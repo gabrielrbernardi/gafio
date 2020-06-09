@@ -6,10 +6,11 @@ export async function up(knex: knex){
         table.string('Nome').notNullable();
         table.string('Email').notNullable();
         table.string('Senha').notNullable();
-        table.string('Matrícula').notNullable();
+        table.string('Matricula').notNullable();
         table.enu('TipoUsuario', ['A', 'M', 'F']);
         table.boolean('isVerified').notNullable();
-        table.timestamps(true);
+        table.timestamp('updatedAt').defaultTo(knex.fn.now());
+        table.timestamp('createdAt').defaultTo(knex.fn.now());
     });
 }
 

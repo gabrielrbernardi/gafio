@@ -4,9 +4,9 @@ module.exports = {
     development:{
         client: 'mysql',
         connection: {
-            filename: './src/database/gafioDB.sql',
+            // filename: './src/database/gafioDB.sql',
             database : 'gafioDB',
-            host : '127.0.0.1',
+            host : 'localhost',
             user : 'root',
             password : 'teste123',
         },

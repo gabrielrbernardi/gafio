@@ -5,6 +5,7 @@ const routes = express.Router();
 
 const usuario = new Usuario();
 
-routes.get('/users', usuario.index);
+routes.get('/usuarios', usuario.index);
+routes.post('/usuarios', usuario.create);
 
 export default routes;
