@@ -8,6 +8,10 @@ class UsuarioController{
         return response.json(users);
     }
 
+    async show(request: Request, response: Response){
+         
+    }
+
     async create(request: Request, response: Response){
         const {nome, email, senha, confirmarSenha, matricula} = request.body;
 

@@ -1,11 +1,8 @@
 import express from 'express';
-import Usuario from './controllers/Usuario';
+import UsuarioRoutes from './routes/userRoutes';
 
-const routes = express.Router();
+const app = express();
 
-const usuario = new Usuario();
+app.use(UsuarioRoutes);
 
-routes.get('/usuarios', usuario.index);
-routes.post('/usuarios', usuario.create);
-
-export default routes;
+export default app;
