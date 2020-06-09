@@ -19,7 +19,6 @@ class UsuarioController{
             return response.json({createdUser: false, error: "Senhas diferentes."});
         }
 
-        // return response.json({nome, email, senha, confirmarSenha, matricula});
         const user = {
             Nome: nome, 
             Email: email, 
