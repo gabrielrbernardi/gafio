@@ -6,10 +6,10 @@ try{
             client: 'mysql',
             connection: {
                 // filename: './src/database/gafioDB.sql',
-                database : 'gafioDB',
+                database : 'gafiodb',
                 host : 'localhost',
                 user : 'root',
-                password : 'teste123',
+                password : '',
             },
             migrations:{
                 directory: path.resolve(__dirname, 'src', 'database', 'migrations')

@@ -9,7 +9,6 @@ import knex from '../database/connection';
 import bcrypt from 'bcrypt';
 
 const saltRounds = 10;
-
 class UsuarioController{
     //Criacao de usuario, verificando senha, se existe usuario com email ja cadastrado
     async create(request: Request, response: Response){     //Criacao de usuario
