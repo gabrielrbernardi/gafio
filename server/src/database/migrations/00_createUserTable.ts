@@ -1,7 +1,7 @@
 import knex from 'knex';
 
 export async function up(knex: knex){
-    return knex.schema.createTable('usuario', table => {
+    return knex.schema.createTable('Usuario', table => {
         table.increments('CodUsuario').primary();
         table.string('Nome').notNullable();
         table.string('Email').notNullable();
@@ -9,8 +9,7 @@ export async function up(knex: knex){
         table.string('Matricula').notNullable();
         table.enu('TipoUsuario', ['A', 'M', 'F']);
         table.boolean('isVerified').notNullable();
-        table.timestamp('updatedAt').defaultTo(knex.fn.now());
-        table.timestamp('createdAt').defaultTo(knex.fn.now());
+        table.timestamps(true, true);
     });
 }
 
