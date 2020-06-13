@@ -1,0 +1,22 @@
+*{
+  transition: .3s ease;
+  display: flexbox;
+}
+
+.cursor-pointer{
+  cursor: pointer;
+}
+
+.header-background{
+  background-image: linear-gradient(to right, #426980, #bad6ff);
+}
+
+.logo{
+  width: 8vw;
+  max-width: 80px;
+  min-width: 50px;
+}
+
+.navbar-brand{
+  font-size: 3vw !important;
+}

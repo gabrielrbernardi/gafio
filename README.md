@@ -11,6 +11,10 @@ npm install @types/cors @types/bcrypt -D
 
 npm install @types/jsonwebtoken
 
+npm install react-router-dom
+
+npm install @types/react-router-dom
+
 # Useful sources to develop
 
 https://github.com/aspto/base-de-dados-de-medicamentos -> Base de dados de medicamentos
