@@ -3,11 +3,13 @@ Sistema de controle de antibióticos que permite à gestão de antibióticos no 
 
 # Dependencias
 
-npm install bcrypt knex cors
+npm install bcrypt knex cors jsonwebtoken
 
 npm install mysql --save
 
 npm install @types/cors @types/bcrypt -D
+
+npm install @types/jsonwebtoken
 
 # Useful sources to develop
 

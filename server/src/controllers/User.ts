@@ -9,7 +9,8 @@ import knex from '../database/connection';
 import bcrypt from 'bcrypt';
 
 const saltRounds = 10;
-class UsuarioController{
+
+class UserController{
     //Criacao de usuario, verificando senha, se existe usuario com email ja cadastrado
     async create(request: Request, response: Response){     //Criacao de usuario
         const {nome, email, senha, confirmarSenha, matricula} = request.body;
@@ -19,6 +20,9 @@ class UsuarioController{
         }
         if(senha != confirmarSenha){
             return response.json({createdUser: false, error: "Senhas diferentes."});
+        }
+        if(!email.includes("@")){
+            return response.json({createdUser: false, error: "Verifique o email e tente novamente."})
         }
 
         const userDB = await knex('Usuario').where('Email', email);
@@ -107,4 +111,4 @@ class UsuarioController{
     }
 }
 
-export default UsuarioController;
+export default UserController;
