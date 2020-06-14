@@ -7,6 +7,7 @@ const Routes = () => {
     return (
         <BrowserRouter>
             <Route component={Login} path="/" exact />
+            <Route component={Login} path="/signup" exact />
         </BrowserRouter>
     )
 }

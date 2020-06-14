@@ -3,6 +3,8 @@ Sistema de controle de antibióticos que permite à gestão de antibióticos no 
 
 # Dependencias
 
+//Executar no backend
+
 npm install bcrypt knex cors jsonwebtoken
 
 npm install mysql --save
@@ -11,7 +13,9 @@ npm install @types/cors @types/bcrypt -D
 
 npm install @types/jsonwebtoken
 
-npm install react-router-dom
+//Executar no frontend
+
+npm install react-router-dom axios
 
 npm install @types/react-router-dom
 
