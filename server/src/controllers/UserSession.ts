@@ -14,7 +14,7 @@ const secretWord = 'PalavraSecreta';
 declare module "jsonwebtoken"{
     export function decode(
         token: string
-    ): {email: string, senha: string};
+    ): {nome: string, email: string, senha: string, confirmarSenha: string, matricula: string};
 }
 
 class UserSession{

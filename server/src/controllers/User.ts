@@ -7,13 +7,23 @@
 import {Request, Response, request} from 'express';
 import knex from '../database/connection';
 import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 
 const saltRounds = 10;
 
 class UserController{
     //Criacao de usuario, verificando senha, se existe usuario com email ja cadastrado
     async create(request: Request, response: Response){     //Criacao de usuario
-        const {nome, email, senha, confirmarSenha, matricula} = request.body;
+        // const {nome, email, senha, confirmarSenha, matricula} = request.body;
+        
+        const {token} = request.body;
+        var decoded = jwt.decode(token);
+        const nome = decoded.nome;
+        const email = decoded.email;
+        const senha = decoded.senha;
+        const confirmarSenha = decoded.confirmarSenha;
+        const matricula = decoded.matricula;
+
 
         if(!nome || !email || !senha || !confirmarSenha || !matricula){
             return response.json({createdUser: false, error: 'Preencha todos os campos.'});
@@ -37,7 +47,8 @@ class UserController{
                     TipoUsuario: 'F',
                     isVerified: 0,
                 }
-                const insertedUser = knex('Usuario').insert(user)
+                // return response.json({createdUser: true, user: user});
+                knex('Usuario').insert(user)
                 .then(function(users){
                     return response.json({createdUser: true, id: users[0], Nome: user['Nome'], Email: user['Email'], Matricula: user['Matricula'], TipoUsuario: user['TipoUsuario']});
                 }).catch(function(err){

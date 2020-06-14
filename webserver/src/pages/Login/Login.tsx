@@ -1,7 +1,5 @@
 import React, {useState, ChangeEvent, FormEvent} from 'react';
 import {Link} from 'react-router-dom';
-// import axios from 'axios';
-
 import jwt from 'jsonwebtoken';
 
 import './login.css';
@@ -43,7 +41,7 @@ const Login = () => {
                 {/* </div> */}
                 <div className="card col-sm-5 p-5 bg-light shadow-lg float-right text-center">
                     <form className="was-validated" onSubmit={handleSubmit}>
-                        <div className="form-group">
+                    <div className="form-group">
                         <label htmlFor="email">Email:</label>
                         <input type="text" className="form-control" id="email" name="email" onChange={handleInputChange} placeholder="Digite seu email" required/>
                         <div className="valid-feedback text-left">Válido.</div>
