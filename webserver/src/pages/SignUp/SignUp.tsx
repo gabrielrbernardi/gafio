@@ -37,16 +37,12 @@ const SignUp = () => {
         const token = jwt.sign({nome: nome, email: email, senha: senha, confirmarSenha: confirmarSenha, matricula: matricula}, secretWord);
         api.post('users', {token: token})
         .then(function(response){
-            if(response.data.createdUser){
-                alert('Usuario Criado');
-            }else{
-                alert(response.data.error);
-            }
+            console.log(response)
         })
  
         // history.push('/');
     }
-
+    
     return (
         <div className="row m-5">
             <div className="card shadow-lg p-3 col-sm-6 offset-md-3 border">
@@ -66,7 +62,7 @@ const SignUp = () => {
                     <input type="password" className="form-control" id="confirmarSenha" name="confirmarSenha" onChange={handleInputChange} placeholder="Confirme sua senha" required/>
                     <div className="m-4"></div>
                     <label htmlFor="matricula">Matrícula:</label>
-                    <input type="password" className="form-control" id="matricula" name="matricula" onChange={handleInputChange} placeholder="Confirme sua senha" required/>
+                    <input type="text" className="form-control" id="matricula" name="matricula" onChange={handleInputChange} placeholder="Confirme sua senha" required/>
                 </div>
                 <button type="submit" className="btn btn-info btn-primary">Entrar</button><br/>
                 </form>
