@@ -24,8 +24,6 @@ class UserSession{
         var decoded = jwt.decode(token);
         const email = decoded.email;
         const senha = decoded.senha;
-        console.log(email);
-        console.log(senha);
         const userDB = await knex('Usuario').where('Email', email);
         const user = userDB[0];
         if(user){

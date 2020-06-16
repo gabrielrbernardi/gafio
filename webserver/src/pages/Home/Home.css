@@ -1,0 +1,11 @@
+.text-decoration-none{
+    color: black;
+}
+
+.zoom-hover{
+    transition: .2s ease;
+}
+
+.zoom-hover:hover{
+    transform: scale(1.06);
+}

@@ -14,11 +14,14 @@ function App() {
       <div className="container-fluid m-0 p-0">
         <nav className="navbar navbar-expand-sm header-background navbar-dark">
           <a href="/" className="navbar-brand cursor-pointer text-big">GAFio</a>
-          <a href="#" className="navbar-brand cursor-pointer ml-auto"> 
+          <a href="/" className="navbar-brand cursor-pointer ml-auto"> 
             <img src={logo} alt="logo" className="logo"/>
           </a>
         </nav>
       </div>
+      {/* <button className="btn ml-3" onClick={handleBackButton}>
+        <FiArrowLeft size={20} />
+      </button> */}
       <Routes />
       
       <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossOrigin="anonymous"></script>

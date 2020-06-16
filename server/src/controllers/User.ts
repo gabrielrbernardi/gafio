@@ -52,7 +52,7 @@ class UserController{
                 .then(function(users){
                     return response.json({createdUser: true, id: users[0], Nome: user['Nome'], Email: user['Email'], Matricula: user['Matricula'], TipoUsuario: user['TipoUsuario']});
                 }).catch(function(err){
-                    return response.json({createdUser: false, error: err});
+                    return response.json({createdUser: false, status: 502});
                 });
             })
         }else{
@@ -83,7 +83,6 @@ class UserController{
         const {email} = request.params;
         const userDB = await knex('Usuario').where('Email', email);
         const user = userDB[0];
-        console.log(user);
         if(user){
             return response.json({userFound: true, id: user['CodUsuario'], Nome: user['Nome'], Email: user['Email'], Matricula: user['Matricula'], TipoUsuario: user['TipoUsuario']});
         }else{
