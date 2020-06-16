@@ -15,7 +15,7 @@ npm install @types/jsonwebtoken
 
 //Frontend
 
-npm install react-router-dom axios
+npm install react-router-dom axios react-icons
 
 npm install @types/react-router-dom
 
