@@ -45,7 +45,7 @@ const SignUp = () => {
         
         
         const token = jwt.sign({nome: nome, email: email, senha: senha, confirmarSenha: confirmarSenha, matricula: matricula}, secretWord);
-        api.post('users', {token: token})
+        api.post('users', {nome: nome, email: email, senha: senha, confirmarSenha: confirmarSenha, matricula: matricula})
         .then(function(response){
             if(response.data.createdUser){
                 setResponseDataStatus(1);

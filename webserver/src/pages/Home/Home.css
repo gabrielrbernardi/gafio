@@ -1,5 +1,6 @@
 .text-decoration-none{
     color: black;
+    text-decoration: none;
 }
 
 .zoom-hover{

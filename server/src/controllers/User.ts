@@ -14,15 +14,15 @@ const saltRounds = 10;
 class UserController{
     //Criacao de usuario, verificando senha, se existe usuario com email ja cadastrado
     async create(request: Request, response: Response){     //Criacao de usuario
-        // const {nome, email, senha, confirmarSenha, matricula} = request.body;
+        const {nome, email, senha, confirmarSenha, matricula} = request.body;
         
-        const {token} = request.body;
-        var decoded = jwt.decode(token);
-        const nome = decoded.nome;
-        const email = decoded.email;
-        const senha = decoded.senha;
-        const confirmarSenha = decoded.confirmarSenha;
-        const matricula = decoded.matricula;
+        // const {token} = request.body;
+        // var decoded = jwt.decode(token);
+        // const nome = decoded.nome;
+        // const email = decoded.email;
+        // const senha = decoded.senha;
+        // const confirmarSenha = decoded.confirmarSenha;
+        // const matricula = decoded.matricula;
 
 
         if(!nome || !email || !senha || !confirmarSenha || !matricula){

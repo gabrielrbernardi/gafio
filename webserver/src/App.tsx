@@ -1,5 +1,5 @@
 import React from 'react';
-import logo from './assets/logoFiocruz.png';
+
 import './App.css';
 
 import Routes from './routes';
@@ -11,14 +11,7 @@ function App() {
       <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
       <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossOrigin="anonymous"/>
       
-      <div className="container-fluid m-0 p-0">
-        <nav className="navbar navbar-expand-sm header-background navbar-dark">
-          <a href="/" className="navbar-brand cursor-pointer text-big">GAFio</a>
-          <a href="/" className="navbar-brand cursor-pointer ml-auto"> 
-            <img src={logo} alt="logo" className="logo"/>
-          </a>
-        </nav>
-      </div>
+      
       {/* <button className="btn ml-3" onClick={handleBackButton}>
         <FiArrowLeft size={20} />
       </button> */}
