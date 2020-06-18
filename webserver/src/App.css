@@ -17,6 +17,10 @@
   min-width: 50px;
 }
 
-.navbar-brand{
+.text-big{
   font-size: 3vw !important;
+}
+
+.text-small{
+  font-size: 1.5vw !important;
 }

@@ -6,9 +6,15 @@ import './login.css';
 
 import loginBanner from '../../assets/fiocruzBanner.jpg';
 import api from '../../services/api';
+import { useCookies } from 'react-cookie';
 
 const secretWord = 'PalavraSecreta';
 
+declare module "jsonwebtoken"{
+    export function decode(
+        token: string
+    ): {Email: string, Nome: string, TipoUsuario: string};
+}
 
 const Login = () => {
     const history = useHistory();
@@ -16,7 +22,8 @@ const Login = () => {
     const [enableSubmitButton, setEnableSubmitButton] = useState(Number);
     const [responseDataStatus, setResponseDataStatus] = useState(Number);
     const [responseData, setResponseData] = useState();
-
+    const [cookies, setCookies, removeCookie] = useCookies([]);
+  
     const [formData, setFormData] = useState({
         email: '',
         senha: '',
@@ -41,13 +48,22 @@ const Login = () => {
         await api.post('session/login', {token: token})
         .then(function(response){
             if(response.data.userLogin){
+                const tokenLoginResponse = jwt.decode(response.data.userToken);
+                let Email = tokenLoginResponse.Email;
+                let Nome = tokenLoginResponse.Nome;
+                let TipoUsuario = tokenLoginResponse.TipoUsuario;
+                setCookiesLogin(Email, Nome, TipoUsuario);
                 history.push('/home');
             }else{
                 setResponseDataStatus(2);
                 setResponseData(response.data.error);
             }
         })
-    }    
+    }
+    
+    function setCookiesLogin(email: string, nome: string, tipoUsuario: string){
+        setCookies('userData', {Email: email, Nome: nome, TipoUsuario: tipoUsuario});
+    }
 
     return (
         <div>
@@ -71,7 +87,7 @@ const Login = () => {
                     }
                     <div className="form-group">
                         <label htmlFor="email">Email:</label>
-                        <input type="email" className="form-control" id="email" name="email" onChange={handleInputChange} placeholder="Digite seu email" required/>
+                        <input type="email" className="form-control" id="email" name="email" onChange={handleInputChange} placeholder="Digite seu email" required autoFocus/>
                         <div className="valid-feedback text-left">Válido.</div>
                         <div className="invalid-feedback text-left">Preencha este campo.</div>
                     </div>
