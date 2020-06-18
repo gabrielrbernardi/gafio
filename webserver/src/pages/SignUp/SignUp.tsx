@@ -44,7 +44,7 @@ const SignUp = () => {
         console.log(matricula);
         
         
-        const token = jwt.sign({nome: nome, email: email, senha: senha, confirmarSenha: confirmarSenha, matricula: matricula}, secretWord);
+        // const token = jwt.sign({nome: nome, email: email, senha: senha, confirmarSenha: confirmarSenha, matricula: matricula}, secretWord);
         api.post('users', {nome: nome, email: email, senha: senha, confirmarSenha: confirmarSenha, matricula: matricula})
         .then(function(response){
             if(response.data.createdUser){

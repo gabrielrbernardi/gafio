@@ -43,9 +43,9 @@ const Login = () => {
         event.preventDefault();
         const {email, senha} = formData;
         
-        const token = jwt.sign({email: email, senha: senha}, secretWord);
+        // const token = jwt.sign({email: email, senha: senha}, secretWord);
 
-        await api.post('session/login', {token: token})
+        await api.post('session/login', {email: email, senha: senha})
         .then(function(response){
             if(response.data.userLogin){
                 const tokenLoginResponse = jwt.decode(response.data.userToken);
