@@ -28,6 +28,24 @@ class DiseaseController {
     return response.json(diseases);
   }
 
+  // Método para listar doenças por nome:
+  async indexByName(request: Request, response: Response) {
+
+    const { name } = request.params;
+    const filteredDisease = await knex('Doenca').where('Nome', name);
+    
+    return response.json(filteredDisease);
+  }
+
+  // Método para listar doenças por código:
+  async indexByCode(request: Request, response: Response) {
+  
+    const { diseaseCode } = request.params;
+    const filteredDisease = await knex('Doenca').where('codDoenca', diseaseCode);
+    
+    return response.json(filteredDisease);
+  }
+
   // Método para deletar uma doença:
   async delete(request: Request, response: Response) {
     const { codDoenca } = request.body;
