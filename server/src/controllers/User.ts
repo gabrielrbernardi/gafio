@@ -164,6 +164,24 @@ class UserController {
       });
     }
   }
+  
+  async requestChangeUserType(request: Request, response: Response){
+    const {id} = request.params;
+    const userDBSelect = await knex('Usuario').where('CodUsuario', id);
+    const user = userDBSelect[0];
+    if(user['requestUserType'] == 'FM'){
+        return response.json({requestChangeUserType: false, error: 'Solicitação enviada anteriormente. Contacte o responsável pelo sistema para mais informações.'})
+    }else{
+        const userDBUpdate = await knex('Usuario').where('CodUsuario', id).update({
+            requestUserType: 'FM'
+        })
+        if(userDBUpdate){
+            return response.json({requestChangeUserType: true});
+        }else{
+            return response.json({requestChangeUserType: false, error: 'Não foi possível fazer a solicitação.'});
+        }
+    }
+}
 }
 
 export default UserController;
