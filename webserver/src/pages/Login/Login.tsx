@@ -1,4 +1,4 @@
-import React, {useState, ChangeEvent, FormEvent} from 'react';
+import React, {useState, ChangeEvent, FormEvent, useEffect} from 'react';
 import {Link, useHistory} from 'react-router-dom';
 import { useCookies } from 'react-cookie';
 import jwt from 'jsonwebtoken';
@@ -67,6 +67,10 @@ const Login = () => {
         nome = nomeArray[0];
         setCookies('userData', {Email: email, Nome: nome, TipoUsuario: tipoUsuario});
     }
+
+    useEffect(() => {
+        document.title = 'GAFio | Login';
+    }, []);
 
     return (
         <div>

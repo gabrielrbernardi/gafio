@@ -15,9 +15,10 @@ const Routes = () => {
     return (
         <BrowserRouter>
             <Route path="/" render={() => <div><HeaderNotLogin/><Root/><Footer/></div>} exact />
-            <Route path="/home" render={() => <div><Header/><Home/><Footer/></div>} exact />
             <Route path="/login" render={() => <div><HeaderNotLogin/><Login/><Footer/></div>} exact />
             <Route path="/signup" render={() => <div><HeaderNotLogin/><SignUp/><Footer/></div>} exact />
+            
+            <Route path="/home" render={() => <div><Header/><Home/><Footer/></div>} exact />
             <Route path="/myProfile" render={() => <div><Header/><MyProfile/><Footer/></div>} exact />
             <Route path="/notifications" render={() => <div><Header/><Notifications/><Footer/></div>} exact />
         </BrowserRouter>

@@ -1,4 +1,4 @@
-import React, {useState, ChangeEvent, FormEvent} from 'react';
+import React, {useState, ChangeEvent, FormEvent, useEffect} from 'react';
 import {useHistory} from 'react-router-dom';
 import jwt from 'jsonwebtoken';
 
@@ -9,7 +9,6 @@ import api from '../../services/api';
 const secretWord = 'PalavraSecreta';
 
 const SignUp = () => {
-    document.title = "Cadastro de Usuário"
     const history = useHistory();
     
     const [responseDataStatus, setResponseDataStatus] = useState(Number);
@@ -64,6 +63,10 @@ const SignUp = () => {
  
         // history.push('/');
     }
+
+    useEffect(() => {
+        document.title = 'GAFio | Cadastro de Usuário';
+    }, []);
     
     return (
         <div className="row m-5">

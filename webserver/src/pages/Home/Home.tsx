@@ -1,10 +1,14 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {Link} from 'react-router-dom';
 import { RiComputerLine, RiBarChart2Line, RiPagesLine } from "react-icons/ri";
 
 import './Home.css';
 
 const Home = () => {
+    useEffect(() => {
+        document.title = 'GAFio | Home';
+    }, []);
+
     return (
         <div className="m-5 p-3 card-columns">
             <Link className="text-decoration-none" to="/medicalRecords">

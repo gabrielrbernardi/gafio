@@ -44,8 +44,10 @@ const MyProfile = () => {
             alert('ERROR. Faça login novamente para acessar o conteúdo.');
         }
             
-    }, [test]);
-    
+    }, []);
+    useEffect(() => {
+        document.title = 'GAFio | Meus Dados';
+    }, []);
 
     function handleInputChange(event: ChangeEvent<HTMLInputElement>){
         const { name, value } = event.target

@@ -1,10 +1,14 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import './App.css';
 
 import Routes from './routes';
 
 function App() {
+  useEffect(() => {
+    document.title = 'GAFio';
+  }, []);
+
   return (
     <div className="App bg-light-custom">
       <meta charSet="utf-8"/>
