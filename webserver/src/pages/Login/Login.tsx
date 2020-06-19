@@ -1,12 +1,12 @@
 import React, {useState, ChangeEvent, FormEvent} from 'react';
 import {Link, useHistory} from 'react-router-dom';
+import { useCookies } from 'react-cookie';
 import jwt from 'jsonwebtoken';
 
 import './login.css';
 
 import loginBanner from '../../assets/fiocruzBanner.jpg';
 import api from '../../services/api';
-import { useCookies } from 'react-cookie';
 
 const secretWord = 'PalavraSecreta';
 
@@ -42,16 +42,17 @@ const Login = () => {
     async function handleSubmit(event: FormEvent){
         event.preventDefault();
         const {email, senha} = formData;
-        
         // const token = jwt.sign({email: email, senha: senha}, secretWord);
 
         await api.post('session/login', {email: email, senha: senha})
         .then(function(response){
             if(response.data.userLogin){
                 const tokenLoginResponse = jwt.decode(response.data.userToken);
-                let Email = tokenLoginResponse.Email;
+                console.log(tokenLoginResponse)
+                var Email = tokenLoginResponse.Email;
                 let Nome = tokenLoginResponse.Nome;
                 let TipoUsuario = tokenLoginResponse.TipoUsuario;
+                console.log(Email);
                 setCookiesLogin(Email, Nome, TipoUsuario);
                 history.push('/home');
             }else{
@@ -62,6 +63,7 @@ const Login = () => {
     }
     
     function setCookiesLogin(email: string, nome: string, tipoUsuario: string){
+        console.log(email)
         setCookies('userData', {Email: email, Nome: nome, TipoUsuario: tipoUsuario});
     }
 
