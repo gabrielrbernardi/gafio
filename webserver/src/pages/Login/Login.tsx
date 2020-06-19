@@ -63,7 +63,8 @@ const Login = () => {
     }
     
     function setCookiesLogin(email: string, nome: string, tipoUsuario: string){
-        console.log(email)
+        let nomeArray = nome.split(' ');
+        nome = nomeArray[0];
         setCookies('userData', {Email: email, Nome: nome, TipoUsuario: tipoUsuario});
     }
 

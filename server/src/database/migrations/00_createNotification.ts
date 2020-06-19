@@ -3,8 +3,8 @@ import knex from 'knex';
 export async function up(knex: knex){
     return knex.schema.createTable('Notificacao', table => {
         table.increments('CodNotifacao').primary();
-        table.string('Descricao').primary();
-        table.boolean('Status').notNullable();
+        table.string('Descricao');
+        table.boolean('Status');
         table.timestamps(true, true);
     });
 }

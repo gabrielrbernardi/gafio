@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import {useHistory, Link} from 'react-router-dom';
-import {FiArrowLeft} from 'react-icons/fi';
-import {MdPersonOutline} from 'react-icons/md';
+import { useHistory, Link } from 'react-router-dom';
+import { FiArrowLeft } from 'react-icons/fi';
+import { MdPersonOutline, MdNotificationsNone } from 'react-icons/md';
 import { useCookies } from 'react-cookie';
-import {Dropdown} from 'react-bootstrap';
+import { Dropdown } from 'react-bootstrap';
 
 import '../Home/Home.css';
 
@@ -22,7 +22,6 @@ const Header = () => {
         }else{
             const cookie = String(cookies.userData.Nome);
             setUserName(cookie);
-            console.log(cookies);
         }
     }, [cookies]);
 
@@ -41,11 +40,13 @@ const Header = () => {
                 <nav className="navbar navbar-expand-sm header-background navbar-dark">
                     <a href="/" className="navbar-brand cursor-pointer text-small">GAFio</a>
                     <div className="ml-auto text-dark">
-                        <Link to="myProfile">
-                            <div className="h6 text-decoration-none">
-                            </div>
+                    </div>
+                    <div className="ml-auto text-dark">
+                        <Link to="/notifications" className="d-inline text-dark">
+                            <p className="d-inline">Notificações</p>
+                            <MdNotificationsNone className="m-2" size={30}/>
                         </Link>
-                        <Dropdown>
+                        <Dropdown className="d-inline">
                             <Dropdown.Toggle variant="outline-dark" id="dropdown-basic">
                                 <strong>{userName}</strong>
                                 

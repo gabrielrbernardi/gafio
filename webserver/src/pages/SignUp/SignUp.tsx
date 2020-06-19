@@ -72,15 +72,15 @@ const SignUp = () => {
                 <form className="was-validated" onSubmit={handleSubmit}>
                 <div className="form-group">
                     {responseDataStatus === 0
-                    ? <div></div>
+                    ? <></>
                     : responseDataStatus === 1 
                         ?
                         <div className="alert alert-success alert-dismissible fade show">
-                            <p>{responseData}</p>
+                            {responseData}
                         </div>
                         :
                         <div className="alert alert-danger alert-dismissible fade show">
-                            <p>{responseData}</p>
+                            {responseData}
                         </div>
                     }
                     <label htmlFor="nome">Nome Completo:</label>
@@ -89,14 +89,14 @@ const SignUp = () => {
                     <label htmlFor="email">Email:</label>
                     <input type="email" className="form-control" id="email" name="email" onChange={handleInputChange} placeholder="Digite seu email" required/>
                     <div className="m-4"></div>
+                    <label htmlFor="matricula">Matrícula:</label>
+                    <input type="text" className="form-control" id="matricula" name="matricula" onChange={handleInputChange} placeholder="Digite sua matrícula" required/>
+                    <div className="m-4"></div>
                     <label htmlFor="senha">Senha:</label>
                     <input type="password" className="form-control" id="senha" name="senha" onChange={handleInputChange} placeholder="Digite sua senha" required/>
                     <div className="m-4"></div>
                     <label htmlFor="confirmarSenha">Confirmar Senha:</label>
                     <input type="password" className="form-control" id="confirmarSenha" name="confirmarSenha" onChange={handleInputChange} placeholder="Confirme sua senha" required/>
-                    <div className="m-4"></div>
-                    <label htmlFor="matricula">Matrícula:</label>
-                    <input type="text" className="form-control" id="matricula" name="matricula" onChange={handleInputChange} placeholder="Confirme sua senha" required/>
                 </div>
                 {
                 enableSubmitButton === 0

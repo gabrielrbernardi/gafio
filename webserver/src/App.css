@@ -24,3 +24,7 @@
 .text-small{
   font-size: 1.5vw !important;
 }
+
+.bg-light-custom{
+  background-color: #efefef;
+}

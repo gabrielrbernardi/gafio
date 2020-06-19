@@ -8,9 +8,10 @@ export async function up(knex: knex){
         table.string('Senha').notNullable();
         table.string('Matricula').notNullable();
         table.enu('TipoUsuario', ['A', 'M', 'F']);
+        table.string('authToken');
         table.boolean('isVerified').notNullable();
         table.enu('requestUserType', ['FM', 'MF', 'MA', 'AM']);
-        table.integer('CodNotifacao').notNullable().references('CodNotifacao').inTable('Notificacao').unsigned();
+        table.integer('CodNotifacao').references('CodNotifacao').inTable('Notificacao').unsigned();
         table.timestamps(true, true);
     });
 }
