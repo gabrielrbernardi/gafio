@@ -4,7 +4,7 @@ import jwt from "jsonwebtoken";
 const authConfig = require("../config/auth.json");
 
 class Middleware {
-  async(request: Request, response: Response, next: NextFunction) {
+  async auth(request: Request, response: Response, next: NextFunction) {
     const authHeader = request.headers.authorization;
 
     if (!authHeader) {
@@ -13,7 +13,7 @@ class Middleware {
 
     const tokenParts = authHeader.split(" ");
 
-    if (tokenParts.length === 2) {
+    if (tokenParts.length !== 2) {
       return response.status(401).json({ error: "Token error" });
     }
 
@@ -25,6 +25,8 @@ class Middleware {
 
     jwt.verify(token, authConfig.secret, (err: any, decoded: any) => {
       if (err) return response.status(401).json({ error: "Token invalid" });
+
+      return next();
     });
   }
 }

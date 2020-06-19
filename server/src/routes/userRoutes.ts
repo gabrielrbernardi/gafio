@@ -1,12 +1,12 @@
 import express from "express";
 import UserController from "../controllers/User";
 import UserSession from "../controllers/UserSession";
-import UserAuth from "../controllers/authController";
+import AuthMiddleware from "../middlewares/auth";
 
 const routes = express.Router();
 const user = new UserController();
 const userSession = new UserSession();
-const userAuth = new UserAuth();
+const authMiddleware = new AuthMiddleware();
 
 //Routes to User CRUD
 routes.get("/users", user.index);
@@ -22,8 +22,5 @@ routes.post(
   "/session/requestUpdateUserType",
   userSession.requestUpdateUserType
 );
-
-//Rotas para autenticação
-routes.get("/auth", userAuth.auth);
 
 export default routes;
