@@ -9,6 +9,8 @@ export async function up(knex: knex){
         table.string('Matricula').notNullable();
         table.enu('TipoUsuario', ['A', 'M', 'F']);
         table.boolean('isVerified').notNullable();
+        table.enu('requestUserType', ['FM', 'MF', 'MA', 'AM']);
+        table.integer('CodNotifacao').notNullable().references('CodNotifacao').inTable('Notificacao').unsigned();
         table.timestamps(true, true);
     });
 }
