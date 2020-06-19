@@ -42,9 +42,9 @@ class UserSession {
           const token = jwt.sign(
             {
               CodUsuario: user["CodUsuario"],
-              // Email: user["Email"],
-              // Nome: user["Nome"],
-              // TipoUsuario: user["TipoUsuario"],
+              Email: user["Email"],
+              Nome: user["Nome"],
+              TipoUsuario: user["TipoUsuario"],
             },
             authConfig.secret,
             { expiresIn: 60 * 60 }
