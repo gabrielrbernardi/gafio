@@ -13,7 +13,7 @@ const secretWord = 'PalavraSecreta';
 declare module "jsonwebtoken"{
     export function decode(
         token: string
-    ): {Email: string, Nome: string, TipoUsuario: string};
+    ): {Email: string, Nome: string, TipoUsuario: string, CodUsuario: string};
 }
 
 const Login = () => {
@@ -52,8 +52,9 @@ const Login = () => {
                 var Email = tokenLoginResponse.Email;
                 let Nome = tokenLoginResponse.Nome;
                 let TipoUsuario = tokenLoginResponse.TipoUsuario;
+                let CodUsuario = tokenLoginResponse.CodUsuario;
                 console.log(Email);
-                setCookiesLogin(Email, Nome, TipoUsuario);
+                setCookiesLogin(Email, Nome, TipoUsuario, CodUsuario);
                 history.push('/home');
             }else{
                 setResponseDataStatus(2);
@@ -62,10 +63,10 @@ const Login = () => {
         })
     }
     
-    function setCookiesLogin(email: string, nome: string, tipoUsuario: string){
+    function setCookiesLogin(email: string, nome: string, tipoUsuario: string, codUsuario: string){
         let nomeArray = nome.split(' ');
         nome = nomeArray[0];
-        setCookies('userData', {Email: email, Nome: nome, TipoUsuario: tipoUsuario});
+        setCookies('userData', {Email: email, Nome: nome, TipoUsuario: tipoUsuario, CodUsuario: codUsuario});
     }
 
     useEffect(() => {

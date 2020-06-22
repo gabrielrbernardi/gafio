@@ -49,7 +49,7 @@ const SignUp = () => {
             if(response.data.createdUser){
                 setResponseDataStatus(1);
                 setResponseData('Usuário criado com sucesso.');
-                setTimeout(function(){history.push('/login')}, 3000);
+                setTimeout(function(){history.push('/login')}, 1750);
             }else{
                 if(response.data.status === 502){
                     setResponseData('Error 502 Bad Gateway. Contate o administrador do sistema para mais detalhes. Erro: UserCreationDatabase')
