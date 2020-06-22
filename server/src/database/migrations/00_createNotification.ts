@@ -2,7 +2,7 @@ import knex from 'knex';
 
 export async function up(knex: knex){
     return knex.schema.createTable('Notificacao', table => {
-        table.increments('CodNotifacao').primary();
+        table.increments('CodNotificacao').primary();
         table.string('Descricao');
         table.boolean('Status');
         table.timestamps(true, true);

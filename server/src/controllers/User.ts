@@ -4,7 +4,7 @@
 | Sistema: GAFio                        |
 ****************************************/
 
-import { Request, Response, request } from "express";
+import { Request, Response } from "express";
 import knex from "../database/connection";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
@@ -181,7 +181,7 @@ class UserController {
             return response.json({requestChangeUserType: false, error: 'Não foi possível fazer a solicitação.'});
         }
     }
-}
+  }
 }
 
 export default UserController;

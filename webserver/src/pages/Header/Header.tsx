@@ -57,16 +57,17 @@ const Header = () => {
                     <div className="ml-auto text-dark">
                         <Button onClick={toNotifications} variant="outline-dark">
                             <p className="d-inline">Notificações</p>
-                            <MdNotificationsNone  size={30}/>
+                            <MdNotificationsNone className="ml-2" size={30}/>
                         </Button>
                         <Dropdown className="ml-2 d-inline">
                             <Dropdown.Toggle variant="outline-dark" id="dropdown-basic">
                                 <strong>{userName}</strong>
                                 
-                                <MdPersonOutline className="ml-2 text-decoration-none" size={30} />
+                                <MdPersonOutline className="ml-2" size={30} />
                             </Dropdown.Toggle>
                             <Dropdown.Menu>
                                 <Dropdown.Item onClick={myProfile}>Gerenciar sua conta</Dropdown.Item>
+                                <Dropdown.Divider />
                                 <Dropdown.Item onClick={logoutFunction}>Logout</Dropdown.Item>
                             </Dropdown.Menu>
                         </Dropdown>

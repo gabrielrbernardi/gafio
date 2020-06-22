@@ -19,9 +19,6 @@ routes.put('/users/requestChangeUserType/:id', user.requestChangeUserType);
 
 //Routes to User Login and account check
 routes.post("/session/login", userSession.login);
-routes.post(
-  "/session/requestUpdateUserType",
-  userSession.requestUpdateUserType
-);
+routes.post("/session/requestUpdateUserType", userSession.requestUpdateUserType);
 
 export default routes;

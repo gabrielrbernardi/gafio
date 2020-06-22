@@ -10,3 +10,11 @@
 .zoom-hover:hover{
     transform: scale(1.06);
 }
+
+.navbar-brand{
+    transition: .2s ease;
+}
+
+.navbar-brand:hover{
+    opacity: .7;
+}
