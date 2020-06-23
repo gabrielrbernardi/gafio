@@ -8,7 +8,7 @@ import './login.css';
 import loginBanner from '../../assets/fiocruzBanner.jpg';
 import api from '../../services/api';
 
-const secretWord = 'PalavraSecreta';
+// const secretWord = 'PalavraSecreta';
 
 declare module "jsonwebtoken"{
     export function decode(

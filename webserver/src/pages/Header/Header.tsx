@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useHistory, Link } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import { FiArrowLeft } from 'react-icons/fi';
 import { MdPersonOutline, MdNotificationsNone } from 'react-icons/md';
 import { useCookies } from 'react-cookie';
@@ -25,7 +25,7 @@ const Header = () => {
             const cookie = String(cookies.userData.Nome);
             setUserName(cookie);
         }
-    }, [cookies]);
+    }, [cookies, history]);
 
     function logoutFunction(){
         removeCookie('userData');
@@ -61,7 +61,7 @@ const Header = () => {
                         </Button>
                         <Dropdown className="ml-2 d-inline">
                             <Dropdown.Toggle variant="outline-dark" id="dropdown-basic">
-                                <strong>{userName}</strong>
+                                <strong className="text-capitalize">{userName}</strong>
                                 
                                 <MdPersonOutline className="ml-2" size={30} />
                             </Dropdown.Toggle>

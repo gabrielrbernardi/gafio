@@ -7,12 +7,11 @@ import { useCookies } from 'react-cookie';
 const MyProfile = () => {
     const history = useHistory();
     
-    const [cookies, setCookies, removeCookie] = useCookies([]);
+    const [cookies] = useCookies([]);
     const [responseDataStatus, setResponseDataStatus] = useState(Number);
     const [enableSubmitButton] = useState(0);
     const [responseData, setResponseData] = useState('');
     const [pharmaceuticalStatus, setPharmaceuticalStatus] = useState('');
-    const test='';
 
     const [initData, setInitData] = useState({
         id: '',
@@ -31,6 +30,7 @@ const MyProfile = () => {
 
     
     useEffect(() => {
+        document.title = 'GAFio | Meus Dados';
         if(cookies.userData){
             const email = cookies.userData.Email;
             api.get(`users/email/${email}`).then(response => {
@@ -42,12 +42,10 @@ const MyProfile = () => {
         }else{
             history.push('/login');
             alert('ERROR. Faça login novamente para acessar o conteúdo.');
-        }
-            
-    }, []);
-    useEffect(() => {
-        document.title = 'GAFio | Meus Dados';
-    }, []);
+        }      
+    }, [cookies.userData, history, initData]);
+    // useEffect(() => {
+    // }, []);
 
     function handleInputChange(event: ChangeEvent<HTMLInputElement>){
         const { name, value } = event.target
@@ -122,16 +120,16 @@ const MyProfile = () => {
                     <div className="m-4"></div>
                     <label htmlFor="matricula">Tipo de usuário atual: 
                         {
-                            pharmaceuticalStatus == 'F'
+                            pharmaceuticalStatus === 'F'
                             ? <label><strong>Farmacêutico</strong></label>
-                            : pharmaceuticalStatus == 'M' 
+                            : pharmaceuticalStatus === 'M' 
                                 ? <label><strong>Médico</strong></label>
                                 : <label><strong>Administrador</strong></label>
                         }
                     </label>
                     <br/>
                     {
-                        pharmaceuticalStatus == 'F'
+                        pharmaceuticalStatus === 'F'
                         ? <button type="button" onClick={requestChangeUserType} className="btn btn-danger">Solicitar alteração</button>
                         : <></>
                     }

@@ -1,12 +1,12 @@
 import React, {useState, ChangeEvent, FormEvent, useEffect} from 'react';
 import {useHistory} from 'react-router-dom';
-import jwt from 'jsonwebtoken';
+// import jwt from 'jsonwebtoken';
 
 import '../Login/login.css';
 
 import api from '../../services/api';
 
-const secretWord = 'PalavraSecreta';
+// const secretWord = 'PalavraSecreta';
 
 const SignUp = () => {
     const history = useHistory();
@@ -52,7 +52,7 @@ const SignUp = () => {
                 setTimeout(function(){history.push('/login')}, 1750);
             }else{
                 if(response.data.status === 502){
-                    setResponseData('Error 502 Bad Gateway. Contate o administrador do sistema para mais detalhes. Erro: UserCreationDatabase')
+                    setResponseData('Error 502 Bad Gateway. Contate o administrador do sistema para mais detalhes. Erro: UserCreationDatabase');
                 }else{
                     setResponseData(response.data.error);
                 }
