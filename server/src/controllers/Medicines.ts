@@ -8,6 +8,7 @@ class MedicinesController {
     const {
       EAN,
       PrincipioAtivo,
+      Registro,
       Laboratorio,
       Produto,
       Apresentacao,
@@ -17,6 +18,16 @@ class MedicinesController {
     await knex("Medicamentos").insert({
       EAN,
       PrincipioAtivo,
+      Registro,
+      Laboratorio,
+      Produto,
+      Apresentacao,
+      ClasseTerapeutica,
+    });
+    return response.json({
+      EAN,
+      PrincipioAtivo,
+      Registro,
       Laboratorio,
       Produto,
       Apresentacao,
@@ -25,14 +36,14 @@ class MedicinesController {
   }
 
   async index(request: Request, response: Response) {
-    const medicines = knex("Medicamentos").select("*");
+    const medicines = await knex("Medicamentos").select("*");
     response.json(medicines);
   }
 
   async indexByPrincipio(request: Request, response: Response) {
-    const principio = request.params;
+    const { principio } = request.params;
 
-    const filteredMedicine = knex("Medicamentos").where(
+    const filteredMedicine = await knex("Medicamentos").where(
       "PrincipioAtivo",
       principio
     );
@@ -40,9 +51,9 @@ class MedicinesController {
   }
 
   async indexByClasse(request: Request, response: Response) {
-    const classe = request.params;
+    const { classe } = request.params;
 
-    const filteredMedicine = knex("Medicamentos").where(
+    const filteredMedicine = await knex("Medicamentos").where(
       "ClasseTerapeutica",
       classe
     );
@@ -50,19 +61,19 @@ class MedicinesController {
   }
 
   async indexByEan(request: Request, response: Response) {
-    const ean = request.params;
+    const { ean } = request.params;
 
-    const filteredMedicine = knex("Medicamentos").where("EAN", ean);
+    const filteredMedicine = await knex("Medicamentos").where("EAN", ean);
     response.json(filteredMedicine);
   }
 
   async delete(request: Request, response: Response) {
-    const ean = request.params;
+    const { ean } = request.params;
 
-    const medicine = knex("Medicamentos").where("EAN", ean);
+    const medicine = await knex("Medicamentos").where("EAN", ean);
 
     if (medicine) {
-      knex("Medicamentos").where("EAN", ean).delete();
+      await knex("Medicamentos").where("EAN", ean).delete();
       return response.json({ Deleted: true });
     } else {
       return response.json({

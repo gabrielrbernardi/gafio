@@ -16,3 +16,5 @@ routes.get("/medicines/classe/:classe", medicineController.indexByClasse);
 routes.post("/medicines", medicineController.create);
 
 routes.delete("/medicines/delete/:ean", medicineController.delete);
+
+export default routes;

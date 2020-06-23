@@ -2,7 +2,7 @@ import knex from "knex";
 
 export async function up(knex: knex) {
   return knex.schema.createTable("Medicamentos", (table) => {
-    table.integer("EAN").primary();
+    table.string("EAN").primary();
     table.string("PrincipioAtivo").notNullable();
     table.string("CNPJ");
     table.string("Laboratorio").notNullable();
