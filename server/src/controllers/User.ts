@@ -8,6 +8,7 @@ import { Request, Response } from "express";
 import knex from "../database/connection";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import Notification from "./Notification";
 
 const saltRounds = 10;
 
@@ -57,14 +58,36 @@ class UserController {
         knex("Usuario")
           .insert(user)
           .then(function (users) {
-            return response.json({
-              createdUser: true,
-              id: users[0],
-              Nome: user["Nome"],
-              Email: user["Email"],
-              Matricula: user["Matricula"],
-              TipoUsuario: user["TipoUsuario"],
-            });
+            const notificationDescription = `${user["Nome"]} criou uma conta.`;
+            const notificationType = "Create";
+            const userId = users[0]
+            const notification = {
+              Descricao: notificationDescription, 
+              Status: 0, 
+              TipoNotificacao: notificationType,
+              CodUsuario: userId
+            }
+            knex("Notificacao").insert(notification).then(function (notifications) {
+              if(notifications){
+                knex("Usuario_Notificacao").insert({"CodNotificacao": notifications[0], "CodUsuario": userId}).then(userResponse => {
+                  if(userResponse){
+                    return response.json({
+                      createdUser: true,
+                      id: userId,
+                      Nome: user["Nome"],
+                      Email: user["Email"],
+                      Matricula: user["Matricula"],
+                      TipoUsuario: user["TipoUsuario"],
+                    });
+                  }else{
+                    return response.json({createdNotification: false, error: "Não pode inserir em usuario."});
+                  }
+                })
+              }else{
+                return response.json({createdNotification: false, error: "Não pode inserir em notificacao."});
+              }
+            })
+            // Notification.prototype.create(request, response, notificationDescription, notificationType);
           })
           .catch(function (err) {
             return response.json({ createdUser: false, status: 502 });
@@ -166,20 +189,51 @@ class UserController {
   }
   
   async requestChangeUserType(request: Request, response: Response){
-    const {id} = request.params;
-    const userDBSelect = await knex('Usuario').where('CodUsuario', id);
-    const user = userDBSelect[0];
-    if(user['requestUserType'] == 'FM'){
-        return response.json({requestChangeUserType: false, error: 'Solicitação enviada anteriormente. Contacte o responsável pelo sistema para mais informações.'})
-    }else{
+    const {notificationId} = request.params;
+    const {TipoNotificacao} = request.body;
+    const notificationDB = await knex('Usuario_Notificacao').where("CodNotificacao", notificationId);
+    if(notificationDB){
+      let id = notificationDB[0].CodUsuario;
+      const userDBSelect = await knex('Usuario').where('CodUsuario', id);
+      const user = userDBSelect[0];
+      if(user['requestUserType'] == 'FM'){
+          return response.json({requestChangeUserType: false, error: 'Solicitação enviada anteriormente. Contacte o responsável pelo sistema para mais informações.'})
+      }else{
         const userDBUpdate = await knex('Usuario').where('CodUsuario', id).update({
             requestUserType: 'FM'
         })
-        if(userDBUpdate){
-            return response.json({requestChangeUserType: true});
-        }else{
-            return response.json({requestChangeUserType: false, error: 'Não foi possível fazer a solicitação.'});
+        var notificationDescription = "";
+        var notificationType = "";
+        if(TipoNotificacao == "Create"){
+          notificationDescription = `${user["Nome"]} deseja criar uma conta.`;
+          notificationType = "Create";
+        }else if(TipoNotificacao == "Change"){
+          notificationDescription = `${user["Nome"]} deseja alterar o tipo de conta.`;
+          notificationType = "Change";
         }
+        const userId = id;
+        const notification = {
+          Descricao: notificationDescription, 
+          Status: 0, 
+          TipoNotificacao: notificationType,
+          CodUsuario: userId
+        }
+        await knex("Notificacao").insert(notification).then(function (notifications) {
+          if(notifications){
+            knex("Usuario_Notificacao").insert({"CodNotificacao": notifications[0], "CodUsuario": userId}).then(userResponse => {
+              if(userResponse){
+                return response.json({requestChangeUserType: true});
+              }else{
+                return response.json({requestChangeUserType: false, error: "Não pode inserir em usuario."});
+              }
+            })
+          }else{
+            return response.json({requestChangeUserType: false, error: "Não pode inserir em notificacao."});
+          }
+        })
+      }
+    }else{
+      return response.json({requestChangeUserType: false, error: "Notificação não encontrada"});
     }
   }
 }

@@ -43,22 +43,27 @@ class Notification{
 
     async showId(request: Request, response: Response){
         const {id} = request.params;        //UserID
-        const notificationDB = await knex('Usuario_Notificacao').where('CodUsuario', id);
-        if(notificationDB.length != 0){
-            var notificationObject: any = {}, notificationList: any = [];
-            var notifications: any = []
-            for(let i = 0; i < notificationDB.length; i++){
-                notificationObject = notificationDB[i];
-                notificationList.push(notificationObject);
+        const {TipoUsuario} = request.body;
+        if(TipoUsuario == 'A'){
+            const notificationDB = await knex('Usuario_Notificacao').whereNot('CodUsuario', id);
+            if(notificationDB.length != 0){
+                var notificationObject: any = {}, notificationList: any = [];
+                var notifications: any = []
+                for(let i = 0; i < notificationDB.length; i++){
+                    notificationObject = notificationDB[i];
+                    notificationList.push(notificationObject);
+                }
+                knex('Notificacao').where({
+                    CodUsuario: notificationList[0].CodUsuario,
+                    Status: 0
+                })
+                .then(notificacoes => {
+                    notifications.push(notificacoes);
+                    return response.json({notificationFound: true, notifications});
+                })
+            }else{
+                return response.json({notificationFound: false, error: "Não há notificações para este usuário."});
             }
-            knex('Notificacao').where({
-                CodUsuario: notificationList[0].CodUsuario,
-                Status: 0
-            })
-            .then(notificacoes => {
-                notifications.push(notificacoes);
-                return response.json({notificationFound: true, notifications});
-            })
         }else{
             return response.json({notificationFound: false, error: "Não há notificações para este usuário."});
         }
@@ -83,6 +88,14 @@ class Notification{
             Status: 1
         });
         if (notificationDB) {
+            const {notificationType} = request.body;
+            if(notificationType == "Change"){
+                const notificationDB1 = await knex("Notificacao").where("CodNotificacao", id);
+                const userId = notificationDB1[0].CodUsuario;
+                const userDB = await knex("Usuario").where("CodUsuario", userId).update({
+                    TipoUsuario: 'M'
+                })
+            }
             return response.json({ updatedStatusNotification: true });
         } else {
             return response.json({updatedStatusNotification: false, error: "Notificação não encontrada"});
@@ -96,6 +109,14 @@ class Notification{
             Status: 1
         });
         if (notificationDB) {
+            const {notificationType} = request.body;
+            if(notificationType == "Change"){
+                const notificationDB1 = await knex("Notificacao").where("CodNotificacao", id);
+                const userId = notificationDB1[0].CodUsuario;
+                const userDB = await knex("Usuario").where("CodUsuario", userId).update({
+                    requestUserType: null
+                })
+            }
             return response.json({ updatedStatusNotification: true });
         } else {
             return response.json({updatedStatusNotification: false, error: "Notificação não encontrada"});

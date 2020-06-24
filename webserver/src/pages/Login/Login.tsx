@@ -48,12 +48,10 @@ const Login = () => {
         .then(function(response){
             if(response.data.userLogin){
                 const tokenLoginResponse = jwt.decode(response.data.userToken);
-                console.log(tokenLoginResponse)
                 var Email = tokenLoginResponse.Email;
                 let Nome = tokenLoginResponse.Nome;
                 let TipoUsuario = tokenLoginResponse.TipoUsuario;
                 let CodUsuario = tokenLoginResponse.CodUsuario;
-                console.log(Email);
                 setCookiesLogin(Email, Nome, TipoUsuario, CodUsuario);
                 history.push('/home');
             }else{
@@ -76,20 +74,18 @@ const Login = () => {
     return (
         <div>
             <div className="row m-5">
-                {/* <div className="card ml-5 mt-5"> */}
                     <img className="rounded col-sm-7 " src={loginBanner} alt="Banner"/>
-                {/* </div> */}
                 <div className="card col-sm-5 p-5 bg-light shadow-lg float-right text-center">
                     <form className="was-validated pb-2" onSubmit={handleSubmit}>
                     {responseDataStatus === 0
                     ? <div></div>
                     : responseDataStatus === 1 
                         ?
-                        <div className="alert alert-success alert-dismissible fade show">
+                        <div className="alert alert-success alert-dismissible fade show text-center">
                             <p>{responseData}</p>
                         </div>
                         :
-                        <div className="alert alert-danger alert-dismissible fade show">
+                        <div className="alert alert-danger alert-dismissible fade show text-center">
                             <p>{responseData}</p>
                         </div>
                     }

@@ -36,12 +36,6 @@ const SignUp = () => {
     function handleSubmit(event: FormEvent){
         event.preventDefault();
         const {nome, email, senha, confirmarSenha, matricula} = formData;
-        console.log(nome);
-        console.log(email);
-        console.log(senha);
-        console.log(confirmarSenha);
-        console.log(matricula);
-        
         
         // const token = jwt.sign({nome: nome, email: email, senha: senha, confirmarSenha: confirmarSenha, matricula: matricula}, secretWord);
         api.post('users', {nome: nome, email: email, senha: senha, confirmarSenha: confirmarSenha, matricula: matricula})
@@ -58,7 +52,6 @@ const SignUp = () => {
                 }
                 setResponseDataStatus(2);
             }
-            console.log(response)
         })
  
         // history.push('/');
@@ -87,7 +80,7 @@ const SignUp = () => {
                         </div>
                     }
                     <label htmlFor="nome">Nome Completo:</label>
-                    <input type="text" className="form-control" id="nome" name="nome" onChange={handleInputChange} placeholder="Digite seu nome" required/>
+                    <input type="text" className="form-control" id="nome" name="nome" onChange={handleInputChange} placeholder="Digite seu nome" required autoFocus/>
                     <div className="m-4"></div>
                     <label htmlFor="email">Email:</label>
                     <input type="email" className="form-control" id="email" name="email" onChange={handleInputChange} placeholder="Digite seu email" required/>

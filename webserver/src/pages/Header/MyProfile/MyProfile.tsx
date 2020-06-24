@@ -54,11 +54,7 @@ const MyProfile = () => {
     
     function handleSubmit(event: FormEvent){
         event.preventDefault();
-        const {nome, email, matricula} = formData;
-        console.log(nome);
-        console.log(email);
-        console.log(matricula);
-        
+        const {nome, email, matricula} = formData;        
         
         // const token = jwt.sign({nome: nome, email: email, matricula: matricula}, secretWord);
         api.post('users', {nome: nome, email: email, matricula: matricula})
@@ -79,7 +75,7 @@ const MyProfile = () => {
      }
 
     function requestChangeUserType(){
-        api.put(`users/requestChangeUserType/${initData['id']}`).then(response => {
+        api.put(`users/requestChangeUserType/${initData['id']}`, {TipoNotificacao: "Change"}).then(response => {
             if(response.data.requestChangeUserType){
                 setResponseDataStatus(1);
                 setResponseData('Solicitação feita com sucesso.');
