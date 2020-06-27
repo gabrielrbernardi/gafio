@@ -89,10 +89,10 @@ const SignUp = () => {
                     <input type="text" className="form-control" id="matricula" name="matricula" onChange={handleInputChange} placeholder="Digite sua matrícula" required/>
                     <div className="m-4"></div>
                     <label htmlFor="senha">Senha:</label>
-                    <input type="password" className="form-control" id="senha" name="senha" onChange={handleInputChange} placeholder="Digite sua senha" required/>
+                    <input type="password" className="form-control" id="senha" name="senha" onChange={handleInputChange} minLength={8} placeholder="Digite sua senha" required/>
                     <div className="m-4"></div>
                     <label htmlFor="confirmarSenha">Confirmar Senha:</label>
-                    <input type="password" className="form-control" id="confirmarSenha" name="confirmarSenha" onChange={handleInputChange} placeholder="Confirme sua senha" required/>
+                    <input type="password" className="form-control" id="confirmarSenha" name="confirmarSenha" onChange={handleInputChange} minLength={8} placeholder="Confirme sua senha" required/>
                 </div>
                 {
                 enableSubmitButton === 0

@@ -1,12 +1,20 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import {useHistory} from 'react-router-dom';
 import {FiArrowLeft} from 'react-icons/fi';
+import { useCookies } from 'react-cookie';
 
 import logo from '../../assets/logoFiocruz.png';
 
 const Header = () => {
     const history = useHistory();
+    const [cookies] = useCookies([]);
     
+    useEffect(() => {
+        if(cookies.userData){
+            history.push('/home');
+        }
+    }, [cookies.userData, history]);
+
     function handleBackButton(){
         history.goBack();
     }

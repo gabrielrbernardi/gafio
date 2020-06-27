@@ -3,7 +3,7 @@ import { useCookies } from 'react-cookie';
 import api from '../../../services/api';
 
 const Notifications = () => {
-    const [cookies] = useCookies([]);
+    const [cookies, setCookies] = useCookies([]);
     const [getNotifications, setNotifications] = useState<any[]>([]);
     const [responseDataStatus, setResponseDataStatus] = useState(Number);
     const [responseData, setResponseData] = useState('');
@@ -18,8 +18,10 @@ const Notifications = () => {
         let TipoUsuario = cookies.userData.TipoUsuario;
         api.post(`notifications/id/${CodUsuario}`, {TipoUsuario: TipoUsuario}).then(response => {
             setNotifications([])
+            console.log(response)
             const responseList = response.data;
             if(response.data.notificationFound){
+                setCookies('notificationLength', {length: response.data.notifications[0].length})
                 for( let i = 0; i < responseList.notifications[0].length; i++){
                     setNotifications(notification => ([...notification, responseList.notifications[0][i] ]))
                 }
@@ -28,7 +30,7 @@ const Notifications = () => {
     }
 
     function accept(NotificationId: Number, tipoNotificacao: string){
-        if(tipoNotificacao == "Change"){
+        if(tipoNotificacao === "Change"){
             api.put(`notifications/status/accept/${NotificationId}`, {notificationType: tipoNotificacao}).then(response => {
                 if(response.data.updatedStatusNotification){
                     getNotificationFunction();
@@ -87,22 +89,24 @@ const Notifications = () => {
                 </div>
                     {getNotifications.length > 0
                         ? getNotifications.map((notification) => (
-                            notification.TipoNotificacao == "Create"
+                            notification.TipoNotificacao === "Create"
                                 ?
                                 <>
-                                    <div key={notification.CodNotificacao} className="card shadow-lg mb-4 mx-auto p-3 col-sm-8">
+                                    <div key={notification.CodNotificacao.toString()} className="card shadow-lg mb-4 mx-auto p-3 col-sm-8">
                                         <p className="h5">{notification.Descricao}</p>
                                         <p className="btn btn-success" onClick={() => accept(notification.CodNotificacao, notification.TipoNotificacao)} role="button">Aceitar</p>
                                         <p className="btn btn-outline-danger" onClick={() => refuse(notification.CodNotificacao, notification.TipoNotificacao)} role="button">Recusar</p>
                                     </div>
                                 </>
-                                : notification.TipoNotificacao == "Change"
+                                : notification.TipoNotificacao === "Change"
                                     ? 
-                                        <div key={notification.CodNotificacao} className="card shadow-lg mb-4 mx-auto p-3 col-sm-8">
-                                            <p className="h5">{notification.Descricao}</p>
-                                            <p className="btn btn-success" onClick={() => accept(notification.CodNotificacao, notification.TipoNotificacao)} role="button">Aceitar</p>
-                                            <p className="btn btn-outline-danger" onClick={() => refuse(notification.CodNotificacao, notification.TipoNotificacao)} role="button">Recusar</p>
-                                        </div>
+                                        <>
+                                            <div key={notification.CodNotificacao.toString()} className="card shadow-lg mb-4 mx-auto p-3 col-sm-8">
+                                                <p className="h5">{notification.Descricao}</p>
+                                                <p className="btn btn-success" onClick={() => accept(notification.CodNotificacao, notification.TipoNotificacao)} role="button">Aceitar</p>
+                                                <p className="btn btn-outline-danger" onClick={() => refuse(notification.CodNotificacao, notification.TipoNotificacao)} role="button">Recusar</p>
+                                            </div>
+                                        </>
                                     :
                                     <></>
                         ))

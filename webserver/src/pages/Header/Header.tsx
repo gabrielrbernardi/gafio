@@ -3,7 +3,7 @@ import { useHistory } from 'react-router-dom';
 import { FiArrowLeft } from 'react-icons/fi';
 import { MdPersonOutline, MdNotificationsNone } from 'react-icons/md';
 import { useCookies } from 'react-cookie';
-import { Dropdown, Button } from 'react-bootstrap';
+import { Dropdown, Button, Badge } from 'react-bootstrap';
 
 import '../Home/Home.css';
 
@@ -11,6 +11,7 @@ const Header = () => {
     const history = useHistory();
     const [cookies, setCookies, removeCookie] = useCookies([]);
     const [userName, setUserName] = useState('');
+    const [notificationsLength, setNotificationsLength] = useState(Number);
     
     function handleBackButton(){
         history.goBack();
@@ -19,7 +20,7 @@ const Header = () => {
     useEffect(() => {
         if(!cookies.userData){
             history.push('/login');
-            alert('Sessão expirada. Faça login novamente para acessar o conteúdo.')
+            alert('Faça login para acessar o conteúdo')
             return
         }else{
             const cookie = String(cookies.userData.Nome);
@@ -27,8 +28,16 @@ const Header = () => {
         }
     }, [cookies, history]);
 
+    useEffect(() => {
+        // let CodUsuario = cookies.userData.CodUsuario;
+        // let TipoUsuario = cookies.userData.TipoUsuario;
+        // console.log(cookies.notificationLength);
+        // setNotificationsLength(cookies.notificationLength.length);
+    }, [])
+
     function logoutFunction(){
         removeCookie('userData');
+        removeCookie('notificationLength');
         history.push('/login');
     }
 
@@ -58,6 +67,15 @@ const Header = () => {
                         <Button onClick={toNotifications} variant="outline-dark">
                             <p className="d-inline">Notificações</p>
                             <MdNotificationsNone className="ml-2" size={30}/>
+                            {/* {
+                                notificationsLength > 0
+                                ? 
+                                    <Badge variant="danger">{notificationsLength}</Badge>
+                                :
+                                    // <Badge variant="secondary">{notificationsLength}</Badge>
+                                    <></>
+                            } */}
+                            
                         </Button>
                         <Dropdown className="ml-2 d-inline">
                             <Dropdown.Toggle variant="outline-dark" id="dropdown-basic">

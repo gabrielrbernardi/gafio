@@ -156,17 +156,18 @@ class UserController {
   async update(request: Request, response: Response) {
     const { nome, email, matricula } = request.body;
     const { id } = request.params;
-    const userDB = await knex("Usuario").where("CodUsuario", id).update({
+    const idInt = parseInt(id)
+    const userDB = await knex('Usuario').where('CodUsuario', idInt).update({
       Nome: nome,
       Email: email,
       Matricula: matricula,
     });
     if (userDB) {
-      return response.json({ updatedUser: true });
+      return response.json({ updatedUser: true, userDB });
     } else {
       return response.json({
         updatedUser: false,
-        error: "Usuário não encontrado",
+        error: "Não foi possível alterar as informações.",
       });
     }
   }

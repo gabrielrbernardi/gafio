@@ -53,7 +53,6 @@ const Login = () => {
                 let TipoUsuario = tokenLoginResponse.TipoUsuario;
                 let CodUsuario = tokenLoginResponse.CodUsuario;
                 setCookiesLogin(Email, Nome, TipoUsuario, CodUsuario);
-                history.push('/home');
             }else{
                 setResponseDataStatus(2);
                 setResponseData(response.data.error);
@@ -61,10 +60,17 @@ const Login = () => {
         })
     }
     
-    function setCookiesLogin(email: string, nome: string, tipoUsuario: string, codUsuario: string){
+    async function setCookiesLogin(email: string, nome: string, tipoUsuario: string, codUsuario: string){
         let nomeArray = nome.split(' ');
         nome = nomeArray[0];
+        // await api.post(`notifications/length/${codUsuario}`, {TipoUsuario: tipoUsuario}).then(response => {
+        //     console.log(response)
+        //     if(response.data.notificationFound){
+        //         setCookies('notificationLength', {length: response.data.length})
+        //     }
+        // })
         setCookies('userData', {Email: email, Nome: nome, TipoUsuario: tipoUsuario, CodUsuario: codUsuario});
+        history.push('/home');
     }
 
     useEffect(() => {
@@ -97,7 +103,7 @@ const Login = () => {
                     </div>
                     <div className="form-group">
                         <label htmlFor="password">Senha:</label>
-                        <input type="password" className="form-control" id="password" name="senha" onChange={handleInputChange} placeholder="Digite sua senha" required/>
+                        <input type="password" className="form-control" id="password" name="senha" onChange={handleInputChange} minLength={8} placeholder="Digite sua senha" required/>
                         <div className="valid-feedback text-left">Válido.</div>
                         <div className="invalid-feedback text-left">Preencha este campo.</div>
                     </div>
