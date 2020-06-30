@@ -17,6 +17,8 @@ npm install @types/jsonwebtoken
 
 npm install react-router-dom axios react-icons react-cookie react-bootstrap
 
+npm install primereact primeicons --save
+
 npm install @types/react-router-dom
 
 # Useful sources to develop
