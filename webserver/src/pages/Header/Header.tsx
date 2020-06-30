@@ -49,7 +49,7 @@ const Header = () => {
         history.push('/notifications');
     }
 
-    function goHome(){
+    function toHome(){
         history.push('/home');
     }
 
@@ -59,7 +59,7 @@ const Header = () => {
             <div className="container-fluid m-0 p-0">
                 <nav className="navbar navbar-expand-sm header-background navbar-dark">
                     {/* <Link to="/home"> */}
-                        <p onClick={goHome} className="navbar-brand m-0 cursor-pointer text-small">GAFio</p>
+                        <p onClick={toHome} className="navbar-brand m-0 cursor-pointer text-small">GAFio</p>
                     {/* </Link> */}
                     <div className="ml-auto text-dark">
                     </div>

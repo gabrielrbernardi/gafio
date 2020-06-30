@@ -1,5 +1,5 @@
 import React from 'react';
-import {Route, BrowserRouter, Redirect} from 'react-router-dom';
+import {Route, BrowserRouter} from 'react-router-dom';
 
 import Root from './pages/Root/Root';
 import Home from './pages/Home/Home';
@@ -12,6 +12,9 @@ import HeaderNotLogin from './pages/Header/HeaderNotLogin';
 import Header from './pages/Header/Header';
 import Footer from './pages/Footer/Footer';
 
+import Dashboard from './pages/Dashboard/Dashboard';
+
+import UnderDevelopment from './pages/UnderDevelopment/UnderDevelopment';
 import NotFound from './pages/NotFound/NotFound';
 
 const Routes = () => {
@@ -22,10 +25,14 @@ const Routes = () => {
             <Route path="/signup" render={() => <div><HeaderNotLogin/><SignUp/><Footer/></div>} exact />
             
             <Route path="/home" render={() => <div><Header/><Home/><Footer/></div>} exact />
+            
+            <Route path="/registrations" render={() => <div><Header/><UnderDevelopment/><Footer/></div>} exact />
+            <Route path="/medicalRecords" render={() => <div><Header/><UnderDevelopment/><Footer/></div>} exact />
+            <Route path="/dashboard" render={() => <div><Header/><Dashboard/><Footer/></div>} exact />
+
             <Route path="/myProfile" render={() => <div><Header/><MyProfile/><Footer/></div>} exact />
             <Route path="/notifications" render={() => <div><Header/><Notifications/><Footer/></div>} exact />
             <Route path="/notFound" render={() => <div><Header/><NotFound/><Footer/></div>} exact/>
-            {/* <Redirect to="/notFound"/> */}
         </BrowserRouter>
     )
 }
