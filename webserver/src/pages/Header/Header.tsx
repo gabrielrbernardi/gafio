@@ -11,6 +11,7 @@ const Header = () => {
     const history = useHistory();
     const [cookies, setCookies, removeCookie] = useCookies([]);
     const [userName, setUserName] = useState('');
+    const [tipoUsuario, setTipoUsuario] = useState('');
     const [notificationsLength, setNotificationsLength] = useState(Number);
     
     function handleBackButton(){
@@ -23,8 +24,9 @@ const Header = () => {
             alert('Faça login para acessar o conteúdo')
             return
         }else{
-            const cookie = String(cookies.userData.Nome);
-            setUserName(cookie);
+            const cookie = cookies.userData;
+            setUserName(cookie.Nome);
+            setTipoUsuario(cookie.TipoUsuario)
         }
     }, [cookies, history]);
 
@@ -51,6 +53,9 @@ const Header = () => {
 
     function toHome(){
         history.push('/home');
+    }
+    function toUsers(){
+        history.push('/users');
     }
 
     return(
@@ -85,6 +90,10 @@ const Header = () => {
                             </Dropdown.Toggle>
                             <Dropdown.Menu>
                                 <Dropdown.Item onClick={myProfile}>Gerenciar sua conta</Dropdown.Item>
+                                {tipoUsuario === 'A'
+                                    ? <Dropdown.Item className="bg-secondary-custom" onClick={toUsers}>Gerenciar usuários</Dropdown.Item>
+                                    : <></>
+                                }
                                 <Dropdown.Divider />
                                 <Dropdown.Item onClick={logoutFunction}>Logout</Dropdown.Item>
                             </Dropdown.Menu>

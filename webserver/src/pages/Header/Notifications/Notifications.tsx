@@ -7,26 +7,28 @@ const Notifications = () => {
     const [getNotifications, setNotifications] = useState<any[]>([]);
     const [responseDataStatus, setResponseDataStatus] = useState(Number);
     const [responseData, setResponseData] = useState('');
-
+    
     useEffect(() => {
         document.title = 'GAFio | Notificações';
         getNotificationFunction();
-    }, [cookies.userData.CodUsuario]);
+    }, []);
     
     function getNotificationFunction(){
-        let CodUsuario = cookies.userData.CodUsuario;
-        let TipoUsuario = cookies.userData.TipoUsuario;
-        api.post(`notifications/id/${CodUsuario}`, {TipoUsuario: TipoUsuario}).then(response => {
-            setNotifications([])
-            console.log(response)
-            const responseList = response.data;
-            if(response.data.notificationFound){
-                setCookies('notificationLength', {length: response.data.notifications[0].length})
-                for( let i = 0; i < responseList.notifications[0].length; i++){
-                    setNotifications(notification => ([...notification, responseList.notifications[0][i] ]))
+        if(cookies.userData){
+            let CodUsuario = cookies.userData.CodUsuario;
+            let TipoUsuario = cookies.userData.TipoUsuario;
+            api.post(`notifications/id/${CodUsuario}`, {TipoUsuario: TipoUsuario}).then(response => {
+                setNotifications([])
+                console.log(response)
+                const responseList = response.data;
+                if(response.data.notificationFound){
+                    setCookies('notificationLength', {length: response.data.notifications[0].length})
+                    for( let i = 0; i < responseList.notifications[0].length; i++){
+                        setNotifications(notification => ([...notification, responseList.notifications[0][i] ]))
+                    }
                 }
-            }
-        })
+            })
+        }
     }
 
     function accept(NotificationId: Number, tipoNotificacao: string){

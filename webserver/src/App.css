@@ -22,7 +22,12 @@
 }
 
 .text-small{
-  font-size: 1.5vw !important;
+  font-size: 23px !important;
+}
+@media screen and (max-width: 600px) {
+  .text-small{
+    font-size: 18px !important;
+  }
 }
 
 .bg-light-custom{

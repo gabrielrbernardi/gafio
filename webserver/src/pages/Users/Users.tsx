@@ -4,28 +4,41 @@ import {Column} from 'primereact/column';
 import Button from 'react-bootstrap/Button';
 
 import {FiTrash2} from 'react-icons/fi';
-import {TiExport} from 'react-icons/ti';
+import {AiOutlineDownload} from 'react-icons/ai';
 
-import {MedicalRecordsService} from './MedicalRecordsService';
+import {UsersService} from './UsersService';
+import { useCookies } from 'react-cookie';
 
 const MedicalRecords = () => {
+    const [cookie] = useCookies();
     const [prontuario, setProntuario] = useState([]);
     const [datasource, setDatasource] = useState([]);
     const [loading, setLoading] = useState(true);
     const [first, setFirst] = useState(0);
     const [totalRecords, setTotalRecords] = useState(0);
 
-    const medicalRecordsService = new MedicalRecordsService();
+    const [formData, setFormData] = useState({
+        email: "null",
+        senha: "null"
+    });
+    
+    const usersService = new UsersService();
     const rows = 10;
     
-    useEffect(() => { 
+    let dt = useRef<any>(null);
+    const onExport = () => {
+        dt.current.exportCSV();
+    };
+
+    //DataTable
+    useEffect(() => {
         setTimeout(() => {
-            medicalRecordsService.getUsers().then(data => {
+            usersService.getUsers().then(data => {
                 setDatasource(data);
                 setTotalRecords(2);
                 for(let i = 0; i < data.length; i++){
                     if(data[i]['TipoUsuario'] === 'A'){
-                        data[i]['TipoUsuario'] = 'Administradores';
+                        data[i]['TipoUsuario'] = 'Administrador';
                     }else if(data[i]['TipoUsuario'] === 'M'){
                         data[i]['TipoUsuario'] = 'Médico';
                     }else{
@@ -40,7 +53,7 @@ const MedicalRecords = () => {
                 setProntuario(data.slice(0, rows));
                 setLoading(false);
             });
-        }, 500);
+        }, 300);
     }, []);
     
     const onPage = (event: any) => {
@@ -61,22 +74,50 @@ const MedicalRecords = () => {
         return <span style={{color: fontColor}}>{rowData.isVerified}</span>;
     }
 
-    const actionsTemplate = (rowData: any, column: any) => {
-        return (
-            <>
-                {/* <Button type="button" variant="outline-info" className="m-1"><FiEdit size={17}/></Button> */}
-                <Button type="button" onClick={() => {alert(rowData['CodUsuario'])}} variant="outline-danger"><FiTrash2 size={17}/></Button>
-            </>
-        )
+    // function deleteUser(rowData: any){
+    //     const codUsuarioDelete = rowData['CodUsuario'];
+    //     const Email = rowData['Email'];
+    //     if(codUsuarioDelete !== cookie.userData.CodUsuario){
+    //         console.log(usersService.deleteUser(codUsuarioDelete, Email))
+    //         usersService.getUsers().then(data => {
+    //             setDatasource(data);
+    //             setTotalRecords(2);
+    //             for(let i = 0; i < data.length; i++){
+    //                 if(data[i]['TipoUsuario'] === 'A'){
+    //                     data[i]['TipoUsuario'] = 'Administrador';
+    //                 }else if(data[i]['TipoUsuario'] === 'M'){
+    //                     data[i]['TipoUsuario'] = 'Médico';
+    //                 }else{
+    //                     data[i]['TipoUsuario'] = 'Farmacêutico';
+    //                 }
+    //                 if(data[i]['isVerified'] === 1){
+    //                     data[i]['isVerified'] = 'Sim';
+    //                 }else{
+    //                     data[i]['isVerified'] = 'Não';
+    //                 }
+    //             }
+    //             setProntuario(data.slice(0, rows));
+    //             setLoading(false);
+    //         });
+    //     }
+    // }
+
+    // const actionsTemplate = (rowData: any, column: any) => {
+    //     return (
+    //         <>
+    //             {/* <Button type="button" variant="outline-info" className="m-1"><FiEdit size={17}/></Button> */}
+    //             <Button type="button" onClick={() => {deleteUser(rowData)}} variant="outline-danger"><FiTrash2 size={17}/></Button>
+    //         </>
+    //     )
+    // }
+    const onHide = (stateMethod: any) => {
+        stateMethod(false);
     }
-    let dt = useRef<any>(null);
-    const onExport = () => {
-        dt.current.exportCSV();
-    };
+    
     const header = 
         <>
             <p style={{textAlign:'left'}} className="p-clearfix d-inline">Dados dos usuários</p>
-            <div style={{textAlign:'right'}} className="m-0"><Button type="button" variant="outline-success" onClick={onExport}><TiExport size={20}/>  Exportar dados</Button></div>
+            <div style={{textAlign:'right'}} className="m-0"><Button type="button" variant="outline-success" onClick={onExport}><AiOutlineDownload size={20}/>  Exportar dados</Button></div>
         </>;
 
     return (
@@ -90,9 +131,10 @@ const MedicalRecords = () => {
                     <Column field="Matricula" header="Matrícula" style={{width:'10%', textAlign:'center'}}/>
                     <Column field="TipoUsuario" header="Tipo usuário" style={{width:'20%', textAlign:'center'}}/>
                     <Column field="isVerified" header="Verificado" style={{width:'10%', textAlign:'center'}} body={VerifiedTemplate}/>
-                    <Column header="Ações" body={actionsTemplate} style={{textAlign:'center', width: '10%'}}/>
+                    {/* <Column header="Ações" body={actionsTemplate} style={{textAlign:'center', width: '10%'}}/> */}
                 </DataTable>
             </div>
+            
         </>
     )
 }

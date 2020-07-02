@@ -174,7 +174,9 @@ class UserController {
 
   //Exclusao de usuario, baseando-se na passagem de email como parametro
   async delete(request: Request, response: Response) {
-    const { email, senha } = request.body;
+    const { Email } = request.body;
+    const email = String(Email);
+    console.log(Email)
     const userDB = await knex("Usuario").where("Email", email);
 
     const user = userDB[0];
