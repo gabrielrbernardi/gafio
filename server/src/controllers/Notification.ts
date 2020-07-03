@@ -53,18 +53,26 @@ class Notification{
                     notificationObject = notificationDB[i];
                     notificationList.push(notificationObject);
                 }
+                // console.log(notificationList)
+                // console.log(notificationList.length)
                 knex('Notificacao').where({
-                    CodUsuario: notificationList[0].CodUsuario,
                     Status: 0
+                }).whereNot({
+                    CodUsuario: id,
                 })
                 .then(notificacoes => {
-                    if(notificacoes){
-                        notifications.push(notificacoes);
-                        return response.json({notificationFound: true, notifications, length: notifications.length});
-                    }else{
-                        return response.json({notificationFound: false, error: "Não há notificações para este usuário.", length: 0});                        
-                    }
+                    return response.json({notificationFound: true, notifications: notificacoes, length: notificacoes.length});
                 })
+                
+                // return response.json({notificationFound: true, notifications, length: notifications.length});
+                // .then(notificacoes => {
+                //     console.log(notificacoes)
+                //     if(notificacoes){
+                //         notifications.push(notificacoes);
+                //     }else{
+                //         return response.json({notificationFound: false, error: "Não há notificações para este usuário.", length: 0});                        
+                //     }
+                // })
             }else{
                 return response.json({notificationFound: false, error: "Não há notificações para este usuário.", length: 0});
             }

@@ -1,12 +1,18 @@
 import React, { useState, useEffect, useRef } from 'react';
 import {DataTable} from 'primereact/datatable';
 import {Column} from 'primereact/column';
+import {InputText} from 'primereact/inputtext';
+
 import Button from 'react-bootstrap/Button';
+import Collapse from 'react-bootstrap/Collapse';
+import {FiSearch} from 'react-icons/fi';
 
 import {FiTrash2} from 'react-icons/fi';
 import {TiExport} from 'react-icons/ti';
+import {AiOutlineClose} from 'react-icons/ai';
 
 import {MedicalRecordsService} from './MedicalRecordsService';
+import { Link } from 'react-router-dom';
 
 const MedicalRecords = () => {
     const [prontuario, setProntuario] = useState([]);
@@ -14,6 +20,8 @@ const MedicalRecords = () => {
     const [loading, setLoading] = useState(true);
     const [first, setFirst] = useState(0);
     const [totalRecords, setTotalRecords] = useState(0);
+    const [searchInput, setSearchInput] = useState('');
+    const [open, setOpen] = useState(false);
 
     const medicalRecordsService = new MedicalRecordsService();
     const rows = 10;
@@ -75,13 +83,32 @@ const MedicalRecords = () => {
     };
     const header = 
         <>
-            <p style={{textAlign:'left'}} className="p-clearfix d-inline">Dados dos usuários</p>
+            <p style={{textAlign:'left'}} className="p-clearfix d-inline">Prontuários</p>
             <div style={{textAlign:'right'}} className="m-0"><Button type="button" variant="outline-success" onClick={onExport}><TiExport size={20}/>  Exportar dados</Button></div>
         </>;
+
+    function handleSearch(){
+        alert(searchInput)
+    }
 
     return (
         <>
             <div className="row m-5 px-5">
+                <Link to={location => ({...location, pathname: '/medicalRecords/create'})}><Button variant="outline-dark" className="mb-2">Cadastrar Prontuário</Button></Link>
+                <Button variant="outline-secondary" className="mb-2 ml-2" onClick={() => setOpen(!open)} aria-controls="example-collapse-text" aria-expanded={open}>Buscar prontuário específico</Button>
+                <Collapse in={open} timeout={200}>
+                    <div className="ml-2">
+                        <span className="p-float-label p-inputgroup">
+                            <InputText id="float-input" type="text" className="bg-light" size={30} value={searchInput} onChange={(e) => setSearchInput((e.target as HTMLInputElement).value)} />
+                            {searchInput
+                            ? <Button tabIndex={2} variant="outline-danger" className="p-0 mr-1" style={{width: '17px'}} onClick={() => setSearchInput('')}><AiOutlineClose size={15}/></Button>
+                            : <></>
+                            }
+                            <label htmlFor="float-input">Buscar</label>
+                            <Button onClick={handleSearch}><FiSearch size={20}/></Button>
+                        </span>
+                    </div>
+                </Collapse>
                 <DataTable value={prontuario} paginator={true} rows={rows} totalRecords={totalRecords} header={header}
                     lazy={true} first={first} onPage={onPage} loading={loading} resizableColumns={true} responsive={true} ref={dt}>
                     <Column field="CodUsuario" header="Código" style={{width:'8%', textAlign:'center'}} />

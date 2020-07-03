@@ -7,6 +7,8 @@ import { Dropdown, Button, Badge } from 'react-bootstrap';
 
 import '../Home/Home.css';
 
+import api from '../../services/api';
+
 const Header = () => {
     const history = useHistory();
     const [cookies, setCookies, removeCookie] = useCookies([]);
@@ -31,6 +33,15 @@ const Header = () => {
     }, [cookies, history]);
 
     useEffect(() => {
+        const cookie = cookies.userData;
+        const CodUsuario = cookie.CodUsuario;
+        const TipoUsuario = cookie.TipoUsuario;
+        console.log(CodUsuario)
+        console.log(TipoUsuario)
+        api.post(`notifications/id/${CodUsuario}`, {TipoUsuario: TipoUsuario}).then(response => {
+            console.log(response)
+            setNotificationsLength(response.data.length)
+        })
         // let CodUsuario = cookies.userData.CodUsuario;
         // let TipoUsuario = cookies.userData.TipoUsuario;
         // console.log(cookies.notificationLength);
@@ -72,14 +83,14 @@ const Header = () => {
                         <Button onClick={toNotifications} variant="outline-dark">
                             <p className="d-inline">Notificações</p>
                             <MdNotificationsNone className="ml-2" size={30}/>
-                            {/* {
+                            {
                                 notificationsLength > 0
                                 ? 
                                     <Badge variant="danger">{notificationsLength}</Badge>
                                 :
                                     // <Badge variant="secondary">{notificationsLength}</Badge>
                                     <></>
-                            } */}
+                            }
                             
                         </Button>
                         <Dropdown className="ml-2 d-inline">
