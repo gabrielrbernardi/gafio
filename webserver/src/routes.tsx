@@ -20,6 +20,8 @@ import MedicalRecords from './pages/MedicalRecords/MedicalRecords';
 
 import Registrations from './pages/Registrations/Registrations';
 
+import Diseases from './pages/Diseases/Diseases';
+
 import UnderDevelopment from './pages/UnderDevelopment/UnderDevelopment';
 import NotFound from './pages/NotFound/NotFound';
 
@@ -39,6 +41,7 @@ const Routes = () => {
                 
                 <Route path="/medicalRecords" render={() => <div><Header/><MedicalRecords/><Footer/></div>} exact />
                 <Route path="/dashboard" render={() => <div><Header/><Dashboard/><Footer/></div>} exact />
+                <Route path="/diseases" render={() => <div><Header/><Diseases/><Footer/></div>} exact />
 
                 <Route path="/myProfile" render={() => <div><Header/><MyProfile/><Footer/></div>} exact />
                 <Route path="/users" render={() => <div><Header/><Users/><Footer/></div>} exact />
