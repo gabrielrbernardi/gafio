@@ -14,7 +14,7 @@ routes.get("/users/id/:id", user.showId);
 routes.get("/users/email/:email", user.showEmail);
 routes.post("/users", user.create);
 routes.put("/users/:id", user.update);
-routes.delete("/users", user.delete);
+routes.post("/users/delete", user.delete);
 routes.put('/users/requestChangeUserType/:notificationId', user.requestChangeUserType);
 
 //Routes to User Login and account check

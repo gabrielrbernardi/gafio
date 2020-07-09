@@ -34,17 +34,6 @@ const Notifications = () => {
                     setLoading(false)
                 })
             }, 300)
-            // api.post(`notifications/id/${CodUsuario}`, {TipoUsuario: TipoUsuario}).then(response => {
-            //     setNotifications([])
-            //     console.log(response)
-            //     const responseList = response.data;
-            //     if(response.data.notificationFound){
-            //         // setCookies('notificationLength', {length: response.data.notifications[0].length})
-            //         for( let i = 0; i < responseList.notifications[0].length; i++){
-            //             setNotifications(notification => ([...notification, responseList.notifications[0][i] ]))
-            //         }
-            //     }
-            // })
         }
     }
 
@@ -116,15 +105,21 @@ const Notifications = () => {
                 <div className="card shadow-lg mb-4 mx-auto p-3 col-sm-8 offset-md-3 border">
                     <p className="text-center h3">Notificações</p>
                 </div>
-                {getNotifications.length > 0
-                    ?
-                    <DataTable className="col-sm-8 offset-sm-8 mx-auto p-0 shadow-lg" value={getNotifications} responsive={true}
-                        resizableColumns={true} loading={loading}>
-                        <Column field="CodUsuario" header="Código" style={{width:'10%', textAlign:'center'}}/>
-                        <Column field="Descricao" header="Descrição" style={{width:'60%', textAlign:'center'}}/>
-                        <Column header="Ações" body={actionTemplate} style={{width:'20%', textAlign:'center'}}/>
-                    </DataTable>
-                    : 
+                {getNotifications
+                ?
+                    getNotifications.length > 0
+                        ?
+                        <DataTable className="col-sm-8 offset-sm-8 mx-auto p-0 shadow-lg" value={getNotifications} responsive={true}
+                            resizableColumns={true} loading={loading}>
+                            <Column field="CodUsuario" header="CodNotificação" style={{width:'15%', textAlign:'center'}}/>
+                            <Column field="Descricao" header="Descrição" style={{width:'55%', textAlign:'center'}}/>
+                            <Column header="Ações"  body={actionTemplate} style={{width:'20%', textAlign:'center'}}/>
+                        </DataTable>
+                        : 
+                        <div className="card shadow-lg mb-4 mx-auto p-3 col-sm-8">
+                            <p className="text-center h5">Não há notificações</p>
+                        </div>
+                :
                     <div className="card shadow-lg mb-4 mx-auto p-3 col-sm-8">
                         <p className="text-center h5">Não há notificações</p>
                     </div>

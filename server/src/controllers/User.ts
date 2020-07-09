@@ -55,9 +55,7 @@ class UserController {
           isVerified: 0,
         };
         // return response.json({createdUser: true, user: user});
-        knex("Usuario")
-          .insert(user)
-          .then(function (users) {
+        knex("Usuario").insert(user).then(users => {
             const notificationDescription = `${user["Nome"]} criou uma conta.`;
             const notificationType = "Create";
             const userId = users[0]
@@ -67,7 +65,7 @@ class UserController {
               TipoNotificacao: notificationType,
               CodUsuario: userId
             }
-            knex("Notificacao").insert(notification).then(function (notifications) {
+            knex("Notificacao").insert(notification).then(notifications => {
               if(notifications){
                 knex("Usuario_Notificacao").insert({"CodNotificacao": notifications[0], "CodUsuario": userId}).then(userResponse => {
                   if(userResponse){
@@ -176,11 +174,12 @@ class UserController {
   async delete(request: Request, response: Response) {
     const { Email } = request.body;
     const email = String(Email);
-    console.log(Email)
     const userDB = await knex("Usuario").where("Email", email);
 
     const user = userDB[0];
     if (user) {
+      await knex('Usuario_Notificacao').where('CodUsuario', user["CodUsuario"]).del();
+      await knex('Notificacao').where('CodUsuario', user['CodUsuario']).del();
       await knex("Usuario").where("Email", email).del();
       return response.json({ deletedUser: true });
     } else {

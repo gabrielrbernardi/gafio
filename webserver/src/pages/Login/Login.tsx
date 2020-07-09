@@ -79,7 +79,7 @@ const Login = () => {
 
     return (
         <div>
-            <div className="row m-5">
+            <div className="row m-5"> 
                     <img className="rounded col-sm-7 " src={loginBanner} alt="Banner"/>
                 <div className="card col-sm-5 p-5 bg-light shadow-lg float-right text-center">
                     <form className="was-validated pb-2" onSubmit={handleSubmit}>

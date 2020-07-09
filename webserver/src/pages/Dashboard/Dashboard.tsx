@@ -40,12 +40,7 @@ const Dashboard = () => {
         ]
     };
     const data2 = {
-        labels: [
-            "Médico",
-            "Farmácia",
-            "Enferamaria",
-            "Pronto Socorro"
-        ],
+        labels: ["Médico", "Farmácia", "Enferamaria", "Pronto Socorro"],
         datasets: [{
             data: [11, 16, 7, 12],
             backgroundColor: [

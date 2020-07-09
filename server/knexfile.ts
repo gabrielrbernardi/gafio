@@ -8,7 +8,7 @@ try {
         // filename: './src/database/gafioDB.sql',
         database: "gafioDB",
         host: "localhost",
-        user: "root",
+        user: "gabriel",
         password: "teste123",
       },
       migrations: {

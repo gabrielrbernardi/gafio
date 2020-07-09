@@ -36,16 +36,9 @@ const Header = () => {
         const cookie = cookies.userData;
         const CodUsuario = cookie.CodUsuario;
         const TipoUsuario = cookie.TipoUsuario;
-        console.log(CodUsuario)
-        console.log(TipoUsuario)
         api.post(`notifications/id/${CodUsuario}`, {TipoUsuario: TipoUsuario}).then(response => {
-            console.log(response)
             setNotificationsLength(response.data.length)
         })
-        // let CodUsuario = cookies.userData.CodUsuario;
-        // let TipoUsuario = cookies.userData.TipoUsuario;
-        // console.log(cookies.notificationLength);
-        // setNotificationsLength(cookies.notificationLength.length);
     }, [])
 
     function logoutFunction(){
