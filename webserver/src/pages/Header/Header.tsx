@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useHistory, Link } from 'react-router-dom';
 import { FiArrowLeft } from 'react-icons/fi';
 import { MdPersonOutline, MdNotificationsNone } from 'react-icons/md';
 import { useCookies } from 'react-cookie';
@@ -39,7 +39,7 @@ const Header = () => {
         api.post(`notifications/id/${CodUsuario}`, {TipoUsuario: TipoUsuario}).then(response => {
             setNotificationsLength(response.data.length)
         })
-    }, [])
+    }, [cookies.userData])
 
     function logoutFunction(){
         removeCookie('userData');
@@ -63,8 +63,8 @@ const Header = () => {
     }
 
     return(
-        <div>
-            <title>teste</title>
+        <div className="no-select">
+            <title>GAFio</title>
             <div className="container-fluid m-0 p-0">
                 <nav className="navbar navbar-expand-sm header-background navbar-dark">
                     {/* <Link to="/home"> */}
@@ -106,9 +106,36 @@ const Header = () => {
                     </div>
                 </nav>
             </div>
-            <button className="btn" onClick={handleBackButton}>
-                <FiArrowLeft size={20} />
-            </button>
+            <div className="container-fluid bg-light shadow-lg mb-5">
+                <div className="row align-items-center justify-content-center">
+                    <div className="col-md-auto mx-5">
+                        <Link className="text-decoration-none" to="/home">
+                            HOME
+                        </Link>
+                    </div>
+                    <div className="col-md-auto mx-5">
+                        <Link className="text-decoration-none" to="/medicalRecords">
+                            PRONTUÁRIOS
+                        </Link>
+                    </div>
+                    <div className="col-md-auto mx-5">
+                        <Link className="text-decoration-none" to="/registrations">
+                            CADASTROS
+                        </Link>
+                    </div>
+                    <div className="col-md-auto mx-5">
+                        <Link className="text-decoration-none" to="/dashboard">
+                            DASHBOARD
+                        </Link>
+                    </div>
+                    
+                </div>
+            </div>
+            <div className="position-fixed" style={{left: '0px', top: '50px'}}>
+                <button className="btn" onClick={handleBackButton}>
+                    <FiArrowLeft size={20} />
+                </button>
+            </div>
         </div>
     )
 }

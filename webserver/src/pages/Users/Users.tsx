@@ -4,7 +4,6 @@ import { useCookies } from 'react-cookie';
 import {InputText} from 'primereact/inputtext';
 import {DataTable} from 'primereact/datatable';
 import {Column} from 'primereact/column';
-import {Dropdown} from 'primereact/dropdown';
 import Button from 'react-bootstrap/Button';
 import {Alert} from 'react-bootstrap';
 
@@ -29,11 +28,6 @@ const MedicalRecords = () => {
 
     const [position, setPosition] = useState('center');
     const [displayPosition, setDisplayPosition] = useState(false);
-
-    const [formData, setFormData] = useState({
-        email: "null",
-        senha: "null"
-    });
     
     const usersService = new UsersService();
     const rows = 10;
@@ -68,7 +62,7 @@ const MedicalRecords = () => {
                 setLoading(false);
             });
         }, 300);
-    }, []);
+    }, [usersService]);
     
     const onPage = (event: any) => {
         setLoading(true);
@@ -125,14 +119,6 @@ const MedicalRecords = () => {
         }else{
             setAlertStatus(2); 
             setAlertContent('Não é possível excluir o próprio usuário.');
-        }
-    }
-
-    const onClick = (stateMethod: any, position: string = '') => {
-        stateMethod(true);
-
-        if (position) {
-            setPosition(position);
         }
     }
 

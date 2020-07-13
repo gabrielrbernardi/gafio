@@ -49,7 +49,7 @@ const MedicalRecords = () => {
                 setLoading(false);
             });
         }, 500);
-    }, []);
+    }, [medicalRecordsService]);
     
     const onPage = (event: any) => {
         setLoading(true);

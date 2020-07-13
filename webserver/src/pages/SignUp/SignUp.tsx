@@ -96,8 +96,8 @@ const SignUp = () => {
                 </div>
                 {
                 enableSubmitButton === 0
-                ? <button type="submit" className="btn btn-info btn-primary disabled" disabled>Entrar</button>
-                : <button type="submit" className="btn btn-info btn-primary">Entrar</button>
+                ? <button type="submit" className="btn btn-info btn-primary disabled" disabled>Cadastrar</button>
+                : <button type="submit" className="btn btn-info btn-primary">Cadastrar</button>
                 }
                 </form>
             </div>

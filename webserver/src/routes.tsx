@@ -37,11 +37,10 @@ const Routes = () => {
                 
                 <Route path="/registrations" render={() => <div><Header/><Registrations/><Footer/></div>} exact />
                 <Route path="/registrations/medicines" render={() => <div><Header/><UnderDevelopment/><Footer/></div>} exact />
-                <Route path="/registrations/diseases" render={() => <div><Header/><UnderDevelopment/><Footer/></div>} exact />
+                <Route path="/registrations/diseases" render={() => <div><Header/><Diseases/><Footer/></div>} exact />
                 
                 <Route path="/medicalRecords" render={() => <div><Header/><MedicalRecords/><Footer/></div>} exact />
                 <Route path="/dashboard" render={() => <div><Header/><Dashboard/><Footer/></div>} exact />
-                <Route path="/diseases" render={() => <div><Header/><Diseases/><Footer/></div>} exact />
 
                 <Route path="/myProfile" render={() => <div><Header/><MyProfile/><Footer/></div>} exact />
                 <Route path="/users" render={() => <div><Header/><Users/><Footer/></div>} exact />

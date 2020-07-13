@@ -22,7 +22,7 @@ class DiseaseController {
 
   // Método para listar doenças:
   async index(request: Request, response: Response) {
-    const diseases = await knex("Doenca").select("*");
+    const diseases = await knex.select("*").from('Doenca');
 
     return response.json(diseases);
   }
