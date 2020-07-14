@@ -24,10 +24,10 @@ const Diseases = () => {
     <>
       <div>
         <DataTable value={disease} style={{margin: 48}} header={header} paginator={true} rows={rows} loading={loading}>
-          <Column field="CodDoenca" header="Código" style={{width:'8%', textAlign:'center'}}/>
-          <Column field="Nome" header="Nome" style={{width:'20%', textAlign:'center'}} />
-          {/* <Column field="codigo" header="Código" style={{width:'8%', textAlign:'center'}} filter={true} filterPlaceholder="Buscar por código CID"/>
-          <Column field="nome" header="Nome" style={{width:'20%', textAlign:'center'}} filter={true} filterPlaceholder="Buscar por nome"/> */}
+          {/* <Column field="CodDoenca" header="Código" style={{width:'8%', textAlign:'center'}}/>
+          <Column field="Nome" header="Nome" style={{width:'20%', textAlign:'center'}} /> */}
+          <Column field="codigo" header="Código" style={{width:'8%', textAlign:'center'}} filter={true} filterPlaceholder="Buscar por código CID"/>
+          <Column field="nome" header="Nome" style={{width:'20%', textAlign:'center'}} filter={true} filterPlaceholder="Buscar por nome"/>
         </DataTable>
       </div>
     </>

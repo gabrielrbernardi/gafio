@@ -5,7 +5,7 @@ import {InputText} from 'primereact/inputtext';
 import {DataTable} from 'primereact/datatable';
 import {Column} from 'primereact/column';
 import Button from 'react-bootstrap/Button';
-import {Alert} from 'react-bootstrap';
+import {Alert, Modal} from 'react-bootstrap';
 
 import {FiTrash2, FiCheck} from 'react-icons/fi';
 import {AiOutlineDownload, AiOutlineClose} from 'react-icons/ai';
@@ -40,8 +40,9 @@ const MedicalRecords = () => {
 
     //DataTable
     useEffect(() => {
-        setTimeout(() => {
+        // setTimeout(() => {
             usersService.getUsers().then(data => {
+                console.log(data)
                 setDatasource(data);
                 setTotalRecords(2);
                 for(let i = 0; i < data.length; i++){
@@ -61,8 +62,8 @@ const MedicalRecords = () => {
                 setProntuario(data.slice(0, rows));
                 setLoading(false);
             });
-        }, 300);
-    }, [usersService]);
+        // }, 300);
+    }, []);
     
     const onPage = (event: any) => {
         setLoading(true);
@@ -121,6 +122,10 @@ const MedicalRecords = () => {
             setAlertContent('Não é possível excluir o próprio usuário.');
         }
     }
+    function deleteUserCancel(){
+        setAlertStatus(3);
+        setAlertContent('Operação cancelada pelo usuário.');
+    }
 
     const onHide = (stateMethod: any) => {
         stateMethod(false);
@@ -129,7 +134,7 @@ const MedicalRecords = () => {
     const renderFooter = (stateMethod: any, rowData: any) => {
         return (
             <div>
-                <Button variant="outline-danger" onClick={() => setDisplayPosition(false)}><p className="d-inline" onClick={() => onHide(stateMethod)}><AiOutlineClose size={30}/>  Cancelar</p></Button>
+                <Button variant="outline-danger" onClick={() => {setDisplayPosition(false); deleteUserCancel()}}><p className="d-inline" onClick={() => onHide(stateMethod)}><AiOutlineClose size={30}/>  Cancelar</p></Button>
                 <Button variant="success" onClick={() => {setDisplayPosition(false); deleteUser(rowData)}}><p className="d-inline" onClick={() => onHide(stateMethod)}><FiCheck size={30}/>  Confirmar</p></Button>
             </div>
         );
@@ -142,7 +147,6 @@ const MedicalRecords = () => {
                 <Dialog header="Confirmação" visible={displayPosition} style={{width: '50vw', textAlign:'left'}} onHide={() => onHide(setDisplayPosition)} footer={renderFooter(setDisplayPosition, rowData)}>
                     Tem certeza que deseja excluir o usuário?
                 </Dialog>
-                {/* <Button type="button" onClick={() => {deleteUser(rowData)}} variant="outline-danger"><FiTrash2 size={17}/></Button> */}
             </>
         )
     }
@@ -158,11 +162,17 @@ const MedicalRecords = () => {
                         <Alert.Heading className="h5">Sucesso!</Alert.Heading>
                         <p className="h6">{alertContent}</p>
                     </Alert>
-                :
-                    <Alert variant="danger" className="col-sm-8 mx-auto" onClose={() => setAlertStatus(0)} dismissible>
-                        <Alert.Heading className="h5">Erro!</Alert.Heading>
-                        <p className="h6">{alertContent}</p>
-                    </Alert>
+                : alertStatus === 2
+                    ?
+                        <Alert variant="danger" className="col-sm-8 mx-auto" onClose={() => setAlertStatus(0)} dismissible>
+                            <Alert.Heading className="h5">Erro!</Alert.Heading>
+                            <p className="h6">{alertContent}</p>
+                        </Alert>
+                    : 
+                        <Alert variant="warning" className="col-sm-8 mx-auto" onClose={() => setAlertStatus(0)} dismissible>
+                            <Alert.Heading className="h5">Alerta!</Alert.Heading>
+                            <p className="h6">{alertContent}</p>
+                        </Alert>
             }
             <div className="row m-1">
                 <span className="p-float-label p-inputgroup col-sm-4 p-0">

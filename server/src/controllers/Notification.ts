@@ -137,7 +137,8 @@ class Notification{
                 const notificationDB1 = await knex("Notificacao").where("CodNotificacao", id);
                 const userId = notificationDB1[0].CodUsuario;
                 const userDB = await knex("Usuario").where("CodUsuario", userId).update({
-                    TipoUsuario: 'M'
+                    TipoUsuario: 'M',
+                    isVerified: 1
                 })
             }
             return response.json({ updatedStatusNotification: true });

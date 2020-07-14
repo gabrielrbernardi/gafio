@@ -194,7 +194,11 @@ class UserController {
     const {notificationId} = request.params;
     const {TipoNotificacao} = request.body;
     const notificationDB = await knex('Usuario_Notificacao').where("CodNotificacao", notificationId);
-    if(notificationDB){
+    if(notificationDB && notificationDB.length > 0){
+      console.log(notificationDB);
+      if(!notificationDB[0].CodUsuario){
+        return response.json({ requestChangeUserType: false, error: 'Não foi encontrado código de usuário.'});
+      }
       let id = notificationDB[0].CodUsuario;
       const userDBSelect = await knex('Usuario').where('CodUsuario', id);
       const user = userDBSelect[0];
@@ -235,7 +239,7 @@ class UserController {
         })
       }
     }else{
-      return response.json({requestChangeUserType: false, error: "Notificação não encontrada"});
+      return response.json({requestChangeUserType: false, error: "Notificação não encontrada ou não pode fazer a solicitação."});
     }
   }
 }
