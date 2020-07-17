@@ -5,9 +5,9 @@ import {InputText} from 'primereact/inputtext';
 import {DataTable} from 'primereact/datatable';
 import {Column} from 'primereact/column';
 import Button from 'react-bootstrap/Button';
-import {Alert, Modal} from 'react-bootstrap';
+import {Alert} from 'react-bootstrap';
 
-import {FiTrash2, FiCheck} from 'react-icons/fi';
+import {FiTrash2, FiCheck, FiSearch} from 'react-icons/fi';
 import {AiOutlineDownload, AiOutlineClose} from 'react-icons/ai';
 
 import {UsersService} from './UsersService';
@@ -20,7 +20,6 @@ const MedicalRecords = () => {
     const [loading, setLoading] = useState(true);
     const [first, setFirst] = useState(0);
     const [totalRecords, setTotalRecords] = useState(0);
-    const [globalFilter, setGlobalFilter] = useState<any>(null);
     const [searchInput, setSearchInput] = useState('');
 
     const [alertStatus, setAlertStatus] = useState(0);
@@ -28,6 +27,12 @@ const MedicalRecords = () => {
 
     const [position, setPosition] = useState('center');
     const [displayPosition, setDisplayPosition] = useState(false);
+    const [selectedUser, setSelectedUser] = useState<any>(null);
+    const [getUser, setUser] = useState<any>(null);
+    const [displayDialog, setDisplayDialog] = useState(false);
+    let newUser = false;
+
+    const [show, setShow] = useState(false);
     
     const usersService = new UsersService();
     const rows = 10;
@@ -41,10 +46,11 @@ const MedicalRecords = () => {
     //DataTable
     useEffect(() => {
         // setTimeout(() => {
-            usersService.getUsers().then(data => {
+            usersService.getUsersPaginate(10).then(data => {
+                setDatasource(data.users);
+                setTotalRecords(data.length);
                 console.log(data)
-                setDatasource(data);
-                setTotalRecords(2);
+                data = data.users;
                 for(let i = 0; i < data.length; i++){
                     if(data[i]['TipoUsuario'] === 'A'){
                         data[i]['TipoUsuario'] = 'Administrador';
@@ -67,34 +73,57 @@ const MedicalRecords = () => {
     
     const onPage = (event: any) => {
         setLoading(true);
-        
-        const startIndex = event.first;
-        const endIndex = event.first + rows;
-        
-        setFirst(startIndex);
-        setProntuario(datasource.slice(startIndex, endIndex));
-        setLoading(false);
+        setTimeout(() => {
+            const startIndex = event.first;
+            const endIndex = event.first + rows;
+            console.log(endIndex);
+            usersService.getUsersPaginate(endIndex).then(data => {
+                setDatasource(data.users);
+                console.log(data)
+                data = data.users;
+                for(let i = 0; i < data.length; i++){
+                    if(data[i]['TipoUsuario'] === 'A'){
+                        data[i]['TipoUsuario'] = 'Administrador';
+                    }else if(data[i]['TipoUsuario'] === 'M'){
+                        data[i]['TipoUsuario'] = 'Médico';
+                    }else{
+                        data[i]['TipoUsuario'] = 'Farmacêutico';
+                    }
+                    if(data[i]['isVerified'] === 1){
+                        data[i]['isVerified'] = 'Sim';
+                    }else{
+                        data[i]['isVerified'] = 'Não';
+                    }
+                }
+                setProntuario(data.slice(0, rows));
+                setLoading(false);
+            });            
+            setFirst(startIndex);
+            setProntuario(datasource.slice(startIndex, endIndex));
+            setLoading(false);
+        })
     }
     
     const VerifiedTemplate = (rowData: any) => {
         let verifyStatus = rowData.isVerified;
         let fontColor: any = verifyStatus === 'Não' ? "#a80000" : "#106b00";
-
         return <span style={{color: fontColor}}>{rowData.isVerified}</span>;
     }
 
-    function deleteUser(rowData: any){
-        const codUsuarioDelete = rowData['CodUsuario'];
-        const Email = rowData['Email'];
+    function deleteUser(){
+        const codUsuarioDelete = selectedUser.CodUsuario;
+        const Email = selectedUser.Email;
+        setDisplayDialog(false);
         if(codUsuarioDelete !== cookie.userData.CodUsuario){
             usersService.deleteUser(codUsuarioDelete, Email).then(response => {
                 if(response.deletedUser){
                     setAlertStatus(1);
                     setAlertContent('Usuário exluído com sucesso.');
                     setProntuario([]);
-                    usersService.getUsers().then(data => {
-                        setDatasource(data);
-                        setTotalRecords(2);
+                    usersService.getUsersPaginate(10).then(data => {
+                        setDatasource(data.users);
+                        console.log(data)
+                        data = data.users;
                         for(let i = 0; i < data.length; i++){
                             if(data[i]['TipoUsuario'] === 'A'){
                                 data[i]['TipoUsuario'] = 'Administrador';
@@ -123,32 +152,44 @@ const MedicalRecords = () => {
         }
     }
     function deleteUserCancel(){
+        setDisplayDialog(false);
         setAlertStatus(3);
         setAlertContent('Operação cancelada pelo usuário.');
     }
-
-    const onHide = (stateMethod: any) => {
-        stateMethod(false);
-    }
     
-    const renderFooter = (stateMethod: any, rowData: any) => {
+    const dialogBox = (rowData: any) => {
+        setShow(true);
         return (
-            <div>
-                <Button variant="outline-danger" onClick={() => {setDisplayPosition(false); deleteUserCancel()}}><p className="d-inline" onClick={() => onHide(stateMethod)}><AiOutlineClose size={30}/>  Cancelar</p></Button>
-                <Button variant="success" onClick={() => {setDisplayPosition(false); deleteUser(rowData)}}><p className="d-inline" onClick={() => onHide(stateMethod)}><FiCheck size={30}/>  Confirmar</p></Button>
-            </div>
+            <>  
+                {console.log(show)}
+                {/* <Modal show={true} onHide={handleClose}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Modal heading</Modal.Title>
+                    </Modal.Header>
+                        <Modal.Body>{rowData['CodUsuario']}</Modal.Body>
+                    <Modal.Footer>
+                        <Button variant="secondary" onClick={handleClose}>
+                            Close
+                        </Button>
+                        <Button variant="primary" onClick={handleClose}>
+                            Save Changes
+                        </Button>
+                    </Modal.Footer>
+                </Modal> */}
+            </>
         );
-    }
+    };
 
     const actionsTemplate = (rowData: any, column: any) => {
         return (
             <>
-                <Button variant="outline-danger" onClick={() => setDisplayPosition(true) } ><FiTrash2 size={17}/></Button>
-                <Dialog header="Confirmação" visible={displayPosition} style={{width: '50vw', textAlign:'left'}} onHide={() => onHide(setDisplayPosition)} footer={renderFooter(setDisplayPosition, rowData)}>
-                    Tem certeza que deseja excluir o usuário?
-                </Dialog>
+                <Button variant="outline-danger" onClick={() => {dialogBox(rowData)} } ><FiTrash2 size={17}/></Button>
             </>
         )
+    }
+
+    function handleSearch(){
+        alert("filtro inoperante")
     }
     
     const header = (
@@ -176,29 +217,57 @@ const MedicalRecords = () => {
             }
             <div className="row m-1">
                 <span className="p-float-label p-inputgroup col-sm-4 p-0">
-                    <InputText className="ml-0 bg-light border border-secondary rounded col-sm-8" id="float-input" type="search" value={searchInput} onChange={(e) => {setGlobalFilter((e.target as HTMLInputElement).value); setSearchInput((e.target as HTMLInputElement).value)}} size={50}/>
-                    <label htmlFor="float-input">Buscar</label>
+                    <InputText className="ml-0 bg-light border border-secondary rounded col-sm-8" id="float-input" type="search" value={searchInput} onChange={(e) => {setSearchInput((e.target as HTMLInputElement).value)}} size={50}/>
+                    <label htmlFor="float-input">Buscar por email</label>
+                    {searchInput
+                    ? 
+                        <>
+                            <Button tabIndex={2} variant="outline-danger" className="p-0 mr-1" style={{width: '17px'}} onClick={() => setSearchInput('')}><AiOutlineClose size={15}/></Button>
+                            <Button onClick={handleSearch}><FiSearch size={20}/></Button>
+                        </>
+                    : <></>
+                    }
                 </span>
                 <Button className="col-md-2 offset-md-6" type="button" variant="outline-success" onClick={onExport}><AiOutlineDownload size={20}/>  Exportar dados</Button>
             </div>
+            <p style={{textAlign:'left'}} className="p-clearfix d-inline">Selecione um usuário para mais informações</p>
+
         </>
     );
-
+   
+    const onUserSelect = (e: any) => {
+        newUser = false;
+        setUser(Object.assign({}, e.data));
+        setDisplayDialog(true);
+    };
+    
+    const dialogFooter = 
+        <div className="ui-dialog-buttonpane p-clearfix">
+            <Button variant="outline-danger" onClick={() => {deleteUserCancel()}}><p className="d-inline"><AiOutlineClose size={30}/>  Cancelar</p></Button>
+            <Button variant="success" onClick={() => deleteUser()}><p className="d-inline"><FiCheck size={30}/>  Confirmar</p></Button>
+        </div>;
+    
     return (
         <>
             <div className="row m-5 px-5">              
                 <DataTable ref={dt} value={prontuario} paginator={true} rows={rows} header={header} totalRecords={totalRecords}
-                    globalFilter={globalFilter} emptyMessage="Nenhum resultado encontrado" responsive={true} resizableColumns={true}
-                    loading={loading} first={first} onPage={onPage}>
-                    {/* <DataTable lazy={true}> */}
-                    <Column field="CodUsuario" header="Código" style={{width:'12%', textAlign:'center'}} filter={true} filterPlaceholder="Buscar código" filterMatchMode="contains"/>
-                    <Column field="Nome" header="Nome" style={{width:'16%', textAlign:'center'}} filter={true} filterPlaceholder="Buscar nome" filterMatchMode="contains"/>
-                    <Column field="Email" header="Email" style={{width:'20%', textAlign:'center'}} filter={true} filterPlaceholder="Buscar email" filterMatchMode="contains"/>
-                    <Column field="Matricula" header="Matrícula" style={{width:'14%', textAlign:'center'}} filter={true} filterPlaceholder="Buscar matrícula" filterMatchMode="contains"/>
-                    <Column field="TipoUsuario" header="Tipo usuário" style={{width:'16%', textAlign:'center'}} filter={true} filterPlaceholder="Buscar cargo"/>
-                    <Column field="isVerified" header="Verificado" style={{width:'10%', textAlign:'center'}} body={VerifiedTemplate} filter={true} filterPlaceholder="Buscar status"/>
+                    emptyMessage="Nenhum resultado encontrado" responsive={true} resizableColumns={true} loading={loading} first={first}
+                    onPage={onPage} lazy={true} selectionMode="single" selection={selectedUser} onSelectionChange={e => setSelectedUser(e.value)}
+                    onRowSelect={onUserSelect}>
+                    <Column field="CodUsuario" header="Código" style={{width:'12%', textAlign:'center'}}/>
+                    <Column field="Nome" header="Nome" style={{width:'16%', textAlign:'center'}}/>
+                    <Column field="Email" header="Email" style={{width:'20%', textAlign:'center'}}/>
+                    <Column field="Matricula" header="Matrícula" style={{width:'14%', textAlign:'center'}}/>
+                    <Column field="TipoUsuario" header="Tipo usuário" style={{width:'16%', textAlign:'center'}}/>
+                    <Column field="isVerified" header="Verificado" style={{width:'10%', textAlign:'center'}} body={VerifiedTemplate}/>
                     <Column header="Ações" body={actionsTemplate} style={{textAlign:'center', width: '10%'}}/>
                 </DataTable>
+                <Dialog visible={displayDialog} style={{width: '50%'}} header="Confirmar exclusão" modal={true} footer={dialogFooter} onHide={() => setDisplayDialog(false)}
+                    blockScroll={false}>
+                    { getUser &&
+                        <p className="h6">Deseja excluir o usuário "{selectedUser.Nome}" de código "{selectedUser.CodUsuario}" do sistema?</p>
+                    }
+                </Dialog>
             </div>
             
         </>

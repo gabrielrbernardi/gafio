@@ -105,6 +105,16 @@ class UserController {
     return response.send(users);
   }
 
+  //Listagem de usuários por pagina
+  async indexPagination(request: Request, response: Response){
+    const {page} = request.params;
+    const pageRequest = parseInt(page) / 10;
+    const rows = 10;
+    const users = await knex("Usuario").select("*").offset((pageRequest-1)*rows).limit(rows);
+    const usersLength = (await knex("Usuario").select("*")).length;
+    return response.json({users: users, length: usersLength});
+  }
+
   //Listagem de usuario especifico com busca por id
   async showId(request: Request, response: Response) {
     const { id } = request.params;

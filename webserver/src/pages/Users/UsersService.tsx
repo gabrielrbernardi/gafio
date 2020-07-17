@@ -1,8 +1,8 @@
 import api from '../../services/api';
 
 class UsersService {
-    async getUsers(){
-        return await api.get('users').then(response => response.data);
+    async getUsersPaginate(endIndex: Number){
+        return await api.get(`users/paginate/${endIndex}`).then(response => response.data);
     }
 
     async deleteUser(CodUsuario: Number, Email: string){
