@@ -4,8 +4,10 @@ import { useCookies } from 'react-cookie';
 import {InputText} from 'primereact/inputtext';
 import {DataTable} from 'primereact/datatable';
 import {Column} from 'primereact/column';
+import {Dropdown} from 'primereact/dropdown';
 import Button from 'react-bootstrap/Button';
 import {Alert} from 'react-bootstrap';
+import {Dropdown as DropdownReact} from 'react-bootstrap';
 
 import {FiTrash2, FiCheck, FiSearch} from 'react-icons/fi';
 import {AiOutlineDownload, AiOutlineClose} from 'react-icons/ai';
@@ -31,8 +33,9 @@ const MedicalRecords = () => {
     const [getUser, setUser] = useState<any>(null);
     const [displayDialog, setDisplayDialog] = useState(false);
     let newUser = false;
-
+    const [getOptionState, setOptionState] = useState<any>(null)
     const [show, setShow] = useState(false);
+    const [getUserChange, setUserChange] = useState<string>('F');
     
     const usersService = new UsersService();
     const rows = 10;
@@ -43,30 +46,32 @@ const MedicalRecords = () => {
         dt.current.exportCSV();
     };
 
+    const onOptionChange = (e: { value: any }) => {
+        setOptionState(e.value);
+    };
+    
+    const onUserSelectChange = (e: { value: any }) => {
+        setUserChange(e.value);
+    };
+    
+    let options = [
+        {name: 'CódUsuário', cod: 'C'},
+        {name: 'Nome', cod: 'N'},
+        {name: 'Email', cod: 'E'},
+        {name: 'Matrícula', cod: 'M'},
+        {name: 'TipoUsuário', cod: 'TU'}
+    ];
+
+    let tipoUsuario = [
+        {label: 'Médico', value: 'M'},
+        {label: 'Farmacêutico', value: 'F'},
+    ];
+
     //DataTable
     useEffect(() => {
         // setTimeout(() => {
             usersService.getUsersPaginate(10).then(data => {
-                setDatasource(data.users);
-                setTotalRecords(data.length);
-                console.log(data)
-                data = data.users;
-                for(let i = 0; i < data.length; i++){
-                    if(data[i]['TipoUsuario'] === 'A'){
-                        data[i]['TipoUsuario'] = 'Administrador';
-                    }else if(data[i]['TipoUsuario'] === 'M'){
-                        data[i]['TipoUsuario'] = 'Médico';
-                    }else{
-                        data[i]['TipoUsuario'] = 'Farmacêutico';
-                    }
-                    if(data[i]['isVerified'] === 1){
-                        data[i]['isVerified'] = 'Sim';
-                    }else{
-                        data[i]['isVerified'] = 'Não';
-                    }
-                }
-                setProntuario(data.slice(0, rows));
-                setLoading(false);
+                getUsersFunction(data)
             });
         // }, 300);
     }, []);
@@ -78,25 +83,7 @@ const MedicalRecords = () => {
             const endIndex = event.first + rows;
             console.log(endIndex);
             usersService.getUsersPaginate(endIndex).then(data => {
-                setDatasource(data.users);
-                console.log(data)
-                data = data.users;
-                for(let i = 0; i < data.length; i++){
-                    if(data[i]['TipoUsuario'] === 'A'){
-                        data[i]['TipoUsuario'] = 'Administrador';
-                    }else if(data[i]['TipoUsuario'] === 'M'){
-                        data[i]['TipoUsuario'] = 'Médico';
-                    }else{
-                        data[i]['TipoUsuario'] = 'Farmacêutico';
-                    }
-                    if(data[i]['isVerified'] === 1){
-                        data[i]['isVerified'] = 'Sim';
-                    }else{
-                        data[i]['isVerified'] = 'Não';
-                    }
-                }
-                setProntuario(data.slice(0, rows));
-                setLoading(false);
+                getUsersFunction(data);
             });            
             setFirst(startIndex);
             setProntuario(datasource.slice(startIndex, endIndex));
@@ -121,25 +108,7 @@ const MedicalRecords = () => {
                     setAlertContent('Usuário exluído com sucesso.');
                     setProntuario([]);
                     usersService.getUsersPaginate(10).then(data => {
-                        setDatasource(data.users);
-                        console.log(data)
-                        data = data.users;
-                        for(let i = 0; i < data.length; i++){
-                            if(data[i]['TipoUsuario'] === 'A'){
-                                data[i]['TipoUsuario'] = 'Administrador';
-                            }else if(data[i]['TipoUsuario'] === 'M'){
-                                data[i]['TipoUsuario'] = 'Médico';
-                            }else{
-                                data[i]['TipoUsuario'] = 'Farmacêutico';
-                            }
-                            if(data[i]['isVerified'] === 1){
-                                data[i]['isVerified'] = 'Sim';
-                            }else{
-                                data[i]['isVerified'] = 'Não';
-                            }
-                        }
-                        setProntuario(data.slice(0, rows));
-                        setLoading(false);
+                        getUsersFunction(data)
                     });
                 }else{
                     setAlertStatus(2);
@@ -151,45 +120,109 @@ const MedicalRecords = () => {
             setAlertContent('Não é possível excluir o próprio usuário.');
         }
     }
+
     function deleteUserCancel(){
         setDisplayDialog(false);
         setAlertStatus(3);
-        setAlertContent('Operação cancelada pelo usuário.');
+        setAlertContent('Exclusão cancelada pelo usuário.');
     }
-    
-    const dialogBox = (rowData: any) => {
-        setShow(true);
-        return (
-            <>  
-                {console.log(show)}
-                {/* <Modal show={true} onHide={handleClose}>
-                    <Modal.Header closeButton>
-                        <Modal.Title>Modal heading</Modal.Title>
-                    </Modal.Header>
-                        <Modal.Body>{rowData['CodUsuario']}</Modal.Body>
-                    <Modal.Footer>
-                        <Button variant="secondary" onClick={handleClose}>
-                            Close
-                        </Button>
-                        <Button variant="primary" onClick={handleClose}>
-                            Save Changes
-                        </Button>
-                    </Modal.Footer>
-                </Modal> */}
-            </>
-        );
-    };
+
+    function changeUserType(){
+        const userId = selectedUser.CodUsuario;
+        usersService.changeUserType(userId, getUserChange).then(response => {
+            if(response.updatedUser){
+                setAlertStatus(1);
+                setAlertContent(`A permissão do usuário ${selectedUser.Nome} foi alterada com sucesso.`);
+                getUsersFunction();
+            }else{
+                setAlertStatus(2);
+                setAlertContent(response.error)
+            }
+            setDisplayDialog(false);
+        })
+    }
 
     const actionsTemplate = (rowData: any, column: any) => {
         return (
             <>
-                <Button variant="outline-danger" onClick={() => {dialogBox(rowData)} } ><FiTrash2 size={17}/></Button>
+                <Button variant="outline-danger" onClick={() => {setShow(true)} } ><FiTrash2 size={17}/></Button>
             </>
         )
     }
 
+    function getUsersFunction(data?: any){
+        setLoading(true);
+        if(!data){
+            usersService.getUsersPaginate(10).then(data => {
+                setDatasource(data.users);
+                setTotalRecords(data.length);
+                data = data.users;
+                for(let i = 0; i < data.length; i++){
+                    if(data[i]['TipoUsuario'] === 'A'){
+                        data[i]['TipoUsuario'] = 'Administrador';
+                    }else if(data[i]['TipoUsuario'] === 'M'){
+                        data[i]['TipoUsuario'] = 'Médico';
+                    }else{
+                        data[i]['TipoUsuario'] = 'Farmacêutico';
+                    }
+                    if(data[i]['isVerified'] === 1){
+                        data[i]['isVerified'] = 'Sim';
+                    }else{
+                        data[i]['isVerified'] = 'Não';
+                    }
+                }
+                setProntuario(data.slice(0, rows));
+                setLoading(false);
+                return
+            })
+        }else{
+            setDatasource(data.users);
+            setTotalRecords(data.length);
+            console.log(data)
+            data = data.users;
+            for(let i = 0; i < data.length; i++){
+                if(data[i]['TipoUsuario'] === 'A'){
+                    data[i]['TipoUsuario'] = 'Administrador';
+                }else if(data[i]['TipoUsuario'] === 'M'){
+                    data[i]['TipoUsuario'] = 'Médico';
+                }else{
+                    data[i]['TipoUsuario'] = 'Farmacêutico';
+                }
+                if(data[i]['isVerified'] === 1){
+                    data[i]['isVerified'] = 'Sim';
+                }else{
+                    data[i]['isVerified'] = 'Não';
+                }
+            }
+            setProntuario(data.slice(0, rows));
+            setLoading(false);
+        }
+    }
+
     function handleSearch(){
-        alert("filtro inoperante")
+        if(!getOptionState){
+            setAlertContent('Selecione um filtro para buscar.');
+            setAlertStatus(2);
+            return
+        }
+        setLoading(true);
+        if(!searchInput){
+            usersService.getUsersPaginate(10).then(data => {
+                getUsersFunction(data);
+                setLoading(false);
+                setAlertStatus(2);
+                setAlertContent("Digite algum valor para pesquisar.");
+            })
+            return
+        }
+        usersService.searchUserGlobal(searchInput, getOptionState.cod).then(data => {
+            if(!data.userFound){
+                setLoading(false);
+                setProntuario([]);
+                return
+            }
+            getUsersFunction(data)
+        })
     }
     
     const header = (
@@ -216,21 +249,24 @@ const MedicalRecords = () => {
                         </Alert>
             }
             <div className="row m-1">
-                <span className="p-float-label p-inputgroup col-sm-4 p-0">
-                    <InputText className="ml-0 bg-light border border-secondary rounded col-sm-8" id="float-input" type="search" value={searchInput} onChange={(e) => {setSearchInput((e.target as HTMLInputElement).value)}} size={50}/>
-                    <label htmlFor="float-input">Buscar por email</label>
-                    {searchInput
-                    ? 
+                <div className="col-sm-4 p-">
+                    <span className="p-float-label p-inputgroup">
+                        <InputText className="ml-0 bg-light border border-secondary rounded col-sm-8" id="float-input" type="search" value={searchInput} onChange={(e) => {setSearchInput((e.target as HTMLInputElement).value)}} onKeyPress={(ev) => {if (ev.key === 'Enter') {handleSearch(); ev.preventDefault();}}} size={50}/>
+                        <label htmlFor="float-input">Buscar por email</label>
+                        {searchInput
+                        ? 
                         <>
-                            <Button tabIndex={2} variant="outline-danger" className="p-0 mr-1" style={{width: '17px'}} onClick={() => setSearchInput('')}><AiOutlineClose size={15}/></Button>
+                            <Dropdown className="ml-1" value={getOptionState} options={options} onChange={onOptionChange} placeholder="Selecione um filtro" optionLabel="name" style={{width: '12em'}}/>
+                            <Button tabIndex={2} variant="outline-danger" className="p-0 mr-1" style={{width: '17px'}} onClick={() => {setSearchInput(''); getUsersFunction()}}><AiOutlineClose size={15}/></Button>
                             <Button onClick={handleSearch}><FiSearch size={20}/></Button>
                         </>
-                    : <></>
-                    }
-                </span>
+                        : <></>
+                        }
+                    </span>
+                </div>
                 <Button className="col-md-2 offset-md-6" type="button" variant="outline-success" onClick={onExport}><AiOutlineDownload size={20}/>  Exportar dados</Button>
             </div>
-            <p style={{textAlign:'left'}} className="p-clearfix d-inline">Selecione um usuário para mais informações</p>
+            <p style={{textAlign:'left'}} className="p-clearfix d-inline text-secondary">Selecione um usuário para mais informações</p>
 
         </>
     );
@@ -260,18 +296,28 @@ const MedicalRecords = () => {
                     <Column field="Matricula" header="Matrícula" style={{width:'14%', textAlign:'center'}}/>
                     <Column field="TipoUsuario" header="Tipo usuário" style={{width:'16%', textAlign:'center'}}/>
                     <Column field="isVerified" header="Verificado" style={{width:'10%', textAlign:'center'}} body={VerifiedTemplate}/>
-                    <Column header="Ações" body={actionsTemplate} style={{textAlign:'center', width: '10%'}}/>
+                    {/* <Column header="Ações" body={actionsTemplate} style={{textAlign:'center', width: '10%'}}/> */}
                 </DataTable>
-                <Dialog visible={displayDialog} style={{width: '50%'}} header="Confirmar exclusão" modal={true} footer={dialogFooter} onHide={() => setDisplayDialog(false)}
-                    blockScroll={false}>
-                    { getUser &&
-                        <p className="h6">Deseja excluir o usuário "{selectedUser.Nome}" de código "{selectedUser.CodUsuario}" do sistema?</p>
+                <Dialog visible={displayDialog} style={{width: '50%'}} header="Ações" modal={true} onHide={() => setDisplayDialog(false)}
+                    blockScroll={true}>
+                    <p className="h3 mx-2">Alterar tipo de usuário</p>
+                    {getUser && 
+                        <Dropdown value={getUserChange} options={tipoUsuario} onChange={onUserSelectChange} style={{width: '12em'}}/>
                     }
+                    <Button className="mx-2" variant="outline-success" onClick={() => {changeUserType()}}><p className="d-inline"><FiCheck size={30}/>  Confirmar</p></Button>
+                    <br/><br/><br/>
+                    <DropdownReact.Divider/>
+                    <p className="h3 mx-2">Exclusão</p>
+                    { getUser &&
+                        <p className="h6 mx-2">Deseja excluir o usuário "{selectedUser.Nome}" de código "{selectedUser.CodUsuario}" do sistema?</p>
+                    }
+                    <Button className="mx-2" variant="outline-danger" onClick={() => {deleteUserCancel()}}><p className="d-inline"><AiOutlineClose size={30}/>  Cancelar</p></Button>
+                    <Button className="mx-2" variant="success" onClick={() => deleteUser()}><p className="d-inline"><FiCheck size={30}/>  Confirmar</p></Button>
                 </Dialog>
             </div>
-            
         </>
     )
 }
+
 
 export default MedicalRecords;

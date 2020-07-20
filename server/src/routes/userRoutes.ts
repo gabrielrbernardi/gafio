@@ -11,13 +11,16 @@ const authMiddleware = new AuthMiddleware();
 //Routes to User CRUD
 routes.get("/users", user.index);
 routes.get("/users/paginate/:page", user.indexPagination);
-routes.get("/users/firstTen", user.indexFirstTen);
 routes.get("/users/id/:id", user.showId);
 routes.get("/users/email/:email", user.showEmail);
+routes.get("/users/name/:name", user.showName);
+routes.get("/users/registrations/:registrations", user.showRegistrations);
+routes.get("/users/userType/:userType", user.showUserType);
 routes.post("/users", user.create);
 routes.put("/users/:id", user.update);
 routes.post("/users/delete", user.delete);
 routes.put('/users/requestChangeUserType/:notificationId', user.requestChangeUserType);
+routes.post('/users/changeUserType', user.changeUserType);
 
 //Routes to User Login and account check
 routes.post("/session/login", userSession.login);

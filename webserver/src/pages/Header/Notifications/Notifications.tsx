@@ -111,7 +111,7 @@ const Notifications = () => {
                         ?
                         <DataTable className="col-sm-8 offset-sm-8 mx-auto p-0 shadow-lg" value={getNotifications} responsive={true}
                             resizableColumns={true} loading={loading}>
-                            <Column field="CodUsuario" header="CodNotificação" style={{width:'15%', textAlign:'center'}}/>
+                            <Column field="CodUsuario" header="CodUsuaário" style={{width:'15%', textAlign:'center'}}/>
                             <Column field="Descricao" header="Descrição" style={{width:'55%', textAlign:'center'}}/>
                             <Column header="Ações"  body={actionTemplate} style={{width:'20%', textAlign:'center'}}/>
                         </DataTable>

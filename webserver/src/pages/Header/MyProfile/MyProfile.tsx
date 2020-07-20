@@ -42,8 +42,8 @@ const MyProfile = () => {
         if(cookies.userData){
             const email = cookies.userData.Email;
             api.get(`users/email/${email}`).then(response => {
-                var {id, Nome, Matricula, Email, TipoUsuario} = response.data;
-                setInitData({...initData, id: id, nome: Nome, email: Email, matricula: Matricula, tipoUsuario: TipoUsuario});
+                var {CodUsuario, Nome, Matricula, Email, TipoUsuario} = response.data.users[0];
+                setInitData({...initData, id: CodUsuario, nome: Nome, email: Email, matricula: Matricula, tipoUsuario: TipoUsuario});
                 setFormData({...formData, nome: Nome, email: Email, matricula: Matricula, tipoUsuario: TipoUsuario});
                 // setFormData({...formData, nome: Nome, email: Email, matricula: Matricula, tipoUsuario: TipoUsuario});
                 setPharmaceuticalStatus(TipoUsuario);
@@ -70,9 +70,9 @@ const MyProfile = () => {
                 setResponseDataStatus(1);
                 setResponseData('Informações alteradas com sucesso.');
                 api.get(`users/email/${email}`).then(response1 => {
-                    var {id, Nome, Matricula, Email, TipoUsuario} = response1.data;
+                    var {CodUsuario, Nome, Matricula, Email, TipoUsuario} = response1.data.users[0];
                     setFormData({...formData, nome: Nome, email: Email, matricula: Matricula, tipoUsuario: TipoUsuario});
-                    setInitData({...initData, id: id, nome: Nome, email: Email, matricula: Matricula, tipoUsuario: TipoUsuario});
+                    setInitData({...initData, id: CodUsuario, nome: Nome, email: Email, matricula: Matricula, tipoUsuario: TipoUsuario});
                     setPharmaceuticalStatus(TipoUsuario);
                 })
                 // setTimeout(function(){history.push('/login')}, 3000);

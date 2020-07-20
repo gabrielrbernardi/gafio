@@ -131,7 +131,7 @@ const Header = () => {
                     
                 </div>
             </div>
-            <div className="position-fixed" style={{left: '0px', top: '50px'}}>
+            <div className="position-absolute" style={{left: '0px', top: '50px'}}>
                 <button className="btn" onClick={handleBackButton}>
                     <FiArrowLeft size={20} />
                 </button>
