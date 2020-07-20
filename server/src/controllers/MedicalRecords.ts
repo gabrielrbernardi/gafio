@@ -1,0 +1,109 @@
+/****************************************
+| Data: 20/07/2020                      |
+| Resumo: Controlador Prontuário (CRUD) |
+| Sistema: GAFio                        |
+****************************************/
+
+import { Request, Response } from "express";
+import knex from "../database/connection";
+
+class ProntuarioController {
+   async create(request: Request, response: Response) {
+      const {
+         NroProntuario,
+         DataInternacao,
+         CodDoencaPrincipal,
+         CodDoencaSecundario,
+         Sistema,
+         CodDoencaComorbidade,
+         Origem,
+         Alocacao,
+         DataDesfecho,
+         Coleta,
+         ResultadoColeta,
+         CodAntibiotico2a,
+         CodAntibiotico2b,
+         SitioInfeccaoPrimario,
+         TratamentoConformeCCIH,
+         IndicacaoSepse,
+         DisfuncaoRenal,
+         OrigemInfeccao,
+      } = request.body;
+
+      await knex("Prontuario").insert({
+         NroProntuario,
+         DataInternacao,
+         CodDoencaPrincipal,
+         CodDoencaSecundario,
+         Sistema,
+         CodDoencaComorbidade,
+         Origem,
+         Alocacao,
+         DataDesfecho,
+         Coleta,
+         ResultadoColeta,
+         CodAntibiotico2a,
+         CodAntibiotico2b,
+         SitioInfeccaoPrimario,
+         TratamentoConformeCCIH,
+         IndicacaoSepse,
+         DisfuncaoRenal,
+         OrigemInfeccao,
+      });
+   }
+
+   async index(request: Request, response: Response) {
+      const prontuario = await knex("Prontuario").select("*");
+      response.json(prontuario);
+   }
+
+   async indexByNroProntuario(request: Request, response: Response) {
+      const NroProntuario = request.params;
+
+      const filteredProntuario = await knex("Prontuario").where(
+         "NroProntuario",
+         NroProntuario
+      );
+      return response.json(filteredProntuario);
+   }
+
+   async indexByDataInternacao(request: Request, response: Response) {
+      const data = request.params;
+
+      const filteredProntuario = await knex("Prontuario").where(
+         "DataInternacao",
+         data
+      );
+      return response.json(filteredProntuario);
+   }
+
+   async indexByOrigem(request: Request, response: Response) {
+      const origem = request.params;
+
+      const filteredProntuario = await knex("Prontuario").where(
+         "Origem",
+         origem
+      );
+      return response.json(filteredProntuario);
+   }
+
+   async delete(request: Request, response: Response) {
+      const { NroProntuario } = request.body;
+      const prontuario = await knex("Prontuario").where(
+         "NroProntuario",
+         NroProntuario
+      );
+
+      if (prontuario) {
+         await knex("Historico").where("NroProntuario", NroProntuario).delete();
+         return response.json({ deletedprontuario: true });
+      } else {
+         return response.json({
+            deletedprontuario: false,
+            error: "Historico não encontrado",
+         });
+      }
+   }
+}
+
+export default ProntuarioController;
