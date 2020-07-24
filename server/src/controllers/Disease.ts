@@ -38,12 +38,20 @@ class DiseaseController {
   // Método para listar doenças por código:
   async indexByCode(request: Request, response: Response) {
     const { diseaseCode } = request.params;
-    const filteredDisease = await knex("Doenca").where(
-      "codDoenca",
-      diseaseCode
-    );
+    const filteredDisease = await knex("Doenca").where("codDoenca", diseaseCode);
 
     return response.json(filteredDisease);
+  }
+
+  // Método para listar doenças por página
+  async indexByPage(request: Request, response: Response) {
+    const { page } = request.params;
+    const pageRequest = parseInt(page) / 10;
+    const rows = 10;
+    const diseases = await knex("Doenca").select("*").offset((pageRequest-1) * rows).limit(rows);
+    const diseasesLength = (await knex("Doenca").select("*")).length;
+
+    return response.json({diseases: diseases, length: diseasesLength});
   }
 
   // Método para deletar uma doença:
@@ -54,10 +62,11 @@ class DiseaseController {
     if (disease) {
       await knex("Doenca").where("codDoenca", codDoenca).delete();
       return response.json({ deletedDisease: true });
-    } else {
+    }
+    else {
       return response.json({
         deletedDisease: false,
-        error: "Doença não encontrado.",
+        error: "Doença não encontrada.",
       });
     }
   }
