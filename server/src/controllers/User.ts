@@ -108,28 +108,37 @@ class UserController {
   //Listagem de usuários por pagina
   async indexPagination(request: Request, response: Response){
     const {page} = request.params;
-    const pageRequest = parseInt(page) / 10;
+    var pageRequest = parseInt(page) / 10;
     const rows = 10;
-    const users = await knex("Usuario").select("*").offset((pageRequest-1)*rows).limit(rows);
-    const usersLength = (await knex("Usuario").select("*")).length;
-    return response.json({users: users, length: usersLength});
+    try{
+      const users = await knex("Usuario").select("*").offset((pageRequest-1)*rows).limit(rows);
+      const usersLength = (await knex("Usuario").select("*")).length;
+      return response.json({showUsers: true, users: users, length: usersLength});
+    }catch(err){
+      return response.json({showUsers: false, error: err});
+    }
+    
   }
 
   //Listagem de usuario especifico com busca por id
   async showId(request: Request, response: Response) {
     const { id } = request.params;
-    const userDB = await knex("Usuario").where('CodUsuario', 'like', `%${id}%`);
-    const user = userDB[0];
-    if (user) {
-      return response.json({
-        userFound: true,
-        users: userDB
-      });
-    } else {
-      return response.json({
-        userFound: false,
-        error: "Usuário não encontrado. Verifique o id e tente novamente.",
-      });
+    if(id){
+      const userDB = await knex("Usuario").where('CodUsuario', 'like', `%${id}%`);
+      const user = userDB[0];
+      if (user) {
+        return response.json({
+          userFound: true,
+          users: userDB
+        });
+      } else {
+        return response.json({
+          userFound: false,
+          error: "Usuário não encontrado. Verifique o id e tente novamente.",
+        });
+      }
+    }else{
+      return response.json({userFound: false, error: "Digite um id para procurar."})
     }
   }
 
@@ -137,18 +146,22 @@ class UserController {
   async showEmail(request: Request, response: Response) {
     //Listagem de usuario especifico
     const { email } = request.params;
-    const userDB = await knex("Usuario").where('Email', 'like', `%${email}%`);
-    const user = userDB[0];
-    if (user) {
-      return response.json({
-        userFound: true,
-        users: userDB
-      });
-    } else {
-      return response.json({
-        userFound: false,
-        error: "Usuário não encontrado. Verifique o email e tente novamente.",
-      });
+    if(email){
+      const userDB = await knex("Usuario").where('Email', 'like', `%${email}%`);
+      const user = userDB[0];
+      if (user) {
+        return response.json({
+          userFound: true,
+          users: userDB
+        });
+      } else {
+        return response.json({
+          userFound: false,
+          error: "Usuário não encontrado. Verifique o email e tente novamente.",
+        });
+      }
+    }else{
+      return response.json({userFound: false, error: "Digite um email para procurar."})
     }
   }
 
@@ -156,56 +169,68 @@ class UserController {
   async showName(request: Request, response: Response) {
     //Listagem de usuario especifico
     const { name } = request.params;
-    const userDB = await knex("Usuario").where('Nome', 'like', `%${name}%`);
-    const user = userDB[0];
-    if (user) {
-      return response.json({
-        userFound: true,
-        users: userDB
-      });
-    } else {
-      return response.json({
-        userFound: false,
-        error: "Usuário não encontrado. Verifique o nome e tente novamente.",
-      });
+    if(name){
+      const userDB = await knex("Usuario").where('Nome', 'like', `%${name}%`);
+      const user = userDB[0];
+      if (user) {
+        return response.json({
+          userFound: true,
+          users: userDB
+        });
+      } else {
+        return response.json({
+          userFound: false,
+          error: "Usuário não encontrado. Verifique o nome e tente novamente.",
+        });
+      }
+    }else{
+      return response.json({userFound: false, error: "Digite um nome para procurar."})
     }
   }
   //Listagem de usuario especifico com busca por matricula
   async showRegistrations(request: Request, response: Response) {
     //Listagem de usuario especifico
     const { registrations } = request.params;
-    const userDB = await knex("Usuario").where('Matricula', 'like', `%${registrations}%`);
-    const user = userDB[0];
-    if (user) {
-      return response.json({
-        userFound: true,
-        users: userDB
-      });
-    } else {
-      return response.json({
-        userFound: false,
-        error: "Usuário não encontrado. Verifique a matrícula e tente novamente.",
-      });
+    if(registrations){
+      const userDB = await knex("Usuario").where('Matricula', 'like', `%${registrations}%`);
+      const user = userDB[0];
+      if (user) {
+        return response.json({
+          userFound: true,
+          users: userDB
+        });
+      } else {
+        return response.json({
+          userFound: false,
+          error: "Usuário não encontrado. Verifique a matrícula e tente novamente.",
+        });
+      }
+    }else{
+      return response.json({userFound: false, error: "Digite uma matrícula para procurar."})
     }
   }
   //Listagem de usuario especifico com busca por tipo de usuario
   async showUserType(request: Request, response: Response) {
     //Listagem de usuario especifico
     const { userType } = request.params;
-    const userTypeChar = userType[0];
-    const userDB = await knex("Usuario").where('TipoUsuario', 'like', `%${userTypeChar}%`);
-    const user = userDB[0];
-    if (user) {
-      return response.json({
-        userFound: true,
-        users: userDB,
-        length: userDB.length
-      });
-    } else {
-      return response.json({
-        userFound: false,
-        error: "Usuário não encontrado. Verifique o tipo de usuário e tente novamente.",
-      });
+    if(userType){
+      const userTypeChar = userType[0];
+      const userDB = await knex("Usuario").where('TipoUsuario', 'like', `%${userTypeChar}%`);
+      const user = userDB[0];
+      if (user) {
+        return response.json({
+          userFound: true,
+          users: userDB,
+          length: userDB.length
+        });
+      } else {
+        return response.json({
+          userFound: false,
+          error: "Usuário não encontrado. Verifique o tipo de usuário e tente novamente.",
+        });
+      }
+    }else{
+      return response.json({userFound: false, error: "Digite um tipo de usuário para procurar."})
     }
   }
 
@@ -301,15 +326,54 @@ class UserController {
     }
   }
   async changeUserType(request: Request, response: Response){
-    const {userId} = request.body;
+    const {userId, newUserType} = request.body;
+    const charNewUserType = newUserType[0];
     if(userId){
-      const userDBUpdate = await knex('Usuario').where('CodUsuario', userId).update({
-        TipoUsuario: 'M'
-      })
-      if(userDBUpdate === 1){
-        return response.json({updatedUser: true});
+      const userDB = await knex('Usuario').select("*").where('CodUsuario', userId);
+      if(userDB[0]['TipoUsuario'] === 'A'){
+        return response.json({verifyUser: false, error: "Não é possível alterar o tipo de usuário de Administrador."})
+      }
+      if(userDB[0]['TipoUsuario'] === charNewUserType){
+        return response.json({updatedUser: false, error: "Usuário já possui o referido cargo."});
       }else{
-        return response.json({updateduser: false, error: "Erro na atualização da permissão do usuário"});
+        const userDBUpdate = await knex('Usuario').where('CodUsuario', userId).update({
+          TipoUsuario: charNewUserType
+        })
+        if(userDBUpdate === 1){
+          return response.json({updatedUser: true});
+        }else{
+          return response.json({updateduser: false, error: "Erro na atualização da permissão do usuário"});
+        }
+      }
+    }
+  }
+
+  async verifyUser(request: Request, response: Response){
+    const {userId, verifyUserOption} = request.body;
+    const charVerifyUserOption = verifyUserOption[0];
+    if(userId){
+      const userDB = await knex('Usuario').select("*").where('CodUsuario', userId);
+      if(userDB[0]['TipoUsuario'] === 'A'){
+        return response.json({verifyUser: false, error: "Não é possível alterar a verificação de Administrador."})
+      }
+      if(userDB[0]['isVerified'] === verifyUserOption){
+        return response.json({verifyUser: false, error: "Usuário já possui a verificação solicitada."});
+      }else{
+        var userDBUpdate;
+        if(charVerifyUserOption === 'S'){
+          userDBUpdate = await knex('Usuario').where('CodUsuario', userId).update({
+            isVerified: 1
+          })
+        }else{
+          userDBUpdate = await knex('Usuario').where('CodUsuario', userId).update({
+            isVerified: 0
+          })
+        }
+        if(userDBUpdate === 1){
+          return response.json({verifyUser: true});
+        }else{
+          return response.json({verifyUser: false, error: "Não foi possível alterar a verificação do usuário."});
+        }
       }
     }
   }

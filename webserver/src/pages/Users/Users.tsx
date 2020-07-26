@@ -27,8 +27,6 @@ const MedicalRecords = () => {
     const [alertStatus, setAlertStatus] = useState(0);
     const [alertContent, setAlertContent] = useState('');
 
-    const [position, setPosition] = useState('center');
-    const [displayPosition, setDisplayPosition] = useState(false);
     const [selectedUser, setSelectedUser] = useState<any>(null);
     const [getUser, setUser] = useState<any>(null);
     const [displayDialog, setDisplayDialog] = useState(false);
@@ -36,6 +34,7 @@ const MedicalRecords = () => {
     const [getOptionState, setOptionState] = useState<any>(null)
     const [show, setShow] = useState(false);
     const [getUserChange, setUserChange] = useState<string>('F');
+    const [getUserVerifyOption, setUserVerifyOption] = useState<string>('N');
     
     const usersService = new UsersService();
     const rows = 10;
@@ -54,6 +53,12 @@ const MedicalRecords = () => {
         setUserChange(e.value);
     };
     
+    const onUserSelectVerifyChange = (e: { value: any }) => {
+        setUserVerifyOption(e.value);
+        console.log(getUserChange)
+        console.log(getUserVerifyOption)
+    };
+    
     let options = [
         {name: 'CódUsuário', cod: 'C'},
         {name: 'Nome', cod: 'N'},
@@ -65,6 +70,11 @@ const MedicalRecords = () => {
     let tipoUsuario = [
         {label: 'Médico', value: 'M'},
         {label: 'Farmacêutico', value: 'F'},
+    ];
+
+    let verifyOptions = [
+        {label: 'Sim', value: 'S'},
+        {label: 'Não', value: 'N'},
     ];
 
     //DataTable
@@ -119,27 +129,52 @@ const MedicalRecords = () => {
             setAlertStatus(2); 
             setAlertContent('Não é possível excluir o próprio usuário.');
         }
+        setUserChange('F');
     }
 
-    function deleteUserCancel(){
+    function dialogCancel(status: number, message: string){
         setDisplayDialog(false);
-        setAlertStatus(3);
-        setAlertContent('Exclusão cancelada pelo usuário.');
+        setAlertStatus(status);
+        setAlertContent(message);
+        setUserChange('F');
     }
 
     function changeUserType(){
         const userId = selectedUser.CodUsuario;
-        usersService.changeUserType(userId, getUserChange).then(response => {
-            if(response.updatedUser){
-                setAlertStatus(1);
-                setAlertContent(`A permissão do usuário ${selectedUser.Nome} foi alterada com sucesso.`);
-                getUsersFunction();
-            }else{
-                setAlertStatus(2);
-                setAlertContent(response.error)
-            }
-            setDisplayDialog(false);
-        })
+        setAlertStatus(0);
+        setTimeout(() => {
+            usersService.changeUserType(userId, getUserChange).then(response => {
+                if(response.updatedUser){
+                    setAlertStatus(1);
+                    setAlertContent(`A permissão do usuário ${selectedUser.Nome} foi alterada com sucesso.`);
+                    getUsersFunction();
+                }else{
+                    setAlertStatus(2);
+                    setAlertContent(response.error)
+                }
+                setDisplayDialog(false);
+            })
+            setUserChange('F');
+        }, 300);
+    }
+
+    function changeVerifyUser(){
+        const userId = selectedUser.CodUsuario;
+        setAlertStatus(0);
+        setTimeout(() => {
+            usersService.changeVerifyUser(userId, getUserVerifyOption).then(response => {
+                if(response.verifyUser){
+                    setAlertStatus(1);
+                    setAlertContent(`A verificação do usuário "${selectedUser.Nome}" foi alterada com sucesso.`);
+                    getUsersFunction();
+                }else{
+                    setAlertStatus(2);
+                    setAlertContent(response.error)
+                }
+            })
+            setUserVerifyOption('N');
+        }, 300);
+        setDisplayDialog(false);
     }
 
     const actionsTemplate = (rowData: any, column: any) => {
@@ -200,6 +235,7 @@ const MedicalRecords = () => {
     }
 
     function handleSearch(){
+        setAlertStatus(0);
         if(!getOptionState){
             setAlertContent('Selecione um filtro para buscar.');
             setAlertStatus(2);
@@ -264,7 +300,7 @@ const MedicalRecords = () => {
                         }
                     </span>
                 </div>
-                <Button className="col-md-2 offset-md-6" type="button" variant="outline-success" onClick={onExport}><AiOutlineDownload size={20}/>  Exportar dados</Button>
+                {/* <Button className="col-md-2 offset-md-6" type="button" variant="outline-success" onClick={onExport}><AiOutlineDownload size={20}/>  Exportar dados</Button> */}
             </div>
             <p style={{textAlign:'left'}} className="p-clearfix d-inline text-secondary">Selecione um usuário para mais informações</p>
 
@@ -279,8 +315,7 @@ const MedicalRecords = () => {
     
     const dialogFooter = 
         <div className="ui-dialog-buttonpane p-clearfix">
-            <Button variant="outline-danger" onClick={() => {deleteUserCancel()}}><p className="d-inline"><AiOutlineClose size={30}/>  Cancelar</p></Button>
-            <Button variant="success" onClick={() => deleteUser()}><p className="d-inline"><FiCheck size={30}/>  Confirmar</p></Button>
+            <Button className="mx-2" variant="outline-danger" onClick={() => {dialogCancel(3, 'Operação cancelada pelo usuário.')}}><p className="d-inline"><AiOutlineClose size={20}/>  Cancelar</p></Button>
         </div>;
     
     return (
@@ -299,20 +334,27 @@ const MedicalRecords = () => {
                     {/* <Column header="Ações" body={actionsTemplate} style={{textAlign:'center', width: '10%'}}/> */}
                 </DataTable>
                 <Dialog visible={displayDialog} style={{width: '50%'}} header="Ações" modal={true} onHide={() => setDisplayDialog(false)}
-                    blockScroll={true}>
+                    blockScroll={true} footer={dialogFooter}>
                     <p className="h3 mx-2">Alterar tipo de usuário</p>
                     {getUser && 
-                        <Dropdown value={getUserChange} options={tipoUsuario} onChange={onUserSelectChange} style={{width: '12em'}}/>
+                        <Dropdown className="mx-2" value={getUserChange} options={tipoUsuario} onChange={onUserSelectChange} style={{width: '12em'}}/>
                     }
-                    <Button className="mx-2" variant="outline-success" onClick={() => {changeUserType()}}><p className="d-inline"><FiCheck size={30}/>  Confirmar</p></Button>
-                    <br/><br/><br/>
+                    <Button className="mx-2" variant="outline-success" onClick={() => {changeUserType()}}><p className="d-inline"><FiCheck size={20}/>  Confirmar</p></Button>
+                    <br/><br/>
+                    <DropdownReact.Divider/>
+                    <p className="h3 mx-2">Alterar verificação do usuário</p>
+                    {getUser && 
+                        <Dropdown className="mx-2" value={getUserVerifyOption} options={verifyOptions} onChange={onUserSelectVerifyChange} style={{width: '12em'}}/>
+                    }
+                    <Button className="mx-2" variant="outline-success" onClick={() => {changeVerifyUser()}}><p className="d-inline"><FiCheck size={20}/>  Confirmar</p></Button>
+                    <br/><br/>
                     <DropdownReact.Divider/>
                     <p className="h3 mx-2">Exclusão</p>
                     { getUser &&
                         <p className="h6 mx-2">Deseja excluir o usuário "{selectedUser.Nome}" de código "{selectedUser.CodUsuario}" do sistema?</p>
                     }
-                    <Button className="mx-2" variant="outline-danger" onClick={() => {deleteUserCancel()}}><p className="d-inline"><AiOutlineClose size={30}/>  Cancelar</p></Button>
-                    <Button className="mx-2" variant="success" onClick={() => deleteUser()}><p className="d-inline"><FiCheck size={30}/>  Confirmar</p></Button>
+                    {/* <Button className="mx-2" variant="outline-danger" onClick={() => {dialogCancel(3, 'Operação cancelada pelo')}}><p className="d-inline"><AiOutlineClose size={20}/>  Cancelar</p></Button> */}
+                    <Button className="mx-2" variant="success" onClick={() => deleteUser()}><p className="d-inline"><FiCheck size={20}/>  Confirmar</p></Button>
                 </Dialog>
             </div>
         </>

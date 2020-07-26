@@ -23,12 +23,12 @@ class UsersService {
         }
     }
     
-    async changeUserType(userId: Number, userType: String){
-        if(userType=='M'){
-            return await api.post('users/changeUserType', {userId: userId}).then(response => response.data)
-        }else{
-            return {updatedUser: false, error: 'Não foi solicitada alteração no tipo de usuário.'}
-        }
+    async changeUserType(userId: Number, newUserType: string){
+        return await api.post('users/changeUserType', {userId: userId, newUserType: newUserType}).then(response => response.data);
+    }
+
+    async changeVerifyUser(userId: Number, newUserType: string){
+        return await api.post(`users/changeVerifyUser`, {userId: userId, verifyUserOption: newUserType}).then(response => response.data);
     }
 }
 

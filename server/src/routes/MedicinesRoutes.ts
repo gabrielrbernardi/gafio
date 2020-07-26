@@ -6,10 +6,7 @@ const routes = express.Router();
 const medicineController = new MedicineController();
 
 routes.get("/medicines", medicineController.index);
-routes.get(
-  "/medicines/principio/:principio",
-  medicineController.indexByPrincipio
-);
+routes.get("/medicines/principio/:principio", medicineController.indexByPrincipio);
 routes.get("/medicines/ean/:ean", medicineController.indexByEan);
 routes.get("/medicines/classe/:classe", medicineController.indexByClasse);
 

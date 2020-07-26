@@ -8,8 +8,8 @@ try {
             // filename: './src/database/gafioDB.sql',
             database: "gafioDB",
             host: "localhost",
-            user: "root",
-            password: "password",
+            user: "gabriel",
+            password: "teste123",
          },
          migrations: {
             directory: path.resolve(__dirname, "src", "database", "migrations"),
