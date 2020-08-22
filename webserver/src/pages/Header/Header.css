@@ -1,0 +1,17 @@
+@media screen and (max-width: 800px) {
+    .home-label{
+        margin-left: 15px !important;
+    }
+}
+
+@media screen and (max-width: 452px) {
+    .arrow-left{
+        top: 88px !important;
+    }
+}
+
+@media screen and (max-width: 401px) {
+    .arrow-left{
+        top: 133px !important;
+    }
+}

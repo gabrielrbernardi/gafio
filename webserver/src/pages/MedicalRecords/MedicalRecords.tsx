@@ -49,7 +49,7 @@ const MedicalRecords = () => {
                 setLoading(false);
             });
         }, 500);
-    }, [medicalRecordsService]);
+    }, []);
     
     const onPage = (event: any) => {
         setLoading(true);
@@ -109,16 +109,8 @@ const MedicalRecords = () => {
                         </span>
                     </div>
                 </Collapse>
-                <DataTable value={prontuario} paginator={true} rows={rows} totalRecords={totalRecords} header={header}
-                    lazy={true} first={first} onPage={onPage} loading={loading} resizableColumns={true} responsive={true} ref={dt}>
-                    <Column field="CodUsuario" header="Código" style={{width:'8%', textAlign:'center'}} />
-                    <Column field="Nome" header="Nome" style={{width:'20%', textAlign:'center'}}/>
-                    <Column field="Email" header="Email" style={{width:'20%', textAlign:'center'}}/>
-                    <Column field="Matricula" header="Matrícula" style={{width:'10%', textAlign:'center'}}/>
-                    <Column field="TipoUsuario" header="Tipo usuário" style={{width:'20%', textAlign:'center'}}/>
-                    <Column field="isVerified" header="Verificado" style={{width:'10%', textAlign:'center'}} body={VerifiedTemplate}/>
-                    <Column header="Ações" body={actionsTemplate} style={{textAlign:'center', width: '10%'}}/>
-                </DataTable>
+                <div className="ml-auto"></div>
+                <Button variant="outline-danger" className="mb-2 ml-2 offset-md-9">Desfecho</Button>
             </div>
         </>
     )

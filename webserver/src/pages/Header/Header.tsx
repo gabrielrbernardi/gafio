@@ -6,12 +6,13 @@ import { useCookies } from 'react-cookie';
 import { Dropdown, Button, Badge } from 'react-bootstrap';
 
 import '../Home/Home.css';
+import './Header.css';
 
 import api from '../../services/api';
 
 const Header = () => {
     const history = useHistory();
-    const [cookies, setCookies, removeCookie] = useCookies([]);
+    const [cookies, , removeCookie] = useCookies([]);
     const [userName, setUserName] = useState('');
     const [tipoUsuario, setTipoUsuario] = useState('');
     const [notificationsLength, setNotificationsLength] = useState(Number);
@@ -108,30 +109,45 @@ const Header = () => {
             </div>
             <div className="container-fluid bg-light shadow-lg mb-5">
                 <div className="row align-items-center justify-content-center">
-                    <div className="col-md-auto mx-5">
-                        <Link className="text-decoration-none" to="/home">
+                    <div className="col-md-auto mx-2">
+                        <Link className="text-decoration-none home-label" to="/home">
                             HOME
                         </Link>
                     </div>
-                    <div className="col-md-auto mx-5">
+                    <div className="col-md-auto mx-2">
                         <Link className="text-decoration-none" to="/medicalRecords">
                             PRONTUÁRIOS
                         </Link>
                     </div>
-                    <div className="col-md-auto mx-5">
+                    <div className="col-md-auto mx-2">
                         <Link className="text-decoration-none" to="/registrations">
                             CADASTROS
                         </Link>
                     </div>
-                    <div className="col-md-auto mx-5">
+                    <div className="col-md-auto mx-2">
                         <Link className="text-decoration-none" to="/dashboard">
                             DASHBOARD
+                        </Link>
+                    </div>
+                    <div className="col-md-auto mx-2">
+                        <Link className="text-decoration-none" to="/notFound">
+                            MICROBIOLOGIA
+                        </Link>
+                    </div>
+                    <div className="col-md-auto mx-2">
+                        <Link className="text-decoration-none" to="/notFound">
+                            RECOMENDAÇÕES CCIH
+                        </Link>
+                    </div>
+                    <div className="col-md-auto mx-2">
+                        <Link className="text-decoration-none" to="/notFound">
+                            HISTÓRICO
                         </Link>
                     </div>
                     
                 </div>
             </div>
-            <div className="position-absolute" style={{left: '0px', top: '50px'}}>
+            <div className="position-absolute arrow-left" style={{left: '0px', top: '50px'}}>
                 <button className="btn" onClick={handleBackButton}>
                     <FiArrowLeft size={20} />
                 </button>

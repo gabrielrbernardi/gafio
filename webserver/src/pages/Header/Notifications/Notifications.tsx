@@ -8,7 +8,7 @@ import { Column } from 'primereact/column';
 import Button from 'react-bootstrap/Button';
 
 const Notifications = () => {
-    const [cookies, setCookies] = useCookies([]);
+    const [cookies] = useCookies([]);
     const [getNotifications, setNotifications] = useState([]);
     const [responseDataStatus, setResponseDataStatus] = useState(Number);
     const [responseData, setResponseData] = useState('');
@@ -30,6 +30,7 @@ const Notifications = () => {
             let TipoUsuario = cookies.userData.TipoUsuario;
             setTimeout(() => {
                 notificationsService.getNotifications(CodUsuario, TipoUsuario).then(data => {
+                    console.log(data)
                     setNotifications(data.notifications)
                     setLoading(false)
                 })
@@ -111,8 +112,9 @@ const Notifications = () => {
                         ?
                         <DataTable className="col-sm-8 offset-sm-8 mx-auto p-0 shadow-lg" value={getNotifications} responsive={true}
                             resizableColumns={true} loading={loading}>
-                            <Column field="CodUsuario" header="CodUsuaário" style={{width:'15%', textAlign:'center'}}/>
-                            <Column field="Descricao" header="Descrição" style={{width:'55%', textAlign:'center'}}/>
+                            <Column field="CodNotificacao" header="CodNotificação" style={{width:'15%', textAlign:'center'}}/>
+                            <Column field="CodUsuario" header="CodUsuário" style={{width:'15%', textAlign:'center'}}/>
+                            <Column field="Descricao" header="Descrição" style={{width:'45%', textAlign:'center'}}/>
                             <Column header="Ações"  body={actionTemplate} style={{width:'20%', textAlign:'center'}}/>
                         </DataTable>
                         : 

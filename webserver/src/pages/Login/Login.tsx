@@ -7,6 +7,7 @@ import './login.css';
 
 import loginBanner from '../../assets/fiocruzBanner.jpg';
 import api from '../../services/api';
+import Toast from '../../components/Toast';
 
 // const secretWord = 'PalavraSecreta';
 
@@ -22,7 +23,7 @@ const Login = () => {
     const [enableSubmitButton, setEnableSubmitButton] = useState(Number);
     const [responseDataStatus, setResponseDataStatus] = useState(Number);
     const [responseData, setResponseData] = useState();
-    const [cookies, setCookies, removeCookie] = useCookies([]);
+    const [, setCookies] = useCookies([]);
   
     const [formData, setFormData] = useState({
         email: '',
@@ -43,21 +44,27 @@ const Login = () => {
         event.preventDefault();
         const {email, senha} = formData;
         // const token = jwt.sign({email: email, senha: senha}, secretWord);
-
-        await api.post('session/login', {email: email, senha: senha})
-        .then(function(response){
-            if(response.data.userLogin){
-                const tokenLoginResponse = jwt.decode(response.data.userToken);
-                var Email = tokenLoginResponse.Email;
-                let Nome = tokenLoginResponse.Nome;
-                let TipoUsuario = tokenLoginResponse.TipoUsuario;
-                let CodUsuario = tokenLoginResponse.CodUsuario;
-                setCookiesLogin(Email, Nome, TipoUsuario, CodUsuario);
-            }else{
-                setResponseDataStatus(2);
-                setResponseData(response.data.error);
+        try{
+            await api.post('session/login', {email: email, senha: senha})
+            .then(function(response){
+                if(response.data.userLogin){
+                    const tokenLoginResponse = jwt.decode(response.data.userToken);
+                    var Email = tokenLoginResponse.Email;
+                    let Nome = tokenLoginResponse.Nome;
+                    let TipoUsuario = tokenLoginResponse.TipoUsuario;
+                    let CodUsuario = tokenLoginResponse.CodUsuario;
+                    setCookiesLogin(Email, Nome, TipoUsuario, CodUsuario);
+                }else{
+                    setResponseDataStatus(2);
+                    setResponseData(response.data.error);
+                }
+            })
+        }catch(err) {
+            alert(err)
+            if(err.message === "Network Error"){
+                return <Toast status="1" message="teste"/>
             }
-        })
+        }
     }
     
     async function setCookiesLogin(email: string, nome: string, tipoUsuario: string, codUsuario: string){
@@ -97,7 +104,7 @@ const Login = () => {
                     }
                     <div className="form-group">
                         <label htmlFor="email">Email:</label>
-                        <input type="email" className="form-control" id="email" name="email" onChange={handleInputChange} placeholder="Digite seu email" required autoFocus/>
+                        <input type="email" className="form-control" id="email" name="email" onChange={handleInputChange} placeholder="Digite seu email" required autoFocus autoComplete="off"/>
                         <div className="valid-feedback text-left">Válido.</div>
                         <div className="invalid-feedback text-left">Preencha este campo.</div>
                     </div>

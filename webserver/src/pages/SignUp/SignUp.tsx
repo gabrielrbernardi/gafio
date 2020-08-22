@@ -1,5 +1,4 @@
-import React, {useState, ChangeEvent, FormEvent, useEffect} from 'react';
-import {useHistory} from 'react-router-dom';
+import React, {useState, FormEvent, useEffect} from 'react';
 // import jwt from 'jsonwebtoken';
 
 import '../Login/login.css';
@@ -9,10 +8,8 @@ import api from '../../services/api';
 // const secretWord = 'PalavraSecreta';
 
 const SignUp = () => {
-    const history = useHistory();
     
     const [responseDataStatus, setResponseDataStatus] = useState(Number);
-    const [enableSubmitButton, setEnableSubmitButton] = useState(Number);
     const [responseData, setResponseData] = useState('');
     const [getNome, setNome] = useState('gabriel');
     const [getEmail, setEmail] = useState('teste1@gafio.com');
@@ -20,23 +17,23 @@ const SignUp = () => {
     const [getSenha, setSenha] = useState('teste123');
     const [getRedefinirSenha, setRedefinirSenha] = useState('teste123');
 
-    const [formData, setFormData] = useState({
-        nome: '',
-        email: '',
-        senha: '',
-        confirmarSenha: '',
-        matricula: '',
-    });
+    // const [formData, setFormData] = useState({
+    //     nome: '',
+    //     email: '',
+    //     senha: '',
+    //     confirmarSenha: '',
+    //     matricula: '',
+    // });
 
-    function handleInputChange(event: ChangeEvent<HTMLInputElement>){
-        const { name, value } = event.target;
-        setFormData({...formData, [name]: value});
-        if(formData['nome'] && formData['email'] && formData['senha'] && formData['confirmarSenha'] && formData['matricula']){
-            setEnableSubmitButton(1);
-        }else{
-            setEnableSubmitButton(0);
-        }
-    }
+    // function handleInputChange(event: ChangeEvent<HTMLInputElement>){
+    //     const { name, value } = event.target;
+    //     setFormData({...formData, [name]: value});
+    //     if(formData['nome'] && formData['email'] && formData['senha'] && formData['confirmarSenha'] && formData['matricula']){
+    //         setEnableSubmitButton(1);
+    //     }else{
+    //         setEnableSubmitButton(0);
+    //     }
+    // }
     
     function handleSubmit(event: FormEvent){
         event.preventDefault();

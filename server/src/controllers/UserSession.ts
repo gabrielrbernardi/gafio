@@ -37,32 +37,36 @@ class UserSession {
     const userDB = await knex("Usuario").where("Email", email);
     const user = userDB[0];
     if (user) {
-      const userStatusDB = await knex("Notificacao").where({Status: 1, CodUsuario: user["CodUsuario"]});
-      const userStatus = userStatusDB[0];
-      if(userStatus){
-        if(userStatus.StatusAR == 'A'){
-          bcrypt.compare(senha, user["Senha"], function (err, result) {
-            if (result) {
-              const token = jwt.sign(
-                {
-                  CodUsuario: user["CodUsuario"],
-                  Email: user["Email"],
-                  Nome: user["Nome"],
-                  TipoUsuario: user["TipoUsuario"],
-                },
-                authConfig.secret,
-                { expiresIn: 60 * 60 }
-              ); //Expira em 1 hora
-              return response.json({ userLogin: true, userToken: token });
-            } else {
-              return response.json({ userLogin: false, error: "Senha incorreta." });
-            }
-          });
+      if(user.isVerified === 1){
+        const userStatusDB = await knex("Notificacao").where({Status: 1, CodUsuario: user["CodUsuario"]});
+        const userStatus = userStatusDB[0];
+        if(userStatus){
+          if(userStatus.StatusAR == 'A'){
+            bcrypt.compare(senha, user["Senha"], function (err, result) {
+              if (result) {
+                const token = jwt.sign(
+                  {
+                    CodUsuario: user["CodUsuario"],
+                    Email: user["Email"],
+                    Nome: user["Nome"],
+                    TipoUsuario: user["TipoUsuario"],
+                  },
+                  authConfig.secret,
+                  { expiresIn: 60 * 60 }
+                ); //Expira em 1 hora
+                return response.json({ userLogin: true, userToken: token });
+              } else {
+                return response.json({ userLogin: false, error: "Senha incorreta." });
+              }
+            });
+          }else{
+            return response.json({ userLogin: false, error: "A criação da sua conta foi recusada pelo administrador." })
+          }
         }else{
-          return response.json({ userLogin: false, error: "A criação da sua conta foi recusada pelo administrador." })
+          return response.json({ userLogin: false, error: "Seu cadastro foi realizado e está sob análise." })
         }
       }else{
-        return response.json({ userLogin: false, error: "Seu cadastro foi realizado e está sob análise." })
+        return response.json({ userLogin: false, error: "Seu cadastro foi realizado e está sob análise."});
       }
     } else {
       return response.json({

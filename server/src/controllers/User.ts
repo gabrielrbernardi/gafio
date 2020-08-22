@@ -364,6 +364,16 @@ class UserController {
           userDBUpdate = await knex('Usuario').where('CodUsuario', userId).update({
             isVerified: 1
           })
+          const codNotificacaoDB = await knex('Usuario_Notificacao').where("CodUsuario", userId);
+          const notificationDB = await knex("Notificacao").where("CodNotificacao", codNotificacaoDB[0]["CodNotificacao"]).update({
+              StatusAR: 'A',
+              Status: 1
+          });
+          if (notificationDB) {
+              return response.json({ verifyUser: true });
+          } else {
+              return response.json({verifyUser: false, error: "Não foi possível verificar o usuário"});
+          }
         }else{
           userDBUpdate = await knex('Usuario').where('CodUsuario', userId).update({
             isVerified: 0

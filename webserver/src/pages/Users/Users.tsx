@@ -9,11 +9,13 @@ import Button from 'react-bootstrap/Button';
 import {Alert} from 'react-bootstrap';
 import {Dropdown as DropdownReact} from 'react-bootstrap';
 
-import {FiTrash2, FiCheck, FiSearch} from 'react-icons/fi';
-import {AiOutlineDownload, AiOutlineClose} from 'react-icons/ai';
+import {FiCheck, FiSearch} from 'react-icons/fi';
+import {AiOutlineClose} from 'react-icons/ai';
 
 import {UsersService} from './UsersService';
 import { Dialog } from 'primereact/dialog';
+
+import './Users.css';
 
 const MedicalRecords = () => {
     const [cookie] = useCookies();
@@ -32,7 +34,6 @@ const MedicalRecords = () => {
     const [displayDialog, setDisplayDialog] = useState(false);
     let newUser = false;
     const [getOptionState, setOptionState] = useState<any>(null)
-    const [show, setShow] = useState(false);
     const [getUserChange, setUserChange] = useState<string>('F');
     const [getUserVerifyOption, setUserVerifyOption] = useState<string>('N');
     
@@ -40,10 +41,6 @@ const MedicalRecords = () => {
     const rows = 10;
     
     let dt = useRef<any>(null);
-
-    const onExport = () => {
-        dt.current.exportCSV();
-    };
 
     const onOptionChange = (e: { value: any }) => {
         setOptionState(e.value);
@@ -175,14 +172,6 @@ const MedicalRecords = () => {
             setUserVerifyOption('N');
         }, 300);
         setDisplayDialog(false);
-    }
-
-    const actionsTemplate = (rowData: any, column: any) => {
-        return (
-            <>
-                <Button variant="outline-danger" onClick={() => {setShow(true)} } ><FiTrash2 size={17}/></Button>
-            </>
-        )
     }
 
     function getUsersFunction(data?: any){

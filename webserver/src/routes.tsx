@@ -23,7 +23,6 @@ import Registrations from './pages/Registrations/Registrations';
 import Diseases from './pages/Diseases/Diseases';
 import Medicines from './pages/Medicines/Medicines';
 
-import UnderDevelopment from './pages/UnderDevelopment/UnderDevelopment';
 import NotFound from './pages/NotFound/NotFound';
 
 const Routes = () => {

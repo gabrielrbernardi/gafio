@@ -15,7 +15,7 @@ const MyProfile = () => {
     
     const [cookies] = useCookies([]);
     const [responseDataStatus, setResponseDataStatus] = useState(Number);
-    const [editable, setEditable] = useState(0);
+    const [, setEditable] = useState(0);
     const [responseData, setResponseData] = useState('');
     const [pharmaceuticalStatus, setPharmaceuticalStatus] = useState('');
 
