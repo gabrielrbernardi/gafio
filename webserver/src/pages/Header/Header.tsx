@@ -130,17 +130,17 @@ const Header = () => {
                         </Link>
                     </div>
                     <div className="col-md-auto mx-2">
-                        <Link className="text-decoration-none" to="/notFound">
+                        <Link className="text-decoration-none" to="/underDevelopment">
                             MICROBIOLOGIA
                         </Link>
                     </div>
                     <div className="col-md-auto mx-2">
-                        <Link className="text-decoration-none" to="/notFound">
+                        <Link className="text-decoration-none" to="/underDevelopment">
                             RECOMENDAÇÕES CCIH
                         </Link>
                     </div>
                     <div className="col-md-auto mx-2">
-                        <Link className="text-decoration-none" to="/notFound">
+                        <Link className="text-decoration-none" to="/underDevelopment">
                             HISTÓRICO
                         </Link>
                     </div>

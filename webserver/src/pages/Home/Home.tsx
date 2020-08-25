@@ -40,7 +40,7 @@ const Home = () => {
             </div>
 
             <div className="m-5 p-3 card-columns justify-content-center">
-                <Link className="text-decoration-none" to="/notFound">
+                <Link className="text-decoration-none" to="/underDevelopment">
                     <div className="card text-center shadow zoom-hover">
                             <p className="h6">
                                 <FaMicroscope className="mt-3 mb-3 ml-auto mr-auto" size={40} /><br/>
@@ -48,7 +48,7 @@ const Home = () => {
                             </p>
                     </div>
                 </Link>
-                <Link className="text-decoration-none" to="/notFound">
+                <Link className="text-decoration-none" to="/underDevelopment">
                     <div className="card text-center shadow zoom-hover">
                             <p className="h6">
                                 <FaHospital className="mt-3 mb-3 ml-auto mr-auto" size={40} /><br/>
@@ -56,7 +56,7 @@ const Home = () => {
                             </p>
                     </div>
                 </Link>
-                <Link className="text-decoration-none" to="/notFound">
+                <Link className="text-decoration-none" to="/underDevelopment">
                     <div className="card text-center shadow zoom-hover">
                             <p className="h6">
                                 <FaHistory className="mt-3 mb-3 ml-auto mr-auto" size={40} /><br/>

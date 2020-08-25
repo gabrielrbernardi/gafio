@@ -20,10 +20,12 @@ import MedicalRecords from './pages/MedicalRecords/MedicalRecords';
 
 import Registrations from './pages/Registrations/Registrations';
 
-import Diseases from './pages/Diseases/Diseases';
-import Medicines from './pages/Medicines/Medicines';
+import Diseases from './pages/Registrations/Diseases/Diseases';
+import Medicines from './pages/Registrations/Medicines/Medicines';
 
 import NotFound from './pages/NotFound/NotFound';
+
+import UnderDevelopment from './pages/UnderDevelopment/UnderDevelopment';
 
 const Routes = () => {
     return (
@@ -47,6 +49,7 @@ const Routes = () => {
 
                 <Route path="/notifications" render={() => <div><Header/><Notifications/><Footer/></div>} exact />
                 <Route path="/notFound" render={() => <div><Header/><NotFound/><Footer/></div>} exact/>
+                <Route path="/underDevelopment" render={() => <div><Header/><UnderDevelopment/><Footer/></div>} exact/>
             </Switch>
         </BrowserRouter>
     )
