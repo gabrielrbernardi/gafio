@@ -33,4 +33,4 @@ https://data.medicare.gov/developers -> Sistema de saúde publica dos EUA para d
 
 https://www.who.int/data/gho/info/gho-odata-api -> API da WHO/OMS
 
-https://sourceforge.net/projects/contentservices/ -> API do departamento de saude dos EUA
+https://sourceforge.net/projects/contentservices/ -> API do departamento de saude dos EUA.
