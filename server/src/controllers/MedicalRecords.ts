@@ -60,13 +60,15 @@ class ProntuarioController {
          OrigemInfeccao,
          DoseCorreta,
          PosologiaCorreta
+      }).then(respostaDB => {
+        console.log(respostaDB);
+        return response.json({CreatedMedicalRecords: true});
       })
-
    }
 
    async index(request: Request, response: Response) {
       const prontuario = await knex("Prontuario").select("*");
-      response.json(prontuario);
+      return response.json(prontuario);
    }
 
    async indexByNroProntuario(request: Request, response: Response) {
