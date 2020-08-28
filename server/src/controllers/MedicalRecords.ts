@@ -11,45 +11,57 @@ class ProntuarioController {
    async create(request: Request, response: Response) {
       const {
          NroProntuario,
+         NroPaciente,
          DataInternacao,
          CodDoencaPrincipal,
          CodDoencaSecundario,
-         Sistema,
-         CodDoencaComorbidade,
+         SistemaAcometido,
+         CodComorbidade,
          Origem,
          Alocacao,
-         DataDesfecho,
          Coleta,
          ResultadoColeta,
-         CodAntibiotico2a,
-         CodAntibiotico2b,
-         SitioInfeccaoPrimario,
-         TratamentoConformeCCIH,
+         CodAtbPrimario,
+         CodAtbSecundario,
+         SitioInfecaoPrimario,
+         TratamentoCCIH,
          IndicacaoSepse,
          DisfuncaoRenal,
          OrigemInfeccao,
-      } = request.body;
+         DoseCorreta,
+         PosologiaCorreta
+      } = request.body
+      
+      if (!NroProntuario || !NroPaciente || !DataInternacao || !CodDoencaPrincipal || !SistemaAcometido || !Origem || !Alocacao || !CodAtbPrimario || !TratamentoCCIH || !IndicacaoSepse || !DisfuncaoRenal || !OrigemInfeccao) {
+         return response.json({
+           createdMedRec: false,
+           error: "Preencha todos os campos."
+         })
+      }
 
       await knex("Prontuario").insert({
          NroProntuario,
+         NroPaciente,
          DataInternacao,
          CodDoencaPrincipal,
          CodDoencaSecundario,
-         Sistema,
-         CodDoencaComorbidade,
+         SistemaAcometido,
+         CodComorbidade,
          Origem,
          Alocacao,
-         DataDesfecho,
          Coleta,
          ResultadoColeta,
-         CodAntibiotico2a,
-         CodAntibiotico2b,
-         SitioInfeccaoPrimario,
-         TratamentoConformeCCIH,
+         CodAtbPrimario,
+         CodAtbSecundario,
+         SitioInfecaoPrimario,
+         TratamentoCCIH,
          IndicacaoSepse,
          DisfuncaoRenal,
          OrigemInfeccao,
-      });
+         DoseCorreta,
+         PosologiaCorreta
+      })
+
    }
 
    async index(request: Request, response: Response) {

@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "ts-node-dev --transpileOnly --ignore-watch node_modules src/server.ts",
+    "dev": "ts-node-dev --transpile-only --ignore-watch node_modules src/server.ts",
     "knex:migrate": "knex --knexfile knexfile.ts migrate:latest"
   },
   "keywords": [],
@@ -16,16 +16,16 @@
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "jsonwebtoken": "^8.5.1",
-    "knex": "^0.21.1",
+    "knex": "^0.21.5",
     "mysql": "^2.18.1",
     "mysql2": "^2.1.0"
   },
   "devDependencies": {
     "@types/bcrypt": "^3.0.0",
-    "@types/cors": "^2.8.6",
-    "@types/express": "^4.17.6",
+    "@types/cors": "^2.8.7",
+    "@types/express": "^4.17.7",
     "ts-node": "^8.10.2",
-    "ts-node-dev": "^1.0.0-pre.44",
-    "typescript": "^3.9.5"
+    "ts-node-dev": "^1.0.0-pre.61",
+    "typescript": "^3.9.7"
   }
 }
