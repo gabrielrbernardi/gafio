@@ -71,7 +71,7 @@ class ProntuarioController {
          }else{
             return response.json({
                CreatedMedicalRecords: false,
-               error: "Numero de prontuario já existente.",
+               error: "Numero de prontuario já existente."
             });
          }
       }
@@ -221,36 +221,39 @@ class ProntuarioController {
             error: "Preencha todos os campos necessarios."
          })
       }else{
-         const MedicalRecordDB = await knex('Prontuario').where('NroProntuario', NroProntuario).update({
-            NroPaciente: NroPaciente,
-            DataInternacao: DataInternacao,
-            CodDoencaPrincipal: CodDoencaPrincipal,
-            CodDoencaSecundario: CodDoencaSecundario,
-            SistemaAcometido: SistemaAcometido,
-            CodComorbidade: CodComorbidade,
-            Origem: Origem,
-            Alocacao: Alocacao,
-            DataDesfecho: DataDesfecho,
-            Coleta: Coleta,
-            ResultadoColeta: ResultadoColeta,
-            CodAtbPrimario: CodAtbPrimario,
-            CodAtbSecundario: CodAtbSecundario,
-            SitioInfecaoPrimario: SitioInfecaoPrimario,
-            TratamentoCCIH: TratamentoCCIH,
-            IndicacaoSepse: IndicacaoSepse,
-            DisfuncaoRenal: DisfuncaoRenal,
-            OrigemInfeccao: OrigemInfeccao,
-            Desfecho: Desfecho,
-            DoseCorreta: DoseCorreta,
-            PosologiaCorreta : PosologiaCorreta
-         });
-         if (MedicalRecordDB) {
-            return response.json({ updatedMedicalRecord: true, MedicalRecordDB });
-         } else {
-            return response.json({
-               updatedMedicalRecord: false,
-               error: "Não foi possível alterar as informações.",
-            });
+         const MedicalRecordDB = await knex('Prontuario').where('NroProntuario', NroProntuario)
+         const MedicalRecord = MedicalRecordDB[0]
+         
+         if(MedicalRecord){
+            await knex('Prontuario').where('NroProntuario', NroProntuario).update({
+               NroPaciente: NroPaciente,
+               DataInternacao: DataInternacao,
+               CodDoencaPrincipal: CodDoencaPrincipal,
+               CodDoencaSecundario: CodDoencaSecundario,
+               SistemaAcometido: SistemaAcometido,
+               CodComorbidade: CodComorbidade,
+               Origem: Origem,
+               Alocacao: Alocacao,
+               DataDesfecho: DataDesfecho,
+               Coleta: Coleta,
+               ResultadoColeta: ResultadoColeta,
+               CodAtbPrimario: CodAtbPrimario,
+               CodAtbSecundario: CodAtbSecundario,
+               SitioInfecaoPrimario: SitioInfecaoPrimario,
+               TratamentoCCIH: TratamentoCCIH,
+               IndicacaoSepse: IndicacaoSepse,
+               DisfuncaoRenal: DisfuncaoRenal,
+               OrigemInfeccao: OrigemInfeccao,
+               Desfecho: Desfecho,
+               DoseCorreta: DoseCorreta,
+               PosologiaCorreta : PosologiaCorreta
+            }).then(() => {
+               return response.json({updatedMedicalRecord: true});
+            }).catch(err => {
+               return response.json({updatedMedicalRecord: false, err});
+            })
+         }else{
+            return response.json({updatedMedicalRecord: false, error: "Numero de prontuario nao existente."});
          }
       }
    }
