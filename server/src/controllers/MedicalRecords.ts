@@ -37,34 +37,44 @@ class ProntuarioController {
             CreatedMedicalRecords: false,
             error: "Preencha todos os campos."
          })
+      }else{
+         const MedicalRecordDB = await knex("Prontuario").where("NroProntuario", NroProntuario);
+         const MedicalRecord = MedicalRecordDB[0];
+         
+         if(!MedicalRecord){
+            await knex("Prontuario").insert({
+               NroProntuario,
+               NroPaciente,
+               DataInternacao,
+               CodDoencaPrincipal,
+               CodDoencaSecundario,
+               SistemaAcometido,
+               CodComorbidade,
+               Origem,
+               Alocacao,
+               Coleta,
+               ResultadoColeta,
+               CodAtbPrimario,
+               CodAtbSecundario,
+               SitioInfecaoPrimario,
+               TratamentoCCIH,
+               IndicacaoSepse,
+               DisfuncaoRenal,
+               OrigemInfeccao,
+               DoseCorreta,
+               PosologiaCorreta
+            }).then(() => {
+              return response.json({CreatedMedicalRecords: true});
+            }).catch(err => {
+               return response.json({CreatedMedicalRecords: false, err});
+            })
+         }else{
+            return response.json({
+               CreatedMedicalRecords: false,
+               error: "Numero de prontuario já existente.",
+            });
+         }
       }
-
-      await knex("Prontuario").insert({
-         NroProntuario,
-         NroPaciente,
-         DataInternacao,
-         CodDoencaPrincipal,
-         CodDoencaSecundario,
-         SistemaAcometido,
-         CodComorbidade,
-         Origem,
-         Alocacao,
-         Coleta,
-         ResultadoColeta,
-         CodAtbPrimario,
-         CodAtbSecundario,
-         SitioInfecaoPrimario,
-         TratamentoCCIH,
-         IndicacaoSepse,
-         DisfuncaoRenal,
-         OrigemInfeccao,
-         DoseCorreta,
-         PosologiaCorreta
-      }).then(() => {
-        return response.json({CreatedMedicalRecords: true});
-      }).catch(err => {
-         return response.json({CreatedMedicalRecords: false, err});
-      })
    }
 
    //FILTRO DA LISTA DE PRONTUARIOS
@@ -74,7 +84,7 @@ class ProntuarioController {
       var pageRequest = parseInt(page) / 10;
       const rows = 10;
       try{
-        const MedicalRecords = await knex("Prontuario").select("*") //filtrar o select
+        const MedicalRecords = await knex("Prontuario").select("*")
         .offset((pageRequest-1)*rows).limit(rows);
         
          const serializedMedicalRecords = MedicalRecords.map(MedicalRecord =>{
@@ -176,7 +186,6 @@ class ProntuarioController {
       }
 
    //UPDATE DE DADOS
-
    async update(request: Request, response: Response) {
       
       //NUMERO DE PRONTUARIO DEVE SER PASSADO POR PARAMETRO
@@ -207,6 +216,7 @@ class ProntuarioController {
       } = request.body
 
       const MedicalRecordDB = await knex('Prontuario').where('NroProntuario', NroProntuario).update({
+         NroPaciente: NroPaciente,
          DataInternacao: DataInternacao,
          CodDoencaPrincipal: CodDoencaPrincipal,
          CodDoencaSecundario: CodDoencaSecundario,
@@ -239,7 +249,6 @@ class ProntuarioController {
    }
 
    //DELETAR PRONTUARIO
-
    async delete(request: Request, response: Response) {
       const { NroProntuario } = request.body;
       const MedicalRecordDB = await knex("Prontuario").where(
