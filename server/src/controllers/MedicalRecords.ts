@@ -1,5 +1,5 @@
 /****************************************
-| Data: 28/08/2020                      |
+| Data: 29/08/2020                      |
 | Resumo: Controlador Prontuário (CRUD) |
 | Sistema: GAFio                        |
 ****************************************/
@@ -35,7 +35,7 @@ class ProntuarioController {
       if (!NroProntuario || !NroPaciente || !DataInternacao || !CodDoencaPrincipal || !SistemaAcometido || !Origem || !Alocacao || !CodAtbPrimario || !TratamentoCCIH || !IndicacaoSepse || !DisfuncaoRenal || !OrigemInfeccao) {
          return response.json({
             CreatedMedicalRecords: false,
-            error: "Preencha todos os campos."
+            error: "Preencha todos os campos necessarios."
          })
       }else{
          const MedicalRecordDB = await knex("Prontuario").where("NroProntuario", NroProntuario);
@@ -215,36 +215,43 @@ class ProntuarioController {
          PosologiaCorreta
       } = request.body
 
-      const MedicalRecordDB = await knex('Prontuario').where('NroProntuario', NroProntuario).update({
-         NroPaciente: NroPaciente,
-         DataInternacao: DataInternacao,
-         CodDoencaPrincipal: CodDoencaPrincipal,
-         CodDoencaSecundario: CodDoencaSecundario,
-         SistemaAcometido: SistemaAcometido,
-         CodComorbidade: CodComorbidade,
-         Origem: Origem,
-         Alocacao: Alocacao,
-         DataDesfecho: DataDesfecho,
-         Coleta: Coleta,
-         ResultadoColeta: ResultadoColeta,
-         CodAtbPrimario: CodAtbPrimario,
-         CodAtbSecundario: CodAtbSecundario,
-         SitioInfecaoPrimario: SitioInfecaoPrimario,
-         TratamentoCCIH: TratamentoCCIH,
-         IndicacaoSepse: IndicacaoSepse,
-         DisfuncaoRenal: DisfuncaoRenal,
-         OrigemInfeccao: OrigemInfeccao,
-         Desfecho: Desfecho,
-         DoseCorreta: DoseCorreta,
-         PosologiaCorreta : PosologiaCorreta
-      });
-      if (MedicalRecordDB) {
-         return response.json({ updatedMedicalRecord: true, MedicalRecordDB });
-      } else {
+      if (!NroProntuario || !NroPaciente || !DataInternacao || !CodDoencaPrincipal || !SistemaAcometido || !Origem || !Alocacao || !CodAtbPrimario || !TratamentoCCIH || !IndicacaoSepse || !DisfuncaoRenal || !OrigemInfeccao) {
          return response.json({
-            updatedMedicalRecord: false,
-            error: "Não foi possível alterar as informações.",
+            CreatedMedicalRecords: false,
+            error: "Preencha todos os campos necessarios."
+         })
+      }else{
+         const MedicalRecordDB = await knex('Prontuario').where('NroProntuario', NroProntuario).update({
+            NroPaciente: NroPaciente,
+            DataInternacao: DataInternacao,
+            CodDoencaPrincipal: CodDoencaPrincipal,
+            CodDoencaSecundario: CodDoencaSecundario,
+            SistemaAcometido: SistemaAcometido,
+            CodComorbidade: CodComorbidade,
+            Origem: Origem,
+            Alocacao: Alocacao,
+            DataDesfecho: DataDesfecho,
+            Coleta: Coleta,
+            ResultadoColeta: ResultadoColeta,
+            CodAtbPrimario: CodAtbPrimario,
+            CodAtbSecundario: CodAtbSecundario,
+            SitioInfecaoPrimario: SitioInfecaoPrimario,
+            TratamentoCCIH: TratamentoCCIH,
+            IndicacaoSepse: IndicacaoSepse,
+            DisfuncaoRenal: DisfuncaoRenal,
+            OrigemInfeccao: OrigemInfeccao,
+            Desfecho: Desfecho,
+            DoseCorreta: DoseCorreta,
+            PosologiaCorreta : PosologiaCorreta
          });
+         if (MedicalRecordDB) {
+            return response.json({ updatedMedicalRecord: true, MedicalRecordDB });
+         } else {
+            return response.json({
+               updatedMedicalRecord: false,
+               error: "Não foi possível alterar as informações.",
+            });
+         }
       }
    }
 
