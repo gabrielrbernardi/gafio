@@ -64,8 +64,12 @@ class ProntuarioController {
                OrigemInfeccao,
                DoseCorreta,
                PosologiaCorreta
-            }).then(() => {
-              return response.json({CreatedMedicalRecords: true});
+            }).then((SeqProntuarioDB) => {
+               knex("Historico").insert({"IdProntuario": SeqProntuarioDB, "IdPaciente": NroPaciente}).then(() => {
+                  return response.json({CreatedMedicalRecords: true});
+               }).catch((error) =>{
+                  return response.json({CreatedMedicalRecords: false, error});
+               })
             }).catch(error => {
                return response.json({CreatedMedicalRecords: false, error});
             })
@@ -91,7 +95,12 @@ class ProntuarioController {
             return {
                NroProntuario: MedicalRecord.NroProntuario,
                NroPaciente: MedicalRecord.NroPaciente,
+               //IDADE
+               //NOME (INICIAIS)
+               //GENERO
                DataInternacao: MedicalRecord.DataInternacao,
+               //BUSCAR DIAGNOSTICO NA TABELA DE DOENCAS
+               Alocacao: MedicalRecord.Alocacao,
                Desfecho: MedicalRecord.Desfecho
             }
          })
@@ -109,6 +118,7 @@ class ProntuarioController {
       return response.send(MedicalRecord);
    }
    
+   //FILTROS DE BUSCA
       //FILTRAR POR NroProntuario
       async indexByNroProntuario(request: Request, response: Response) {
          const { NroProntuario } = request.params;
@@ -133,7 +143,6 @@ class ProntuarioController {
          }
       }
    
-   //FILTROS DE BUSCA
       //FILTRAR POR NroPaciente
       async indexByNroPaciente(request: Request, response: Response) {
          const { NroPaciente } = request.params;
@@ -260,9 +269,6 @@ class ProntuarioController {
 
    //DELETAR PRONTUARIO
    async delete(request: Request, response: Response) {
-      
-      //APAGAR LIGACAO DO PRONTUARIO COM O HISTORICO
-
       const { id } = request.params;
       const MedicalRecordDB = await knex("Prontuario").where(
          "NroProntuario",
@@ -272,8 +278,28 @@ class ProntuarioController {
       const MedicalRecord = MedicalRecordDB[0];
 
       if (MedicalRecord) {
-         await knex("Prontuario").where("NroProntuario", id).delete();
-         return response.json({ deletedMedicalRecord: true });
+         await knex("Historico").where("IdProntuario", MedicalRecord.SeqProntuario).delete().then(() => {
+            const AvaliacaoDB = knex("Avaliacao").where("SeqProntuario", MedicalRecord.SeqProntuario)
+            if(AvaliacaoDB){
+               knex("Avaliacao").where("SeqProntuario", MedicalRecord.SeqProntuario).delete().then(() => {
+                  knex("Prontuario").where("NroProntuario", id).delete().then(() => {
+                     return response.json({ deletedMedicalRecord: true });
+                  }).catch((error) => {
+                     return response.json({ deletedMedicalRecord: false, error });
+                  })
+               }).catch((error) => {
+                  return response.json({ deletedMedicalRecord: false, error });
+               })
+            }else{
+               knex("Prontuario").where("NroProntuario", id).delete().then(() => {
+                  return response.json({ deletedMedicalRecord: true });
+               }).catch((error) => {
+                  return response.json({ deletedMedicalRecord: false, error });
+               })
+            }
+         }).catch((error) => {
+            return response.json({ deletedMedicalRecord: false, error });
+         })
       } else {
          return response.json({
             deletedMedicalRecord: false,
