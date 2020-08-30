@@ -1,8 +1,9 @@
 import knex from "knex";
 
 export async function up(knex: knex) {
-   return knex.schema.createTable("Historico", (table) => {
-      table.increments("IdHistorico").primary();
+   return knex.schema.createTable("Avaliacao", (table) => {
+      table.increments("IdAvaliacao").primary();
+      table.integer("SeqProntuario").references("SeqProntuario").inTable("Prontuario").unsigned();
       table.integer("IdPaciente").references("SeqPaciente").inTable("Paciente").unsigned();
       table.string("DataAvaliacao").notNullable();
       table.string("ResultadoCulturas");
@@ -25,5 +26,5 @@ export async function up(knex: knex) {
 }
 
 export async function down(knex: knex) {
-   return knex.schema.dropTable("Historico");
+   return knex.schema.dropTable("Avaliacao");
 }
