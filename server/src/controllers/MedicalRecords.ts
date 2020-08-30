@@ -36,7 +36,7 @@ class ProntuarioController {
       if (!NroProntuario || !NroPaciente || !DataInternacao || !CodDoencaPrincipal || !SistemaAcometido || !Origem || !Alocacao || !CodAtbPrimario || !TratamentoCCIH || !IndicacaoSepse || !DisfuncaoRenal || !OrigemInfeccao) {
          return response.json({
             CreatedMedicalRecords: false,
-            error: "Preencha todos os campos necessarios."
+            error: "Preencha todos os campos necessários."
          })
       }else{
          const MedicalRecordDB = await knex("Prontuario").where("NroProntuario", NroProntuario);
@@ -66,13 +66,13 @@ class ProntuarioController {
                PosologiaCorreta
             }).then(() => {
               return response.json({CreatedMedicalRecords: true});
-            }).catch(err => {
-               return response.json({CreatedMedicalRecords: false, err});
+            }).catch(error => {
+               return response.json({CreatedMedicalRecords: false, error});
             })
          }else{
             return response.json({
                CreatedMedicalRecords: false,
-               error: "Numero de prontuario já existente."
+               error: "O número de prontuário já existe."
             });
          }
       }
@@ -125,14 +125,15 @@ class ProntuarioController {
             }else{
                return response.json({
                   MedicalRecordFound: false,
-                  error: "Prontuario não encontrado. Verifique o numero do prontuario e tente novamente.",
+                  error: "Prontuário não encontrado. Verifique o número do prontuário e tente novamente.",
                });
             }
          }else{
-            return response.json({MedicalRecordFound: false, error: "Digite o numero do prontuario para procurar"})
+            return response.json({MedicalRecordFound: false, error: "Digite o número do prontuário para procurar."})
          }
       }
    
+   //FILTROS DE BUSCA
       //FILTRAR POR NroPaciente
       async indexByNroPaciente(request: Request, response: Response) {
          const { NroPaciente } = request.params;
@@ -149,11 +150,11 @@ class ProntuarioController {
             }else{
                return response.json({
                   MedicalRecordFound: false,
-                  error: "Prontuario não encontrado. Verifique o numero do paciente e tente novamente.",
+                  error: "Prontuário não encontrado. Verifique o número do paciente e tente novamente.",
                });
             }
          }else{
-            return response.json({MedicalRecordFound: false, error: "Digite o numero do paciente para procurar"})
+            return response.json({MedicalRecordFound: false, error: "Digite o número do paciente para procurar."})
          }
       }
 
@@ -173,11 +174,11 @@ class ProntuarioController {
             }else{
                return response.json({
                   MedicalRecordFound: false,
-                  error: "Prontuario não encontrado. Verifique a data de internacao e tente novamente.",
+                  error: "Prontuário não encontrado. Verifique a data de internação e tente novamente.",
                });
             }
          }else{
-            return response.json({MedicalRecordFound: false, error: "Digite a data de internacao para procurar"})
+            return response.json({MedicalRecordFound: false, error: "Digite a data de internação para procurar."})
          }
       }
 
@@ -214,7 +215,7 @@ class ProntuarioController {
          if (!NroPaciente || !DataInternacao || !CodDoencaPrincipal || !SistemaAcometido || !Origem || !Alocacao || !CodAtbPrimario || !TratamentoCCIH || !IndicacaoSepse || !DisfuncaoRenal || !OrigemInfeccao) {
             return response.json({
                updatedMedicalRecord: false,
-               error: "Preencha todos os campos necessarios."
+               error: "Preencha todos os campos necessários."
             })
          }else{
             const MedicalRecordDB = await knex('Prontuario').where('NroProntuario', id)
@@ -245,22 +246,22 @@ class ProntuarioController {
                   PosologiaCorreta : PosologiaCorreta
                }).then(() => {
                   return response.json({updatedMedicalRecord: true});
-               }).catch(err => {
-                  return response.json({updatedMedicalRecord: false, err});
+               }).catch(error => {
+                  return response.json({updatedMedicalRecord: false, error});
                })
             }else{
-               return response.json({updatedMedicalRecord: false, error: "Numero de prontuario nao existente."});
+               return response.json({updatedMedicalRecord: false, error: "O número de prontuário não existe."});
             }
          }
       }else{
-         return response.json({updatedMedicalRecord: false, error: "Eh necessario informar o numero de prontuario."});
+         return response.json({updatedMedicalRecord: false, error: "É necessário informar o número do prontuário."});
       }
    }
 
    //DELETAR PRONTUARIO
    async delete(request: Request, response: Response) {
       
-      //PAGAR LIGACAO DO PRONTUARIO COM O HISTORICO
+      //APAGAR LIGACAO DO PRONTUARIO COM O HISTORICO
 
       const { id } = request.params;
       const MedicalRecordDB = await knex("Prontuario").where(
@@ -276,7 +277,7 @@ class ProntuarioController {
       } else {
          return response.json({
             deletedMedicalRecord: false,
-            error: "Prontuario nao encontrado"
+            error: "Prontuário não encontrado."
          });
       }
    }
