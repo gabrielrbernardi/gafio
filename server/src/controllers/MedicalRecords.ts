@@ -83,44 +83,46 @@ class ProntuarioController {
    }
 
    //PAGINACAO DA LISTA DE PRONTUARIOS
-   async indexPagination(request: Request, response: Response){
-      const {page} = request.params;
-      var pageRequest = parseInt(page) / 10;
-      const rows = 10;
-      try{
-        const MedicalRecords = await knex("Prontuario").select("*")
-        .offset((pageRequest-1)*rows).limit(rows);
-        
-         var serializedMedicalRecords:any = []
-         MedicalRecords.map(async MedicalRecord => {
-            const patientDB = await knex("Paciente").where("NroPaciente", MedicalRecord.NroPaciente)
-            const patient = patientDB[0]
-
-            const diseaseDB = await knex("Doenca").where("CodDoenca", MedicalRecord.CodDoencaPrincipal)
-            const disease = diseaseDB[0]
-
-            const serializedObject =  {
-               NroProntuario: MedicalRecord.NroProntuario,
-               NroPaciente: MedicalRecord.NroPaciente,
-               Nome: patient.NomePaciente,
-               Genero: patient.Genero,
-               DataNascimento: patient.DataNascimento,
-               DataInternacao: MedicalRecord.DataInternacao,
-               DiagnosticoPrincipal: disease.Nome,
-               Alocacao: MedicalRecord.Alocacao,
-               Desfecho: MedicalRecord.Desfecho
-            }
-            console.log(disease)
-            serializedMedicalRecords.push(serializedObject)
-         })
-
-         console.log(serializedMedicalRecords)
-        const MedicalRecordsLength = (await knex("Prontuario").select("*")).length;
-        return response.json({showMedicalRecords: true, serializedMedicalRecords, length: MedicalRecordsLength});
-      }catch(err){
-        return response.json({showMedicalRecords: false, error: err});
-      }
-   }
+    async indexPagination(request: Request, response: Response){
+        const {page} = request.params;
+        var pageRequest = parseInt(page) / 10;
+        const rows = 10;
+        try{
+            const MedicalRecords = await knex("Prontuario").select("*")
+            .offset((pageRequest-1)*rows).limit(rows);
+            
+            var serializedMedicalRecords:any[] = []
+            MedicalRecords.map(async MedicalRecord => {
+                await knex("Paciente").where("NroPaciente", MedicalRecord.NroPaciente).then(async patientDB => {
+                    const diseaseDB = await knex("Doenca").where("CodDoenca", MedicalRecord.CodDoencaPrincipal).then(async diseaseDB => {
+                        const patient = patientDB[0]
+                        const disease = diseaseDB[0]
+            
+                        const serializedObject = {
+                        NroProntuario: MedicalRecord.NroProntuario,
+                        NroPaciente: MedicalRecord.NroPaciente,
+                        Nome: patient.NomePaciente,
+                        Genero: patient.Genero,
+                        DataNascimento: patient.DataNascimento,
+                        DataInternacao: MedicalRecord.DataInternacao,
+                        DiagnosticoPrincipal: disease.Nome,
+                        Alocacao: MedicalRecord.Alocacao,
+                        Desfecho: MedicalRecord.Desfecho
+                        }
+                        serializedMedicalRecords.push(serializedObject);
+                    }).catch(error => {
+                        return response.json({showMedicalRecords: false, error, errorMessage: "Não foi possível buscar os dados da doença."});
+                    })
+                    const MedicalRecordsLength = (await knex("Prontuario").select("*")).length;
+                    return response.json({showMedicalRecords: true, serializedMedicalRecords: serializedMedicalRecords, length: MedicalRecordsLength});
+                }).catch(error => {
+                    return response.json({showMedicalRecords: false, error, errorMessage: "Não foi possível buscar os dados do paciente."});
+                })
+            })
+        }catch(err){
+            return response.json({showMedicalRecords: false, error: err});
+        }
+    }
 
    //LISTA DOS PRONTUARIOS
    async index(request: Request, response: Response) {
