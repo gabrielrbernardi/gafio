@@ -122,92 +122,209 @@ class UserController {
 
   //Listagem de usuario especifico com busca por id
   async showId(request: Request, response: Response) {
-    const { id } = request.params;
-    if(id){
-      const userDB = await knex("Usuario").where('CodUsuario', 'like', `%${id}%`);
-      const user = userDB[0];
-      if (user) {
-        return response.json({
-          userFound: true,
-          users: userDB
-        });
-      } else {
-        return response.json({
-          userFound: false,
-          error: "Usuário não encontrado. Verifique o id e tente novamente.",
-        });
-      }
-    }else{
-      return response.json({userFound: false, error: "Digite um id para procurar."})
+    //Listagem de usuario especifico
+    const {id} = request.query;
+    var page = String(request.query.page);
+    if(!page){
+        page="10";
+    }
+    console.log(id)
+    console.log(typeof page)
+    var pageRequest = parseInt(page) / 10;
+    const rows = 10;
+    try{
+        if(id){
+          const userDB = await knex("Usuario").where('CodUsuario', 'like', `%${id}%`).offset((pageRequest-1)*rows).limit(rows);
+          const user = userDB[0];
+          if (user) {
+            const usersLength = (await knex("Usuario").select("*")).length;
+            var serializedUsers = userDB.map(userDB => {
+                return {
+                    CodUsuario: userDB.CodUsuario,
+                    Nome: userDB.Nome,
+                    Email: userDB.Email,
+                    Matricula: userDB.Matricula,
+                    TipoUsuario: userDB.TipoUsuario,
+                    isVerirified: userDB.isVerirified,
+                }
+            })
+            return response.json({
+              userFound: true,
+              users: serializedUsers,
+              length: usersLength,
+              length1: userDB.length
+            });
+          } else {
+            return response.json({
+              userFound: false,
+              error: "Usuário não encontrado. Verifique o id e tente novamente.",
+            });
+          }
+        }else{
+          return response.json({userFound: false, error: "Digite um id para procurar."})
+        }
+    }catch(err){
+      return response.json({showUsers: false, error: err});
     }
   }
 
   //Listagem de usuario especifico com busca por email
   async showEmail(request: Request, response: Response) {
     //Listagem de usuario especifico
-    const { email } = request.params;
-    if(email){
-      const userDB = await knex("Usuario").where('Email', 'like', `%${email}%`);
-      const user = userDB[0];
-      if (user) {
-        return response.json({
-          userFound: true,
-          users: userDB
-        });
-      } else {
-        return response.json({
-          userFound: false,
-          error: "Usuário não encontrado. Verifique o email e tente novamente.",
-        });
-      }
-    }else{
-      return response.json({userFound: false, error: "Digite um email para procurar."})
+    const {email} = request.query;
+    var page = String(request.query.page);
+    if(!page){
+        page="10";
+    }
+    var pageRequest = parseInt(page) / 10;
+    const rows = 10;
+    try{
+        if(email){
+          const userDB = await knex("Usuario").where('Email', 'like', `%${email}%`).offset((pageRequest-1)*rows).limit(rows);
+          const user = userDB[0];
+          if (user) {
+            const usersLength = (await knex("Usuario").select("*")).length;
+            var serializedUsers = userDB.map(userDB => {
+                return {
+                    CodUsuario: userDB.CodUsuario,
+                    Nome: userDB.Nome,
+                    Email: userDB.Email,
+                    Matricula: userDB.Matricula,
+                    TipoUsuario: userDB.TipoUsuario,
+                    isVerirified: userDB.isVerirified,
+                }
+            })
+            return response.json({
+              userFound: true,
+              users: serializedUsers,
+              length: usersLength,
+              length1: userDB.length
+            });
+          } else {
+            return response.json({
+              userFound: false,
+              error: "Usuário não encontrado. Verifique o email e tente novamente.",
+            });
+          }
+        }else{
+          return response.json({userFound: false, error: "Digite um email para procurar."})
+        }
+    }catch(err){
+      return response.json({showUsers: false, error: err});
     }
   }
 
   //Listagem de usuario especifico com busca por nome
   async showName(request: Request, response: Response) {
     //Listagem de usuario especifico
-    const { name } = request.params;
-    if(name){
-      const userDB = await knex("Usuario").where('Nome', 'like', `%${name}%`);
-      const user = userDB[0];
-      if (user) {
-        return response.json({
-          userFound: true,
-          users: userDB
-        });
-      } else {
-        return response.json({
-          userFound: false,
-          error: "Usuário não encontrado. Verifique o nome e tente novamente.",
-        });
-      }
-    }else{
-      return response.json({userFound: false, error: "Digite um nome para procurar."})
+    const {nome} = request.query;
+    var page = String(request.query.page);
+    if(!page){
+        page="10";
+    }
+    console.log(nome)
+    console.log(typeof page)
+    var pageRequest = parseInt(page) / 10;
+    const rows = 10;
+    try{
+        if(nome){
+          const userDB = await knex("Usuario").where('Nome', 'like', `%${nome}%`).offset((pageRequest-1)*rows).limit(rows);
+          const user = userDB[0];
+          if (user) {
+            const usersLength = (await knex("Usuario").select("*")).length;
+            var serializedUsers = userDB.map(userDB => {
+                return {
+                    CodUsuario: userDB.CodUsuario,
+                    Nome: userDB.Nome,
+                    Email: userDB.Email,
+                    Matricula: userDB.Matricula,
+                    TipoUsuario: userDB.TipoUsuario,
+                    isVerirified: userDB.isVerirified,
+                }
+            })
+            return response.json({
+              userFound: true,
+              users: serializedUsers,
+              length: usersLength,
+              length1: userDB.length
+            });
+          } else {
+            return response.json({
+              userFound: false,
+              error: "Usuário não encontrado. Verifique o nome e tente novamente.",
+            });
+          }
+        }else{
+          return response.json({userFound: false, error: "Digite um nome para procurar."})
+        }
+    }catch(err){
+      return response.json({showUsers: false, error: err});
     }
   }
   //Listagem de usuario especifico com busca por matricula
   async showRegistrations(request: Request, response: Response) {
     //Listagem de usuario especifico
-    const { registrations } = request.params;
-    if(registrations){
-      const userDB = await knex("Usuario").where('Matricula', 'like', `%${registrations}%`);
-      const user = userDB[0];
-      if (user) {
-        return response.json({
-          userFound: true,
-          users: userDB
-        });
-      } else {
-        return response.json({
-          userFound: false,
-          error: "Usuário não encontrado. Verifique a matrícula e tente novamente.",
-        });
-      }
-    }else{
-      return response.json({userFound: false, error: "Digite uma matrícula para procurar."})
+    const {matricula} = request.query;
+    var page = String(request.query.page);
+    if(!page){
+        page="10";
     }
+    console.log(matricula)
+    console.log(typeof page)
+    var pageRequest = parseInt(page) / 10;
+    const rows = 10;
+    try{
+        if(matricula){
+          const userDB = await knex("Usuario").where('Matricula', 'like', `%${matricula}%`).offset((pageRequest-1)*rows).limit(rows);
+          const user = userDB[0];
+          if (user) {
+            const usersLength = (await knex("Usuario").select("*")).length;
+            var serializedUsers = userDB.map(userDB => {
+                return {
+                    CodUsuario: userDB.CodUsuario,
+                    Nome: userDB.Nome,
+                    Email: userDB.Email,
+                    Matricula: userDB.Matricula,
+                    TipoUsuario: userDB.TipoUsuario,
+                    isVerirified: userDB.isVerirified,
+                }
+            })
+            return response.json({
+              userFound: true,
+              users: serializedUsers,
+              length: usersLength,
+              length1: userDB.length
+            });
+          } else {
+            return response.json({
+              userFound: false,
+              error: "Usuário não encontrado. Verifique o nome e tente novamente.",
+            });
+          }
+        }else{
+          return response.json({userFound: false, error: "Digite um nome para procurar."})
+        }
+    }catch(err){
+      return response.json({showUsers: false, error: err});
+    }
+    // const { registrations } = request.params;
+    // if(registrations){
+    //   const userDB = await knex("Usuario").where('Matricula', 'like', `%${registrations}%`);
+    //   const user = userDB[0];
+    //   if (user) {
+    //     return response.json({
+    //       userFound: true,
+    //       users: userDB
+    //     });
+    //   } else {
+    //     return response.json({
+    //       userFound: false,
+    //       error: "Usuário não encontrado. Verifique a matrícula e tente novamente.",
+    //     });
+    //   }
+    // }else{
+    //   return response.json({userFound: false, error: "Digite uma matrícula para procurar."})
+    // }
   }
   //Listagem de usuario especifico com busca por tipo de usuario
   async showUserType(request: Request, response: Response) {
