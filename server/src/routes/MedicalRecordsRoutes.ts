@@ -14,6 +14,6 @@ routes.get("/medicalRecords/dataInternacao/:DataInternacao?", records.indexByDat
 routes.get("/medicalRecords/paginate/:page?", records.indexPagination)
 
 routes.put("/medicalRecords/:id?", records.update)
-routes.delete("/medicalRecords/:id?", records.delete);
+routes.post("/medicalRecords/:id?", records.delete);
 
 export default routes;
