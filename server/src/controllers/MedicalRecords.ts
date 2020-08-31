@@ -82,7 +82,7 @@ class ProntuarioController {
       }
    }
 
-   //FILTRO DA LISTA DE PRONTUARIOS
+   //PAGINACAO DA LISTA DE PRONTUARIOS
    async indexPagination(request: Request, response: Response){
       const {page} = request.params;
       var pageRequest = parseInt(page) / 10;
@@ -91,20 +91,30 @@ class ProntuarioController {
         const MedicalRecords = await knex("Prontuario").select("*")
         .offset((pageRequest-1)*rows).limit(rows);
         
-         const serializedMedicalRecords = MedicalRecords.map(MedicalRecord =>{
-            return {
+         var serializedMedicalRecords:any = []
+         MedicalRecords.map(async MedicalRecord => {
+            const patientDB = await knex("Paciente").where("NroPaciente", MedicalRecord.NroPaciente)
+            const patient = patientDB[0]
+
+            const diseaseDB = await knex("Doenca").where("CodDoenca", MedicalRecord.CodDoencaPrincipal)
+            const disease = diseaseDB[0]
+
+            const serializedObject =  {
                NroProntuario: MedicalRecord.NroProntuario,
                NroPaciente: MedicalRecord.NroPaciente,
-               //IDADE
-               //NOME (INICIAIS)
-               //GENERO
+               Nome: patient.NomePaciente,
+               Genero: patient.Genero,
+               DataNascimento: patient.DataNascimento,
                DataInternacao: MedicalRecord.DataInternacao,
-               //BUSCAR DIAGNOSTICO NA TABELA DE DOENCAS
+               DiagnosticoPrincipal: disease.Nome,
                Alocacao: MedicalRecord.Alocacao,
                Desfecho: MedicalRecord.Desfecho
             }
+            console.log(disease)
+            serializedMedicalRecords.push(serializedObject)
          })
 
+         console.log(serializedMedicalRecords)
         const MedicalRecordsLength = (await knex("Prontuario").select("*")).length;
         return response.json({showMedicalRecords: true, serializedMedicalRecords, length: MedicalRecordsLength});
       }catch(err){
@@ -112,7 +122,7 @@ class ProntuarioController {
       }
    }
 
-   //LISTAR PRONTUARIOS
+   //LISTA DOS PRONTUARIOS
    async index(request: Request, response: Response) {
       const MedicalRecord = await knex("Prontuario").select("*");
       return response.send(MedicalRecord);
