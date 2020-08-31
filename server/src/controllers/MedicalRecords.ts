@@ -99,15 +99,15 @@ class ProntuarioController {
                         const disease = diseaseDB[0]
             
                         const serializedObject = {
-                        NroProntuario: MedicalRecord.NroProntuario,
-                        NroPaciente: MedicalRecord.NroPaciente,
-                        Nome: patient.NomePaciente,
-                        Genero: patient.Genero,
-                        DataNascimento: patient.DataNascimento,
-                        DataInternacao: MedicalRecord.DataInternacao,
-                        DiagnosticoPrincipal: disease.Nome,
-                        Alocacao: MedicalRecord.Alocacao,
-                        Desfecho: MedicalRecord.Desfecho
+                            NroProntuario: MedicalRecord.NroProntuario,
+                            NroPaciente: MedicalRecord.NroPaciente,
+                            Nome: patient.NomePaciente,
+                            Genero: patient.Genero,
+                            DataNascimento: patient.DataNascimento,
+                            DataInternacao: MedicalRecord.DataInternacao,
+                            DiagnosticoPrincipal: disease.Nome,
+                            Alocacao: MedicalRecord.Alocacao,
+                            Desfecho: MedicalRecord.Desfecho
                         }
                         serializedMedicalRecords.push(serializedObject);
                     }).catch(error => {
