@@ -47,8 +47,8 @@ class PatientController {
 
   // Método para listar pacientes pela data de nascimento:
   async indexByBirthday(request: Request, response: Response) {
-    const { birthday } = request.params;
-    const filteredPatients = await knex("Paciente").where("DataNascimento", birthday);
+    const { DataNascimento } = request.body;
+    const filteredPatients = await knex("Paciente").where("DataNascimento", DataNascimento);
 
     return response.json(filteredPatients);
   }
