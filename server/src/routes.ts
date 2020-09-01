@@ -5,6 +5,7 @@ import NotificationRoutes from "./routes/notificationRoutes";
 import MedicineRoutes from "./routes/MedicinesRoutes";
 import histRoutes from "./routes/histRoutes";
 import MedicalRecordsRoutes from "./routes/MedicalRecordsRoutes";
+import PatientRoutes from "./routes/patientRoutes";
 
 const app = express();
 
@@ -14,5 +15,6 @@ app.use(NotificationRoutes);
 app.use(MedicineRoutes);
 app.use(histRoutes);
 app.use(MedicalRecordsRoutes);
+app.use(PatientRoutes);
 
 export default app;
