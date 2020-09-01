@@ -29,6 +29,30 @@ class PatientController {
     return response.json(patients);
   }
 
+  // Método para listar pacientes pelo nome:
+  async indexByName(request: Request, response: Response) {
+    const { name } = request.params;
+    const filteredPatients = await knex("Paciente").where("NomePaciente", name);
+
+    return response.json(filteredPatients);
+  }
+
+  // Método para listar pacientes pelo id:
+  async indexById(request: Request, response: Response) {
+    const { id } = request.params;
+    const filteredPatients = await knex("Paciente").where("IdPaciente", id);
+
+    return response.json(filteredPatients);
+  }
+
+  // Método para listar pacientes pela data de nascimento:
+  async indexByBirthday(request: Request, response: Response) {
+    const { birthday } = request.params;
+    const filteredPatients = await knex("Paciente").where("DataNascimento", birthday);
+
+    return response.json(filteredPatients);
+  }
+
   // Método para deletar um paciente:
   async delete(request: Request, response: Response) {
     const { IdPaciente } = request.body;
