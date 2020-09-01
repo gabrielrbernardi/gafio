@@ -82,37 +82,43 @@ class ProntuarioController {
       }
    }
 
-   //FILTRO DA LISTA DE PRONTUARIOS
+   //PAGINACAO DA LISTA DE PRONTUARIOS
    async indexPagination(request: Request, response: Response){
       const {page} = request.params;
       var pageRequest = parseInt(page) / 10;
       const rows = 10;
       try{
-        const MedicalRecords = await knex("Prontuario").select("*")
-        .offset((pageRequest-1)*rows).limit(rows);
-        
-         const serializedMedicalRecords = MedicalRecords.map(MedicalRecord =>{
-            return {
-               NroProntuario: MedicalRecord.NroProntuario,
-               NroPaciente: MedicalRecord.NroPaciente,
-               //IDADE
-               //NOME (INICIAIS)
-               //GENERO
-               DataInternacao: MedicalRecord.DataInternacao,
-               //BUSCAR DIAGNOSTICO NA TABELA DE DOENCAS
-               Alocacao: MedicalRecord.Alocacao,
-               Desfecho: MedicalRecord.Desfecho
-            }
-         })
-
-        const MedicalRecordsLength = (await knex("Prontuario").select("*")).length;
-        return response.json({showMedicalRecords: true, serializedMedicalRecords, length: MedicalRecordsLength});
+          const MedicalRecords = await knex("Prontuario").select("*").offset((pageRequest-1)*rows).limit(rows);
+      
+          var serializedMedicalRecords = MedicalRecords.map(MedicalRecord => {
+              return {
+                  NroProntuario: MedicalRecord.NroProntuario,
+                  NroPaciente: MedicalRecord.NroPaciente,
+                  DataNascimento: null,
+                  NomePaciente: null,
+                  Genero: null,
+                  DataInternacao: MedicalRecord.DataInternacao,
+                  DiagnosticoPrincipal: MedicalRecord.CodDoencaPrincipal,
+                  Alocacao: MedicalRecord.Alocacao,
+                  Desfecho: MedicalRecord.Desfecho
+              }
+          })
+          for(let i = 0; i < serializedMedicalRecords.length; i++){
+              const patientDB = await knex("Paciente").where("NroPaciente", serializedMedicalRecords[i]["NroPaciente"]);
+              serializedMedicalRecords[i]['NomePaciente'] = patientDB[0]['NomePaciente'];
+              serializedMedicalRecords[i]['Genero'] = patientDB[0]['Genero'];
+              serializedMedicalRecords[i]['DataNascimento'] = patientDB[0]['DataNascimento'];
+              const diseaseDB = await knex("Doenca").where("CodDoenca", serializedMedicalRecords[i]["DiagnosticoPrincipal"]);
+              serializedMedicalRecords[i]['DiagnosticoPrincipal'] = diseaseDB[0]['Nome'];
+          }
+          const MedicalRecordsLength = (await knex("Prontuario").select("*")).length;
+          return response.json({showMedicalRecords: true, serializedMedicalRecords, length: MedicalRecordsLength});
       }catch(err){
-        return response.json({showMedicalRecords: false, error: err});
+          return response.json({showMedicalRecords: false, error: err});
       }
-   }
+  }
 
-   //LISTAR PRONTUARIOS
+   //LISTA DOS PRONTUARIOS
    async index(request: Request, response: Response) {
       const MedicalRecord = await knex("Prontuario").select("*");
       return response.send(MedicalRecord);
@@ -121,73 +127,109 @@ class ProntuarioController {
    //FILTROS DE BUSCA
       //FILTRAR POR NroProntuario
       async indexByNroProntuario(request: Request, response: Response) {
-         const { NroProntuario } = request.params;
-
-         if(NroProntuario){
-            const MedicalRecordDB = await knex("Prontuario").where('NroProntuario', 'like', `%${NroProntuario}%`);
-            const MedicalRecord = MedicalRecordDB[0];
-
-            if (MedicalRecord) {
-               return response.json({
-                  MedicalRecordFound: true,
-                  MedicalRecords: MedicalRecordDB
-               });
-            }else{
-               return response.json({
-                  MedicalRecordFound: false,
-                  error: "Prontuário não encontrado. Verifique o número do prontuário e tente novamente.",
-               });
+         const {nroProntuario} = request.query;
+         var page = String(request.query.page);
+         var pageRequest = parseInt(page) / 10;
+         const rows = 10;
+         try{
+            const MedicalRecordDB = await knex("Prontuario").where('NroProntuario', 'like', `%${nroProntuario}%`).offset((pageRequest-1)*rows).limit(rows);
+            var serializedMedicalRecords = MedicalRecordDB.map(MedicalRecordDB => {
+               return {
+                  NroProntuario: MedicalRecordDB.NroProntuario,
+                  NroPaciente: MedicalRecordDB.NroPaciente,
+                  DataNascimento: null,
+                  NomePaciente: null,
+                  Genero: null,
+                  DataInternacao: MedicalRecordDB.DataInternacao,
+                  DiagnosticoPrincipal: MedicalRecordDB.CodDoencaPrincipal,
+                  Alocacao: MedicalRecordDB.Alocacao,
+                  Desfecho: MedicalRecordDB.Desfecho
+               }
+            })
+            for(let i = 0; i < serializedMedicalRecords.length; i++){
+               const patientDB = await knex("Paciente").where("NroPaciente", serializedMedicalRecords[i]["NroPaciente"]);
+               serializedMedicalRecords[i]['NomePaciente'] = patientDB[0]['NomePaciente'];
+               serializedMedicalRecords[i]['Genero'] = patientDB[0]['Genero'];
+               serializedMedicalRecords[i]['DataNascimento'] = patientDB[0]['DataNascimento'];
+               const diseaseDB = await knex("Doenca").where("CodDoenca", serializedMedicalRecords[i]["DiagnosticoPrincipal"]);
+               serializedMedicalRecords[i]['DiagnosticoPrincipal'] = diseaseDB[0]['Nome'];
             }
-         }else{
-            return response.json({MedicalRecordFound: false, error: "Digite o número do prontuário para procurar."})
+            const MedicalRecordsLength = (await knex("Prontuario").select("*")).length;
+            return response.json({showMedicalRecords: true, serializedMedicalRecords, length: MedicalRecordsLength, length1: serializedMedicalRecords.length});
+         }catch(err){
+            return response.json({showMedicalRecords: false, error: err});
          }
       }
    
       //FILTRAR POR NroPaciente
       async indexByNroPaciente(request: Request, response: Response) {
-         const { NroPaciente } = request.params;
-
-         if(NroPaciente){
-            const MedicalRecordDB = await knex("Prontuario").where('NroPaciente', 'like', `%${NroPaciente}%`);
-            const MedicalRecord = MedicalRecordDB[0];
-
-            if (MedicalRecord) {
-               return response.json({
-                  MedicalRecordFound: true,
-                  MedicalRecords: MedicalRecordDB
-               });
-            }else{
-               return response.json({
-                  MedicalRecordFound: false,
-                  error: "Prontuário não encontrado. Verifique o número do paciente e tente novamente.",
-               });
+         const {nroPaciente} = request.query;
+         var page = String(request.query.page);
+         var pageRequest = parseInt(page) / 10;
+         const rows = 10;
+         try{
+            const MedicalRecordDB = await knex("Prontuario").where('NroPaciente', 'like', `%${nroPaciente}%`).offset((pageRequest-1)*rows).limit(rows);
+            var serializedMedicalRecords = MedicalRecordDB.map(MedicalRecordDB => {
+               return {
+                  NroProntuario: MedicalRecordDB.NroProntuario,
+                  NroPaciente: MedicalRecordDB.NroPaciente,
+                  DataNascimento: null,
+                  NomePaciente: null,
+                  Genero: null,
+                  DataInternacao: MedicalRecordDB.DataInternacao,
+                  DiagnosticoPrincipal: MedicalRecordDB.CodDoencaPrincipal,
+                  Alocacao: MedicalRecordDB.Alocacao,
+                  Desfecho: MedicalRecordDB.Desfecho
+               }
+            })
+            for(let i = 0; i < serializedMedicalRecords.length; i++){
+               const patientDB = await knex("Paciente").where("NroPaciente", serializedMedicalRecords[i]["NroPaciente"]);
+               serializedMedicalRecords[i]['NomePaciente'] = patientDB[0]['NomePaciente'];
+               serializedMedicalRecords[i]['Genero'] = patientDB[0]['Genero'];
+               serializedMedicalRecords[i]['DataNascimento'] = patientDB[0]['DataNascimento'];
+               const diseaseDB = await knex("Doenca").where("CodDoenca", serializedMedicalRecords[i]["DiagnosticoPrincipal"]);
+               serializedMedicalRecords[i]['DiagnosticoPrincipal'] = diseaseDB[0]['Nome'];
             }
-         }else{
-            return response.json({MedicalRecordFound: false, error: "Digite o número do paciente para procurar."})
+            const MedicalRecordsLength = (await knex("Prontuario").select("*")).length;
+            return response.json({showMedicalRecords: true, serializedMedicalRecords, length: MedicalRecordsLength, length1: serializedMedicalRecords.length});
+         }catch(err){
+            return response.json({showMedicalRecords: false, error: err});
          }
       }
 
       //FILTRAR POR DataInternacao
       async indexByDataInternacao(request: Request, response: Response) {
-         const { DataInternacao } = request.params;
-
-         if(DataInternacao){
-            const MedicalRecordDB = await knex("Prontuario").where('DataInternacao', 'like', `%${DataInternacao}%`);
-            const MedicalRecord = MedicalRecordDB[0];
-
-            if (MedicalRecord) {
-               return response.json({
-                  MedicalRecordFound: true,
-                  MedicalRecords: MedicalRecordDB
-               });
-            }else{
-               return response.json({
-                  MedicalRecordFound: false,
-                  error: "Prontuário não encontrado. Verifique a data de internação e tente novamente.",
-               });
+         const {dataInternacao} = request.query;
+         var page = String(request.query.page);
+         var pageRequest = parseInt(page) / 10;
+         const rows = 10;
+         try{
+            const MedicalRecordDB = await knex("Prontuario").where('DataInternacao', 'like', `%${dataInternacao}%`).offset((pageRequest-1)*rows).limit(rows);
+            var serializedMedicalRecords = MedicalRecordDB.map(MedicalRecordDB => {
+               return {
+                  NroProntuario: MedicalRecordDB.NroProntuario,
+                  NroPaciente: MedicalRecordDB.NroPaciente,
+                  DataNascimento: null,
+                  NomePaciente: null,
+                  Genero: null,
+                  DataInternacao: MedicalRecordDB.DataInternacao,
+                  DiagnosticoPrincipal: MedicalRecordDB.CodDoencaPrincipal,
+                  Alocacao: MedicalRecordDB.Alocacao,
+                  Desfecho: MedicalRecordDB.Desfecho
+               }
+            })
+            for(let i = 0; i < serializedMedicalRecords.length; i++){
+               const patientDB = await knex("Paciente").where("NroPaciente", serializedMedicalRecords[i]["NroPaciente"]);
+               serializedMedicalRecords[i]['NomePaciente'] = patientDB[0]['NomePaciente'];
+               serializedMedicalRecords[i]['Genero'] = patientDB[0]['Genero'];
+               serializedMedicalRecords[i]['DataNascimento'] = patientDB[0]['DataNascimento'];
+               const diseaseDB = await knex("Doenca").where("CodDoenca", serializedMedicalRecords[i]["DiagnosticoPrincipal"]);
+               serializedMedicalRecords[i]['DiagnosticoPrincipal'] = diseaseDB[0]['Nome'];
             }
-         }else{
-            return response.json({MedicalRecordFound: false, error: "Digite a data de internação para procurar."})
+            const MedicalRecordsLength = (await knex("Prontuario").select("*")).length;
+            return response.json({showMedicalRecords: true, serializedMedicalRecords, length: MedicalRecordsLength, length1: serializedMedicalRecords.length});
+         }catch(err){
+            return response.json({showMedicalRecords: false, error: err});
          }
       }
 
