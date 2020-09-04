@@ -296,7 +296,13 @@ class ProntuarioController {
                   DoseCorreta: DoseCorreta,
                   PosologiaCorreta : PosologiaCorreta
                }).then(() => {
-                  return response.json({updatedMedicalRecord: true});
+                  knex('Historico').where('NroProntuario', id).update({
+                     NroPaciente: NroPaciente
+                  }).then(() => {
+                     return response.json({updatedMedicalRecord: true})
+                  }).catch(error => {
+                     return response.json({updatedMedicalRecord: false, error})
+                  })
                }).catch(error => {
                   return response.json({updatedMedicalRecord: false, error});
                })
