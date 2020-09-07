@@ -17,7 +17,7 @@ export async function up(knex: knex) {
     table.string("ResultadoColeta");
     table.string("CodAtbPrimario").references("EAN").inTable("Medicamentos").notNullable();
     table.string("CodAtbSecundario").references("EAN").inTable("Medicamentos");
-    table.string("SitioInfecaoPrimario");
+    table.string("SitioInfeccaoPrimario");
     table.enu("TratamentoCCIH", ["S", "N"]).notNullable();
     table.enu("IndicacaoSepse", ["S", "N"]).notNullable();
     table.enu("DisfuncaoRenal", ["S", "N"]).notNullable();

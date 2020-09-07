@@ -17,6 +17,7 @@ import Footer from './pages/Footer/Footer';
 import Dashboard from './pages/Dashboard/Dashboard';
 
 import MedicalRecords from './pages/MedicalRecords/MedicalRecords';
+import MedicalRecordsCreate from './pages/MedicalRecords/Create/Create';
 
 import Registrations from './pages/Registrations/Registrations';
 
@@ -40,7 +41,8 @@ const Routes = () => {
                 <Route path="/registrations" render={() => <div><Header/><Registrations/><Footer/></div>} exact />
                 <Route path="/registrations/medicines" render={() => <div><Header/><Medicines/><Footer/></div>} exact />
                 <Route path="/registrations/diseases" render={() => <div><Header/><Diseases/><Footer/></div>} exact />
-                
+
+                <Route path="/medicalRecords/create" render={() => <div><Header/><MedicalRecordsCreate/><Footer/></div>} exact />
                 <Route path="/medicalRecords" render={() => <div><Header/><MedicalRecords/><Footer/></div>} exact />
                 <Route path="/dashboard" render={() => <div><Header/><Dashboard/><Footer/></div>} exact />
 

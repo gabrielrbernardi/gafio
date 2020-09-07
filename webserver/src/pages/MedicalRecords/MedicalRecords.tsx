@@ -22,34 +22,8 @@ const MedicalRecords = () => {
     const [totalRecords, setTotalRecords] = useState(0);
     const [searchInput, setSearchInput] = useState('');
     const [open, setOpen] = useState(false);
-
-    const medicalRecordsService = new MedicalRecordsService();
-    const rows = 10;
     
-    useEffect(() => { 
-        setTimeout(() => {
-            medicalRecordsService.getUsers().then(data => {
-                setDatasource(data);
-                setTotalRecords(2);
-                for(let i = 0; i < data.length; i++){
-                    if(data[i]['TipoUsuario'] === 'A'){
-                        data[i]['TipoUsuario'] = 'Administradores';
-                    }else if(data[i]['TipoUsuario'] === 'M'){
-                        data[i]['TipoUsuario'] = 'Médico';
-                    }else{
-                        data[i]['TipoUsuario'] = 'Farmacêutico';
-                    }
-                    if(data[i]['isVerified'] === 1){
-                        data[i]['isVerified'] = 'Sim';
-                    }else{
-                        data[i]['isVerified'] = 'Não';
-                    }
-                }
-                setProntuario(data.slice(0, rows));
-                setLoading(false);
-            });
-        }, 500);
-    }, []);
+    const rows = 10;
     
     const onPage = (event: any) => {
         setLoading(true);
