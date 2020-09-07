@@ -9,17 +9,17 @@ class UsersService {
         return await api.post('users/delete', {Email: Email}).then(response => response.data);
     }
 
-    async searchUserGlobal(searchKey: String, searchCode: String){
+    async searchUserGlobal(searchKey: String, searchCode: String, first: number){
         if(searchCode === 'C'){
-            return await api.get(`users/id/${searchKey}`).then(response => response.data);
+            return await api.get(`users/id/?id=${searchKey}&page=${first}`).then(response => response.data);
         }else if(searchCode === 'N'){
-            return await api.get(`users/name/${searchKey}`).then(response => response.data);
+            return await api.get(`users/name/?nome=${searchKey}&page=${first}`).then(response => response.data);
         }else if(searchCode === 'E'){
-            return await api.get(`users/email/${searchKey}`).then(response => response.data);
+            return await api.get(`users/email/?email=${searchKey}&page=${first}`).then(response => response.data);
         }else if(searchCode === 'M'){
-            return await api.get(`users/registrations/${searchKey}`).then(response => response.data);
+            return await api.get(`users/matricula/?matricula=${searchKey}&page=${first}`).then(response => response.data);
         }else if(searchCode === 'TU'){
-            return await api.get(`users/userType/${searchKey}`).then(response => response.data);
+            return await api.get(`users/userType/?userType=${searchKey}&page=${first}`).then(response => response.data);
         }
     }
     

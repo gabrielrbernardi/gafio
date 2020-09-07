@@ -88,7 +88,7 @@ class UserController {
             // Notification.prototype.create(request, response, notificationDescription, notificationType);
           })
           .catch(function (err) {
-            return response.json({ createdUser: false, status: 502 });
+            return response.json({ createdUser: false, status: 502, err });
           });
       });
     } else {
@@ -128,8 +128,7 @@ class UserController {
     if(!page){
         page="10";
     }
-    console.log(id)
-    console.log(typeof page)
+
     var pageRequest = parseInt(page) / 10;
     const rows = 10;
     try{
@@ -145,7 +144,7 @@ class UserController {
                     Email: userDB.Email,
                     Matricula: userDB.Matricula,
                     TipoUsuario: userDB.TipoUsuario,
-                    isVerirified: userDB.isVerirified,
+                    isVerified: userDB.isVerified,
                 }
             })
             return response.json({
@@ -191,7 +190,7 @@ class UserController {
                     Email: userDB.Email,
                     Matricula: userDB.Matricula,
                     TipoUsuario: userDB.TipoUsuario,
-                    isVerirified: userDB.isVerirified,
+                    isVerified: userDB.isVerified,
                 }
             })
             return response.json({
@@ -222,8 +221,6 @@ class UserController {
     if(!page){
         page="10";
     }
-    console.log(nome)
-    console.log(typeof page)
     var pageRequest = parseInt(page) / 10;
     const rows = 10;
     try{
@@ -239,7 +236,7 @@ class UserController {
                     Email: userDB.Email,
                     Matricula: userDB.Matricula,
                     TipoUsuario: userDB.TipoUsuario,
-                    isVerirified: userDB.isVerirified,
+                    isVerified: userDB.isVerified,
                 }
             })
             return response.json({
@@ -269,8 +266,6 @@ class UserController {
     if(!page){
         page="10";
     }
-    console.log(matricula)
-    console.log(typeof page)
     var pageRequest = parseInt(page) / 10;
     const rows = 10;
     try{
@@ -286,7 +281,7 @@ class UserController {
                     Email: userDB.Email,
                     Matricula: userDB.Matricula,
                     TipoUsuario: userDB.TipoUsuario,
-                    isVerirified: userDB.isVerirified,
+                    isVerified: userDB.isVerified,
                 }
             })
             return response.json({
@@ -298,56 +293,60 @@ class UserController {
           } else {
             return response.json({
               userFound: false,
-              error: "Usuário não encontrado. Verifique o nome e tente novamente.",
+              error: "Usuário não encontrado. Verifique a matrícula e tente novamente.",
             });
           }
         }else{
-          return response.json({userFound: false, error: "Digite um nome para procurar."})
+          return response.json({userFound: false, error: "Digite uma matrícula para procurar."})
         }
     }catch(err){
       return response.json({showUsers: false, error: err});
     }
-    // const { registrations } = request.params;
-    // if(registrations){
-    //   const userDB = await knex("Usuario").where('Matricula', 'like', `%${registrations}%`);
-    //   const user = userDB[0];
-    //   if (user) {
-    //     return response.json({
-    //       userFound: true,
-    //       users: userDB
-    //     });
-    //   } else {
-    //     return response.json({
-    //       userFound: false,
-    //       error: "Usuário não encontrado. Verifique a matrícula e tente novamente.",
-    //     });
-    //   }
-    // }else{
-    //   return response.json({userFound: false, error: "Digite uma matrícula para procurar."})
-    // }
   }
   //Listagem de usuario especifico com busca por tipo de usuario
   async showUserType(request: Request, response: Response) {
     //Listagem de usuario especifico
-    const { userType } = request.params;
-    if(userType){
-      const userTypeChar = userType[0];
-      const userDB = await knex("Usuario").where('TipoUsuario', 'like', `%${userTypeChar}%`);
-      const user = userDB[0];
-      if (user) {
-        return response.json({
-          userFound: true,
-          users: userDB,
-          length: userDB.length
-        });
-      } else {
-        return response.json({
-          userFound: false,
-          error: "Usuário não encontrado. Verifique o tipo de usuário e tente novamente.",
-        });
-      }
-    }else{
-      return response.json({userFound: false, error: "Digite um tipo de usuário para procurar."})
+    const userType = String(request.query.userType);
+    var page = String(request.query.page);
+    const userTypeChar = userType[0];
+    if(!page){
+        page="10";
+    }
+    var pageRequest = parseInt(page) / 10;
+    const rows = 10;
+    try{
+        if(userTypeChar){
+            const userDB = await knex("Usuario").where('TipoUsuario', 'like', `%${userTypeChar}%`).offset((pageRequest-1)*rows).limit(rows);
+          const user = userDB[0];
+          if (user) {
+            const usersLength = (await knex("Usuario").select("*")).length;
+            var serializedUsers = userDB.map(userDB => {
+                return {
+                    CodUsuario: userDB.CodUsuario,
+                    Nome: userDB.Nome,
+                    Email: userDB.Email,
+                    Matricula: userDB.Matricula,
+                    TipoUsuario: userDB.TipoUsuario,
+                    isVerified: userDB.isVerified,
+                }
+            })
+            return response.json({
+              userFound: true,
+              users: serializedUsers,
+              length: usersLength,
+              length1: userDB.length
+            });
+          } else {
+            return response.json({
+              userFound: false,
+              error:"Usuário não encontrado. Verifique o tipo de usuário e tente novamente.",
+            });
+          }
+        }else{
+          return response.json({userFound: false, error: "Digite um tipo de usuário para procurar."})
+        }
+    }catch(err){
+      return response.json({showUsers: false, error: err});
     }
   }
 
@@ -502,6 +501,20 @@ class UserController {
           return response.json({verifyUser: false, error: "Não foi possível alterar a verificação do usuário."});
         }
       }
+    }
+  }
+  async checkAdminUser(request:Request, response:Response){
+    const {email} = request.params;
+    var userDB = await knex('Usuario').where('Email', email);
+    const user = userDB[0];
+    if(user){
+        if(user.TipoUsuario === 'A'){
+            return response.json({adminUser: true})
+        }else{
+            return response.json({adminUser: false, error: "Usuário não tem permissão"})
+        }
+    }else{
+        return response.json({adminUser: false, error: "Usuário não encontrado."})
     }
   }
 }

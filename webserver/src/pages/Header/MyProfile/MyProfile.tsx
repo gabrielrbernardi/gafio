@@ -41,7 +41,7 @@ const MyProfile = () => {
     useEffect(() => {
         if(cookies.userData){
             const email = cookies.userData.Email;
-            api.get(`users/email/${email}`).then(response => {
+            api.get(`users/email/?email=${email}&page=10`).then(response => {
                 var {CodUsuario, Nome, Matricula, Email, TipoUsuario} = response.data.users[0];
                 setInitData({...initData, id: CodUsuario, nome: Nome, email: Email, matricula: Matricula, tipoUsuario: TipoUsuario});
                 setFormData({...formData, nome: Nome, email: Email, matricula: Matricula, tipoUsuario: TipoUsuario});
@@ -69,7 +69,7 @@ const MyProfile = () => {
             if(response.data.updatedUser){
                 setResponseDataStatus(1);
                 setResponseData('Informações alteradas com sucesso.');
-                api.get(`users/email/${email}`).then(response1 => {
+                api.get(`users/email/?email=${email}&page=10`).then(response1 => {
                     var {CodUsuario, Nome, Matricula, Email, TipoUsuario} = response1.data.users[0];
                     setFormData({...formData, nome: Nome, email: Email, matricula: Matricula, tipoUsuario: TipoUsuario});
                     setInitData({...initData, id: CodUsuario, nome: Nome, email: Email, matricula: Matricula, tipoUsuario: TipoUsuario});

@@ -22,9 +22,10 @@ const MedicalRecords = () => {
     const [prontuario, setProntuario] = useState([]);
     const [datasource, setDatasource] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [first, setFirst] = useState(0);
+    const [getFirst, setFirst] = useState(0);
     const [totalRecords, setTotalRecords] = useState(0);
     const [searchInput, setSearchInput] = useState('');
+    const [getMode, setMode] = useState('N');
 
     const [alertStatus, setAlertStatus] = useState(0);
     const [alertContent, setAlertContent] = useState('');
@@ -89,9 +90,20 @@ const MedicalRecords = () => {
             const startIndex = event.first;
             const endIndex = event.first + rows;
             console.log(endIndex);
-            usersService.getUsersPaginate(endIndex).then(data => {
-                getUsersFunction(data);
-            });            
+            if(getMode === 'S'){
+                usersService.searchUserGlobal(searchInput, getOptionState.cod, endIndex).then(data => {
+                    if(!data.userFound){
+                        setLoading(false);
+                        setProntuario([]);
+                        return
+                    }
+                    getUsersFunction(data)
+                })       
+            }else if(getMode === 'N'){
+                usersService.getUsersPaginate(endIndex).then(data => {
+                    getUsersFunction(data);
+                });
+            }
             setFirst(startIndex);
             setProntuario(datasource.slice(startIndex, endIndex));
             setLoading(false);
@@ -220,6 +232,7 @@ const MedicalRecords = () => {
             }
             setProntuario(data.slice(0, rows));
             setLoading(false);
+            return
         }
     }
 
@@ -240,7 +253,9 @@ const MedicalRecords = () => {
             })
             return
         }
-        usersService.searchUserGlobal(searchInput, getOptionState.cod).then(data => {
+        // const primeiro = getFirstString();
+        setMode('S');
+        usersService.searchUserGlobal(searchInput, getOptionState.cod, getFirst+rows).then(data => {
             if(!data.userFound){
                 setLoading(false);
                 setProntuario([]);
@@ -277,12 +292,15 @@ const MedicalRecords = () => {
                 <div className="col-sm-4 p-">
                     <span className="p-float-label p-inputgroup">
                         <InputText className="ml-0 bg-light border border-secondary rounded col-sm-8" id="float-input" type="search" value={searchInput} onChange={(e) => {setSearchInput((e.target as HTMLInputElement).value)}} onKeyPress={(ev) => {if (ev.key === 'Enter') {handleSearch(); ev.preventDefault();}}} size={50}/>
-                        <label htmlFor="float-input">Buscar por email</label>
+                        {getOptionState === null
+                            ? <label htmlFor="float-input">Buscar</label>
+                            : <label htmlFor="float-input">Buscar por {getOptionState.name}</label>
+                        }
                         {searchInput
                         ? 
                         <>
                             <Dropdown className="ml-1" value={getOptionState} options={options} onChange={onOptionChange} placeholder="Selecione um filtro" optionLabel="name" style={{width: '12em'}}/>
-                            <Button tabIndex={2} variant="outline-danger" className="p-0 mr-1" style={{width: '17px'}} onClick={() => {setSearchInput(''); getUsersFunction()}}><AiOutlineClose size={15}/></Button>
+                            <Button tabIndex={2} variant="outline-danger" className="p-0 mr-1" style={{width: '17px'}} onClick={() => {setSearchInput(''); getUsersFunction(); setMode('N'); setOptionState(null)}}><AiOutlineClose size={15}/></Button>
                             <Button onClick={handleSearch}><FiSearch size={20}/></Button>
                         </>
                         : <></>
@@ -311,7 +329,7 @@ const MedicalRecords = () => {
         <>
             <div className="row m-5 px-5">              
                 <DataTable ref={dt} value={prontuario} paginator={true} rows={rows} header={header} totalRecords={totalRecords}
-                    emptyMessage="Nenhum resultado encontrado" responsive={true} resizableColumns={true} loading={loading} first={first}
+                    emptyMessage="Nenhum resultado encontrado" responsive={true} resizableColumns={true} loading={loading} first={getFirst}
                     onPage={onPage} lazy={true} selectionMode="single" selection={selectedUser} onSelectionChange={e => setSelectedUser(e.value)}
                     onRowSelect={onUserSelect}>
                     <Column field="CodUsuario" header="Código" style={{width:'12%', textAlign:'center'}}/>
@@ -343,7 +361,7 @@ const MedicalRecords = () => {
                         <p className="h6 mx-2">Deseja excluir o usuário "{selectedUser.Nome}" de código "{selectedUser.CodUsuario}" do sistema?</p>
                     }
                     {/* <Button className="mx-2" variant="outline-danger" onClick={() => {dialogCancel(3, 'Operação cancelada pelo')}}><p className="d-inline"><AiOutlineClose size={20}/>  Cancelar</p></Button> */}
-                    <Button className="mx-2" variant="success" onClick={() => deleteUser()}><p className="d-inline"><FiCheck size={20}/>  Confirmar</p></Button>
+                    <Button className="mx-2" variant="outline-success" onClick={() => deleteUser()}><p className="d-inline"><FiCheck size={20}/>  Confirmar</p></Button>
                 </Dialog>
             </div>
         </>

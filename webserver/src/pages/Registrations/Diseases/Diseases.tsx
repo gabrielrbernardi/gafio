@@ -53,11 +53,11 @@ const Diseases = () => {
   return (
     <>
       <div>
-        <DataTable value={disease} paginator={true} rows={rows} header={header} totalRecords={totalRecords} 
+        <DataTable value={disease} style={{ margin: 48 }} paginator={true} rows={rows} header={header} totalRecords={totalRecords} 
             emptyMessage="Nenhum resultado encontrado" responsive={true} resizableColumns={true} loading={loading} 
             first={first} onPage={onPage} lazy={true}>
-          <Column field="CodDoenca" header="Código" style={{width:'8%', textAlign:'center'}}/>
-          <Column field="Nome" header="Nome" style={{width:'20%', textAlign:'center'}}/>
+            <Column field="CodDoenca" header="Código" style={{width:'8%', textAlign:'center'}}/>
+            <Column field="Nome" header="Nome" style={{width:'20%', textAlign:'center'}}/>
         </DataTable>
       </div>
     </>
