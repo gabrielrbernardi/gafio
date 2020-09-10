@@ -13,8 +13,7 @@ export async function up(knex: knex) {
     table.string("Origem").notNullable();
     table.string("Alocacao").notNullable();
     table.string("DataDesfecho");
-    table.string("Coleta");
-    table.string("ResultadoColeta");
+    table.enu("ResultadoColeta", ["S", "N"]);
     table.string("CodAtbPrimario").references("EAN").inTable("Medicamentos").notNullable();
     table.string("CodAtbSecundario").references("EAN").inTable("Medicamentos");
     table.string("SitioInfeccaoPrimario");
