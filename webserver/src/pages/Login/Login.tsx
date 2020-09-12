@@ -7,7 +7,7 @@ import './login.css';
 
 import loginBanner from '../../assets/fiocruzBanner.jpg';
 import api from '../../services/api';
-import Toast from '../../components/Toast';
+import ToastComponent from '../../components/Toast';
 
 // const secretWord = 'PalavraSecreta';
 
@@ -21,9 +21,11 @@ const Login = () => {
     const history = useHistory();
 
     const [enableSubmitButton, setEnableSubmitButton] = useState(Number);
-    const [responseDataStatus, setResponseDataStatus] = useState(Number);
-    const [responseData, setResponseData] = useState();
     const [, setCookies] = useCookies([]);
+    const [getToast, setToast] = useState<boolean>();
+    const [getMessageType, setMessageType] = useState<string>('');
+    const [getMessageTitle, setMessageTitle] = useState<string>('');
+    const [getMessageContent, setMessageContent] = useState<string>('');
   
     const [formData, setFormData] = useState({
         email: '',
@@ -55,16 +57,25 @@ const Login = () => {
                     let CodUsuario = tokenLoginResponse.CodUsuario;
                     setCookiesLogin(Email, Nome, TipoUsuario, CodUsuario);
                 }else{
-                    setResponseDataStatus(2);
-                    setResponseData(response.data.error);
+                    showToast('error', 'Erro!', response.data.error);
                 }
             })
         }catch(err) {
-            alert(err)
             if(err.message === "Network Error"){
-                return <Toast status="1" message="teste"/>
+                showToast('error', 'Erro!', 'Nao foi possível conectar ao servidor.')
             }
         }
+    }
+
+    function showToast(messageType: string, messageTitle: string, messageContent: string){
+        setToast(false)
+        setMessageType(messageType);
+        setMessageTitle(messageTitle);
+        setMessageContent(messageContent);
+        setToast(true);
+        setTimeout(() => {
+            setToast(false);
+        }, 4500)
     }
     
     async function setCookiesLogin(email: string, nome: string, tipoUsuario: string, codUsuario: string){
@@ -90,18 +101,6 @@ const Login = () => {
                     <img className="rounded col-sm-7 " src={loginBanner} alt="Banner"/>
                 <div className="card col-sm-5 p-5 bg-light shadow-lg float-right text-center">
                     <form className="was-validated pb-2" onSubmit={handleSubmit}>
-                    {responseDataStatus === 0
-                    ? <div></div>
-                    : responseDataStatus === 1 
-                        ?
-                        <div className="alert alert-success alert-dismissible fade show text-center">
-                            <p>{responseData}</p>
-                        </div>
-                        :
-                        <div className="alert alert-danger alert-dismissible fade show text-center">
-                            <p>{responseData}</p>
-                        </div>
-                    }
                     <div className="form-group">
                         <label htmlFor="email">Email:</label>
                         <input type="email" className="form-control" id="email" name="email" onChange={handleInputChange} placeholder="Digite seu email" required autoFocus autoComplete="off"/>
@@ -119,11 +118,16 @@ const Login = () => {
                         ? <button type="submit" className="btn btn-info btn-primary disabled" disabled>Entrar</button>
                         : <button type="submit" className="btn btn-info btn-primary">Entrar</button>
                     }
-                    </form> 
-                    <Link to="/signUp">
-                        <p className="text-info">Ainda não possui cadastro?<br/><u>Crie já o seu</u></p> 
-                    </Link>
+                    </form>
+                    <div col-1>
+                        <Link to="/signUp">
+                            <p className="text-info">Ainda não possui cadastro?<br/><u>Crie já o seu</u></p> 
+                        </Link>
+                    </div>
                 </div>
+                {getToast &&
+                    <ToastComponent messageType={getMessageType} messageTitle={getMessageTitle} messageContent={getMessageContent}/>
+                }
             </div>
         </div>
     )

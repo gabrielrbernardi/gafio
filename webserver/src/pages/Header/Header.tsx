@@ -37,7 +37,7 @@ const Header = () => {
         const cookie = cookies.userData;
         const CodUsuario = cookie.CodUsuario;
         const TipoUsuario = cookie.TipoUsuario;
-        api.post(`notifications/id/${CodUsuario}`, {TipoUsuario: TipoUsuario}).then(response => {
+        api.post(`notifications/id/?id=${CodUsuario}&page=30`, {TipoUsuario: TipoUsuario}).then(response => {
             setNotificationsLength(response.data.length)
         })
     }, [cookies.userData])

@@ -8,6 +8,7 @@ import {Dropdown} from 'primereact/dropdown';
 import Button from 'react-bootstrap/Button';
 import {Alert} from 'react-bootstrap';
 import {Dropdown as DropdownReact} from 'react-bootstrap';
+import {Button as ButtonPR} from 'primereact/button';
 
 import {FiCheck, FiSearch} from 'react-icons/fi';
 import {AiOutlineClose} from 'react-icons/ai';
@@ -16,6 +17,7 @@ import {UsersService} from './UsersService';
 import { Dialog } from 'primereact/dialog';
 
 import './Users.css';
+import ToastComponent from '../../components/Toast';
 
 const MedicalRecords = () => {
     const [cookie] = useCookies();
@@ -27,9 +29,6 @@ const MedicalRecords = () => {
     const [searchInput, setSearchInput] = useState('');
     const [getMode, setMode] = useState('N');
 
-    const [alertStatus, setAlertStatus] = useState(0);
-    const [alertContent, setAlertContent] = useState('');
-
     const [selectedUser, setSelectedUser] = useState<any>(null);
     const [getUser, setUser] = useState<any>(null);
     const [displayDialog, setDisplayDialog] = useState(false);
@@ -37,6 +36,11 @@ const MedicalRecords = () => {
     const [getOptionState, setOptionState] = useState<any>(null)
     const [getUserChange, setUserChange] = useState<string>('F');
     const [getUserVerifyOption, setUserVerifyOption] = useState<string>('N');
+
+    const [getToast, setToast] = useState<boolean>();
+    const [getMessageType, setMessageType] = useState<string>('');
+    const [getMessageTitle, setMessageTitle] = useState<string>('');
+    const [getMessageContent, setMessageContent] = useState<string>('');
     
     const usersService = new UsersService();
     const rows = 10;
@@ -77,11 +81,9 @@ const MedicalRecords = () => {
 
     //DataTable
     useEffect(() => {
-        // setTimeout(() => {
-            usersService.getUsersPaginate(10).then(data => {
-                getUsersFunction(data)
-            });
-        // }, 300);
+        usersService.getUsersPaginate(10).then(data => {
+            getUsersFunction(data)
+        });
     }, []);
     
     const onPage = (event: any) => {
@@ -123,43 +125,36 @@ const MedicalRecords = () => {
         if(codUsuarioDelete !== cookie.userData.CodUsuario){
             usersService.deleteUser(codUsuarioDelete, Email).then(response => {
                 if(response.deletedUser){
-                    setAlertStatus(1);
-                    setAlertContent('Usuário exluído com sucesso.');
+                    showToast('success', 'Sucesso!', 'Usuário exluído com sucesso.');
                     setProntuario([]);
                     usersService.getUsersPaginate(10).then(data => {
                         getUsersFunction(data)
                     });
                 }else{
-                    setAlertStatus(2);
-                    setAlertContent(response.error);
+                    showToast('error', 'Erro!', response.error);
                 }
             })
         }else{
-            setAlertStatus(2); 
-            setAlertContent('Não é possível excluir o próprio usuário.');
+            showToast('error', 'Erro!', 'Não é possível excluir o próprio usuário.');
         }
         setUserChange('F');
     }
 
-    function dialogCancel(status: number, message: string){
+    function dialogCancel(status: string, message: string){
         setDisplayDialog(false);
-        setAlertStatus(status);
-        setAlertContent(message);
+        showToast(status, 'Aviso!', message);
         setUserChange('F');
     }
 
     function changeUserType(){
         const userId = selectedUser.CodUsuario;
-        setAlertStatus(0);
         setTimeout(() => {
             usersService.changeUserType(userId, getUserChange).then(response => {
                 if(response.updatedUser){
-                    setAlertStatus(1);
-                    setAlertContent(`A permissão do usuário ${selectedUser.Nome} foi alterada com sucesso.`);
+                    showToast('success', 'Sucesso!', `A permissão do usuário ${selectedUser.Nome} foi alterada com sucesso.`);
                     getUsersFunction();
                 }else{
-                    setAlertStatus(2);
-                    setAlertContent(response.error)
+                    showToast('error', 'Erro!', response.error);
                 }
                 setDisplayDialog(false);
             })
@@ -169,16 +164,13 @@ const MedicalRecords = () => {
 
     function changeVerifyUser(){
         const userId = selectedUser.CodUsuario;
-        setAlertStatus(0);
         setTimeout(() => {
             usersService.changeVerifyUser(userId, getUserVerifyOption).then(response => {
                 if(response.verifyUser){
-                    setAlertStatus(1);
-                    setAlertContent(`A verificação do usuário "${selectedUser.Nome}" foi alterada com sucesso.`);
+                    showToast('success', 'Sucesso!', `A verificação do usuário "${selectedUser.Nome}" foi alterada com sucesso.`);
                     getUsersFunction();
                 }else{
-                    setAlertStatus(2);
-                    setAlertContent(response.error)
+                    showToast('error', 'Erro!', response.error);
                 }
             })
             setUserVerifyOption('N');
@@ -237,10 +229,8 @@ const MedicalRecords = () => {
     }
 
     function handleSearch(){
-        setAlertStatus(0);
         if(!getOptionState){
-            setAlertContent('Selecione um filtro para buscar.');
-            setAlertStatus(2);
+            showToast('error', 'Erro!', 'Selecione um filtro para buscar.');
             return
         }
         setLoading(true);
@@ -248,8 +238,7 @@ const MedicalRecords = () => {
             usersService.getUsersPaginate(10).then(data => {
                 getUsersFunction(data);
                 setLoading(false);
-                setAlertStatus(2);
-                setAlertContent("Digite algum valor para pesquisar.");
+                showToast('error', 'Erro!', 'Digite algum valor para pesquisar.');
             })
             return
         }
@@ -264,47 +253,42 @@ const MedicalRecords = () => {
             getUsersFunction(data)
         })
     }
+
+    function showToast(messageType: string, messageTitle: string, messageContent: string){
+        setToast(false)
+        setMessageType(messageType);
+        setMessageTitle(messageTitle);
+        setMessageContent(messageContent);
+        setToast(true);
+        setTimeout(() => {
+            setToast(false);
+        }, 4500)
+    }
     
     const header = (
         <>
             <p style={{textAlign:'left'}} className="p-clearfix d-inline">Dados dos usuários</p>
-            {alertStatus === 0
-            ? <></>
-            : alertStatus === 1
-                ?
-                    <Alert variant="success" className="col-sm-8 mx-auto" onClose={() => setAlertStatus(0)} dismissible>
-                        <Alert.Heading className="h5">Sucesso!</Alert.Heading>
-                        <p className="h6">{alertContent}</p>
-                    </Alert>
-                : alertStatus === 2
-                    ?
-                        <Alert variant="danger" className="col-sm-8 mx-auto" onClose={() => setAlertStatus(0)} dismissible>
-                            <Alert.Heading className="h5">Erro!</Alert.Heading>
-                            <p className="h6">{alertContent}</p>
-                        </Alert>
-                    : 
-                        <Alert variant="warning" className="col-sm-8 mx-auto" onClose={() => setAlertStatus(0)} dismissible>
-                            <Alert.Heading className="h5">Alerta!</Alert.Heading>
-                            <p className="h6">{alertContent}</p>
-                        </Alert>
-            }
-            <div className="row m-1">
-                <div className="col-sm-4 p-">
+            <div className="row">
+                <div className="col-sm-4">
                     <span className="p-float-label p-inputgroup">
-                        <InputText className="ml-0 bg-light border border-secondary rounded col-sm-8" id="float-input" type="search" value={searchInput} onChange={(e) => {setSearchInput((e.target as HTMLInputElement).value)}} onKeyPress={(ev) => {if (ev.key === 'Enter') {handleSearch(); ev.preventDefault();}}} size={50}/>
-                        {getOptionState === null
+                        <div className="p-col-12">
+                            <div className="p-inputgroup mt-4 mb-1">
+                                <span className="p-float-label">
+                                    <InputText id="float-input" type="search" value={searchInput} onChange={(e) => {setSearchInput((e.target as HTMLInputElement).value)}} onKeyPress={(ev) => {if (ev.key === 'Enter') {handleSearch(); ev.preventDefault();}}} size={50} />
+                                    {getOptionState === null
+                                        ? <label htmlFor="float-input">Buscar</label>
+                                        : <label htmlFor="float-input">Buscar por {getOptionState.name}</label>
+                                    }
+                                </span>
+                                <Dropdown className="mx-1" value={getOptionState} options={options} onChange={onOptionChange} placeholder="Selecione um filtro" optionLabel="name" style={{width: '12em'}}/>
+                                <Button tabIndex={2} variant="outline-danger" className="p-0 mr-1" style={{width: '17px'}} onClick={() => {setSearchInput(''); getUsersFunction(); setMode('N'); setOptionState(null)}}><AiOutlineClose size={15}/></Button>
+                                <Button onClick={handleSearch}><FiSearch size={20}/></Button>
+                            </div>
+                        </div>
+                        {/* {getOptionState === null
                             ? <label htmlFor="float-input">Buscar</label>
                             : <label htmlFor="float-input">Buscar por {getOptionState.name}</label>
-                        }
-                        {searchInput
-                        ? 
-                        <>
-                            <Dropdown className="ml-1" value={getOptionState} options={options} onChange={onOptionChange} placeholder="Selecione um filtro" optionLabel="name" style={{width: '12em'}}/>
-                            <Button tabIndex={2} variant="outline-danger" className="p-0 mr-1" style={{width: '17px'}} onClick={() => {setSearchInput(''); getUsersFunction(); setMode('N'); setOptionState(null)}}><AiOutlineClose size={15}/></Button>
-                            <Button onClick={handleSearch}><FiSearch size={20}/></Button>
-                        </>
-                        : <></>
-                        }
+                        } */}
                     </span>
                 </div>
                 {/* <Button className="col-md-2 offset-md-6" type="button" variant="outline-success" onClick={onExport}><AiOutlineDownload size={20}/>  Exportar dados</Button> */}
@@ -322,14 +306,14 @@ const MedicalRecords = () => {
     
     const dialogFooter = 
         <div className="ui-dialog-buttonpane p-clearfix">
-            <Button className="mx-2" variant="outline-danger" onClick={() => {dialogCancel(3, 'Operação cancelada pelo usuário.')}}><p className="d-inline"><AiOutlineClose size={20}/>  Cancelar</p></Button>
+            <Button className="mx-2" variant="outline-danger" onClick={() => {dialogCancel('warn', 'Operação cancelada pelo usuário.')}}><p className="d-inline"><AiOutlineClose size={20}/>  Cancelar</p></Button>
         </div>;
     
     return (
         <>
             <div className="row m-5 px-5">              
                 <DataTable ref={dt} value={prontuario} paginator={true} rows={rows} header={header} totalRecords={totalRecords}
-                    emptyMessage="Nenhum resultado encontrado" responsive={true} resizableColumns={true} loading={loading} first={getFirst}
+                    emptyMessage="Nenhum resultado encontrado" className=" p-datatable-responsive-demo" resizableColumns={true} loading={loading} first={getFirst}
                     onPage={onPage} lazy={true} selectionMode="single" selection={selectedUser} onSelectionChange={e => setSelectedUser(e.value)}
                     onRowSelect={onUserSelect}>
                     <Column field="CodUsuario" header="Código" style={{width:'12%', textAlign:'center'}}/>
@@ -363,6 +347,9 @@ const MedicalRecords = () => {
                     {/* <Button className="mx-2" variant="outline-danger" onClick={() => {dialogCancel(3, 'Operação cancelada pelo')}}><p className="d-inline"><AiOutlineClose size={20}/>  Cancelar</p></Button> */}
                     <Button className="mx-2" variant="outline-success" onClick={() => deleteUser()}><p className="d-inline"><FiCheck size={20}/>  Confirmar</p></Button>
                 </Dialog>
+                {getToast &&
+                    <ToastComponent messageType={getMessageType} messageTitle={getMessageTitle} messageContent={getMessageContent}/>
+                }
             </div>
         </>
     )

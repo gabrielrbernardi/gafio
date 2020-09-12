@@ -19,7 +19,7 @@ const Medicine = () => {
    return (
       <>
          <div>
-            <DataTable value={medicine} style={{ margin: 48 }} header={header} paginator={true} rows={rows} responsive={true} resizableColumns={true}>
+            <DataTable value={medicine} style={{ margin: 48 }} header={header} paginator={true} rows={rows} className="p-datatable-responsive-demo" resizableColumns={true}>
                <Column field="EAN" header="Código" style={{ width: "8%", textAlign: "center" }}/>
                <Column field="PrincipioAtivo" header="Principio Ativo" style={{ width: "12%", textAlign: "center" }}/>
                <Column field="CNPJ" header="CNPJ" style={{ width: "10%", textAlign: "center" }}/>

@@ -54,7 +54,7 @@ const Diseases = () => {
     <>
       <div>
         <DataTable value={disease} style={{ margin: 48 }} paginator={true} rows={rows} header={header} totalRecords={totalRecords} 
-            emptyMessage="Nenhum resultado encontrado" responsive={true} resizableColumns={true} loading={loading} 
+            emptyMessage="Nenhum resultado encontrado" className="p-datatable-responsive-demo" resizableColumns={true} loading={loading} 
             first={first} onPage={onPage} lazy={true}>
             <Column field="CodDoenca" header="Código" style={{width:'8%', textAlign:'center'}}/>
             <Column field="Nome" header="Nome" style={{width:'20%', textAlign:'center'}}/>

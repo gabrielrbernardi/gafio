@@ -17,7 +17,7 @@ class UsersService {
         }else if(searchCode === 'E'){
             return await api.get(`users/email/?email=${searchKey}&page=${first}`).then(response => response.data);
         }else if(searchCode === 'M'){
-            return await api.get(`users/matricula/?matricula=${searchKey}&page=${first}`).then(response => response.data);
+            return await api.get(`users/registrations/?matricula=${searchKey}&page=${first}`).then(response => response.data);
         }else if(searchCode === 'TU'){
             return await api.get(`users/userType/?userType=${searchKey}&page=${first}`).then(response => response.data);
         }

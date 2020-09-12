@@ -8,6 +8,7 @@ import { Button } from 'react-bootstrap';
 import {FiCheckCircle} from 'react-icons/fi';
 
 import {Dialog} from 'primereact/dialog';
+import ToastComponent from '../../../components/Toast';
 // import {Button} from 'primereact/button';
 
 const MyProfile = () => {
@@ -18,6 +19,11 @@ const MyProfile = () => {
     const [, setEditable] = useState(0);
     const [responseData, setResponseData] = useState('');
     const [pharmaceuticalStatus, setPharmaceuticalStatus] = useState('');
+
+    const [getToast, setToast] = useState<boolean>();
+    const [getMessageType, setMessageType] = useState<string>('');
+    const [getMessageTitle, setMessageTitle] = useState<string>('');
+    const [getMessageContent, setMessageContent] = useState<string>('');
 
     const [initData, setInitData] = useState({
         id: '',
@@ -67,8 +73,7 @@ const MyProfile = () => {
         await api.put(`/users/${initData['id']}}`, {nome: nome, email: email, matricula: matricula})
         .then(function(response){
             if(response.data.updatedUser){
-                setResponseDataStatus(1);
-                setResponseData('Informações alteradas com sucesso.');
+                showToast('success', 'Sucesso!', 'Informações alteradas com sucesso.');
                 api.get(`users/email/?email=${email}&page=10`).then(response1 => {
                     var {CodUsuario, Nome, Matricula, Email, TipoUsuario} = response1.data.users[0];
                     setFormData({...formData, nome: Nome, email: Email, matricula: Matricula, tipoUsuario: TipoUsuario});
@@ -77,8 +82,7 @@ const MyProfile = () => {
                 })
                 // setTimeout(function(){history.push('/login')}, 3000);
             }else{
-                setResponseData(response.data.error);
-                setResponseDataStatus(2);
+                showToast('error', 'Erro!', response.data.error);
             }
         })
      }
@@ -86,14 +90,22 @@ const MyProfile = () => {
     function requestChangeUserType(){
         api.put(`users/requestChangeUserType/${initData['id']}`, {TipoNotificacao: "Change"}).then(response => {
             if(response.data.requestChangeUserType){
-                setResponseDataStatus(1);
-                setResponseData('Solicitação feita com sucesso.');
+                showToast('success', 'Sucesso!', 'Solicitação feita com sucesso.');
             }else{
-                setResponseDataStatus(2);
-                setResponseData(response.data.error);
+                showToast('error', 'Erro!', response.data.error);
             }
         })
-        // alert('solicitar alteracao do tipo de usuario');
+    }
+
+    function showToast(messageType: string, messageTitle: string, messageContent: string){
+        setToast(false)
+        setMessageType(messageType);
+        setMessageTitle(messageTitle);
+        setMessageContent(messageContent);
+        setToast(true);
+        setTimeout(() => {
+            setToast(false);
+        }, 4500)
     }
 
     const [position, setPosition] = useState('center');
@@ -114,7 +126,7 @@ const MyProfile = () => {
     const renderFooter = (stateMethod: any) => {
         return (
             <div>
-                <button type="submit" className="btn btn-primary" onClick={handleSubmit}><p className="d-inline" onClick={() => onHide(stateMethod)}><FiCheckCircle size={30}/>  Finalizar Edição</p></button>
+                <button type="submit" className="btn btn-primary" onClick={(e) => {handleSubmit(e); onHide(stateMethod)}}><FiCheckCircle size={25}/>  Finalizar Edição</button>
                 {/* <Button label="Yes" icon="pi pi-check"  />
                 <Button label="No" icon="pi pi-times" onClick={() => onHide(stateMethod)} className="p-button-secondary"/> */}
             </div>
@@ -129,18 +141,6 @@ const MyProfile = () => {
                 <Dialog header="Editar dados do Usuário" visible={displayPosition} style={{width: '50vw'}} onHide={() => onHide(setDisplayPosition)} position={position} footer={renderFooter(setDisplayPosition)}>
                     <form className="was-validated" onSubmit={handleSubmit}>
                         <div className="form-group">
-                            {responseDataStatus === 0
-                            ? <div></div>
-                            : responseDataStatus === 1 
-                                ?
-                                <div className="alert alert-success alert-dismissible fade show">
-                                    {responseData}
-                                </div>
-                                :
-                                <div className="alert alert-danger alert-dismissible fade show">
-                                    {responseData}
-                                </div>
-                            }
                             <label htmlFor="nome">Nome Completo:</label>
                             <input type="text" className="form-control" id="nome" name="nome" onChange={handleInputChange} defaultValue={initData['nome']} placeholder="Digite seu nome" required/>
                             {/* <input type="text" className="form-control" id="nome" name="nome" onChange={handleInputChange} defaultValue={initData['nome']} placeholder="Digite seu nome" required/> */}
@@ -153,20 +153,7 @@ const MyProfile = () => {
                         </div>
                     </form>
                 </Dialog>
-                <div className="m-2"></div>
-                {responseDataStatus === 0
-                ? <div></div>
-                : responseDataStatus === 1 
-                    ?
-                    <div className="alert alert-success alert-dismissible fade show">
-                        {responseData}
-                    </div>
-                    :
-                    <div className="alert alert-danger alert-dismissible fade show">
-                        {responseData}
-                    </div>
-                }
-                
+                <div className="m-2"></div>               
                 <label htmlFor="nome">Nome Completo:</label>
                 <label className="form-control">{initData['nome']}</label>
                 <div className="m-2"></div>
@@ -197,6 +184,9 @@ const MyProfile = () => {
                 } */}
                 
                 <br/>
+                {getToast &&
+                    <ToastComponent messageType={getMessageType} messageTitle={getMessageTitle} messageContent={getMessageContent}/>
+                }
             </div>
         </div>
     )

@@ -38,31 +38,58 @@ class Notification{
 
     async index(request: Request, response: Response){
         const notificationDB = await knex('Notificacao').select('*');
-        return response.json({notificationFound: true, content: notificationDB});
+        const serializedNotifications = notificationDB.map(notification => {
+            return {
+                CodNotificacao: notification.CodNotificacao,
+                Descricao: notification.Descricao,
+                TipoNotificacao: notification.TipoNotificacao,
+                CodUsuario: notification.CodUsuario,
+            }
+        })
+        return response.json({notificationFound: true, content: serializedNotifications, length: serializedNotifications.length});
     }
 
     async showId(request: Request, response: Response){
-        const {id} = request.params;        //UserID
+        const id = String(request.query.id);        //UserID
         const {TipoUsuario} = request.body;
+        var page = String(request.query.page);
+
+        if(!page){
+            page="10";
+        }
+        var pageRequest = parseInt(page) / 10;
+        const rows = 10; 
+
         if(TipoUsuario == 'A' || TipoUsuario == 'M'){
-            const notificationDB = await knex('Usuario_Notificacao').whereNot('CodUsuario', id);
+            const notificationDB = await knex('Usuario_Notificacao').whereNot('CodUsuario', id).offset((pageRequest-1)*rows).limit(rows);
             if(notificationDB.length != 0){
                 var notificationObject: any = {}, notificationList: any = [];
                 for(let i = 0; i < notificationDB.length; i++){
                     notificationObject = notificationDB[i];
                     notificationList.push(notificationObject);
                 }
+                const notificationsLength = await knex("Notificacao").count('CodNotificacao');
                 knex('Notificacao').where({
                     Status: 0
                 }).whereNot({
                     CodUsuario: id,
-                })
+                }).offset((pageRequest-1)*rows).limit(rows)
                 .then(notificacoes => {
-                    return response.json({notificationFound: true, notifications: notificacoes, length: notificacoes.length});
+                    const serializedNotifications = notificacoes.map(notifications => {
+                        return {
+                            CodNotificacao: notifications.CodNotificacao,
+                            Descricao: notifications.Descricao,
+                            TipoNotificacao: notifications.TipoNotificacao,
+                            CodUsuario: notifications.CodUsuario,
+                        }
+                    })
+                    return response.json({notificationFound: true, notifications: serializedNotifications, length: notificationsLength[0]['count(`CodNotificacao`)']});
                 })
             }else{
                 return response.json({notificationFound: false, error: "Não há notificações para este usuário.", length: 0});
             }
+        }else if(!TipoUsuario){
+            return response.json({notificationFound: false, error: "Tipo de usuário inválido.", length: 0});
         }else{
             return response.json({notificationFound: false, error: "Não há notificações para este usuário.", length: 0});
         }

@@ -16,28 +16,9 @@ const SignUp = () => {
     const [getMatricula, setMatricula] = useState('11821');
     const [getSenha, setSenha] = useState('teste123');
     const [getRedefinirSenha, setRedefinirSenha] = useState('teste123');
-
-    // const [formData, setFormData] = useState({
-    //     nome: '',
-    //     email: '',
-    //     senha: '',
-    //     confirmarSenha: '',
-    //     matricula: '',
-    // });
-
-    // function handleInputChange(event: ChangeEvent<HTMLInputElement>){
-    //     const { name, value } = event.target;
-    //     setFormData({...formData, [name]: value});
-    //     if(formData['nome'] && formData['email'] && formData['senha'] && formData['confirmarSenha'] && formData['matricula']){
-    //         setEnableSubmitButton(1);
-    //     }else{
-    //         setEnableSubmitButton(0);
-    //     }
-    // }
     
     function handleSubmit(event: FormEvent){
         event.preventDefault();
-        // const {nome, email, senha, confirmarSenha, matricula} = formData;
         const nome = getNome;
         const email = getEmail;
         const matricula = getMatricula;
@@ -61,7 +42,6 @@ const SignUp = () => {
                 setResponseDataStatus(2);
             }
         })
- 
         // history.push('/');
     }
 
