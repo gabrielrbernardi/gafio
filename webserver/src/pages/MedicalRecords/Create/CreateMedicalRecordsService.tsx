@@ -1,20 +1,29 @@
 import api from '../../../services/api';
 
 class CreateMedicalRecordsService {
-    async Create(medicalRecordsObject: any){
-        if(typeof medicalRecordsObject["NroProntuario"] == "number" && typeof medicalRecordsObject["NroPaciente"] == "number"){
-            return await api.post('medicalRecords', {
-                NroProntuario: medicalRecordsObject["NroProntuario"], NroPaciente: medicalRecordsObject["NroPaciente"], DataInternacao: medicalRecordsObject["DataInternacao"],
-                CodDoencaPrincipal: medicalRecordsObject["CodDoencaPrincipal"], CodDoencaSecundario: medicalRecordsObject["CodDoencaSecundario"], SistemaAcometido: medicalRecordsObject["SistemaAcometido"],
-                CodComorbidade: medicalRecordsObject["CodComorbidade"], Origem: medicalRecordsObject["Origem"], Alocacao: medicalRecordsObject["Alocacao"],
-                Coleta: medicalRecordsObject["Coleta"], ResultadoColeta: medicalRecordsObject["ResultadoColeta"], CodAtbPrimario: medicalRecordsObject["CodAtbPrimario"],
-                CodAtbSecundario: medicalRecordsObject["CodAtbSecundario"], SitioInfeccaoPrimario: medicalRecordsObject["SitioInfeccaoPrimario"], TratamentoCCIH: medicalRecordsObject["TratamentoCCIH"],
-                IndicacaoSepse: medicalRecordsObject["IndicacaoSepse"], DisfuncaoRenal: medicalRecordsObject["DisfuncaoRenal"], OrigemInfeccao: medicalRecordsObject["OrigemInfeccao"],
-                DoseCorreta: medicalRecordsObject["DoseCorreta"], PosologiaCorreta: medicalRecordsObject["PosologiaCorreta"]})
-            .then(response => response.data);
-        }else{
-            return
-        }
+    async Create(NroProntuariof: any, NroPacientef: any, DataInternacaof: string, CodDoencaPrincipalf: string,
+            CodDoencaSecundariof: any, SistemaAcometidof: string, CodComorbidadef: any, Origemf: string, Alocacaof: string,
+            ResultadoColetaf: any, CodAtbPrimariof: string, CodAtbSecundariof: any, SitioInfeccaoPrimariof: any,
+            TratamentoCCIHf: string, IndicacaoSepsef: string, DisfuncaoRenalf: string, OrigemInfeccaof: string,
+            DoseCorretaf: any, PosologiaCorretaf: any){
+            let NroProntuario = NroProntuariof
+            let NroPaciente = NroPacientef
+            let CodDoencaSecundario = CodDoencaSecundariof
+            let CodComorbidade = CodComorbidadef
+            let ResultadoColeta = ResultadoColetaf
+            let CodAtbSecundario = CodAtbSecundariof
+            let SitioInfeccaoPrimario = SitioInfeccaoPrimariof
+            let DoseCorreta = DoseCorretaf
+            let PosologiaCorreta = PosologiaCorretaf
+        return await api.post('medicalRecords', {
+            NroProntuario, NroPaciente, DataInternacao: DataInternacaof,
+            CodDoencaPrincipal: CodDoencaPrincipalf, CodDoencaSecundario,
+            SistemaAcometido: SistemaAcometidof, CodComorbidade, Origem: Origemf, 
+            Alocacao: Alocacaof, ResultadoColeta, CodAtbPrimario: CodAtbPrimariof,
+            CodAtbSecundario, SitioInfeccaoPrimario,
+            TratamentoCCIH: TratamentoCCIHf, IndicacaoSepse: IndicacaoSepsef, DisfuncaoRenal: DisfuncaoRenalf,
+            OrigemInfeccao: OrigemInfeccaof, DoseCorreta, PosologiaCorreta})
+        .then(response => response.data);
     }
 }
 

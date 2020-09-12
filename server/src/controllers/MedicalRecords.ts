@@ -42,38 +42,48 @@ class ProntuarioController {
          const MedicalRecord = MedicalRecordDB[0];
          
          if(!MedicalRecord){
-            await knex("Prontuario").insert({
-               NroProntuario,
-               NroPaciente,
-               DataInternacao,
-               CodDoencaPrincipal,
-               CodDoencaSecundario,
-               SistemaAcometido,
-               CodComorbidade,
-               Origem,
-               Alocacao,
-               ResultadoColeta,
-               CodAtbPrimario,
-               CodAtbSecundario,
-               SitioInfeccaoPrimario,
-               TratamentoCCIH,
-               IndicacaoSepse,
-               DisfuncaoRenal,
-               OrigemInfeccao,
-               DoseCorreta,
-               PosologiaCorreta
-            }).then((SeqProntuarioDB) => {
-               knex("Historico").insert({"IdProntuario": SeqProntuarioDB, "IdPaciente": NroPaciente}).then(() => {
-                  return response.json({CreatedMedicalRecords: true});
-               }).catch((error) =>{
-                  return response.json({CreatedMedicalRecords: false, error});
+            const patientDB = await knex("Paciente").where("NroPaciente", NroPaciente)
+            const patient = patientDB[0]
+            
+            if(patient){
+               await knex("Prontuario").insert({
+                  NroProntuario,
+                  NroPaciente,
+                  DataInternacao,
+                  CodDoencaPrincipal,
+                  CodDoencaSecundario,
+                  SistemaAcometido,
+                  CodComorbidade,
+                  Origem,
+                  Alocacao,
+                  ResultadoColeta,
+                  CodAtbPrimario,
+                  CodAtbSecundario,
+                  SitioInfeccaoPrimario,
+                  TratamentoCCIH,
+                  IndicacaoSepse,
+                  DisfuncaoRenal,
+                  OrigemInfeccao,
+                  DoseCorreta,
+                  PosologiaCorreta
+               }).then((SeqProntuarioDB) => {
+                  knex("Historico").insert({"IdProntuario": SeqProntuarioDB, "IdPaciente": NroPaciente}).then(() => {
+                     return response.json({CreatedMedicalRecord: true});
+                  }).catch((error) =>{
+                     return response.json({CreatedMedicalRecord: false, error});
+                  })
+               }).catch(error => {
+                  return response.json({CreatedMedicalRecord: false, error});
                })
-            }).catch(error => {
-               return response.json({CreatedMedicalRecords: false, error});
-            })
+            }else{
+               return response.json({
+                  CreatedMedicalRecord: false,
+                  error: "O número de paciente não existe."
+               });
+            }
          }else{
             return response.json({
-               CreatedMedicalRecords: false,
+               CreatedMedicalRecord: false,
                error: "O número de prontuário já existe."
             });
          }
@@ -268,36 +278,46 @@ class ProntuarioController {
             const MedicalRecord = MedicalRecordDB[0]
             
             if(MedicalRecord){
-               await knex('Prontuario').where('NroProntuario', id).update({
-                  NroPaciente: NroPaciente,
-                  DataInternacao: DataInternacao,
-                  CodDoencaPrincipal: CodDoencaPrincipal,
-                  CodDoencaSecundario: CodDoencaSecundario,
-                  SistemaAcometido: SistemaAcometido,
-                  CodComorbidade: CodComorbidade,
-                  Origem: Origem,
-                  Alocacao: Alocacao,
-                  ResultadoColeta: ResultadoColeta,
-                  CodAtbPrimario: CodAtbPrimario,
-                  CodAtbSecundario: CodAtbSecundario,
-                  SitioInfeccaoPrimario: SitioInfeccaoPrimario,
-                  TratamentoCCIH: TratamentoCCIH,
-                  IndicacaoSepse: IndicacaoSepse,
-                  DisfuncaoRenal: DisfuncaoRenal,
-                  OrigemInfeccao: OrigemInfeccao,
-                  DoseCorreta: DoseCorreta,
-                  PosologiaCorreta : PosologiaCorreta
-               }).then(() => {
-                  knex('Historico').where('NroProntuario', id).update({
-                     NroPaciente: NroPaciente
+               const patientDB = await knex("Paciente").where("NroPaciente", NroPaciente)
+               const patient = patientDB[0]
+            
+               if(patient){
+                  await knex('Prontuario').where('NroProntuario', id).update({
+                     NroPaciente: NroPaciente,
+                     DataInternacao: DataInternacao,
+                     CodDoencaPrincipal: CodDoencaPrincipal,
+                     CodDoencaSecundario: CodDoencaSecundario,
+                     SistemaAcometido: SistemaAcometido,
+                     CodComorbidade: CodComorbidade,
+                     Origem: Origem,
+                     Alocacao: Alocacao,
+                     ResultadoColeta: ResultadoColeta,
+                     CodAtbPrimario: CodAtbPrimario,
+                     CodAtbSecundario: CodAtbSecundario,
+                     SitioInfeccaoPrimario: SitioInfeccaoPrimario,
+                     TratamentoCCIH: TratamentoCCIH,
+                     IndicacaoSepse: IndicacaoSepse,
+                     DisfuncaoRenal: DisfuncaoRenal,
+                     OrigemInfeccao: OrigemInfeccao,
+                     DoseCorreta: DoseCorreta,
+                     PosologiaCorreta : PosologiaCorreta
                   }).then(() => {
-                     return response.json({updatedMedicalRecord: true})
+                     knex('Historico').where('NroProntuario', id).update({
+                        NroPaciente: NroPaciente
+                     }).then(() => {
+                        return response.json({updatedMedicalRecord: true})
+                     }).catch(error => {
+                        return response.json({updatedMedicalRecord: false, error})
+                     })
                   }).catch(error => {
-                     return response.json({updatedMedicalRecord: false, error})
+                     return response.json({updatedMedicalRecord: false, error});
                   })
-               }).catch(error => {
-                  return response.json({updatedMedicalRecord: false, error});
-               })
+               }else{
+                  return response.json({
+                     updatedMedicalRecord: false,
+                     error: "O número de paciente não existe."
+                  });
+               }
             }else{
                return response.json({updatedMedicalRecord: false, error: "O número de prontuário não existe."});
             }

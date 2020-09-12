@@ -6,8 +6,8 @@ import {CreateMedicalRecordsService} from './CreateMedicalRecordsService'
 
 const MedicalRecordsForm = () => {
 
-    const [getNroProntuario, setNroProntuario] = useState<number>()
-    const [getNroPaciente, setNroPaciente] = useState<number>()
+    const [getNroProntuario, setNroProntuario] = useState<any>(null)
+    const [getNroPaciente, setNroPaciente] = useState<any>(null)
     const [getDataInternacao, setDataInternacao] = useState<string>('')
     const [getCodDoencaPrincipal, setCodDoencaPrincipal] = useState<string>('')
     const [getCodDoencaSecundario, setCodDoencaSecundario] = useState<any>(null)
@@ -60,14 +60,19 @@ const MedicalRecordsForm = () => {
     function handleSubmit(event: FormEvent){
         event.preventDefault();
         
-        const medicalRecordsObject = {NroProntuario: getNroProntuario, NroPaciente: getNroPaciente, DataInternacao: getDataInternacao, CodDoencaPrincipal: getCodDoencaPrincipal, CodDoencaSecundario: getCodDoencaSecundario, SistemaAcometido: getSistemaAcometido, CodComorbidade: getCodComorbidade, Origem: getOrigem, Alocacao: getAlocacao, ResultadoColeta: getResultadoColeta, CodAtbPrimario: getCodAtbPrimario, CodAtbSecundario: getCodAtbSecundario, SitioInfeccaoPrimario: getSitioInfeccaoPrimario, TratamentoCCIH: getTratamento, IndicacaoSepse: getIndicacao, DisfuncaoRenal: getDisfuncao, OrigemInfeccao: getOrigemInfeccao, DoseCorreta: getDose, PosologiaCorreta: getPosologia}
-        createMedicalRecordsService.Create(medicalRecordsObject).then((response) => {
+        createMedicalRecordsService.Create(getNroProntuario, getNroPaciente,
+            getDataInternacao, getCodDoencaPrincipal, getCodDoencaSecundario,
+            getSistemaAcometido, getCodComorbidade, getOrigem, getAlocacao,
+            getResultadoColeta, getCodAtbPrimario, getCodAtbSecundario,
+            getSitioInfeccaoPrimario, getTratamento, getIndicacao,
+            getDisfuncao, getOrigemInfeccao, getDose, getPosologia)
+        .then((response) => {
 
         })
-        
     }
     
     return (
+        //TRATAMENTO DE ERRO
         <div className="row m-5">
             <div className="card shadow-lg p-3 col-sm-6 offset-md-3 border">
                 <p className="text-dark h3 text-center">Cadastro de Prontuario</p>
