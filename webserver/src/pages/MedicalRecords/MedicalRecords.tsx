@@ -10,6 +10,7 @@ import { Link } from 'react-router-dom';
 import ToastComponent from '../../components/Toast';
 
 import {MedicalRecordsService} from './MedicalRecordsService';
+import { Dropdown } from 'primereact/dropdown';
 const medicalRecordsService = new MedicalRecordsService()
 
 const MedicalRecords = () => {
@@ -23,8 +24,22 @@ const MedicalRecords = () => {
 
     const [selectedMedicalRecord, setSelectedMedicalRecord] = useState<any>(null);
     const [getMedicalRecord, setMedicalRecord] = useState<any>(null);
+
+    const [getOptionState, setOptionState] = useState<any>(null)
     
     const rows = 10;
+
+    let options = [
+        {name: 'CódUsuário', cod: 'C'},
+        {name: 'Nome', cod: 'N'},
+        {name: 'Email', cod: 'E'},
+        {name: 'Matrícula', cod: 'M'},
+        {name: 'TipoUsuário', cod: 'TU'}
+    ];
+
+    const onOptionChange = (e: { value: any }) => {
+        setOptionState(e.value);
+    };
     
     useEffect(() => {
         medicalRecordsService.getMedicalRecordsPaginate(10).then(data => {
@@ -87,19 +102,31 @@ const MedicalRecords = () => {
     return (
         <>
             <div className="row m-5 px-5">
-                <Link to={location => ({...location, pathname: '/medicalRecords/create'})}><Button variant="outline-dark" className="mb-2">Cadastrar Prontuário</Button></Link>
-                <Button variant="outline-secondary" className="mb-2 ml-2" onClick={() => setOpen(!open)} aria-controls="example-collapse-text" aria-expanded={open}>Buscar prontuário específico</Button>
+                <Link to={location => ({...location, pathname: '/medicalRecords/create'})}><Button variant="outline-dark" className="mb-2" style={{borderRadius: '0'}}>Cadastrar Prontuário</Button></Link>
+                <Button variant="outline-secondary" className="mb-2 ml-2" onClick={() => setOpen(!open)} aria-controls="example-collapse-text" aria-expanded={open} style={{borderRadius: '0'}}>Buscar prontuário específico</Button>
                 <Collapse in={open} timeout={200}>
                     <div className="ml-2">
-                        <span className="p-float-label p-inputgroup">
-                            <InputText id="float-input" type="text" className="bg-light" size={30} value={searchInput} onChange={(e) => setSearchInput((e.target as HTMLInputElement).value)} />
-                            {searchInput
-                            ? <Button tabIndex={2} variant="outline-danger" className="p-0 mr-1" style={{width: '17px'}} onClick={() => setSearchInput('')}><AiOutlineClose size={15}/></Button>
-                            : <></>
+                        <div className="p-inputgroup">
+                            <span className="p-float-label">
+                                <InputText id="float-input" type="search" value={searchInput} onChange={(e) => {setSearchInput((e.target as HTMLInputElement).value)}} onKeyPress={(ev) => {if (ev.key === 'Enter') {handleSearch(); ev.preventDefault();}}}  style={{minWidth:'4em', borderRadius: '0'}} size={30} />
+                                {getOptionState === null
+                                    ? <label htmlFor="float-input">Buscar</label>
+                                    : <label htmlFor="float-input">Buscar por {getOptionState.name}</label>
+                                }
+                            </span>
+                            {searchInput === ''
+                                ? <></>
+                                :
+                                    <>
+                                        <Dropdown className="mx-1" value={getOptionState} options={options} onChange={onOptionChange} placeholder="Selecione um filtro" optionLabel="name" style={{width: '12em'}}/>
+                                        <Button tabIndex={2} variant="outline-danger" className="p-0 mr-1" style={{width: '17px', borderRadius: '0'}} onClick={() => {setSearchInput(''); setOptionState(null)}}><AiOutlineClose size={15}/></Button>
+                                        <Button onClick={handleSearch} style={{borderRadius: '0'}}><FiSearch size={15}/></Button>
+                                    </>
                             }
-                            <label htmlFor="float-input">Buscar</label>
-                            <Button onClick={handleSearch}><FiSearch size={20}/></Button>
-                        </span>
+                            {/* <Dropdown className="mx-1" value={getOptionState} options={options} onChange={onOptionChange} placeholder="Selecione um filtro" optionLabel="name" style={{width: '12em'}}/>
+                            <Button tabIndex={2} variant="outline-danger" className="p-0 mr-1" style={{width: '17px'}} onClick={() => {setSearchInput(''); getUsersFunction(); setMode('N'); setOptionState(null)}}><AiOutlineClose size={15}/></Button>
+                            <Button onClick={handleSearch}><FiSearch size={20}/></Button> */}
+                        </div>
                     </div>
                 </Collapse>
                 <div className="ml-auto"></div>
