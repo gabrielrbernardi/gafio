@@ -27,7 +27,7 @@ const MedicalRecords = () => {
     const [getFirst, setFirst] = useState(0);
     const [totalRecords, setTotalRecords] = useState(0);
     const [searchInput, setSearchInput] = useState('');
-    const [getMode, setMode] = useState('N');
+    const [getMode, setMode] = useState<string>('N');
 
     const [selectedUser, setSelectedUser] = useState<any>(null);
     const [getUser, setUser] = useState<any>(null);
@@ -83,6 +83,7 @@ const MedicalRecords = () => {
     useEffect(() => {
         usersService.getUsersPaginate(10).then(data => {
             getUsersFunction(data)
+            showToast('info', 'Resultados Encontrados!', `Foram encontrados ${data.length} resultados.`)
         });
     }, []);
     
@@ -206,7 +207,6 @@ const MedicalRecords = () => {
         }else{
             setDatasource(data.users);
             setTotalRecords(data.length);
-            console.log(data)
             data = data.users;
             for(let i = 0; i < data.length; i++){
                 if(data[i]['TipoUsuario'] === 'A'){
@@ -248,9 +248,22 @@ const MedicalRecords = () => {
             if(!data.userFound){
                 setLoading(false);
                 setProntuario([]);
+                showToast('warn', 'Resultados não encontrados!', 'Não foram encontrados resultados para a busca desejada')
                 return
             }
             getUsersFunction(data)
+            let searchType;
+            if(getOptionState.name === 'CódUsuário'){
+                searchType = 'CodUsuario';
+            }else if(getOptionState.name === 'Matrícula'){
+                searchType = 'Matricula';
+            }else if(getOptionState.name === 'TipoUsuário'){
+                searchType = 'TipoUsuario'
+            }else{
+                searchType = getOptionState.name
+            }
+            let dataSize = data.length[0]['count(`' + searchType + '`)']
+            showToast('info', 'Resultados Encontrados!', `Foram encontrados ${dataSize} resultados.`)
         })
     }
 
@@ -269,20 +282,29 @@ const MedicalRecords = () => {
         <>
             <p style={{textAlign:'left'}} className="p-clearfix d-inline">Dados dos usuários</p>
             <div className="row">
-                <div className="col-sm-4">
+                <div className="col-sm-6">
                     <span className="p-float-label p-inputgroup">
                         <div className="p-col-12">
                             <div className="p-inputgroup mt-4 mb-1">
                                 <span className="p-float-label">
-                                    <InputText id="float-input" type="search" value={searchInput} onChange={(e) => {setSearchInput((e.target as HTMLInputElement).value)}} onKeyPress={(ev) => {if (ev.key === 'Enter') {handleSearch(); ev.preventDefault();}}} size={50} />
+                                    <InputText id="float-input" type="search" value={searchInput} onChange={(e) => {setSearchInput((e.target as HTMLInputElement).value)}} onKeyPress={(ev) => {if (ev.key === 'Enter') {handleSearch(); ev.preventDefault();}}}  style={{minWidth:'8em', borderRadius: '0'}} size={50} />
                                     {getOptionState === null
                                         ? <label htmlFor="float-input">Buscar</label>
                                         : <label htmlFor="float-input">Buscar por {getOptionState.name}</label>
                                     }
                                 </span>
-                                <Dropdown className="mx-1" value={getOptionState} options={options} onChange={onOptionChange} placeholder="Selecione um filtro" optionLabel="name" style={{width: '12em'}}/>
+                                {searchInput === ''
+                                    ? <></>
+                                    :
+                                        <>
+                                            <Dropdown className="mx-1" value={getOptionState} options={options} onChange={onOptionChange} placeholder="Selecione um filtro" optionLabel="name" style={{width: '12em'}}/>
+                                            <Button tabIndex={2} variant="outline-danger" className="p-0 mr-1" style={{width: '17px', borderRadius: '0'}} onClick={() => {setSearchInput(''); getUsersFunction(); setMode('N'); setOptionState(null)}}><AiOutlineClose size={15}/></Button>
+                                            <Button onClick={handleSearch} style={{borderRadius: '0'}}><FiSearch size={20}/></Button>
+                                        </>
+                                }
+                                {/* <Dropdown className="mx-1" value={getOptionState} options={options} onChange={onOptionChange} placeholder="Selecione um filtro" optionLabel="name" style={{width: '12em'}}/>
                                 <Button tabIndex={2} variant="outline-danger" className="p-0 mr-1" style={{width: '17px'}} onClick={() => {setSearchInput(''); getUsersFunction(); setMode('N'); setOptionState(null)}}><AiOutlineClose size={15}/></Button>
-                                <Button onClick={handleSearch}><FiSearch size={20}/></Button>
+                                <Button onClick={handleSearch}><FiSearch size={20}/></Button> */}
                             </div>
                         </div>
                         {/* {getOptionState === null

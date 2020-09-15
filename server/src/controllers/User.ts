@@ -136,7 +136,7 @@ class UserController {
           const userDB = await knex("Usuario").where('CodUsuario', 'like', `%${id}%`).offset((pageRequest-1)*rows).limit(rows);
           const user = userDB[0];
           if (user) {
-            const usersLength = (await knex("Usuario").select("*")).length;
+            const usersLength = (await knex("Usuario").count('CodUsuario').where('CodUsuario', 'like', `%${id}%`));
             var serializedUsers = userDB.map(userDB => {
                 return {
                     CodUsuario: userDB.CodUsuario,
@@ -182,7 +182,7 @@ class UserController {
           const userDB = await knex("Usuario").where('Email', 'like', `%${email}%`).offset((pageRequest-1)*rows).limit(rows);
           const user = userDB[0];
           if (user) {
-            const usersLength = (await knex("Usuario").select("*")).length;
+            const usersLength = (await knex("Usuario").count('Email').where('Email', 'like', `%${email}%`));
             var serializedUsers = userDB.map(userDB => {
                 return {
                     CodUsuario: userDB.CodUsuario,
@@ -228,7 +228,7 @@ class UserController {
           const userDB = await knex("Usuario").where('Nome', 'like', `%${nome}%`).offset((pageRequest-1)*rows).limit(rows);
           const user = userDB[0];
           if (user) {
-            const usersLength = (await knex("Usuario").select("*")).length;
+            const usersLength = (await knex("Usuario").count('Nome').where('Nome', 'like', `%${nome}%`));
             var serializedUsers = userDB.map(userDB => {
                 return {
                     CodUsuario: userDB.CodUsuario,
@@ -273,7 +273,7 @@ class UserController {
           const userDB = await knex("Usuario").where('Matricula', 'like', `%${matricula}%`).offset((pageRequest-1)*rows).limit(rows);
           const user = userDB[0];
           if (user) {
-            const usersLength = (await knex("Usuario").select("*")).length;
+            const usersLength = (await knex("Usuario").count('Matricula').where('Matricula', 'like', `%${matricula}%`));
             var serializedUsers = userDB.map(userDB => {
                 return {
                     CodUsuario: userDB.CodUsuario,
@@ -319,7 +319,7 @@ class UserController {
             const userDB = await knex("Usuario").where('TipoUsuario', 'like', `%${userTypeChar}%`).offset((pageRequest-1)*rows).limit(rows);
           const user = userDB[0];
           if (user) {
-            const usersLength = (await knex("Usuario").select("*")).length;
+            const usersLength = (await knex("Usuario").count('TipoUsuario').where('TipoUsuario', 'like', `%${userTypeChar}%`));
             var serializedUsers = userDB.map(userDB => {
                 return {
                     CodUsuario: userDB.CodUsuario,

@@ -11,7 +11,7 @@ class DiseasesService {
       return await api.get(`users/id/?id=${searchKey}&page=${first}`).then(response => response.data);
     }
     else if (searchCode === 'N') {
-      return await api.get(`users/name/?nome=${searchKey}&page=${first}`).then(response => response.data);
+      return await api.get(`disease/name/${searchKey}`).then(response => response.data);
     }  
   }
 }

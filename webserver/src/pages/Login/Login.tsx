@@ -62,7 +62,7 @@ const Login = () => {
             })
         }catch(err) {
             if(err.message === "Network Error"){
-                showToast('error', 'Erro!', 'Nao foi possível conectar ao servidor.')
+                showToast('error', 'Erro!', 'Não foi possível conectar ao servidor.')
             }
         }
     }

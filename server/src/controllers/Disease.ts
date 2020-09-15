@@ -30,9 +30,9 @@ class DiseaseController {
   // Método para listar doenças por nome:
   async indexByName(request: Request, response: Response) {
     const { name } = request.params;
-    const filteredDisease = await knex("Doenca").where("Nome", name);
-
-    return response.json(filteredDisease);
+    const filteredDisease = await knex("Doenca").where('Nome', 'like', `%${name}%`);
+    console.log(filteredDisease)
+    return response.json({filteredDisease: true, diseases: filteredDisease});
   }
 
   // Método para listar doenças por código:

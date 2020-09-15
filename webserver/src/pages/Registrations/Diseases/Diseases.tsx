@@ -27,19 +27,27 @@ const Diseases = () => {
   const [getMessageType, setMessageType] = useState<string>('');
   const [getMessageTitle, setMessageTitle] = useState<string>('');
   const [getMessageContent, setMessageContent] = useState<string>('');
+  const [datasource, setDatasource] = useState([]);
+
 
   function getDiseasesFunction(data?: any){
     setLoading(true);
+    setDisease([]);
     if (!data) {
       diseasesService.getDiseasesPaginate(10).then(data => {
-        setDisease(data.slice(0, rows));
+        console.log(data)
+        console.log(1)
+        setDatasource(data.diseases);
+        setDisease(datasource.slice(0, rows));
         setLoading(false);
 
         return;
       });
     }
     else {
-      setDisease(data.slice(0, rows));
+      console.log(data)
+      setDatasource(data.diseases);
+      setDisease(data.diseases.slice(0, rows));
       setLoading(false);
     }
   }
@@ -47,7 +55,7 @@ const Diseases = () => {
   useEffect(() => {
     diseasesService.getDiseasesPaginate(10).then(data => {
       setTotalRecords(data.length);
-      getDiseasesFunction(data.diseases);
+      getDiseasesFunction(data);
     });
   }, []);
 
@@ -56,7 +64,7 @@ const Diseases = () => {
     setTimeout( () => {
       const startIndex = event.first;
       const endIndex = event.first + rows;
-
+    
       diseasesService.getDiseasesPaginate(endIndex).then(data => {
         getDiseasesFunction(data.diseases);
       });      
@@ -81,7 +89,7 @@ const Diseases = () => {
     } 
     setMode('S');
     diseasesService.searchDiseaseGlobal(searchInput, getOptionState.cod, first+rows).then(data => {
-      if(!data.userFound){
+      if(!data.filteredDisease){
         setLoading(false);
         return;
       }
