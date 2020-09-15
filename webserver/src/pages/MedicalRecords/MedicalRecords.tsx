@@ -2,68 +2,87 @@ import React, { useState, useEffect, useRef } from 'react';
 import {DataTable} from 'primereact/datatable';
 import {Column} from 'primereact/column';
 import {InputText} from 'primereact/inputtext';
-
 import Button from 'react-bootstrap/Button';
 import Collapse from 'react-bootstrap/Collapse';
 import {FiSearch} from 'react-icons/fi';
-
-import {FiTrash2} from 'react-icons/fi';
-import {TiExport} from 'react-icons/ti';
 import {AiOutlineClose} from 'react-icons/ai';
+import { Link } from 'react-router-dom';
+import ToastComponent from '../../components/Toast';
 
 import {MedicalRecordsService} from './MedicalRecordsService';
-import { Link } from 'react-router-dom';
+const medicalRecordsService = new MedicalRecordsService()
 
 const MedicalRecords = () => {
-    const [prontuario, setProntuario] = useState([]);
+    const [MedicalRecords, setMedicalRecords] = useState([]);
     const [datasource, setDatasource] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [first, setFirst] = useState(0);
+    const [getFirst, setFirst] = useState(0);
     const [totalRecords, setTotalRecords] = useState(0);
     const [searchInput, setSearchInput] = useState('');
     const [open, setOpen] = useState(false);
+
+    const [selectedMedicalRecord, setSelectedMedicalRecord] = useState<any>(null);
+    const [getMedicalRecord, setMedicalRecord] = useState<any>(null);
     
     const rows = 10;
     
+    useEffect(() => {
+        medicalRecordsService.getMedicalRecordsPaginate(10).then(data => {
+            getMedicalRecordsFunction(data)
+        });
+    }, []);
+
+    function getMedicalRecordsFunction(data?: any){
+        setLoading(true);
+        if(!data){
+            medicalRecordsService.getMedicalRecordsPaginate(10).then(data => {
+                setDatasource(data.medicalRecords);
+                setTotalRecords(data.length);
+                data = data.medicalRecords;
+                
+                setMedicalRecords(data.slice(0, rows));
+                setLoading(false);
+                return
+            })
+        }else{
+            setDatasource(data.medicalRecords);
+            setTotalRecords(data.length);
+            console.log(data)
+            data = data.medicalRecords;
+            
+            setMedicalRecords(data.slice(0, rows));
+            setLoading(false);
+            return
+        }
+    }
+
     const onPage = (event: any) => {
         setLoading(true);
         
         const startIndex = event.first;
         const endIndex = event.first + rows;
-        
+        medicalRecordsService.getMedicalRecordsPaginate(endIndex).then(data => {
+            getMedicalRecordsFunction(data);
+        });
         setFirst(startIndex);
-        setProntuario(datasource.slice(startIndex, endIndex));
+        setMedicalRecords(datasource.slice(startIndex, endIndex));
         setLoading(false);
     }
-    
-    const VerifiedTemplate = (rowData: any) => {
-        let verifyStatus = rowData.isVerified;
-        let fontColor: any = verifyStatus === 'Não' ? "#a80000" : "#106b00";
 
-        return <span style={{color: fontColor}}>{rowData.isVerified}</span>;
-    }
-
-    const actionsTemplate = (rowData: any, column: any) => {
-        return (
-            <>
-                {/* <Button type="button" variant="outline-info" className="m-1"><FiEdit size={17}/></Button> */}
-                <Button type="button" onClick={() => {alert(rowData['CodUsuario'])}} variant="outline-danger"><FiTrash2 size={17}/></Button>
-            </>
-        )
-    }
-    let dt = useRef<any>(null);
-    const onExport = () => {
-        dt.current.exportCSV();
-    };
     const header = 
         <>
             <p style={{textAlign:'left'}} className="p-clearfix d-inline">Prontuários</p>
-            <div style={{textAlign:'right'}} className="m-0"><Button type="button" variant="outline-success" onClick={onExport}><TiExport size={20}/>  Exportar dados</Button></div>
         </>;
 
     function handleSearch(){
         alert(searchInput)
     }
+
+    let newMedicalRecord = false;
+    const onMedicalRecordSelect = (e: any) => {
+        newMedicalRecord = false;
+        setMedicalRecord(Object.assign({}, e.data));
+    };
 
     return (
         <>
@@ -84,7 +103,21 @@ const MedicalRecords = () => {
                     </div>
                 </Collapse>
                 <div className="ml-auto"></div>
-                <Button variant="outline-danger" className="mb-2 ml-2 offset-md-9">Desfecho</Button>
+
+                <DataTable value={MedicalRecords} paginator={true} rows={rows} header={header} totalRecords={totalRecords}
+                    emptyMessage="Nenhum resultado encontrado" className=" p-datatable-responsive-demo" resizableColumns={true} loading={loading} first={getFirst}
+                    onPage={onPage} lazy={true} selectionMode="single" selection={selectedMedicalRecord} onSelectionChange={e => setSelectedMedicalRecord(e.value)}
+                    onRowSelect={onMedicalRecordSelect}>
+                    <Column field="NroProntuario" header="NroProntuário" style={{width:'9.5%', textAlign:'center'}}/>
+                    <Column field="NroPaciente" header="NroPaciente" style={{width:'9.5%', textAlign:'center'}}/>
+                    <Column field="DataNascimento" header="Nascimento" style={{width:'11%', textAlign:'center'}}/>
+                    <Column field="NomePaciente" header="Nome" style={{width:'12.5%', textAlign:'center'}}/>
+                    <Column field="Genero" header="Gênero" style={{width:'8%', textAlign:'center'}}/>
+                    <Column field="DataInternacao" header="Internação" style={{width:'11.5%', textAlign:'center'}}/>
+                    <Column field="DiagnosticoPrincipal" header="Diagnostico" style={{width:'13%', textAlign:'center'}}/>
+                    <Column field="Alocacao" header="Alocação" style={{width:'15%', textAlign:'center'}}/>
+                    <Column field="Desfecho" header="Desfecho" style={{width:'10%', textAlign:'center'}}/>
+                </DataTable>
             </div>
         </>
     )

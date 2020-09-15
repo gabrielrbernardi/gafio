@@ -46,6 +46,8 @@ class ProntuarioController {
             const patient = patientDB[0]
             
             if(patient){
+               //TRATAR DATA
+               
                await knex("Prontuario").insert({
                   NroProntuario,
                   NroPaciente,
@@ -120,7 +122,7 @@ class ProntuarioController {
               serializedMedicalRecords[i]['DiagnosticoPrincipal'] = diseaseDB[0]['Nome'];
           }
           const MedicalRecordsLength = (await knex("Prontuario").select("*")).length;
-          return response.json({showMedicalRecords: true, serializedMedicalRecords, length: MedicalRecordsLength});
+          return response.json({showMedicalRecords: true, medicalRecords: serializedMedicalRecords, length: MedicalRecordsLength});
       }catch(err){
           return response.json({showMedicalRecords: false, error: err});
       }
