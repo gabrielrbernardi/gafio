@@ -5,6 +5,7 @@ import { useHistory } from 'react-router-dom';
 import ToastComponent from '../../../components/Toast';
 
 import {CreateMedicalRecordsService} from './CreateMedicalRecordsService'
+import FormCheckInput from 'react-bootstrap/FormCheckInput';
 
 const MedicalRecordsForm = () => {
 
@@ -59,6 +60,14 @@ const MedicalRecordsForm = () => {
         setPosologia(e.value);
     };
 
+    function checkInput(e: any){
+        if(e === ''){
+            setCodDoencaSecundario(null);
+        }else{
+            setCodDoencaSecundario(e)
+        }
+    }
+
     let options = [
         {label: 'Sim', value: 'S'},
         {label: 'Não', value: 'N'},
@@ -66,6 +75,8 @@ const MedicalRecordsForm = () => {
 
     function handleSubmit(event: FormEvent){
         event.preventDefault();
+        console.log(getCodDoencaSecundario)
+
         
         createMedicalRecordsService.Create(getNroProntuario, getNroPaciente,
             getDataInternacao, getCodDoencaPrincipal, getCodDoencaSecundario,
@@ -164,7 +175,7 @@ const MedicalRecordsForm = () => {
                         
                         <label htmlFor="CodDoencaSecundario" className="mt-4">Código de Doença Secundário</label>
                         <input type="text" className="form-control" id="CodDoencaSecundario" name="CodDoencaSecundario"
-                            defaultValue={getCodDoencaSecundario} onChange={(e) => setCodDoencaSecundario((e.target as HTMLInputElement).value)}
+                            defaultValue={getCodDoencaSecundario} onChange={(e) => {checkInput((e.target as HTMLInputElement).value)}}
                             placeholder="Digite o código de doença secundário" />
                         
                         <label htmlFor="SistemaAcometido" className="mt-4">Sistema Acometido</label>
