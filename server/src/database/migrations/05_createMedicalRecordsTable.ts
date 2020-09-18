@@ -21,7 +21,7 @@ export async function up(knex: knex) {
     table.enu("IndicacaoSepse", ["S", "N"]).notNullable();
     table.enu("DisfuncaoRenal", ["S", "N"]).notNullable();
     table.string("OrigemInfeccao").notNullable();
-    table.string("Desfecho");
+    table.enu("Desfecho", ["A", "O", "T"]);
     table.enu("DoseCorreta", ["S", "N"]);
     table.enu("PosologiaCorreta", ["S", "N"]);
   });

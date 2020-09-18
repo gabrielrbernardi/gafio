@@ -13,6 +13,7 @@ routes.get("/medicalRecords/dataInternacao/:DataInternacao?", records.indexByDat
 
 routes.get("/medicalRecords/paginate/:page?", records.indexPagination)
 
+routes.put("/medicalRecords/desfecho/:id?", records.updateDesfecho)
 routes.put("/medicalRecords/:id?", records.update)
 routes.post("/medicalRecords/:id?", records.delete);
 

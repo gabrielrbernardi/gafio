@@ -325,7 +325,42 @@ class ProntuarioController {
             }
          }
       }else{
-         return response.json({updatedMedicalRecord: false, error: "É necessário informar o número do prontuário."});
+         return response.json({updatedMedicalRecord: false, error: "O número do prontuário está incorreto."});
+      }
+   }
+
+   //UPDATE NO DESFECHO
+   async updateDesfecho(request: Request, response: Response){
+      const { id } = request.params
+      
+      if(id){
+         const {
+            DataDesfecho,
+            Desfecho
+         } = request.body
+         
+         if (!DataDesfecho || !Desfecho) {
+            return response.json({
+               updatedMedicalRecord: false,
+               error: "Preencha todos os campos necessários."
+            })
+         }else{
+            const MedicalRecordDB = await knex('Prontuario').where('NroProntuario', id)
+            const MedicalRecord = MedicalRecordDB[0]
+            
+            if(MedicalRecord){
+               await knex('Prontuario').where('NroProntuario', id).update({
+                  DataDesfecho: DataDesfecho,
+                  Desfecho: Desfecho
+               }).then(() => {
+                  return response.json({updatedMedicalRecord: true})
+               }).catch(error => {
+                  return response.json({updatedMedicalRecord: false, error})
+               })
+            }else{
+               return response.json({updatedMedicalRecord: false, error: "O número do prontuário está incorreto."});
+            }
+         }
       }
    }
 

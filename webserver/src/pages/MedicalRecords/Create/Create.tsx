@@ -66,7 +66,7 @@ const MedicalRecordsForm = () => {
 
     function handleSubmit(event: FormEvent){
         event.preventDefault();
-        
+
         createMedicalRecordsService.Create(getNroProntuario, getNroPaciente,
             getDataInternacao, getCodDoencaPrincipal, getCodDoencaSecundario,
             getSistemaAcometido, getCodComorbidade, getOrigem, getAlocacao,
@@ -74,7 +74,6 @@ const MedicalRecordsForm = () => {
             getSitioInfeccaoPrimario, getTratamento, getIndicacao,
             getDisfuncao, getOrigemInfeccao, getDose, getPosologia)
         .then((response) => {
-            console.log(response.CreatedMedicalRecord)
             if(response.CreatedMedicalRecord){
                 showToast('success', 'Sucesso!', `Prontuário criado com sucesso!`);
                 setTimeout(() => {
@@ -113,7 +112,6 @@ const MedicalRecordsForm = () => {
     }
 
     return (
-        //TRATAMENTO DE ERRO
         <div className="row m-5">
             <div className="card shadow-lg p-3 col-sm-6 offset-md-3 border">
                 <p className="text-dark h3 text-center">Cadastro de Prontuário</p>

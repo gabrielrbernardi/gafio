@@ -123,9 +123,6 @@ const MedicalRecords = () => {
                                         <Button onClick={handleSearch} style={{borderRadius: '0'}}><FiSearch size={15}/></Button>
                                     </>
                             }
-                            {/* <Dropdown className="mx-1" value={getOptionState} options={options} onChange={onOptionChange} placeholder="Selecione um filtro" optionLabel="name" style={{width: '12em'}}/>
-                            <Button tabIndex={2} variant="outline-danger" className="p-0 mr-1" style={{width: '17px'}} onClick={() => {setSearchInput(''); getUsersFunction(); setMode('N'); setOptionState(null)}}><AiOutlineClose size={15}/></Button>
-                            <Button onClick={handleSearch}><FiSearch size={20}/></Button> */}
                         </div>
                     </div>
                 </Collapse>
