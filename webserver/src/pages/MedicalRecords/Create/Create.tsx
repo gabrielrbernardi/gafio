@@ -5,7 +5,6 @@ import { useHistory } from 'react-router-dom';
 import ToastComponent from '../../../components/Toast';
 
 import {CreateMedicalRecordsService} from './CreateMedicalRecordsService'
-import FormCheckInput from 'react-bootstrap/FormCheckInput';
 
 const MedicalRecordsForm = () => {
 
@@ -60,11 +59,34 @@ const MedicalRecordsForm = () => {
         setPosologia(e.value);
     };
 
-    function checkInput(e: any){
-        if(e === ''){
-            setCodDoencaSecundario(null);
-        }else{
-            setCodDoencaSecundario(e)
+    function checkInput(type: number, e: any){
+        if(type == 1){
+            if(e === ''){
+                setCodDoencaSecundario(null);
+            }else{
+                setCodDoencaSecundario(e)
+            }
+        }
+        if(type == 2){
+            if(e === ''){
+                setCodComorbidade(null);
+            }else{
+                setCodComorbidade(e)
+            }
+        }
+        if(type == 3){
+            if(e === ''){
+                setCodAtbSecundario(null);
+            }else{
+                setCodAtbSecundario(e)
+            } 
+        }
+        if(type == 4){
+            if(e === ''){
+                setSitioInfeccaoPrimario(null);
+            }else{
+                setSitioInfeccaoPrimario(e)
+            }  
         }
     }
 
@@ -75,9 +97,7 @@ const MedicalRecordsForm = () => {
 
     function handleSubmit(event: FormEvent){
         event.preventDefault();
-        console.log(getCodDoencaSecundario)
 
-        
         createMedicalRecordsService.Create(getNroProntuario, getNroPaciente,
             getDataInternacao, getCodDoencaPrincipal, getCodDoencaSecundario,
             getSistemaAcometido, getCodComorbidade, getOrigem, getAlocacao,
@@ -85,7 +105,6 @@ const MedicalRecordsForm = () => {
             getSitioInfeccaoPrimario, getTratamento, getIndicacao,
             getDisfuncao, getOrigemInfeccao, getDose, getPosologia)
         .then((response) => {
-            console.log(response.CreatedMedicalRecord)
             if(response.CreatedMedicalRecord){
                 showToast('success', 'Sucesso!', `Prontuário criado com sucesso!`);
                 setTimeout(() => {
@@ -124,7 +143,6 @@ const MedicalRecordsForm = () => {
     }
 
     return (
-        //TRATAMENTO DE ERRO
         <div className="row m-5">
             <div className="card shadow-lg p-3 col-sm-6 offset-md-3 border">
                 <p className="text-dark h3 text-center">Cadastro de Prontuário</p>
@@ -175,7 +193,7 @@ const MedicalRecordsForm = () => {
                         
                         <label htmlFor="CodDoencaSecundario" className="mt-4">Código de Doença Secundário</label>
                         <input type="text" className="form-control" id="CodDoencaSecundario" name="CodDoencaSecundario"
-                            defaultValue={getCodDoencaSecundario} onChange={(e) => {checkInput((e.target as HTMLInputElement).value)}}
+                            defaultValue={getCodDoencaSecundario} onChange={(e) => {checkInput(1, (e.target as HTMLInputElement).value)}}
                             placeholder="Digite o código de doença secundário" />
                         
                         <label htmlFor="SistemaAcometido" className="mt-4">Sistema Acometido</label>
@@ -185,7 +203,7 @@ const MedicalRecordsForm = () => {
                         
                         <label htmlFor="CodComorbidade" className="mt-4">Código de Comorbidade</label>
                         <input type="text" className="form-control" id="CodComorbidade" name="CodComorbidade"
-                            defaultValue={getCodComorbidade} onChange={(e) => setCodComorbidade((e.target as HTMLInputElement).value)}
+                            defaultValue={getCodComorbidade} onChange={(e) => {checkInput(2, (e.target as HTMLInputElement).value)}}
                             placeholder="Digite o código de comorbidade" />
                         
                         <label htmlFor="CodAtbPrimario" className="mt-4">Código de Medicamento Primário</label>
@@ -195,12 +213,12 @@ const MedicalRecordsForm = () => {
 
                         <label htmlFor="CodAtbSecundario" className="mt-4">Código de Medicamento Secundário</label>
                         <input type="text" className="form-control" id="CodAtbSecundario" name="CodAtbSecundario"
-                            defaultValue={getCodAtbSecundario} onChange={(e) => setCodAtbSecundario((e.target as HTMLInputElement).value)}
+                            defaultValue={getCodAtbSecundario} onChange={(e) => {checkInput(3, (e.target as HTMLInputElement).value)}}
                             placeholder="Digite o código de medicamento secundário" />
 
                         <label htmlFor="SitioInfeccaoPrimario" className="mt-4">Sítio de Infecção Primário</label>
                         <input type="text" className="form-control" id="SitioInfeccaoPrimario" name="SitioInfeccaoPrimario"
-                            defaultValue={getSitioInfeccaoPrimario} onChange={(e) => setSitioInfeccaoPrimario((e.target as HTMLInputElement).value)}
+                            defaultValue={getSitioInfeccaoPrimario} onChange={(e) => {checkInput(4, (e.target as HTMLInputElement).value)}}
                             placeholder="Digite o sítio de infecção primário" />
 
                         <label htmlFor="OrigemInfeccao" className="mt-4">Origem da Infecção</label>

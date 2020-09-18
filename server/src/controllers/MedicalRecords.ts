@@ -4,7 +4,7 @@
 | Sistema: GAFio                        |
 ****************************************/
 
-import { Request, Response } from "express";
+import e, { Request, Response } from "express";
 import knex from "../database/connection";
 
 class ProntuarioController {
@@ -46,12 +46,13 @@ class ProntuarioController {
             const patient = patientDB[0]
             
             if(patient){
-               //TRATAR DATA
-               
+               var res = DataInternacao.split("-")
+               var datatratada = res[2] + "/" + res[1] + "/" + res[0]
+
                await knex("Prontuario").insert({
                   NroProntuario,
                   NroPaciente,
-                  DataInternacao,
+                  DataInternacao: datatratada,
                   CodDoencaPrincipal,
                   CodDoencaSecundario,
                   SistemaAcometido,
@@ -94,37 +95,54 @@ class ProntuarioController {
 
    //PAGINACAO DA LISTA DE PRONTUARIOS
    async indexPagination(request: Request, response: Response){
-      const {page} = request.params;
+      var page = String(request.query.page);
+      if(!page){
+         page = "10"
+      }
       var pageRequest = parseInt(page) / 10;
       const rows = 10;
       try{
-          const MedicalRecords = await knex("Prontuario").select("*").offset((pageRequest-1)*rows).limit(rows);
-      
-          var serializedMedicalRecords = MedicalRecords.map(MedicalRecord => {
-              return {
-                  NroProntuario: MedicalRecord.NroProntuario,
-                  NroPaciente: MedicalRecord.NroPaciente,
-                  DataNascimento: null,
-                  NomePaciente: null,
-                  Genero: null,
-                  DataInternacao: MedicalRecord.DataInternacao,
-                  DiagnosticoPrincipal: MedicalRecord.CodDoencaPrincipal,
-                  Alocacao: MedicalRecord.Alocacao,
-                  Desfecho: MedicalRecord.Desfecho
-              }
-          })
-          for(let i = 0; i < serializedMedicalRecords.length; i++){
-              const patientDB = await knex("Paciente").where("NroPaciente", serializedMedicalRecords[i]["NroPaciente"]);
-              serializedMedicalRecords[i]['NomePaciente'] = patientDB[0]['NomePaciente'];
-              serializedMedicalRecords[i]['Genero'] = patientDB[0]['Genero'];
-              serializedMedicalRecords[i]['DataNascimento'] = patientDB[0]['DataNascimento'];
-              const diseaseDB = await knex("Doenca").where("CodDoenca", serializedMedicalRecords[i]["DiagnosticoPrincipal"]);
-              serializedMedicalRecords[i]['DiagnosticoPrincipal'] = diseaseDB[0]['Nome'];
-          }
-          const MedicalRecordsLength = (await knex("Prontuario").select("*")).length;
-          return response.json({showMedicalRecords: true, medicalRecords: serializedMedicalRecords, length: MedicalRecordsLength});
+         const MedicalRecords = await knex("Prontuario").select("*").offset((pageRequest-1)*rows).limit(rows);
+
+         var serializedMedicalRecords = MedicalRecords.map(MedicalRecord => {
+            var newDesfecho
+            if(MedicalRecord.Desfecho == null){
+               newDesfecho = "Sem desfecho"
+            }else{
+               if(MedicalRecord.Desfecho == "A"){
+                  newDesfecho = "Alta"
+               }
+               if(MedicalRecord.Desfecho == "O"){
+                  newDesfecho = "Óbito"
+               }
+               if(MedicalRecord.Desfecho == "T"){
+                  newDesfecho = "Transferência"
+               }
+            }
+            return {
+               NroProntuario: MedicalRecord.NroProntuario,
+               NroPaciente: MedicalRecord.NroPaciente,
+               DataNascimento: null,
+               NomePaciente: null,
+               Genero: null,
+               DataInternacao: MedicalRecord.DataInternacao,
+               DiagnosticoPrincipal: MedicalRecord.CodDoencaPrincipal,
+               Alocacao: MedicalRecord.Alocacao,
+               Desfecho: newDesfecho
+            }
+         })
+         for(let i = 0; i < serializedMedicalRecords.length; i++){
+            const patientDB = await knex("Paciente").where("NroPaciente", serializedMedicalRecords[i]["NroPaciente"]);
+            serializedMedicalRecords[i]['NomePaciente'] = patientDB[0]['NomePaciente'];
+            serializedMedicalRecords[i]['Genero'] = patientDB[0]['Genero'];
+            serializedMedicalRecords[i]['DataNascimento'] = patientDB[0]['DataNascimento'];
+            const diseaseDB = await knex("Doenca").where("CodDoenca", serializedMedicalRecords[i]["DiagnosticoPrincipal"]);
+            serializedMedicalRecords[i]['DiagnosticoPrincipal'] = diseaseDB[0]['Nome'];
+         }
+         const MedicalRecordsLength = (await knex("Prontuario").select("*")).length;
+         return response.json({showMedicalRecords: true, medicalRecords: serializedMedicalRecords, length: MedicalRecordsLength});
       }catch(err){
-          return response.json({showMedicalRecords: false, error: err});
+         return response.json({showMedicalRecords: false, error: err});
       }
   }
 
@@ -139,21 +157,38 @@ class ProntuarioController {
       async indexByNroProntuario(request: Request, response: Response) {
          const {nroProntuario} = request.query;
          var page = String(request.query.page);
+         if(!page){
+            page = "10"
+         }
          var pageRequest = parseInt(page) / 10;
          const rows = 10;
          try{
-            const MedicalRecordDB = await knex("Prontuario").where('NroProntuario', 'like', `%${nroProntuario}%`).offset((pageRequest-1)*rows).limit(rows);
-            var serializedMedicalRecords = MedicalRecordDB.map(MedicalRecordDB => {
+            const MedicalRecord = await knex("Prontuario").where('NroProntuario', 'like', `%${nroProntuario}%`).offset((pageRequest-1)*rows).limit(rows);
+            var serializedMedicalRecords = MedicalRecord.map(MedicalRecord => {
+               var newDesfecho
+               if(MedicalRecord.Desfecho == null){
+                  newDesfecho = "Sem desfecho"
+               }else{
+                  if(MedicalRecord.Desfecho == "A"){
+                     newDesfecho = "Alta"
+                  }
+                  if(MedicalRecord.Desfecho == "O"){
+                     newDesfecho = "Óbito"
+                  }
+                  if(MedicalRecord.Desfecho == "T"){
+                     newDesfecho = "Transferência"
+                  }
+               }
                return {
-                  NroProntuario: MedicalRecordDB.NroProntuario,
-                  NroPaciente: MedicalRecordDB.NroPaciente,
+                  NroProntuario: MedicalRecord.NroProntuario,
+                  NroPaciente: MedicalRecord.NroPaciente,
                   DataNascimento: null,
                   NomePaciente: null,
                   Genero: null,
-                  DataInternacao: MedicalRecordDB.DataInternacao,
-                  DiagnosticoPrincipal: MedicalRecordDB.CodDoencaPrincipal,
-                  Alocacao: MedicalRecordDB.Alocacao,
-                  Desfecho: MedicalRecordDB.Desfecho
+                  DataInternacao: MedicalRecord.DataInternacao,
+                  DiagnosticoPrincipal: MedicalRecord.CodDoencaPrincipal,
+                  Alocacao: MedicalRecord.Alocacao,
+                  Desfecho: newDesfecho
                }
             })
             for(let i = 0; i < serializedMedicalRecords.length; i++){
@@ -178,18 +213,32 @@ class ProntuarioController {
          var pageRequest = parseInt(page) / 10;
          const rows = 10;
          try{
-            const MedicalRecordDB = await knex("Prontuario").where('NroPaciente', 'like', `%${nroPaciente}%`).offset((pageRequest-1)*rows).limit(rows);
-            var serializedMedicalRecords = MedicalRecordDB.map(MedicalRecordDB => {
+            const MedicalRecord = await knex("Prontuario").where('NroPaciente', 'like', `%${nroPaciente}%`).offset((pageRequest-1)*rows).limit(rows);
+            var serializedMedicalRecords = MedicalRecord.map(MedicalRecord => {
+               var newDesfecho
+               if(MedicalRecord.Desfecho == null){
+                  newDesfecho = "Sem desfecho"
+               }else{
+                  if(MedicalRecord.Desfecho == "A"){
+                     newDesfecho = "Alta"
+                  }
+                  if(MedicalRecord.Desfecho == "O"){
+                     newDesfecho = "Óbito"
+                  }
+                  if(MedicalRecord.Desfecho == "T"){
+                     newDesfecho = "Transferência"
+                  }
+               }
                return {
-                  NroProntuario: MedicalRecordDB.NroProntuario,
-                  NroPaciente: MedicalRecordDB.NroPaciente,
+                  NroProntuario: MedicalRecord.NroProntuario,
+                  NroPaciente: MedicalRecord.NroPaciente,
                   DataNascimento: null,
                   NomePaciente: null,
                   Genero: null,
-                  DataInternacao: MedicalRecordDB.DataInternacao,
-                  DiagnosticoPrincipal: MedicalRecordDB.CodDoencaPrincipal,
-                  Alocacao: MedicalRecordDB.Alocacao,
-                  Desfecho: MedicalRecordDB.Desfecho
+                  DataInternacao: MedicalRecord.DataInternacao,
+                  DiagnosticoPrincipal: MedicalRecord.CodDoencaPrincipal,
+                  Alocacao: MedicalRecord.Alocacao,
+                  Desfecho: newDesfecho
                }
             })
             for(let i = 0; i < serializedMedicalRecords.length; i++){
@@ -214,18 +263,32 @@ class ProntuarioController {
          var pageRequest = parseInt(page) / 10;
          const rows = 10;
          try{
-            const MedicalRecordDB = await knex("Prontuario").where('DataInternacao', 'like', `%${dataInternacao}%`).offset((pageRequest-1)*rows).limit(rows);
-            var serializedMedicalRecords = MedicalRecordDB.map(MedicalRecordDB => {
+            const MedicalRecord = await knex("Prontuario").where('DataInternacao', 'like', `%${dataInternacao}%`).offset((pageRequest-1)*rows).limit(rows);
+            var serializedMedicalRecords = MedicalRecord.map(MedicalRecord => {
+               var newDesfecho
+               if(MedicalRecord.Desfecho == null){
+                  newDesfecho = "Sem desfecho"
+               }else{
+                  if(MedicalRecord.Desfecho == "A"){
+                     newDesfecho = "Alta"
+                  }
+                  if(MedicalRecord.Desfecho == "O"){
+                     newDesfecho = "Óbito"
+                  }
+                  if(MedicalRecord.Desfecho == "T"){
+                     newDesfecho = "Transferência"
+                  }
+               }
                return {
-                  NroProntuario: MedicalRecordDB.NroProntuario,
-                  NroPaciente: MedicalRecordDB.NroPaciente,
+                  NroProntuario: MedicalRecord.NroProntuario,
+                  NroPaciente: MedicalRecord.NroPaciente,
                   DataNascimento: null,
                   NomePaciente: null,
                   Genero: null,
-                  DataInternacao: MedicalRecordDB.DataInternacao,
-                  DiagnosticoPrincipal: MedicalRecordDB.CodDoencaPrincipal,
-                  Alocacao: MedicalRecordDB.Alocacao,
-                  Desfecho: MedicalRecordDB.Desfecho
+                  DataInternacao: MedicalRecord.DataInternacao,
+                  DiagnosticoPrincipal: MedicalRecord.CodDoencaPrincipal,
+                  Alocacao: MedicalRecord.Alocacao,
+                  Desfecho: newDesfecho
                }
             })
             for(let i = 0; i < serializedMedicalRecords.length; i++){
