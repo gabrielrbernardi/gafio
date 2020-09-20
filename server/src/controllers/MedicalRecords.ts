@@ -4,7 +4,7 @@
 | Sistema: GAFio                        |
 ****************************************/
 
-import e, { Request, Response } from "express";
+import { Request, Response } from "express";
 import knex from "../database/connection";
 
 class ProntuarioController {
@@ -199,8 +199,8 @@ class ProntuarioController {
                const diseaseDB = await knex("Doenca").where("CodDoenca", serializedMedicalRecords[i]["DiagnosticoPrincipal"]);
                serializedMedicalRecords[i]['DiagnosticoPrincipal'] = diseaseDB[0]['Nome'];
             }
-            const MedicalRecordsLength = (await knex("Prontuario").select("*")).length;
-            return response.json({showMedicalRecords: true, serializedMedicalRecords, length: MedicalRecordsLength, length1: serializedMedicalRecords.length});
+            const MedicalRecordsLength = (await knex("Prontuario").count('NroProntuario').where('NroProntuario', 'like', `%${nroProntuario}%`));
+            return response.json({showMedicalRecords: true, medicalRecords: serializedMedicalRecords, length: MedicalRecordsLength, length1: serializedMedicalRecords.length});
          }catch(err){
             return response.json({showMedicalRecords: false, error: err});
          }
@@ -249,8 +249,8 @@ class ProntuarioController {
                const diseaseDB = await knex("Doenca").where("CodDoenca", serializedMedicalRecords[i]["DiagnosticoPrincipal"]);
                serializedMedicalRecords[i]['DiagnosticoPrincipal'] = diseaseDB[0]['Nome'];
             }
-            const MedicalRecordsLength = (await knex("Prontuario").select("*")).length;
-            return response.json({showMedicalRecords: true, serializedMedicalRecords, length: MedicalRecordsLength, length1: serializedMedicalRecords.length});
+            const MedicalRecordsLength = (await knex("Prontuario").count('NroPaciente').where('NroPaciente', 'like', `%${nroPaciente}%`));
+            return response.json({showMedicalRecords: true, medicalRecords: serializedMedicalRecords, length: MedicalRecordsLength, length1: serializedMedicalRecords.length});
          }catch(err){
             return response.json({showMedicalRecords: false, error: err});
          }
@@ -299,8 +299,8 @@ class ProntuarioController {
                const diseaseDB = await knex("Doenca").where("CodDoenca", serializedMedicalRecords[i]["DiagnosticoPrincipal"]);
                serializedMedicalRecords[i]['DiagnosticoPrincipal'] = diseaseDB[0]['Nome'];
             }
-            const MedicalRecordsLength = (await knex("Prontuario").select("*")).length;
-            return response.json({showMedicalRecords: true, serializedMedicalRecords, length: MedicalRecordsLength, length1: serializedMedicalRecords.length});
+            const MedicalRecordsLength = (await knex("Prontuario").count('DataInternacao').where('DataInternacao', 'like', `%${dataInternacao}%`));
+            return response.json({showMedicalRecords: true, medicalRecords: serializedMedicalRecords, length: MedicalRecordsLength, length1: serializedMedicalRecords.length});
          }catch(err){
             return response.json({showMedicalRecords: false, error: err});
          }
@@ -347,9 +347,12 @@ class ProntuarioController {
                const patient = patientDB[0]
             
                if(patient){
+                  var res = DataInternacao.split("-")
+                  var datatratada = res[2] + "/" + res[1] + "/" + res[0]
+
                   await knex('Prontuario').where('NroProntuario', id).update({
                      NroPaciente: NroPaciente,
-                     DataInternacao: DataInternacao,
+                     DataInternacao: datatratada,
                      CodDoencaPrincipal: CodDoencaPrincipal,
                      CodDoencaSecundario: CodDoencaSecundario,
                      SistemaAcometido: SistemaAcometido,
@@ -412,8 +415,11 @@ class ProntuarioController {
             const MedicalRecord = MedicalRecordDB[0]
             
             if(MedicalRecord){
+               var res = DataDesfecho.split("-")
+               var datatratada = res[2] + "/" + res[1] + "/" + res[0]
+               
                await knex('Prontuario').where('NroProntuario', id).update({
-                  DataDesfecho: DataDesfecho,
+                  DataDesfecho: datatratada,
                   Desfecho: Desfecho
                }).then(() => {
                   return response.json({updatedMedicalRecord: true})

@@ -134,7 +134,11 @@ const MedicalRecords = () => {
                 searchType = getOptionState.name
             }
             let dataSize = data.length[0]['count(`' + searchType + '`)']
-            showToast('info', 'Resultados Encontrados!', `Foram encontrados ${dataSize} resultados.`)
+            if(dataSize == 1){
+                showToast('info', 'Resultado Encontrado!', `Foi encontrado ${dataSize} resultado.`)
+            }else{
+                showToast('info', 'Resultados Encontrados!', `Foram encontrados ${dataSize} resultados.`)
+            }
         })
     }
 
@@ -152,7 +156,7 @@ const MedicalRecords = () => {
     return (
         <>
             <div className="row m-5 px-5">
-                <Link to={location => ({...location, pathname: '/medicalRecords/create'})}><Button variant="outline-dark" className="mb-2" style={{borderRadius: '0', height:'41.5px'}}>Cadastrar Prontuário</Button></Link>
+                <Link to={location => ({...location, pathname: '/medicalRecords/create'})}><Button variant="outline-dark" className="mb-2" style={{borderRadius: '0'}}>Cadastrar Prontuário</Button></Link>
                 <Button variant="outline-secondary" className="mb-2 ml-2" onClick={() => setOpen(!open)} aria-controls="example-collapse-text" aria-expanded={open} style={{borderRadius: '0'}}>Buscar prontuário específico</Button>
                 <Collapse in={open} timeout={200}>
                     <div className="ml-2">
@@ -193,6 +197,9 @@ const MedicalRecords = () => {
                     <Column field="Desfecho" header="Desfecho" style={{width:'10%', textAlign:'center'}}/>
                 </DataTable>
             </div>
+            {getToast &&
+                <ToastComponent messageType={getMessageType} messageTitle={getMessageTitle} messageContent={getMessageContent}/>
+            }
         </>
     )
 }

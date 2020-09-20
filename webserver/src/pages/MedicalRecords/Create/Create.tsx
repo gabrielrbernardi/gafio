@@ -173,7 +173,7 @@ const MedicalRecordsForm = () => {
                                     placeholder="Digite a origem" required/>
                             </div>
 
-                            <div className="col">    
+                            <div className="col">
                                 <label htmlFor="Alocacao">Alocação</label>
                                 <input type="text" className="form-control" id="Alocacao" name="Alocacao"
                                     defaultValue={getAlocacao} onChange={(e) => setAlocacao((e.target as HTMLInputElement).value)}
