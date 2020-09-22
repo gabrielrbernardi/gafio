@@ -6,11 +6,15 @@ const ToastComponent = (props: any) => {
 
     const myToast: any = useRef(null);
     useEffect(() => {
-            showToast(props.messageType, props.messageTitle, props.messageContent);
+        showToast(props.messageType, props.messageTitle, props.messageContent, props.lifeTime);
     },[])
 
-    function showToast (messageType: string, messageTitle: string, messageContent: string)  {
-            myToast.current.show({severity: messageType, summary: messageTitle, detail: messageContent, life: 4000});   
+    function showToast (messageType: string, messageTitle: string, messageContent: string, lifeTime?: number)  {
+        if(lifeTime){
+            myToast.current.show({severity: messageType, summary: messageTitle, detail: messageContent, life: lifeTime});               
+        }else{
+            myToast.current.show({severity: messageType, summary: messageTitle, detail: messageContent, life: 4000});
+        }
     }   
     
     return (

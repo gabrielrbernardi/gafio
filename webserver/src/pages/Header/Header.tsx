@@ -9,6 +9,7 @@ import '../Home/Home.css';
 import './Header.css';
 
 import api from '../../services/api';
+import ToastComponent from '../../components/Toast';
 
 const Header = () => {
     const history = useHistory();
@@ -16,6 +17,12 @@ const Header = () => {
     const [userName, setUserName] = useState('');
     const [tipoUsuario, setTipoUsuario] = useState('');
     const [notificationsLength, setNotificationsLength] = useState(Number);
+
+    const [getToast, setToast] = useState<boolean>();
+    const [getMessageType, setMessageType] = useState<string>('');
+    const [getMessageTitle, setMessageTitle] = useState<string>('');
+    const [getMessageContent, setMessageContent] = useState<string>('');
+    const [getLifeTime, setLifeTime] = useState<Number>(4000);
     
     function handleBackButton(){
         history.goBack();
@@ -34,13 +41,52 @@ const Header = () => {
     }, [cookies, history]);
 
     useEffect(() => {
-        const cookie = cookies.userData;
-        const CodUsuario = cookie.CodUsuario;
-        const TipoUsuario = cookie.TipoUsuario;
-        api.post(`notifications/id/?id=${CodUsuario}&page=30`, {TipoUsuario: TipoUsuario}).then(response => {
-            setNotificationsLength(response.data.length)
-        })
-    }, [cookies.userData])
+        const getNotifications = async () => {
+            const cookie = cookies.userData;
+            const CodUsuario = cookie.CodUsuario;
+            try{
+                await api.get(`notifications/length/${CodUsuario}`).then(response => {
+                    if(response.data.notificationFound){
+                        let dataSize = response.data.length[0]['count(`CodUsuario`)']
+                        setNotificationsLength(dataSize)
+                        if(dataSize === 0){
+                            showToast('info', 'Notificação', `Você não possui notificações.`)
+                        }else{
+                            showToast('info', 'Notificação', `Você possui ${dataSize} notificações.`)
+                        }
+                    }else{
+                        showToast('info', 'Notificação', `Você não possui notificações.`)                        
+                    }
+                })
+            }catch(err){
+                if(err.message === "Network Error"){
+                    showToast('error', 'Erro!', 'Não foi possível conectar ao servidor. O sistema se desconectará! Contacte o administrador do sistema para mais informações!', 8000)
+                }
+                // showToast('error', 'Erro!', 'teste');
+            }
+        };
+        
+        getNotifications();
+
+    }, [])
+
+    function showToast(messageType: string, messageTitle: string, messageContent: string, lifeTime?: number){
+        setToast(false)
+        setMessageType(messageType);
+        setMessageTitle(messageTitle);
+        setMessageContent(messageContent);
+        if(lifeTime){
+            setLifeTime(lifeTime);
+            setTimeout(() => {
+                setToast(false);
+            }, 8500)
+        }else{
+            setTimeout(() => {
+                setToast(false);
+            }, 4500)
+        }
+        setToast(true);
+    }
 
     function logoutFunction(){
         removeCookie('userData');
@@ -140,7 +186,7 @@ const Header = () => {
                         </Link>
                     </div>
                     <div className="col-md-auto mx-2">
-                        <Link className="text-decoration-none" to="/underDevelopment">
+                        <Link className="text-decoration-none" to="/history">
                             HISTÓRICO
                         </Link>
                     </div>
@@ -152,6 +198,9 @@ const Header = () => {
                     <FiArrowLeft size={20} />
                 </button>
             </div>
+            {getToast &&
+                <ToastComponent messageType={getMessageType} messageTitle={getMessageTitle} messageContent={getMessageContent} lifeTime={getLifeTime}/>
+            }
         </div>
     )
 }

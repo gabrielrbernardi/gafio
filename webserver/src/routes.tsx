@@ -24,6 +24,8 @@ import Registrations from './pages/Registrations/Registrations';
 import Diseases from './pages/Registrations/Diseases/Diseases';
 import Medicines from './pages/Registrations/Medicines/Medicines';
 
+import History from './pages/History/History';
+
 import NotFound from './pages/NotFound/NotFound';
 
 import UnderDevelopment from './pages/UnderDevelopment/UnderDevelopment';
@@ -45,6 +47,8 @@ const Routes = () => {
                 <Route path="/medicalRecords/create" render={() => <div><Header/><MedicalRecordsCreate/><Footer/></div>} exact />
                 <Route path="/medicalRecords" render={() => <div><Header/><MedicalRecords/><Footer/></div>} exact />
                 <Route path="/dashboard" render={() => <div><Header/><Dashboard/><Footer/></div>} exact />
+                
+                <Route path="/history" render={() => <div><Header/><History/><Footer/></div>} exact />
 
                 <Route path="/myProfile" render={() => <div><Header/><MyProfile/><Footer/></div>} exact />
                 <Route path="/users" render={() => <div><Header/><Users/><Footer/></div>} exact />

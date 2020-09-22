@@ -18,12 +18,14 @@ import { Dialog } from 'primereact/dialog';
 
 import './Users.css';
 import ToastComponent from '../../components/Toast';
+import Loading from '../../components/Loading';
 
 const MedicalRecords = () => {
     const [cookie] = useCookies();
     const [prontuario, setProntuario] = useState([]);
     const [datasource, setDatasource] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [loading1, setLoading1] = useState(true);
     const [getFirst, setFirst] = useState(0);
     const [totalRecords, setTotalRecords] = useState(0);
     const [searchInput, setSearchInput] = useState('');
@@ -81,10 +83,13 @@ const MedicalRecords = () => {
 
     //DataTable
     useEffect(() => {
-        usersService.getUsersPaginate(10).then(data => {
-            getUsersFunction(data)
-            showToast('info', 'Resultados Encontrados!', `Foram encontrados ${data.length} resultados.`)
-        });
+        setLoading1(true);
+        setTimeout(() => {
+            usersService.getUsersPaginate(10).then(data => {
+                getUsersFunction(data)
+                showToast('info', 'Resultados Encontrados!', `Foram encontrados ${data.length} resultados.`)
+            });
+        }, 1000)
     }, []);
     
     const onPage = (event: any) => {
@@ -202,6 +207,7 @@ const MedicalRecords = () => {
                 }
                 setProntuario(data.slice(0, rows));
                 setLoading(false);
+                setLoading1(false);
                 return
             })
         }else{
@@ -224,6 +230,7 @@ const MedicalRecords = () => {
             }
             setProntuario(data.slice(0, rows));
             setLoading(false);
+            setLoading1(false);
             return
         }
     }
@@ -371,6 +378,9 @@ const MedicalRecords = () => {
                 </Dialog>
                 {getToast &&
                     <ToastComponent messageType={getMessageType} messageTitle={getMessageTitle} messageContent={getMessageContent}/>
+                }
+                {loading1 &&
+                    <Loading/>
                 }
             </div>
         </>

@@ -56,7 +56,7 @@ const Home = () => {
                             </p>
                     </div>
                 </Link>
-                <Link className="text-decoration-none" to="/underDevelopment">
+                <Link className="text-decoration-none" to="/history">
                     <div className="card text-center shadow zoom-hover">
                             <p className="h6">
                                 <FaHistory className="mt-3 mb-3 ml-auto mr-auto" size={40} /><br/>
