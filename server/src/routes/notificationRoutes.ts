@@ -7,7 +7,7 @@ const notification = new NotificationController();
 //Routes to User CRUD
 routes.get("/notifications", notification.index);
 routes.post("/notifications/id/", notification.showId);
-routes.post('/notifications/length/:id', notification.showNotificationLength);
+routes.get('/notifications/length/:id', notification.showNotificationLength);
 routes.post("/notifications", notification.create);
 routes.put("/notifications/status/:id", notification.updateStatus);
 routes.put("/notifications/status/accept/:id", notification.updateStatusAccepted);

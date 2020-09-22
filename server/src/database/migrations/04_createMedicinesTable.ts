@@ -6,7 +6,7 @@ export async function up(knex: knex) {
     table.string("PrincipioAtivo").notNullable();
     table.string("CNPJ");
     table.string("Laboratorio").notNullable();
-    table.integer("Registro").notNullable();
+    table.string("Registro").notNullable();
     table.string("Produto").notNullable();
     table.string("Apresentacao").notNullable();
     table.string("ClasseTerapeutica").notNullable();

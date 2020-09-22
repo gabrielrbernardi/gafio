@@ -14,11 +14,11 @@ interface notificationObject{
 
 class Notification{
     async create(request: Request, response: Response){
-        const {descricao, userId} = request.body;
+        const {descricao, userId, tipoNotificacao} = request.body;
         const notification = {
             Descricao: descricao, 
             Status: 0, 
-            TipoNotificacao: "teste",
+            TipoNotificacao: tipoNotificacao,
             CodUsuario: userId
         }
         await knex("Notificacao").insert(notification).then(function (notifications) {
@@ -97,31 +97,12 @@ class Notification{
 
     async showNotificationLength(request: Request, response: Response){
         const {id} = request.params;        //UserID
-        const {TipoUsuario} = request.body;
-        if(TipoUsuario == 'A' || TipoUsuario == 'M'){
-            const notificationDB = await knex('Usuario_Notificacao').whereNot('CodUsuario', id);
-            if(notificationDB.length != 0){
-                var notificationObject: any = {}, notificationList: any = [];
-                var notifications: any = []
-                for(let i = 0; i < notificationDB.length; i++){
-                    notificationObject = notificationDB[i];
-                    notificationList.push(notificationObject);
-                }
-                knex('Notificacao').where({
-                    CodUsuario: notificationList[0].CodUsuario,
-                    Status: 0
-                })
-                .then(notificacoes => {
-                    if(notificacoes){
-                        notifications.push(notificacoes);
-                        return response.json({notificationFound: true, notifications, length: notifications.length});
-                    }else{
-                        return response.json({notificationFound: false, error: "Não há notificações para este usuário.", length: 0});                        
-                    }
-                })
-            }else{
-                return response.json({notificationFound: false, error: "Não há notificações para este usuário.", length: 0});
-            }
+        // const {TipoUsuario} = request.body;
+        const userTypeDB = await knex('Usuario').where('CodUsuario', id);
+        const userType = userTypeDB[0]['TipoUsuario']
+        if(userType == 'A' || userType == 'M'){
+            const notificationLength = await knex('Usuario_Notificacao').count('CodUsuario').whereNot('CodUsuario', id);
+            return response.json({notificationFound: true, length: notificationLength});
         }else{
             return response.json({notificationFound: false, error: "Não há notificações para este usuário.", length: 0});
         }

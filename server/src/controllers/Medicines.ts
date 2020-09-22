@@ -13,6 +13,7 @@ class MedicinesController {
       Produto,
       Apresentacao,
       ClasseTerapeutica,
+      CNPJ
     } = request.body;
 
     await knex("Medicamentos").insert({
@@ -23,11 +24,13 @@ class MedicinesController {
       Produto,
       Apresentacao,
       ClasseTerapeutica,
+      CNPJ
     });
     return response.json({
       EAN,
-      PrincipioAtivo,
+      CNPJ,
       Registro,
+      PrincipioAtivo,
       Laboratorio,
       Produto,
       Apresentacao,
