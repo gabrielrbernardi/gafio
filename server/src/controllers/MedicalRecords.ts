@@ -128,7 +128,21 @@ class ProntuarioController {
                DataInternacao: MedicalRecord.DataInternacao,
                DiagnosticoPrincipal: MedicalRecord.CodDoencaPrincipal,
                Alocacao: MedicalRecord.Alocacao,
-               Desfecho: newDesfecho
+               Desfecho: newDesfecho,
+               CodDoencaSecundario: MedicalRecord.CodDoencaSecundario,
+               SistemaAcometido: MedicalRecord.SistemaAcometido,
+               CodComorbidade: MedicalRecord.CodComorbidade,
+               Origem: MedicalRecord.Origem,
+               ResultadoColeta: MedicalRecord.ResultadoColeta,
+               CodAtbPrimario: MedicalRecord.CodAtbPrimario,
+               CodAtbSecundario: MedicalRecord.CodAtbSecundario,
+               SitioInfeccaoPrimario: MedicalRecord.SitioInfeccaoPrimario,
+               TratamentoCCIH: MedicalRecord.TratamentoCCIH,
+               IndicacaoSepse: MedicalRecord.IndicacaoSepse,
+               DisfuncaoRenal: MedicalRecord.DisfuncaoRenal,
+               OrigemInfeccao: MedicalRecord.OrigemInfeccao,
+               DoseCorreta: MedicalRecord.DoseCorreta,
+               PosologiaCorreta: MedicalRecord.PosologiaCorreta
             }
          })
          for(let i = 0; i < serializedMedicalRecords.length; i++){
@@ -188,7 +202,21 @@ class ProntuarioController {
                   DataInternacao: MedicalRecord.DataInternacao,
                   DiagnosticoPrincipal: MedicalRecord.CodDoencaPrincipal,
                   Alocacao: MedicalRecord.Alocacao,
-                  Desfecho: newDesfecho
+                  Desfecho: newDesfecho,
+                  CodDoencaSecundario: MedicalRecord.CodDoencaSecundario,
+                  SistemaAcometido: MedicalRecord.SistemaAcometido,
+                  CodComorbidade: MedicalRecord.CodComorbidade,
+                  Origem: MedicalRecord.Origem,
+                  ResultadoColeta: MedicalRecord.ResultadoColeta,
+                  CodAtbPrimario: MedicalRecord.CodAtbPrimario,
+                  CodAtbSecundario: MedicalRecord.CodAtbSecundario,
+                  SitioInfeccaoPrimario: MedicalRecord.SitioInfeccaoPrimario,
+                  TratamentoCCIH: MedicalRecord.TratamentoCCIH,
+                  IndicacaoSepse: MedicalRecord.IndicacaoSepse,
+                  DisfuncaoRenal: MedicalRecord.DisfuncaoRenal,
+                  OrigemInfeccao: MedicalRecord.OrigemInfeccao,
+                  DoseCorreta: MedicalRecord.DoseCorreta,
+                  PosologiaCorreta: MedicalRecord.PosologiaCorreta
                }
             })
             for(let i = 0; i < serializedMedicalRecords.length; i++){
@@ -238,7 +266,21 @@ class ProntuarioController {
                   DataInternacao: MedicalRecord.DataInternacao,
                   DiagnosticoPrincipal: MedicalRecord.CodDoencaPrincipal,
                   Alocacao: MedicalRecord.Alocacao,
-                  Desfecho: newDesfecho
+                  Desfecho: newDesfecho,
+                  CodDoencaSecundario: MedicalRecord.CodDoencaSecundario,
+                  SistemaAcometido: MedicalRecord.SistemaAcometido,
+                  CodComorbidade: MedicalRecord.CodComorbidade,
+                  Origem: MedicalRecord.Origem,
+                  ResultadoColeta: MedicalRecord.ResultadoColeta,
+                  CodAtbPrimario: MedicalRecord.CodAtbPrimario,
+                  CodAtbSecundario: MedicalRecord.CodAtbSecundario,
+                  SitioInfeccaoPrimario: MedicalRecord.SitioInfeccaoPrimario,
+                  TratamentoCCIH: MedicalRecord.TratamentoCCIH,
+                  IndicacaoSepse: MedicalRecord.IndicacaoSepse,
+                  DisfuncaoRenal: MedicalRecord.DisfuncaoRenal,
+                  OrigemInfeccao: MedicalRecord.OrigemInfeccao,
+                  DoseCorreta: MedicalRecord.DoseCorreta,
+                  PosologiaCorreta: MedicalRecord.PosologiaCorreta
                }
             })
             for(let i = 0; i < serializedMedicalRecords.length; i++){
@@ -288,7 +330,21 @@ class ProntuarioController {
                   DataInternacao: MedicalRecord.DataInternacao,
                   DiagnosticoPrincipal: MedicalRecord.CodDoencaPrincipal,
                   Alocacao: MedicalRecord.Alocacao,
-                  Desfecho: newDesfecho
+                  Desfecho: newDesfecho,
+                  CodDoencaSecundario: MedicalRecord.CodDoencaSecundario,
+                  SistemaAcometido: MedicalRecord.SistemaAcometido,
+                  CodComorbidade: MedicalRecord.CodComorbidade,
+                  Origem: MedicalRecord.Origem,
+                  ResultadoColeta: MedicalRecord.ResultadoColeta,
+                  CodAtbPrimario: MedicalRecord.CodAtbPrimario,
+                  CodAtbSecundario: MedicalRecord.CodAtbSecundario,
+                  SitioInfeccaoPrimario: MedicalRecord.SitioInfeccaoPrimario,
+                  TratamentoCCIH: MedicalRecord.TratamentoCCIH,
+                  IndicacaoSepse: MedicalRecord.IndicacaoSepse,
+                  DisfuncaoRenal: MedicalRecord.DisfuncaoRenal,
+                  OrigemInfeccao: MedicalRecord.OrigemInfeccao,
+                  DoseCorreta: MedicalRecord.DoseCorreta,
+                  PosologiaCorreta: MedicalRecord.PosologiaCorreta
                }
             })
             for(let i = 0; i < serializedMedicalRecords.length; i++){

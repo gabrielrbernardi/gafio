@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, FormEvent } from 'react';
 import {DataTable} from 'primereact/datatable';
 import {Column} from 'primereact/column';
 import {InputText} from 'primereact/inputtext';
@@ -8,12 +8,39 @@ import {FiSearch} from 'react-icons/fi';
 import {AiOutlineClose} from 'react-icons/ai';
 import { Link } from 'react-router-dom';
 import ToastComponent from '../../components/Toast';
+import { Dropdown } from 'primereact/dropdown';
+import {Dropdown as DropdownReact} from 'react-bootstrap';
+import { Dialog } from 'primereact/dialog';
 
 import {MedicalRecordsService} from './MedicalRecordsService';
-import { Dropdown } from 'primereact/dropdown';
-const medicalRecordsService = new MedicalRecordsService()
+
+import {CreateMedicalRecordsService} from './Create/CreateMedicalRecordsService'
+
+import { useHistory } from 'react-router-dom';
 
 const MedicalRecords = () => {
+    const medicalRecordsService = new MedicalRecordsService()
+    const createMedicalRecordsService = new CreateMedicalRecordsService()
+    const [getNroProntuario, setNroProntuario] = useState<any>(null)
+    const [getNroPaciente, setNroPaciente] = useState<any>(null)
+    const [getDataInternacao, setDataInternacao] = useState<string>('')
+    const [getCodDoencaPrincipal, setCodDoencaPrincipal] = useState<string>('')
+    const [getCodDoencaSecundario, setCodDoencaSecundario] = useState<any>(null)
+    const [getSistemaAcometido, setSistemaAcometido] = useState<string>('')
+    const [getCodComorbidade, setCodComorbidade] = useState<any>(null)
+    const [getOrigem, setOrigem] = useState<string>('')
+    const [getAlocacao, setAlocacao] = useState<string>('')
+    const [getResultadoColeta, setResultadoColeta] = useState<any>(null)
+    const [getCodAtbPrimario, setCodAtbPrimario] = useState<string>('')
+    const [getCodAtbSecundario, setCodAtbSecundario] = useState<any>(null)
+    const [getSitioInfeccaoPrimario, setSitioInfeccaoPrimario] = useState<any>(null)
+    const [getTratamento, setTratamento] = useState<string>('')
+    const [getIndicacao, setIndicacao] = useState<string>('')
+    const [getDisfuncao, setDisfuncao] = useState<string>('')
+    const [getOrigemInfeccao, setOrigemInfeccao] = useState<string>('')
+    const [getDose, setDose] = useState<any>(null)
+    const [getPosologia, setPosologia] = useState<any>(null)
+    
     const [MedicalRecords, setMedicalRecords] = useState([]);
     const [datasource, setDatasource] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -22,23 +49,84 @@ const MedicalRecords = () => {
     const [searchInput, setSearchInput] = useState('');
     const [open, setOpen] = useState(false);
     const [getMode, setMode] = useState<string>('N');
+    const [displayDialog, setDisplayDialog] = useState(false);
+    const [selectedMedicalRecord, setSelectedMedicalRecord] = useState<any>(null);
+    const [getMedicalRecord, setMedicalRecord] = useState<any>(null);
+    const [getOptionState, setOptionState] = useState<any>(null)
 
     const [getToast, setToast] = useState<boolean>();
     const [getMessageType, setMessageType] = useState<string>('');
     const [getMessageTitle, setMessageTitle] = useState<string>('');
     const [getMessageContent, setMessageContent] = useState<string>('');
 
-    const [selectedMedicalRecord, setSelectedMedicalRecord] = useState<any>(null);
-    const [getMedicalRecord, setMedicalRecord] = useState<any>(null);
-
-    const [getOptionState, setOptionState] = useState<any>(null)
+    const history = useHistory()
     
     const rows = 10;
 
-    let options = [
+    let options2 = [
         {name: 'Nro Prontuário', cod: 'Pro'},
         {name: 'Nro Paciente', cod: 'Pac'},
         {name: 'Data Internação', cod: 'Int'},
+    ];
+
+    const onResultadoChange = (e: { value: string }) => {
+        setResultadoColeta(e.value);
+    };
+
+    const onTratamentoChange = (e: { value: string }) => {
+        setTratamento(e.value);
+    };
+
+    const onIndicacaoChange = (e: { value: string }) => {
+        setIndicacao(e.value);
+    };
+
+    const onDisfuncaoChange = (e: { value: string }) => {
+        setDisfuncao(e.value);
+    };
+
+    const onDoseChange = (e: { value: string }) => {
+        setDose(e.value);
+    };
+
+    const onPosologiaChange = (e: { value: string }) => {
+        setPosologia(e.value);
+    };
+
+    function checkInput(type: number, e: any){
+        if(type == 1){
+            if(e === ''){
+                setCodDoencaSecundario(null);
+            }else{
+                setCodDoencaSecundario(e)
+            }
+        }
+        if(type == 2){
+            if(e === ''){
+                setCodComorbidade(null);
+            }else{
+                setCodComorbidade(e)
+            }
+        }
+        if(type == 3){
+            if(e === ''){
+                setCodAtbSecundario(null);
+            }else{
+                setCodAtbSecundario(e)
+            } 
+        }
+        if(type == 4){
+            if(e === ''){
+                setSitioInfeccaoPrimario(null);
+            }else{
+                setSitioInfeccaoPrimario(e)
+            }  
+        }
+    }
+
+    let options = [
+        {label: 'Sim', value: 'S'},
+        {label: 'Não', value: 'N'},
     ];
 
     const onOptionChange = (e: { value: any }) => {
@@ -93,12 +181,6 @@ const MedicalRecords = () => {
             <p style={{textAlign:'left'}} className="p-clearfix d-inline">Prontuários</p>
         </>;
 
-    var newMedicalRecord
-    const onMedicalRecordSelect = (e: any) => {
-        newMedicalRecord = false;
-        setMedicalRecord(Object.assign({}, e.data));
-    };
-
     function handleSearch(){
         if(!getOptionState){
             showToast('error', 'Erro!', 'Selecione um filtro para buscar.');
@@ -133,8 +215,48 @@ const MedicalRecords = () => {
             }else{
                 searchType = getOptionState.name
             }
-            let dataSize = data.length[0]['count(`' + searchType + '`)']
-            showToast('info', 'Resultados Encontrados!', `Foram encontrados ${dataSize} resultados.`)
+            let dataSize = data.length[0]['count(' + searchType + ')']
+            if(dataSize == 1){
+                showToast('info', 'Resultado Encontrado!', `Foi encontrado ${dataSize} resultado.`)
+            }else{
+                showToast('info', 'Resultados Encontrados!', `Foram encontrados ${dataSize} resultados.`)
+            }
+        })
+    }
+
+    function handleSubmit(event: FormEvent){
+        event.preventDefault();
+
+        createMedicalRecordsService.Create(getNroProntuario, getNroPaciente,
+            getDataInternacao, getCodDoencaPrincipal, getCodDoencaSecundario,
+            getSistemaAcometido, getCodComorbidade, getOrigem, getAlocacao,
+            getResultadoColeta, getCodAtbPrimario, getCodAtbSecundario,
+            getSitioInfeccaoPrimario, getTratamento, getIndicacao,
+            getDisfuncao, getOrigemInfeccao, getDose, getPosologia)
+        .then((response) => {
+            if(response.CreatedMedicalRecord){
+                showToast('success', 'Sucesso!', `Prontuário criado com sucesso!`);
+                setTimeout(() => {
+                    history.push('/medicalRecords')
+                }, 4500)
+            }else{
+                if(response.error.sqlMessage){
+                    if(response.error.sqlState == 23000){
+                        if(String(response.error.sqlMessage).includes("(`CodDoencaPrincipal`)") || String(response.error.sqlMessage).includes("(`CodDoencaSecundario`)")){
+                            showToast('error', 'Erro!', `O campo código de doença está incorreto`);
+                        }
+                        else if(String(response.error.sqlMessage).includes("(`CodAtbPrimario`)")  || String(response.error.sqlMessage).includes("(`CodAtbSecundario`)")){
+                            showToast('error', 'Erro!', `O campo código de medicamento está incorreto`);
+                        }else{
+                            showToast('error', 'Erro!', String(response.error.sqlMessage));
+                        }
+                    }else{
+                        showToast('error', 'Erro!', String(response.error.sqlMessage));
+                    }
+                }else{
+                    showToast('error', 'Erro!', String(response.error));
+                }
+            }
         })
     }
 
@@ -148,6 +270,34 @@ const MedicalRecords = () => {
             setToast(false);
         }, 4500)
     }
+
+    var newMedicalRecord
+    const onMedicalRecordSelect = (e: any) => {
+        newMedicalRecord = false;
+        setMedicalRecord(Object.assign({}, e.data));
+        //setNroProntuario(selectedMedicalRecord.NroProntuario)
+        // setNroPaciente
+        // setDataInternacao
+        // setCodDoencaPrincipal
+        // setCodDoencaSecundario
+        // setSistemaAcometido
+        // setCodComorbidade
+        // setOrigem
+        // setAlocacao
+        // setResultadoColeta
+        // setCodAtbPrimario
+        // setCodAtbSecundario
+        // setSitioInfeccaoPrimario
+        // setTratamento
+        // setIndicacao
+        // setDisfuncao
+        // setOrigemInfeccao
+        // setDose
+        // setPosologia
+
+        setDisplayDialog(true);
+        console.log(selectedMedicalRecord)
+    };
 
     return (
         <>
@@ -168,7 +318,7 @@ const MedicalRecords = () => {
                                 ? <></>
                                 :
                                     <>
-                                        <Dropdown className="mx-1" value={getOptionState} options={options} onChange={onOptionChange} placeholder="Selecione um filtro" optionLabel="name" style={{width: '12em'}}/>
+                                        <Dropdown className="mx-1" value={getOptionState} options={options2} onChange={onOptionChange} placeholder="Selecione um filtro" optionLabel="name" style={{width: '12em'}}/>
                                         <Button tabIndex={2} variant="outline-danger" className="p-0 mr-1" style={{width: '17px', borderRadius: '0'}} onClick={() => {setSearchInput(''); getMedicalRecordsFunction(); setMode('N'); setOptionState(null)}}><AiOutlineClose size={15}/></Button>
                                         <Button onClick={handleSearch} style={{borderRadius: '0'}}><FiSearch size={15}/></Button>
                                     </>
@@ -192,7 +342,152 @@ const MedicalRecords = () => {
                     <Column field="Alocacao" header="Alocação" style={{width:'15%', textAlign:'center'}}/>
                     <Column field="Desfecho" header="Desfecho" style={{width:'10%', textAlign:'center'}}/>
                 </DataTable>
+                <Dialog visible={displayDialog} style={{width: '50%'}} modal={true} onHide={() => setDisplayDialog(false)} maximizable>
+                    <div className="">
+                        <p className="text-dark h3 text-center">Atualização de Prontuário</p>
+                        <form className="was-validated" onSubmit={handleSubmit}>
+                            <div className="form-group">
+                                
+                                <div className="form-row mt-4">
+                                    <div className="col mr-4">
+                                        <label htmlFor="NroProntuario">Número do Prontuário</label>
+                                        <input type="number" className="form-control" id="NroProntuario" name="NroProntuario"
+                                            defaultValue={getNroProntuario} onChange={(e) => setNroProntuario(Number((e.target as HTMLInputElement).value))}
+                                            readOnly/>
+                                    </div>
+
+                                    <div className="col">
+                                        <label htmlFor="NroPaciente">Número do Paciente</label>
+                                        <input type="number" className="form-control" id="NroPaciente" name="NroPaciente"
+                                        defaultValue={getNroPaciente} onChange={(e) => setNroPaciente(Number((e.target as HTMLInputElement).value))}
+                                        placeholder="Digite o número do paciente" required autoFocus/>
+                                    </div>
+                                </div>
+
+                                <div className="form-row mt-4">
+                                    <div className="col mr-4">
+                                        <label htmlFor="Origem">Origem</label>
+                                        <input type="text" className="form-control" id="Origem" name="Origem"
+                                            defaultValue={getOrigem} onChange={(e) => setOrigem((e.target as HTMLInputElement).value)}
+                                            placeholder="Digite a origem" required/>
+                                    </div>
+
+                                    <div className="col">
+                                        <label htmlFor="Alocacao">Alocação</label>
+                                        <input type="text" className="form-control" id="Alocacao" name="Alocacao"
+                                            defaultValue={getAlocacao} onChange={(e) => setAlocacao((e.target as HTMLInputElement).value)}
+                                            placeholder="Digite a alocação" required/>
+                                    </div>
+                                </div>
+
+                                <label htmlFor="DataInternacao" className="mt-4">Data da Internação</label>
+                                <input type="date" className="form-control" id="DataInternacao" name="DataInternacao"
+                                    defaultValue={getDataInternacao} onChange={(e) => setDataInternacao((e.target as HTMLInputElement).value)}
+                                    placeholder="Digite a data de internação" required/>
+                                
+                                <label htmlFor="CodDoencaPrincipal" className="mt-4">Código de Doença Primário</label>
+                                <input type="text" className="form-control" id="CodDoencaPrincipal" name="CodDoencaPrincipal"
+                                    defaultValue={getCodDoencaPrincipal} onChange={(e) => setCodDoencaPrincipal((e.target as HTMLInputElement).value)}
+                                    placeholder="Digite o código de doença primário" required/>
+                                
+                                <label htmlFor="CodDoencaSecundario" className="mt-4">Código de Doença Secundário</label>
+                                <input type="text" className="form-control" id="CodDoencaSecundario" name="CodDoencaSecundario"
+                                    defaultValue={getCodDoencaSecundario} onChange={(e) => {checkInput(1, (e.target as HTMLInputElement).value)}}
+                                    placeholder="Digite o código de doença secundário" />
+                                
+                                <label htmlFor="SistemaAcometido" className="mt-4">Sistema Acometido</label>
+                                <input type="text" className="form-control" id="SistemaAcometido" name="SistemaAcometido"
+                                    defaultValue={getSistemaAcometido} onChange={(e) => setSistemaAcometido((e.target as HTMLInputElement).value)}
+                                    placeholder="Digite o sistema acometido" required/>
+                                
+                                <label htmlFor="CodComorbidade" className="mt-4">Código de Comorbidade</label>
+                                <input type="text" className="form-control" id="CodComorbidade" name="CodComorbidade"
+                                    defaultValue={getCodComorbidade} onChange={(e) => {checkInput(2, (e.target as HTMLInputElement).value)}}
+                                    placeholder="Digite o código de comorbidade" />
+                                
+                                <label htmlFor="CodAtbPrimario" className="mt-4">Código de Medicamento Primário</label>
+                                <input type="text" className="form-control" id="CodAtbPrimario" name="CodAtbPrimario"
+                                    defaultValue={getCodAtbPrimario} onChange={(e) => setCodAtbPrimario((e.target as HTMLInputElement).value)}
+                                    placeholder="Digite o código de medicamento primário" required/>
+
+                                <label htmlFor="CodAtbSecundario" className="mt-4">Código de Medicamento Secundário</label>
+                                <input type="text" className="form-control" id="CodAtbSecundario" name="CodAtbSecundario"
+                                    defaultValue={getCodAtbSecundario} onChange={(e) => {checkInput(3, (e.target as HTMLInputElement).value)}}
+                                    placeholder="Digite o código de medicamento secundário" />
+
+                                <label htmlFor="SitioInfeccaoPrimario" className="mt-4">Sítio de Infecção Primário</label>
+                                <input type="text" className="form-control" id="SitioInfeccaoPrimario" name="SitioInfeccaoPrimario"
+                                    defaultValue={getSitioInfeccaoPrimario} onChange={(e) => {checkInput(4, (e.target as HTMLInputElement).value)}}
+                                    placeholder="Digite o sítio de infecção primário" />
+
+                                <label htmlFor="OrigemInfeccao" className="mt-4">Origem da Infecção</label>
+                                <input type="text" className="form-control" id="OrigemInfeccao" name="OrigemInfeccao"
+                                    defaultValue={getOrigemInfeccao} onChange={(e) => setOrigemInfeccao((e.target as HTMLInputElement).value)}
+                                    placeholder="Digite a origem da infecção" required/>
+
+                                <div className="form-row mt-4">
+                                    <div className="col mr-4">
+                                        <DropdownReact/>
+                                            <label htmlFor="ResultadoColeta">Resultado da Coleta</label>
+                                            <br></br>
+                                            <Dropdown className="" value={getResultadoColeta} options={options} onChange={onResultadoChange} placeholder="Selecione uma opção" style={{width: '100%'}}/>
+                                        <DropdownReact/>
+                                    </div>
+                                    
+                                    <div className="col mr-4">
+                                        <DropdownReact/>
+                                            <label htmlFor="TratamentoCCIH">Tratamento CCIH</label>
+                                            <br></br>
+                                            <Dropdown className="" value={getTratamento} options={options} onChange={onTratamentoChange} placeholder="Selecione uma opção" style={{width: '100%'}} required/>
+                                        <DropdownReact/>
+                                    </div>
+
+                                    <div className="col">
+                                        <DropdownReact/>
+                                            <label htmlFor="IndicacaoSepse">Indicação Sepse</label>
+                                            <br></br>
+                                            <Dropdown className="" value={getIndicacao} options={options} onChange={onIndicacaoChange} placeholder="Selecione uma opção" style={{width: '100%'}} required/>
+                                        <DropdownReact/>
+                                    </div>
+                                </div>
+
+                                <div className="form-row mt-4">
+                                    <div className="col mr-4">
+                                        <DropdownReact/>
+                                            <label htmlFor="DisfuncaoRenal">Disfunção Renal</label>
+                                            <br></br>
+                                            <Dropdown className="" value={getDisfuncao} options={options} onChange={onDisfuncaoChange} placeholder="Selecione uma opção" style={{width: '100%'}} required/>
+                                        <DropdownReact/>
+                                    </div>
+                                    
+                                    <div className="col mr-4">
+                                        <DropdownReact/>
+                                            <label htmlFor="DoseCorreta">Dose Correta</label>
+                                            <br></br>
+                                            <Dropdown className="" value={getDose} options={options} onChange={onDoseChange} placeholder="Selecione uma opção" style={{width: '100%'}}/>
+                                        <DropdownReact/>
+                                    </div>
+
+                                    <div className="col">
+                                        <DropdownReact/>
+                                            <label htmlFor="PosologiaCorreta">Posologia Correta</label>
+                                            <br></br>
+                                            <Dropdown className="" value={getPosologia} options={options} onChange={onPosologiaChange} placeholder="Selecione uma opção" style={{width: '100%'}}/>
+                                        <DropdownReact/>
+                                    </div>
+                                </div>
+
+                            </div>
+                            
+                            <button type="submit" className="btn btn-info btn-primary mt-3">Atualizar</button>
+                        </form>
+                    </div>
+                </Dialog>
             </div>
+
+            {getToast &&
+                <ToastComponent messageType={getMessageType} messageTitle={getMessageTitle} messageContent={getMessageContent}/>
+            }
         </>
     )
 }
