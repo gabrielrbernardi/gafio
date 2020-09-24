@@ -54,10 +54,13 @@ const MedicalRecords = () => {
     const [getMedicalRecord, setMedicalRecord] = useState<any>(null);
     const [getOptionState, setOptionState] = useState<any>(null)
 
+    const [getUserChange, setUserChange] = useState();
+
     const [getToast, setToast] = useState<boolean>();
     const [getMessageType, setMessageType] = useState<string>('');
     const [getMessageTitle, setMessageTitle] = useState<string>('');
     const [getMessageContent, setMessageContent] = useState<string>('');
+    var medicalRecordData:any = {};
 
     const history = useHistory()
     
@@ -271,11 +274,14 @@ const MedicalRecords = () => {
         }, 4500)
     }
 
-    var newMedicalRecord
-    const onMedicalRecordSelect = (e: any) => {
+    let newMedicalRecord = true
+
+    function onMedicalRecordSelect (e: any) {
         newMedicalRecord = false;
-        setMedicalRecord(Object.assign({}, e.data));
-        //setNroProntuario(selectedMedicalRecord.NroProntuario)
+        setUserChange(e.value)
+        medicalRecordData = e.data;
+        setNroProntuario(medicalRecordData.NroProntuario)
+        setNroPaciente(medicalRecordData.NroPaciente)
         // setNroPaciente
         // setDataInternacao
         // setCodDoencaPrincipal
@@ -294,9 +300,8 @@ const MedicalRecords = () => {
         // setOrigemInfeccao
         // setDose
         // setPosologia
-
+        
         setDisplayDialog(true);
-        console.log(selectedMedicalRecord)
     };
 
     return (
@@ -331,7 +336,7 @@ const MedicalRecords = () => {
                 <DataTable value={MedicalRecords} paginator={true} rows={rows} header={header} totalRecords={totalRecords}
                     emptyMessage="Nenhum resultado encontrado" className=" p-datatable-responsive-demo" resizableColumns={true} loading={loading} first={getFirst}
                     onPage={onPage} lazy={true} selectionMode="single" selection={selectedMedicalRecord} onSelectionChange={e => setSelectedMedicalRecord(e.value)}
-                    onRowSelect={onMedicalRecordSelect}>
+                    onRowSelect={(e) => {onMedicalRecordSelect(e);}}>
                     <Column field="NroProntuario" header="Nro Prontuário" style={{width:'9.5%', textAlign:'center'}}/>
                     <Column field="NroPaciente" header="Nro Paciente" style={{width:'9.5%', textAlign:'center'}}/>
                     <Column field="DataNascimento" header="Nascimento" style={{width:'11%', textAlign:'center'}}/>
@@ -351,7 +356,7 @@ const MedicalRecords = () => {
                                 <div className="form-row mt-4">
                                     <div className="col mr-4">
                                         <label htmlFor="NroProntuario">Número do Prontuário</label>
-                                        <input type="number" className="form-control" id="NroProntuario" name="NroProntuario"
+                                        <input type="text" className="form-control" id="NroProntuario" name="NroProntuario"
                                             defaultValue={getNroProntuario} onChange={(e) => setNroProntuario(Number((e.target as HTMLInputElement).value))}
                                             readOnly/>
                                     </div>
@@ -479,7 +484,7 @@ const MedicalRecords = () => {
 
                             </div>
                             
-                            <button type="submit" className="btn btn-info btn-primary mt-3">Atualizar</button>
+                            <button type="submit" className="btn btn-info btn-primary mt-3 mb-3">Atualizar</button>
                         </form>
                     </div>
                 </Dialog>
