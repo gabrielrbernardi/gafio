@@ -14,13 +14,7 @@ import { Dialog } from 'primereact/dialog';
 
 import {MedicalRecordsService} from './MedicalRecordsService';
 
-import {CreateMedicalRecordsService} from './Create/CreateMedicalRecordsService'
-
-import { useHistory } from 'react-router-dom';
-
 const MedicalRecords = () => {
-    const medicalRecordsService = new MedicalRecordsService()
-    const createMedicalRecordsService = new CreateMedicalRecordsService()
     const [getNroProntuario, setNroProntuario] = useState<any>(null)
     const [getNroPaciente, setNroPaciente] = useState<any>(null)
     const [getDataInternacao, setDataInternacao] = useState<string>('')
@@ -51,20 +45,22 @@ const MedicalRecords = () => {
     const [getMode, setMode] = useState<string>('N');
     const [displayDialog, setDisplayDialog] = useState(false);
     const [selectedMedicalRecord, setSelectedMedicalRecord] = useState<any>(null);
-    const [getMedicalRecord, setMedicalRecord] = useState<any>(null);
     const [getOptionState, setOptionState] = useState<any>(null)
-
-    const [getUserChange, setUserChange] = useState();
-
+    const [getUserChange, setMedicalRecordChange] = useState();
     const [getToast, setToast] = useState<boolean>();
     const [getMessageType, setMessageType] = useState<string>('');
     const [getMessageTitle, setMessageTitle] = useState<string>('');
     const [getMessageContent, setMessageContent] = useState<string>('');
+    
+    const medicalRecordsService = new MedicalRecordsService()
     var medicalRecordData:any = {};
 
-    const history = useHistory()
-    
     const rows = 10;
+
+    let options = [
+        {label: 'Sim', value: 'S'},
+        {label: 'Não', value: 'N'},
+    ];
 
     let options2 = [
         {name: 'Nro Prontuário', cod: 'Pro'},
@@ -126,11 +122,6 @@ const MedicalRecords = () => {
             }  
         }
     }
-
-    let options = [
-        {label: 'Sim', value: 'S'},
-        {label: 'Não', value: 'N'},
-    ];
 
     const onOptionChange = (e: { value: any }) => {
         setOptionState(e.value);
@@ -230,18 +221,18 @@ const MedicalRecords = () => {
     function handleSubmit(event: FormEvent){
         event.preventDefault();
 
-        createMedicalRecordsService.Create(getNroProntuario, getNroPaciente,
+        medicalRecordsService.Update(getNroProntuario, getNroPaciente,
             getDataInternacao, getCodDoencaPrincipal, getCodDoencaSecundario,
             getSistemaAcometido, getCodComorbidade, getOrigem, getAlocacao,
             getResultadoColeta, getCodAtbPrimario, getCodAtbSecundario,
             getSitioInfeccaoPrimario, getTratamento, getIndicacao,
             getDisfuncao, getOrigemInfeccao, getDose, getPosologia)
         .then((response) => {
-            if(response.CreatedMedicalRecord){
-                showToast('success', 'Sucesso!', `Prontuário criado com sucesso!`);
+            if(response.updatedMedicalRecord){
+                showToast('success', 'Sucesso!', `Prontuário atualizado com sucesso!`);
                 setTimeout(() => {
-                    history.push('/medicalRecords')
-                }, 4500)
+                    window.location.reload(false)
+                }, 2500)
             }else{
                 if(response.error.sqlMessage){
                     if(response.error.sqlState == 23000){
@@ -275,31 +266,32 @@ const MedicalRecords = () => {
     }
 
     let newMedicalRecord = true
-
     function onMedicalRecordSelect (e: any) {
         newMedicalRecord = false;
-        setUserChange(e.value)
+        setMedicalRecordChange(e.value)
         medicalRecordData = e.data;
+        
         setNroProntuario(medicalRecordData.NroProntuario)
         setNroPaciente(medicalRecordData.NroPaciente)
-        // setNroPaciente
-        // setDataInternacao
-        // setCodDoencaPrincipal
-        // setCodDoencaSecundario
-        // setSistemaAcometido
-        // setCodComorbidade
-        // setOrigem
-        // setAlocacao
-        // setResultadoColeta
-        // setCodAtbPrimario
-        // setCodAtbSecundario
-        // setSitioInfeccaoPrimario
-        // setTratamento
-        // setIndicacao
-        // setDisfuncao
-        // setOrigemInfeccao
-        // setDose
-        // setPosologia
+        var res = medicalRecordData.DataInternacao.split("/")
+        var newData = res[2] + "-" + res[1] + "-" + res[0]
+        setDataInternacao(newData)
+        setCodDoencaPrincipal(medicalRecordData.CodDoencaPrincipal)
+        setCodDoencaSecundario(medicalRecordData.CodDoencaSecundario)
+        setSistemaAcometido(medicalRecordData.SistemaAcometido)
+        setCodComorbidade(medicalRecordData.CodComorbidade)
+        setOrigem(medicalRecordData.Origem)
+        setAlocacao(medicalRecordData.Alocacao)
+        setResultadoColeta(medicalRecordData.ResultadoColeta)
+        setCodAtbPrimario(medicalRecordData.CodAtbPrimario)
+        setCodAtbSecundario(medicalRecordData.CodAtbSecundario)
+        setSitioInfeccaoPrimario(medicalRecordData.SitioInfeccaoPrimario)
+        setTratamento(medicalRecordData.TratamentoCCIH)
+        setIndicacao(medicalRecordData.IndicacaoSepse)
+        setDisfuncao(medicalRecordData.DisfuncaoRenal)
+        setOrigemInfeccao(medicalRecordData.OrigemInfeccao)
+        setDose(medicalRecordData.DoseCorreta)
+        setPosologia(medicalRecordData.PosologiaCorreta)
         
         setDisplayDialog(true);
     };
@@ -357,8 +349,7 @@ const MedicalRecords = () => {
                                     <div className="col mr-4">
                                         <label htmlFor="NroProntuario">Número do Prontuário</label>
                                         <input type="text" className="form-control" id="NroProntuario" name="NroProntuario"
-                                            defaultValue={getNroProntuario} onChange={(e) => setNroProntuario(Number((e.target as HTMLInputElement).value))}
-                                            readOnly/>
+                                            defaultValue={getNroProntuario} readOnly/>
                                     </div>
 
                                     <div className="col">
@@ -433,7 +424,7 @@ const MedicalRecords = () => {
                                 <div className="form-row mt-4">
                                     <div className="col mr-4">
                                         <DropdownReact/>
-                                            <label htmlFor="ResultadoColeta">Resultado da Coleta</label>
+                                            <label htmlFor="ResultadoColeta">Resultado Coleta</label>
                                             <br></br>
                                             <Dropdown className="" value={getResultadoColeta} options={options} onChange={onResultadoChange} placeholder="Selecione uma opção" style={{width: '100%'}}/>
                                         <DropdownReact/>

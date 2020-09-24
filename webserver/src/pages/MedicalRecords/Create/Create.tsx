@@ -229,7 +229,7 @@ const MedicalRecordsForm = () => {
                         <div className="form-row mt-4">
                             <div className="col mr-4">
                                 <DropdownReact/>
-                                    <label htmlFor="ResultadoColeta">Resultado da Coleta</label>
+                                    <label htmlFor="ResultadoColeta">Resultado Coleta</label>
                                     <br></br>
                                     <Dropdown className="" value={getResultadoColeta} options={options} onChange={onResultadoChange} placeholder="Selecione uma opção" style={{width: '100%'}}/>
                                 <DropdownReact/>
