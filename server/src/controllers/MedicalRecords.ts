@@ -143,7 +143,8 @@ class ProntuarioController {
                DisfuncaoRenal: MedicalRecord.DisfuncaoRenal,
                OrigemInfeccao: MedicalRecord.OrigemInfeccao,
                DoseCorreta: MedicalRecord.DoseCorreta,
-               PosologiaCorreta: MedicalRecord.PosologiaCorreta
+               PosologiaCorreta: MedicalRecord.PosologiaCorreta,
+               DataDesfecho: MedicalRecord.PosologiaCorreta
             }
          })
          for(let i = 0; i < serializedMedicalRecords.length; i++){
@@ -218,7 +219,8 @@ class ProntuarioController {
                   DisfuncaoRenal: MedicalRecord.DisfuncaoRenal,
                   OrigemInfeccao: MedicalRecord.OrigemInfeccao,
                   DoseCorreta: MedicalRecord.DoseCorreta,
-                  PosologiaCorreta: MedicalRecord.PosologiaCorreta
+                  PosologiaCorreta: MedicalRecord.PosologiaCorreta,
+                  DataDesfecho: MedicalRecord.PosologiaCorreta
                }
             })
             for(let i = 0; i < serializedMedicalRecords.length; i++){
@@ -283,7 +285,8 @@ class ProntuarioController {
                   DisfuncaoRenal: MedicalRecord.DisfuncaoRenal,
                   OrigemInfeccao: MedicalRecord.OrigemInfeccao,
                   DoseCorreta: MedicalRecord.DoseCorreta,
-                  PosologiaCorreta: MedicalRecord.PosologiaCorreta
+                  PosologiaCorreta: MedicalRecord.PosologiaCorreta,
+                  DataDesfecho: MedicalRecord.PosologiaCorreta
                }
             })
             for(let i = 0; i < serializedMedicalRecords.length; i++){
@@ -348,7 +351,8 @@ class ProntuarioController {
                   DisfuncaoRenal: MedicalRecord.DisfuncaoRenal,
                   OrigemInfeccao: MedicalRecord.OrigemInfeccao,
                   DoseCorreta: MedicalRecord.DoseCorreta,
-                  PosologiaCorreta: MedicalRecord.PosologiaCorreta
+                  PosologiaCorreta: MedicalRecord.PosologiaCorreta,
+                  DataDesfecho: MedicalRecord.PosologiaCorreta
                }
             })
             for(let i = 0; i < serializedMedicalRecords.length; i++){
@@ -451,80 +455,79 @@ class ProntuarioController {
 
    //UPDATE NO DESFECHO
    async updateDesfecho(request: Request, response: Response){
-      const { id } = request.params
-      
-      if(id){
-         const {
-            DataDesfecho,
-            Desfecho
-         } = request.body
+      const {
+         NroProntuario,
+         DataDesfecho,
+         Desfecho
+      } = request.body
          
-         if (!DataDesfecho || !Desfecho) {
-            return response.json({
-               updatedMedicalRecord: false,
-               error: "Preencha todos os campos necessários."
+      if (!DataDesfecho || !Desfecho) {
+         return response.json({
+            updatedMedicalRecord: false,
+            error: "Preencha todos os campos necessários."
+         })
+      }else{
+         const MedicalRecordDB = await knex('Prontuario').where('NroProntuario', NroProntuario)
+         const MedicalRecord = MedicalRecordDB[0]
+            
+         if(MedicalRecord){
+            var res = DataDesfecho.split("-")
+            var datatratada = res[2] + "/" + res[1] + "/" + res[0]
+               
+            await knex('Prontuario').where('NroProntuario', NroProntuario).update({
+               DataDesfecho: datatratada,
+               Desfecho: Desfecho
+            }).then(() => {
+               return response.json({updatedMedicalRecord: true})
+            }).catch(error => {
+               return response.json({updatedMedicalRecord: false, error})
             })
          }else{
-            const MedicalRecordDB = await knex('Prontuario').where('NroProntuario', id)
-            const MedicalRecord = MedicalRecordDB[0]
-            
-            if(MedicalRecord){
-               var res = DataDesfecho.split("-")
-               var datatratada = res[2] + "/" + res[1] + "/" + res[0]
-               
-               await knex('Prontuario').where('NroProntuario', id).update({
-                  DataDesfecho: datatratada,
-                  Desfecho: Desfecho
-               }).then(() => {
-                  return response.json({updatedMedicalRecord: true})
-               }).catch(error => {
-                  return response.json({updatedMedicalRecord: false, error})
-               })
-            }else{
-               return response.json({updatedMedicalRecord: false, error: "O número do prontuário está incorreto."});
-            }
+            return response.json({updatedMedicalRecord: false, error: "O número do prontuário está incorreto."});
          }
       }
    }
 
    //DELETAR PRONTUARIO
    async delete(request: Request, response: Response) {
-      const { id } = request.params;
-      const MedicalRecordDB = await knex("Prontuario").where(
-         "NroProntuario",
-         id
-      );
-      
+      const { NroProntuario } = request.body;
+
+      const MedicalRecordDB = await knex("Prontuario").where("NroProntuario", NroProntuario);
       const MedicalRecord = MedicalRecordDB[0];
 
-      if (MedicalRecord) {
+      if(MedicalRecord){
          await knex("Historico").where("IdProntuario", MedicalRecord.SeqProntuario).delete().then(() => {
-            const AvaliacaoDB = knex("Avaliacao").where("SeqProntuario", MedicalRecord.SeqProntuario)
-            if(AvaliacaoDB){
-               knex("Avaliacao").where("SeqProntuario", MedicalRecord.SeqProntuario).delete().then(() => {
-                  knex("Prontuario").where("NroProntuario", id).delete().then(() => {
-                     return response.json({ deletedMedicalRecord: true });
-                  }).catch((error) => {
-                     return response.json({ deletedMedicalRecord: false, error });
-                  })
-               }).catch((error) => {
-                  return response.json({ deletedMedicalRecord: false, error });
-               })
-            }else{
-               knex("Prontuario").where("NroProntuario", id).delete().then(() => {
-                  return response.json({ deletedMedicalRecord: true });
-               }).catch((error) => {
-                  return response.json({ deletedMedicalRecord: false, error });
-               })
-            }
+            knex("Prontuario").where("NroProntuario", NroProntuario).delete().then(() => {
+               return response.json({deletedMedicalRecord: true})
+            }).catch((error) => {
+               return response.json({deletedMedicalRecord: false, error})
+            })
          }).catch((error) => {
-            return response.json({ deletedMedicalRecord: false, error });
+            return response.json({deletedMedicalRecord: false, error})
          })
-      } else {
-         return response.json({
-            deletedMedicalRecord: false,
-            error: "Prontuário não encontrado."
-         });
+         //    const AvaliacaoDB = knex("Avaliacao").where("SeqProntuario", MedicalRecord.SeqProntuario)
+         //    if(AvaliacaoDB){
+         //       knex("Avaliacao").where("SeqProntuario", MedicalRecord.SeqProntuario).delete().then(() => {
+         //          knex("Prontuario").where("NroProntuario", NroProntuario).delete().then(() => {
+         //             return response.json({ deletedMedicalRecord: true });
+         //          }).catch((error) => {
+         //             return response.json({ deletedMedicalRecord: false, error });
+         //          })
+         //       }).catch((error) => {
+         //          return response.json({ deletedMedicalRecord: false, error });
+         //       })
+         //    }else{
+         //       knex("Prontuario").where("NroProntuario", NroProntuario).delete().then(() => {
+         //          return response.json({ deletedMedicalRecord: true });
+         //       }).catch((error) => {
+         //          return response.json({ deletedMedicalRecord: false, error });
+         //       })
+         //    }
+         // }).catch((error) => {
+         //    return response.json({ deletedMedicalRecord: false, error });
+         // })
+      }else{
+         return response.json({deletedMedicalRecord: false, error: "Prontuário não encontrado."});
       }
    }
 }

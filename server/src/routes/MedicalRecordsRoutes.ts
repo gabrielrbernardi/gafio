@@ -13,8 +13,8 @@ routes.get("/medicalRecords/dataInternacao/", records.indexByDataInternacao);
 
 routes.get("/medicalRecords/paginate/", records.indexPagination)
 
-routes.put("/medicalRecords/desfecho/:id?", records.updateDesfecho)
+routes.put("/medicalRecords/desfecho", records.updateDesfecho)
 routes.put("/medicalRecords/update", records.update)
-routes.post("/medicalRecords/:id?", records.delete);
+routes.post("/medicalRecords/delete", records.delete);
 
 export default routes;

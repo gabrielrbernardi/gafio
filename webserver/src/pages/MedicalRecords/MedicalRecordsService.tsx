@@ -39,6 +39,20 @@ class MedicalRecordsService {
         OrigemInfeccao: OrigemInfeccaof, DoseCorreta, PosologiaCorreta})
     .then(response => response.data);
     }
+
+    async Delete(NroProntuariof: any){
+        let NroProntuario = NroProntuariof
+        return await api.post('medicalRecords/delete', {NroProntuario})
+            .then(response => response.data);
+    }
+
+    async Desfecho(NroProntuariof: any,  Desfechof: any, DataDesfechof: string){
+        let NroProntuario = NroProntuariof
+        let Desfecho = Desfechof
+        return await api.put('medicalRecords/desfecho', {NroProntuario, Desfecho, DataDesfecho: DataDesfechof})
+            .then(response => response.data);
+    }
+
 }
 
 export {MedicalRecordsService};

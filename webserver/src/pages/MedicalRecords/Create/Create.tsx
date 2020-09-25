@@ -109,7 +109,7 @@ const MedicalRecordsForm = () => {
                 showToast('success', 'Sucesso!', `Prontuário criado com sucesso!`);
                 setTimeout(() => {
                     history.push('/medicalRecords')
-                }, 4500)
+                }, 4000)
             }else{
                 if(response.error.sqlMessage){
                     if(response.error.sqlState == 23000){
@@ -184,7 +184,7 @@ const MedicalRecordsForm = () => {
                         <label htmlFor="DataInternacao" className="mt-4">Data da Internação</label>
                         <input type="date" className="form-control" id="DataInternacao" name="DataInternacao"
                             defaultValue={getDataInternacao} onChange={(e) => setDataInternacao((e.target as HTMLInputElement).value)}
-                            placeholder="Digite a data de internação" required/>
+                            required/>
                         
                         <label htmlFor="CodDoencaPrincipal" className="mt-4">Código de Doença Primário</label>
                         <input type="text" className="form-control" id="CodDoencaPrincipal" name="CodDoencaPrincipal"
