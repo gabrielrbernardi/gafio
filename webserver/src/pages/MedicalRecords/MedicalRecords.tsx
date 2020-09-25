@@ -311,7 +311,9 @@ const MedicalRecords = () => {
         setDose(medicalRecordData.DoseCorreta)
         setPosologia(medicalRecordData.PosologiaCorreta)
         setDesfecho(medicalRecordData.Desfecho)
-        setDataDesfecho(medicalRecordData.DataDesfecho)
+        var res1 = medicalRecordData.DataDesfecho.split("/")
+        var newData1 = res1[2] + "-" + res1[1] + "-" + res1[0]
+        setDataDesfecho(newData1)
 
         setDisplayDialog(true);
     };
@@ -429,7 +431,7 @@ const MedicalRecords = () => {
                             <DropdownReact/>
                                 <label htmlFor="Desfecho" className="mt-4">Desfecho</label>
                                 <br></br>
-                                <Dropdown className="" value={getDesfecho} options={options3} onChange={onDesfechoChange} placeholder="Selecione uma opção" style={{width: '100%'}} required autoFocus/>
+                                <Dropdown className="" value={getDesfecho} options={options3} onChange={onDesfechoChange} placeholder="Selecione uma opção" style={{width: '100%'}} required/>
                             <DropdownReact/>
                             
                             <label htmlFor="DataDesfecho" className="mt-4">Data do Desfecho</label>

@@ -144,7 +144,7 @@ class ProntuarioController {
                OrigemInfeccao: MedicalRecord.OrigemInfeccao,
                DoseCorreta: MedicalRecord.DoseCorreta,
                PosologiaCorreta: MedicalRecord.PosologiaCorreta,
-               DataDesfecho: MedicalRecord.PosologiaCorreta
+               DataDesfecho: MedicalRecord.DataDesfecho
             }
          })
          for(let i = 0; i < serializedMedicalRecords.length; i++){
@@ -220,7 +220,7 @@ class ProntuarioController {
                   OrigemInfeccao: MedicalRecord.OrigemInfeccao,
                   DoseCorreta: MedicalRecord.DoseCorreta,
                   PosologiaCorreta: MedicalRecord.PosologiaCorreta,
-                  DataDesfecho: MedicalRecord.PosologiaCorreta
+                  DataDesfecho: MedicalRecord.DataDesfecho
                }
             })
             for(let i = 0; i < serializedMedicalRecords.length; i++){
@@ -286,7 +286,7 @@ class ProntuarioController {
                   OrigemInfeccao: MedicalRecord.OrigemInfeccao,
                   DoseCorreta: MedicalRecord.DoseCorreta,
                   PosologiaCorreta: MedicalRecord.PosologiaCorreta,
-                  DataDesfecho: MedicalRecord.PosologiaCorreta
+                  DataDesfecho: MedicalRecord.DataDesfecho
                }
             })
             for(let i = 0; i < serializedMedicalRecords.length; i++){
@@ -352,7 +352,7 @@ class ProntuarioController {
                   OrigemInfeccao: MedicalRecord.OrigemInfeccao,
                   DoseCorreta: MedicalRecord.DoseCorreta,
                   PosologiaCorreta: MedicalRecord.PosologiaCorreta,
-                  DataDesfecho: MedicalRecord.PosologiaCorreta
+                  DataDesfecho: MedicalRecord.DataDesfecho
                }
             })
             for(let i = 0; i < serializedMedicalRecords.length; i++){
