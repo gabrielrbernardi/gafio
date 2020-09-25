@@ -13,6 +13,7 @@ import {Dropdown as DropdownReact} from 'react-bootstrap';
 import { Dialog } from 'primereact/dialog';
 
 import {MedicalRecordsService} from './MedicalRecordsService';
+import Loading from '../../components/Loading';
 
 const MedicalRecords = () => {
     const [getNroProntuario, setNroProntuario] = useState<any>(null)
@@ -41,6 +42,7 @@ const MedicalRecords = () => {
     const [MedicalRecords, setMedicalRecords] = useState([]);
     const [datasource, setDatasource] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [loading1, setLoading1] = useState(true);
     const [getFirst, setFirst] = useState(0);
     const [totalRecords, setTotalRecords] = useState(0);
     const [searchInput, setSearchInput] = useState('');
@@ -75,9 +77,9 @@ const MedicalRecords = () => {
     ];
 
     let options3 = [
-        {label: 'Óbito', value: 'O'},
-        {label: 'Alta', value: 'A'},
-        {label: 'Tranferência', value: 'T'}
+        {label: 'Óbito', value: 'Óbito'},
+        {label: 'Alta', value: 'Alta'},
+        {label: 'Tranferência', value: 'Transferência'}
     ]
 
     const onResultadoChange = (e: { value: string }) => {
@@ -144,9 +146,13 @@ const MedicalRecords = () => {
     };
     
     useEffect(() => {
-        medicalRecordsService.getMedicalRecordsPaginate(10).then(data => {
-            getMedicalRecordsFunction(data)
-        });
+        setLoading1(true);
+        setTimeout(() => {
+            medicalRecordsService.getMedicalRecordsPaginate(10).then(data => {
+                getMedicalRecordsFunction(data)
+            });
+        }, 1000)
+
     }, []);
 
     function getMedicalRecordsFunction(data?: any){
@@ -157,18 +163,19 @@ const MedicalRecords = () => {
                 setTotalRecords(data.length);
                 data = data.medicalRecords;
                 
-                setMedicalRecords(datasource.slice(0, rows));
+                setMedicalRecords(data.slice(0, rows));
                 setLoading(false);
+                setLoading1(false);
                 return
             })
         }else{
             setDatasource(data.medicalRecords);
             setTotalRecords(data.length);
-            console.log(data)
             data = data.medicalRecords;
             
             setMedicalRecords(data.slice(0, rows));
             setLoading(false);
+            setLoading1(false);
             return
         }
     }
@@ -213,7 +220,6 @@ const MedicalRecords = () => {
                 showToast('warn', 'Resultados não encontrados!', 'Não foram encontrados resultados para a busca desejada')
                 return
             }
-            console.log(data)
             getMedicalRecordsFunction(data)
             let searchType;
             if(getOptionState.name === 'Nro Prontuário'){
@@ -225,7 +231,8 @@ const MedicalRecords = () => {
             }else{
                 searchType = getOptionState.name
             }
-            let dataSize = data.length[0]['count(' + searchType + ')']
+            console.log(data)
+            let dataSize = data.length[0]['count(`' + searchType + '`)']
             if(dataSize == 1){
                 showToast('info', 'Resultado Encontrado!', `Foi encontrado ${dataSize} resultado.`)
             }else{
@@ -247,9 +254,7 @@ const MedicalRecords = () => {
             if(response.updatedMedicalRecord){
                 showToast('success', 'Sucesso!', `Prontuário atualizado com sucesso!`);
                 getMedicalRecordsFunction()
-                setTimeout(() => {
-                    setDisplayDialog1(false)
-                }, 2500)
+                setDisplayDialog1(false)
             }else{
                 if(response.error.sqlMessage){
                     if(response.error.sqlState == 23000){
@@ -346,12 +351,11 @@ const MedicalRecords = () => {
 
         medicalRecordsService.Desfecho(getNroProntuario, getDesfecho, getDataDesfecho)
         .then((response) => {
+            console.log(response)
             if(response.updatedMedicalRecord){
                 showToast('success', 'Sucesso!', `Desfecho atualizado com sucesso!`);
                 getMedicalRecordsFunction()
-                setTimeout(() => {
-                    setDisplayDialog3(false)
-                }, 2500)
+                setDisplayDialog3(false)
             }else{
                 if(response.error.sqlMessage){
                     showToast('error', 'Erro!', String(response.error.sqlMessage));
@@ -422,13 +426,13 @@ const MedicalRecords = () => {
                     </div>
                 </Dialog>
 
-                <Dialog visible={displayDialog2} style={{width: '50%'}} modal={true} onHide={() => setDisplayDialog2(false)}>
+                <Dialog visible={displayDialog2} style={{width: '50%'}} modal={true} onHide={() => {setDisplayDialog2(false); showToast('warn', 'Aviso!', 'Operação cancelada pelo usuário.');}}>
                     <p className="h5 mx-2">Deseja realmente excluir o prontuário {getNroProntuario} do paciente {getNomePaciente} do sistema?</p>
                     <Button className="mx-2 mt-2 mb-2 mr-3 pr-3 pl-3" variant="outline-danger" onClick={() => {onClickDelete(); setDisplayDialog2(false)}}>Sim</Button>
-                    <Button className="mx-2 mt-2 mb-2 pr-3 pl-3" variant="outline-success"onClick={() => {setDisplayDialog2(false)}}>Não</Button>
+                    <Button className="mx-2 mt-2 mb-2 pr-3 pl-3" variant="outline-success"onClick={() => {setDisplayDialog2(false); showToast('warn', 'Aviso!', 'Operação cancelada pelo usuário.');}}>Não</Button>
                 </Dialog>
 
-                <Dialog visible={displayDialog3} style={{width: '50%'}} modal={true} onHide={() => setDisplayDialog3(false)}>
+                <Dialog visible={displayDialog3} style={{width: '50%'}} modal={true} onHide={() => {setDisplayDialog3(false); showToast('warn', 'Aviso!', 'Operação cancelada pelo usuário.')}}>
                     <div className="">
                         <p className="text-dark h3 text-center">Atualização de Desfecho</p>
                         <form className="was-validated" onSubmit={handleSubmit1}>
@@ -448,7 +452,7 @@ const MedicalRecords = () => {
                     </div>
                 </Dialog>
 
-                <Dialog visible={displayDialog1} style={{width: '50%'}} modal={true} onHide={() => setDisplayDialog1(false)} maximizable>
+                <Dialog visible={displayDialog1} style={{width: '50%'}} modal={true} onHide={() => {setDisplayDialog1(false); showToast('warn', 'Aviso!', 'Operação cancelada pelo usuário.');}} maximizable>
                     <div className="">
                         <p className="text-dark h3 text-center">Atualização de Prontuário</p>
                         <form className="was-validated" onSubmit={handleSubmit}>
@@ -592,6 +596,9 @@ const MedicalRecords = () => {
 
             {getToast &&
                 <ToastComponent messageType={getMessageType} messageTitle={getMessageTitle} messageContent={getMessageContent}/>
+            }
+            {loading1 &&
+                <Loading/>
             }
         </>
     )

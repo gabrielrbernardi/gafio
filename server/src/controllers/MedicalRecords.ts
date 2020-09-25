@@ -47,12 +47,12 @@ class ProntuarioController {
             
             if(patient){
                var res = DataInternacao.split("-")
-               var datatratada = res[2] + "/" + res[1] + "/" + res[0]
+               var dataTratada = res[2] + "/" + res[1] + "/" + res[0]
 
                await knex("Prontuario").insert({
                   NroProntuario,
                   NroPaciente,
-                  DataInternacao: datatratada,
+                  DataInternacao: dataTratada,
                   CodDoencaPrincipal,
                   CodDoencaSecundario,
                   SistemaAcometido,
@@ -409,11 +409,11 @@ class ProntuarioController {
          
             if(patient){
                var res = DataInternacao.split("-")
-               var datatratada = res[2] + "/" + res[1] + "/" + res[0]
+               var dataTratada = res[2] + "/" + res[1] + "/" + res[0]
 
                await knex('Prontuario').where('NroProntuario', NroProntuario).update({
                   NroPaciente: NroPaciente,
-                  DataInternacao: datatratada,
+                  DataInternacao: dataTratada,
                   CodDoencaPrincipal: CodDoencaPrincipal,
                   CodDoencaSecundario: CodDoencaSecundario,
                   SistemaAcometido: SistemaAcometido,
@@ -472,15 +472,16 @@ class ProntuarioController {
             
          if(MedicalRecord){
             var res = DataDesfecho.split("-")
-            var datatratada = res[2] + "/" + res[1] + "/" + res[0]
+            var dataTratada = res[2] + "/" + res[1] + "/" + res[0]
+            let desfechoChar = Desfecho[0][0];
                
             await knex('Prontuario').where('NroProntuario', NroProntuario).update({
-               DataDesfecho: datatratada,
-               Desfecho: Desfecho
+               Desfecho: desfechoChar,
+               DataDesfecho: dataTratada
             }).then(() => {
                return response.json({updatedMedicalRecord: true})
             }).catch(error => {
-               return response.json({updatedMedicalRecord: false, error})
+               return response.json({updatedMedicalRecord: false, error, teste:1})
             })
          }else{
             return response.json({updatedMedicalRecord: false, error: "O número do prontuário está incorreto."});

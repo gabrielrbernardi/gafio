@@ -8,6 +8,6 @@
     justify-content: center;
     position: fixed;
     z-index: 999999;
-    background-color: #000000b3;
+    background-color: #00000080;
     flex-direction: column;
 }
