@@ -311,9 +311,13 @@ const MedicalRecords = () => {
         setDose(medicalRecordData.DoseCorreta)
         setPosologia(medicalRecordData.PosologiaCorreta)
         setDesfecho(medicalRecordData.Desfecho)
-        var res1 = medicalRecordData.DataDesfecho.split("/")
-        var newData1 = res1[2] + "-" + res1[1] + "-" + res1[0]
-        setDataDesfecho(newData1)
+        if(medicalRecordData.DataDesfecho == null){
+            setDataDesfecho(medicalRecordData.DataDesfecho)
+        }else{
+            var res1 = medicalRecordData.DataDesfecho.split("/")
+            var newData1 = res1[2] + "-" + res1[1] + "-" + res1[0]
+            setDataDesfecho(newData1)
+        }
 
         setDisplayDialog(true);
     };
