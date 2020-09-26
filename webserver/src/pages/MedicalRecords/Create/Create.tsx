@@ -109,7 +109,7 @@ const MedicalRecordsForm = () => {
                 showToast('success', 'Sucesso!', `Prontuário criado com sucesso!`);
                 setTimeout(() => {
                     history.push('/medicalRecords')
-                }, 4000)
+                }, 3500)
             }else{
                 if(response.error.sqlMessage){
                     if(response.error.sqlState == 23000){

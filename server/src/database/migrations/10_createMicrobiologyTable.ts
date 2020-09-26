@@ -2,7 +2,7 @@ import knex from "knex";
 
 export async function up(knex: knex) {
    return knex.schema.createTable("Microbiologia", (table) => {
-    table.increments("IdHistorico").primary();
+    table.increments("IdMicrobiologia").primary();
     table.integer("IdPaciente").references("SeqPaciente").inTable("Paciente").unsigned();
     table.integer("IdProntuario").references("SeqProntuario").inTable("Prontuario").unsigned();
     table.string("DataColeta").notNullable();

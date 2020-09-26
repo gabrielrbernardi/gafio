@@ -39,6 +39,15 @@ const MedicalRecords = () => {
     const [getDesfecho, setDesfecho] = useState<any>(null)
     const [getDataDesfecho, setDataDesfecho] = useState<any>(null)
     
+    const [getDataTratadaInternacao, setDataTratadaInternacao] = useState<string>('')
+    const [getResultadoColetaString, setResultadoColetaString] = useState<string>('')
+    const [getTratamentoString, setTratamentoString] = useState<string>('')
+    const [getIndicacaoString, setIndicacaoString] = useState<string>('')
+    const [getDisfuncaoString, setDisfuncaoString] = useState<string>('')
+    const [getDoseString, setDoseString] = useState<string>('')
+    const [getPosologiaString, setPosologiaString] = useState<string>('')
+    const [getDataTratadaDesfecho, setDataTratadaDesfecho] = useState<string>('')
+    
     const [MedicalRecords, setMedicalRecords] = useState([]);
     const [datasource, setDatasource] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -59,6 +68,7 @@ const MedicalRecords = () => {
     const [displayDialog1, setDisplayDialog1] = useState(false);
     const [displayDialog2, setDisplayDialog2] = useState(false);
     const [displayDialog3, setDisplayDialog3] = useState(false);
+    const [displayDialog4, setDisplayDialog4] = useState(false);
 
     const medicalRecordsService = new MedicalRecordsService()
     var medicalRecordData:any = {};
@@ -298,6 +308,7 @@ const MedicalRecords = () => {
         setNomePaciente(medicalRecordData.NomePaciente)
         var res = medicalRecordData.DataInternacao.split("/")
         var newData = res[2] + "-" + res[1] + "-" + res[0]
+        setDataTratadaInternacao(medicalRecordData.DataInternacao)
         setDataInternacao(newData)
         setCodDoencaPrincipal(medicalRecordData.CodDoencaPrincipal)
         setCodDoencaSecundario(medicalRecordData.CodDoencaSecundario)
@@ -305,20 +316,57 @@ const MedicalRecords = () => {
         setCodComorbidade(medicalRecordData.CodComorbidade)
         setOrigem(medicalRecordData.Origem)
         setAlocacao(medicalRecordData.Alocacao)
+        if(medicalRecordData.ResultadoColeta == "S"){
+            setResultadoColetaString("Sim")
+        }
+        if(medicalRecordData.ResultadoColeta == "N"){
+            setResultadoColetaString("Não")
+        }
         setResultadoColeta(medicalRecordData.ResultadoColeta)
         setCodAtbPrimario(medicalRecordData.CodAtbPrimario)
         setCodAtbSecundario(medicalRecordData.CodAtbSecundario)
         setSitioInfeccaoPrimario(medicalRecordData.SitioInfeccaoPrimario)
+        if(medicalRecordData.TratamentoCCIH == "S"){
+            setTratamentoString("Sim")
+        }
+        if(medicalRecordData.TratamentoCCIH == "N"){
+            setTratamentoString("Não")
+        }
         setTratamento(medicalRecordData.TratamentoCCIH)
+        if(medicalRecordData.IndicacaoSepse == "S"){
+            setIndicacaoString("Sim")
+        }
+        if(medicalRecordData.IndicacaoSepse == "N"){
+            setIndicacaoString("Não")
+        }
         setIndicacao(medicalRecordData.IndicacaoSepse)
+        if(medicalRecordData.DisfuncaoRenal == "S"){
+            setDisfuncaoString("Sim")
+        }
+        if(medicalRecordData.DisfuncaoRenal == "N"){
+            setDisfuncaoString("Não")
+        }
         setDisfuncao(medicalRecordData.DisfuncaoRenal)
         setOrigemInfeccao(medicalRecordData.OrigemInfeccao)
+        if(medicalRecordData.DoseCorreta == "S"){
+            setDoseString("Sim")
+        }
+        if(medicalRecordData.DoseCorreta == "N"){
+            setDoseString("Não")
+        }
         setDose(medicalRecordData.DoseCorreta)
+        if(medicalRecordData.PosologiaCorreta == "S"){
+            setPosologiaString("Sim")
+        }
+        if(medicalRecordData.PosologiaCorreta == "N"){
+            setPosologiaString("Não")
+        }
         setPosologia(medicalRecordData.PosologiaCorreta)
         setDesfecho(medicalRecordData.Desfecho)
         if(medicalRecordData.DataDesfecho == null){
             setDataDesfecho(medicalRecordData.DataDesfecho)
         }else{
+            setDataTratadaDesfecho(medicalRecordData.DataDesfecho)
             var res1 = medicalRecordData.DataDesfecho.split("/")
             var newData1 = res1[2] + "-" + res1[1] + "-" + res1[0]
             setDataDesfecho(newData1)
@@ -412,7 +460,10 @@ const MedicalRecords = () => {
 
                 <Dialog visible={displayDialog} style={{width: '50%'}} header="Ações" modal={true} onHide={() => setDisplayDialog(false)}>
                     <div className="form-row">
-                        <div className="col mr-4 ml-5">
+                    <div className="col mr-4 ml-1">
+                            <Button className="mx-2 mt-2 mb-2" onClick={() => {setDisplayDialog4(true); setDisplayDialog(false)}}>Visualizar prontuário</Button>
+                        </div>
+                        <div className="col mr-4">
                             <Button className="mx-2 mt-2 mb-2" onClick={() => {setDisplayDialog1(true); setDisplayDialog(false)}}>Atualizar prontuário</Button>
                         </div>
 
@@ -421,7 +472,7 @@ const MedicalRecords = () => {
                         </div>
 
                         <div className="col">
-                            <Button className="mx-2 mt-2 mb-2" onClick={() => {setDisplayDialog2(true); setDisplayDialog(false)}}>Deletar prontuário</Button>
+                            <Button className="mx-2 mt-2 mb-2 mr-2" onClick={() => {setDisplayDialog2(true); setDisplayDialog(false)}}>Deletar prontuário</Button>
                         </div>
                     </div>
                 </Dialog>
@@ -450,6 +501,47 @@ const MedicalRecords = () => {
                             <button type="submit" className="btn btn-info btn-primary mt-4 mb-4">Atualizar</button>
                         </form>
                     </div>
+                </Dialog>
+
+                <Dialog visible={displayDialog4} style={{width: '50%'}} modal={true} onHide={() => {setDisplayDialog4(false); showToast('warn', 'Aviso!', 'Operação cancelada pelo usuário.')}}>
+                    <p className="text-dark h3 text-center mr-5 mb-2">Prontuário {getNroProntuario} do paciente {getNomePaciente}</p>
+                    <p className="text-dark h5 mt-5">Origem: {getOrigem}</p>
+                    <p className="text-dark h5 mt-3">Alocação: {getAlocacao}</p>
+                    <p className="text-dark h5 mt-3">Data da Internação: {getDataTratadaInternacao}</p>
+                    <p className="text-dark h5 mt-3">Código de Doença Primário: {getCodDoencaPrincipal}</p>
+                    {getCodDoencaSecundario  &&
+                        <p className="text-dark h5 text-left mt-3">Código de Doença Secundário: {getCodDoencaSecundario}</p>
+                    }
+                    <p className="text-dark h5 text-left mt-3">Sistema Acometido: {getSistemaAcometido}</p>
+                    {getCodComorbidade &&
+                        <p className="text-dark h5 text-left mt-3">Código de Comorbidade: {getCodComorbidade}</p>
+                    }
+                    <p className="text-dark h5 text-left mt-3">Código de Medicamento Primário: {getCodAtbPrimario}</p>
+                    {getCodAtbSecundario &&
+                        <p className="text-dark h5 text-left mt-3">Código de Medicamento Secundário: {getCodAtbSecundario}</p>
+                    }
+                    {getSitioInfeccaoPrimario &&
+                        <p className="text-dark h5 text-left mt-3">Sítio de Infecção Primário: {getSitioInfeccaoPrimario}</p>
+                    }
+                    <p className="text-dark h5 text-left mt-3">Origem da Infecção: {getOrigemInfeccao}</p>
+                    {getResultadoColeta &&
+                        <p className="text-dark h5 text-left mt-3">Resultado Coleta: {getResultadoColetaString}</p>
+                    }
+                    <p className="text-dark h5 text-left mt-3">Tratamento CCIH: {getTratamentoString}</p>
+                    <p className="text-dark h5 text-left mt-3">Indicação Sepse: {getIndicacaoString}</p>
+                    <p className="text-dark h5 text-left mt-3">Disfunção Renal: {getDisfuncaoString}</p>
+                    {getDose &&
+                        <p className="text-dark h5 text-left mt-3">Dose Correta: {getDoseString}</p>
+                    }
+                    {getPosologia &&
+                        <p className="text-dark h5 text-left mt-3">Posologia Correta: {getPosologiaString}</p>
+                    }
+                    {getDataDesfecho &&
+                        <p className="text-dark h5 text-left mt-3">Data do Desfecho: {getDataTratadaDesfecho}</p>
+                    }
+                    {getDesfecho != "Sem desfecho" &&
+                        <p className="text-dark h5 text-left mt-3">Desfecho: {getDesfecho}</p>
+                    }
                 </Dialog>
 
                 <Dialog visible={displayDialog1} style={{width: '50%'}} modal={true} onHide={() => {setDisplayDialog1(false); showToast('warn', 'Aviso!', 'Operação cancelada pelo usuário.');}} maximizable>
