@@ -99,14 +99,12 @@ class AvaliacaoController {
 
     //PAGINACAO DA LISTA DE AVALIACOES
     async indexPagination(request: Request, response: Response){
+        const { NroProntuario } = request.body;
         var page = String(request.query.page);
-        if(!page){
-           page = "10"
-        }
         var pageRequest = parseInt(page) / 10;
         const rows = 10;
         try{
-            const assessments = await knex("Avaliacao").select("*").orderBy('IdAvaliacao', 'desc').offset((pageRequest-1)*rows).limit(rows)
+            const assessments = await knex("Avaliacao").where('NroProntuario', 'like', `%${NroProntuario}%`).offset((pageRequest-1)*rows).limit(rows);
     
             var serializedAssessments = assessments.map(assessment => {
                 return {
@@ -117,8 +115,8 @@ class AvaliacaoController {
                     TrocaAtb: assessment.TrocaAtb
                 }
             })
-            const assessmentsLength = (await knex("Avaliacao").select("*")).length;
-            return response.json({showAssessments: true, assessments: serializedAssessments, length: assessmentsLength});
+            
+            return response.json({showAssessments: true, assessments: serializedAssessments, });
         }catch(err){
             return response.json({showAssessments: false, error: err});
         }
