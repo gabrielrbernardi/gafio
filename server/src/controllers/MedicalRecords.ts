@@ -70,7 +70,7 @@ class ProntuarioController {
                   DoseCorreta,
                   PosologiaCorreta
                }).then((SeqProntuarioDB) => {
-                  knex("Historico").insert({"IdProntuario": SeqProntuarioDB, "IdPaciente": NroPaciente}).then(() => {
+                  knex("Historico").insert({"IdProntuario": SeqProntuarioDB, "IdPaciente": patient.SeqPaciente}).then(() => {
                      return response.json({CreatedMedicalRecord: true});
                   }).catch((error) =>{
                      return response.json({CreatedMedicalRecord: false, error});
@@ -91,6 +91,12 @@ class ProntuarioController {
             });
          }
       }
+   }
+
+   //LISTA DOS PRONTUARIOS
+   async index(request: Request, response: Response) {
+      const MedicalRecord = await knex("Prontuario").select("*");
+      return response.send(MedicalRecord);
    }
 
    //PAGINACAO DA LISTA DE PRONTUARIOS
@@ -161,12 +167,6 @@ class ProntuarioController {
          return response.json({showMedicalRecords: false, error: err});
       }
   }
-
-   //LISTA DOS PRONTUARIOS
-   async index(request: Request, response: Response) {
-      const MedicalRecord = await knex("Prontuario").select("*");
-      return response.send(MedicalRecord);
-   }
    
    //FILTROS DE BUSCA
       //FILTRAR POR NroProntuario

@@ -6,7 +6,7 @@ try {
          client: "mysql",
          connection: {
             // filename: './src/database/gafioDB.sql',
-            database: "gafio",
+            database: "gafioDB",
             host: "localhost",
             user: "root",
             password: "kutsu12",

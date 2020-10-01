@@ -472,7 +472,7 @@ const MedicalRecords = () => {
                         </div>
 
                         <div className="col">
-                            <Button className="mx-2 mt-2 mb-2 mr-2" onClick={() => {setDisplayDialog2(true); setDisplayDialog(false)}}>Deletar prontuário</Button>
+                            <Button className="mx-2 mt-2 mb-2 mr-2" onClick={() => {setDisplayDialog2(true); setDisplayDialog(false)}}>Excluir prontuário</Button>
                         </div>
                     </div>
                 </Dialog>
@@ -503,7 +503,7 @@ const MedicalRecords = () => {
                     </div>
                 </Dialog>
 
-                <Dialog visible={displayDialog4} style={{width: '50%'}} modal={true} onHide={() => {setDisplayDialog4(false); showToast('warn', 'Aviso!', 'Operação cancelada pelo usuário.')}}>
+                <Dialog visible={displayDialog4} style={{width: '50%'}} modal={true} onHide={() => setDisplayDialog4(false)} maximizable>
                     <p className="text-dark h3 text-center mr-5 mb-2">Prontuário {getNroProntuario} do paciente {getNomePaciente}</p>
                     <p className="text-dark h5 mt-5">Origem: {getOrigem}</p>
                     <p className="text-dark h5 mt-3">Alocação: {getAlocacao}</p>
