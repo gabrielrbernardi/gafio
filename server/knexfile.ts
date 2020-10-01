@@ -1,3 +1,4 @@
+import { response } from "express";
 import path from "path";
 
 try {
@@ -6,10 +7,10 @@ try {
          client: "mysql",
          connection: {
             // filename: './src/database/gafioDB.sql',
-            database: "gafio",
+            database: "gafioDB",
             host: "localhost",
-            user: "root",
-            password: "kutsu12",
+            user: "gabriel",
+            password: "teste123",
          },
          migrations: {
             directory: path.resolve(__dirname, "src", "database", "migrations"),
