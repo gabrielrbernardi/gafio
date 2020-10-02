@@ -2,8 +2,7 @@ import knex from 'knex';
 
 export async function up(knex: knex){
     return knex.schema.createTable('Doenca', (table) => {
-        table.increments('index').primary();
-        table.string('CodDoenca');
+        table.string('CodDoenca').primary();
         table.string('Nome').notNullable();
         table.timestamps(true, true);
     });

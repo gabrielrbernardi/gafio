@@ -55,47 +55,6 @@ class DiseaseController {
     return response.json({diseases: diseases, length: diseasesLength});
   }
 
-  // Método para atualizar o banco de dados de doenças:
-  async updateDiseaseDB(request: Request, response: Response) {
-
-    const updatedDiseaseDB = await axios.get("https://cid10-api.herokuapp.com/cid10");
-    const localDiseaseDB = await knex.select("*").from('Doenca');
-
-    // Função para sincronizar o banco de dados:
-    async function sync() {
-      for (let i = 0; i < updatedDiseaseDB.data.length; i++) {
-
-        const codDoenca = updatedDiseaseDB.data[i].codigo;
-        const nome = updatedDiseaseDB.data[i].nome;
-
-        await knex('Doenca').where('index', i).update({
-          codDoenca,
-          nome,
-        });
-      }
-    }
-    
-    // Verifica se é necessário atualizar o banco de dados:
-    let equals = true;
-
-    if (updatedDiseaseDB.data.length !== localDiseaseDB.length) {
-
-    }
-    else {
-      for (let i = 0; i < updatedDiseaseDB.data.length; i++) {
-        if (updatedDiseaseDB.data[i] !== localDiseaseDB[i]) equals = false;
-      }
-    }
-
-    if (equals == false) {
-      sync();
-      return response.json({ message: "O banco de dados foi atualizado" });
-    }
-    else {
-      return response.json({ message: "Não há atualizações" });
-    }
-  }
-
   // Método para deletar uma doença:
   async delete(request: Request, response: Response) {
     const { codDoenca } = request.body;
@@ -111,6 +70,30 @@ class DiseaseController {
         error: "Doença não encontrada.",
       });
     }
+  }
+
+  // Método para deletar todo o banco de dados de doenças:
+  async deleteAll(request: Request, response: Response) {
+    await knex.select("*").from('Doenca').delete();
+    return response.json({ deletedAllDisease: true });
+  }
+
+  // Método para importar banco de dados de doenças:
+  async importDB(request: Request, response: Response) {
+    const diseaseAPI = await axios.get("https://cid10-api.herokuapp.com/cid10");
+  
+    for (let i = 0; i < diseaseAPI.data.length; i++) {
+      const codDoenca = diseaseAPI.data[i].codigo;
+      const nome = diseaseAPI.data[i].nome;
+      
+      await knex('Doenca').insert({
+        codDoenca,
+        nome,
+      });
+
+      console.log(`${nome} adicionada.`);
+    }
+    return response.json({ databaseImported: true });
   }
 
 }
