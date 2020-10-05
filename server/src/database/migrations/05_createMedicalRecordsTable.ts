@@ -6,8 +6,8 @@ export async function up(knex: knex) {
     table.integer("NroProntuario").notNullable();
     table.integer("NroPaciente").notNullable();
     table.string("DataInternacao").notNullable();
-    table.integer("CodDoencaPrincipal").references('index').inTable('Doenca').notNullable();
-    table.integer("CodDoencaSecundario").references('index').inTable('Doenca');
+    table.string("CodDoencaPrincipal").references('CodDoenca').inTable('Doenca').notNullable();
+    table.string("CodDoencaSecundario").references('CodDoenca').inTable('Doenca');
     table.string("SistemaAcometido").notNullable();
     table.string("CodComorbidade");
     table.string("Origem").notNullable();
