@@ -498,35 +498,27 @@ class ProntuarioController {
 
       if(MedicalRecord){
          await knex("Historico").where("IdProntuario", MedicalRecord.SeqProntuario).delete().then(() => {
-            knex("Prontuario").where("NroProntuario", NroProntuario).delete().then(() => {
-               return response.json({deletedMedicalRecord: true})
-            }).catch((error) => {
-               return response.json({deletedMedicalRecord: false, error})
-            })
+            const AvaliacaoDB = knex("Avaliacao").where("IdProntuario", MedicalRecord.SeqProntuario)
+            if(AvaliacaoDB){
+               knex("Avaliacao").where("IdProntuario", MedicalRecord.SeqProntuario).delete().then(() => {
+                  knex("Prontuario").where("NroProntuario", NroProntuario).delete().then(() => {
+                     return response.json({ deletedMedicalRecord: true });
+                  }).catch((error) => {
+                     return response.json({ deletedMedicalRecord: false, error });
+                  })
+               }).catch((error) => {
+                  return response.json({ deletedMedicalRecord: false, error });
+               })
+            }else{
+               knex("Prontuario").where("NroProntuario", NroProntuario).delete().then(() => {
+                  return response.json({ deletedMedicalRecord: true });
+               }).catch((error) => {
+                  return response.json({ deletedMedicalRecord: false, error });
+               })
+            }
          }).catch((error) => {
-            return response.json({deletedMedicalRecord: false, error})
+            return response.json({ deletedMedicalRecord: false, error });
          })
-         //    const AvaliacaoDB = knex("Avaliacao").where("SeqProntuario", MedicalRecord.SeqProntuario)
-         //    if(AvaliacaoDB){
-         //       knex("Avaliacao").where("SeqProntuario", MedicalRecord.SeqProntuario).delete().then(() => {
-         //          knex("Prontuario").where("NroProntuario", NroProntuario).delete().then(() => {
-         //             return response.json({ deletedMedicalRecord: true });
-         //          }).catch((error) => {
-         //             return response.json({ deletedMedicalRecord: false, error });
-         //          })
-         //       }).catch((error) => {
-         //          return response.json({ deletedMedicalRecord: false, error });
-         //       })
-         //    }else{
-         //       knex("Prontuario").where("NroProntuario", NroProntuario).delete().then(() => {
-         //          return response.json({ deletedMedicalRecord: true });
-         //       }).catch((error) => {
-         //          return response.json({ deletedMedicalRecord: false, error });
-         //       })
-         //    }
-         // }).catch((error) => {
-         //    return response.json({ deletedMedicalRecord: false, error });
-         // })
       }else{
          return response.json({deletedMedicalRecord: false, error: "Prontuário não encontrado."});
       }

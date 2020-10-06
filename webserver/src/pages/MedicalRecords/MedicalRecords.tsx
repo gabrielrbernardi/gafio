@@ -461,18 +461,18 @@ const MedicalRecords = () => {
                 <Dialog visible={displayDialog} style={{width: '50%'}} header="Ações" modal={true} onHide={() => setDisplayDialog(false)}>
                     <div className="form-row">
                     <div className="col mr-4 ml-1">
-                            <Button className="mx-2 mt-2 mb-2" onClick={() => {setDisplayDialog4(true); setDisplayDialog(false)}}>Visualizar prontuário</Button>
+                            <Button className="mx-2 mt-2 mb-2 p-3" onClick={() => {setDisplayDialog4(true); setDisplayDialog(false)}}>Visualizar <br></br> prontuário</Button>
                         </div>
                         <div className="col mr-4">
-                            <Button className="mx-2 mt-2 mb-2" onClick={() => {setDisplayDialog1(true); setDisplayDialog(false)}}>Atualizar prontuário</Button>
+                            <Button className="mx-2 mt-2 mb-2 p-3" onClick={() => {setDisplayDialog1(true); setDisplayDialog(false)}}>Atualizar <br></br> prontuário</Button>
                         </div>
 
                         <div className="col mr-4">
-                            <Button className="mx-2 mt-2 mb-2" onClick={() => {setDisplayDialog3(true); setDisplayDialog(false)}}>Atualizar desfecho</Button>
+                            <Button className="mx-2 mt-2 mb-2 p-3" onClick={() => {setDisplayDialog3(true); setDisplayDialog(false)}}>Atualizar <br></br> desfecho</Button>
                         </div>
 
                         <div className="col">
-                            <Button className="mx-2 mt-2 mb-2 mr-2" onClick={() => {setDisplayDialog2(true); setDisplayDialog(false)}}>Excluir prontuário</Button>
+                            <Button className="mx-2 mt-2 mb-2 mr-2 p-3" onClick={() => {setDisplayDialog2(true); setDisplayDialog(false)}}>Excluir <br></br> prontuário</Button>
                         </div>
                     </div>
                 </Dialog>
