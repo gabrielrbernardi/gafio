@@ -148,6 +148,7 @@ const Diseases = () => {
                 <Button tabIndex={2} variant="outline-danger" className="p-0 mr-1" style={{width: '17px'}} onClick={ () => { setSearchInput(''); getDiseasesFunction(); setMode('N'); setOptionState(null)}}><AiOutlineClose size={15}/></Button>
                 <Button onClick={handleSearch}><FiSearch size={20}/></Button>
               </div>
+              <Button variant="success" onClick={diseasesService.updateDiseaseDB}>Atualizar banco de dados</Button>
             </div>
           </span>
         </div>
