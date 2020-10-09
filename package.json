@@ -1,0 +1,15 @@
+{
+  "name": "gafio",
+  "private": true,
+  "scripts": {
+    "postinstall": "lerna bootstrap",
+    "start": "lerna run start",
+    "test": "lerna run test"
+  },
+  "devDependencies": {
+    "lerna": "^3.22.1",
+    "typescript": "^3.9.7",
+    "jsonwebtoken": "^8.5.1",
+    "axios": "^0.20.0"
+  }
+}

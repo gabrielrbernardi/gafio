@@ -1,27 +1,51 @@
 # GAFio
+
+<p>
+  <a href="https://opensource.org/licenses/MIT" target="_blank">
+    <img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-yellow.svg" />
+  </a>
+</p>
+
 Sistema de controle de antibióticos que permite à gestão de antibióticos no âmbito da fundação provendo controle, notificações e comunicação do sistema com interfaces externas. A interação será via Desktops e Smartphones.
 
-# Dependências
+## Install
 
-//Backend
+```sh
+yarn install
+```
 
-npm install bcrypt knex cors jsonwebtoken
+## Usage
 
-npm install mysql --save
+```sh
+yarn start
+```
 
-npm install @types/cors @types/bcrypt -D
+## Run tests
 
-npm install @types/jsonwebtoken
+```sh
+yarn test
+```
 
-//Frontend
+## Build with
 
-npm install react-router-dom axios react-icons react-cookie react-bootstrap
+### Backend
 
-npm install primereact primeicons --save
+-   bcrypt
+-   express
+-   knex
+-   mysql2
 
-npm install @types/react-router-dom
+### Frontend
 
-# Useful sources to develop
+-   axios
+-   bootstrap
+-   chart.js
+-   jsonwebtoken
+-   primeicons
+-   primereact
+-   react
+
+## Useful sources to develop
 
 https://github.com/aspto/base-de-dados-de-medicamentos -> Base de dados de medicamentos
 
@@ -34,3 +58,15 @@ https://data.medicare.gov/developers -> Sistema de saúde publica dos EUA para d
 https://www.who.int/data/gho/info/gho-odata-api -> API da WHO/OMS
 
 https://sourceforge.net/projects/contentservices/ -> API do departamento de saude dos EUA.
+
+## 🤝 Contributing
+
+Contributions, issues and feature requests are welcome!<br />Feel free to check [issues page](https://github.com/gabrielrbernardi/gafio/issues).
+
+## Show your support
+
+Give a ⭐️ if this project helped you!
+
+## 📝 License
+
+This project is [MIT](https://opensource.org/licenses/MIT) licensed.
