@@ -342,7 +342,7 @@ const MedicalRecords = () => {
         <>
             <div className="row m-5 px-5">              
                 <DataTable ref={dt} value={prontuario} paginator={true} rows={rows} header={header} totalRecords={totalRecords}
-                    emptyMessage="Nenhum resultado encontrado" className=" p-datatable-responsive-demo" resizableColumns={true} loading={loading} first={getFirst}
+                    emptyMessage="Nenhum resultado encontrado" className="p-datatable-responsive-demo" resizableColumns={true} loading={loading} first={getFirst}
                     onPage={onPage} lazy={true} selectionMode="single" selection={selectedUser} onSelectionChange={e => setSelectedUser(e.value)}
                     onRowSelect={onUserSelect}>
                     <Column field="CodUsuario" header="Código" style={{width:'12%', textAlign:'center'}}/>
