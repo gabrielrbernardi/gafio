@@ -33,6 +33,8 @@ import NotFound from './pages/NotFound/NotFound';
 
 import UnderDevelopment from './pages/UnderDevelopment/UnderDevelopment';
 
+import Assessment from './pages/Assessment/Assessment'
+
 const Routes = () => {
     return (
         <BrowserRouter>
@@ -61,6 +63,8 @@ const Routes = () => {
                 <Route path="/notifications" render={() => <div><Header/><Notifications/><Footer/></div>} exact />
                 <Route path="/notFound" render={() => <div><Header/><NotFound/><Footer/></div>} exact/>
                 <Route path="/underDevelopment" render={() => <div><Header/><UnderDevelopment/><Footer/></div>} exact/>
+
+                <Route path="/assessment" render={() => <div><Header/><Assessment/><Footer/></div>} exact/>
             </Switch>
         </BrowserRouter>
     )

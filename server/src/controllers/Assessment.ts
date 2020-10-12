@@ -99,12 +99,12 @@ class AvaliacaoController {
 
     //PAGINACAO DA LISTA DE AVALIACOES
     async indexPagination(request: Request, response: Response){
-        const { NroProntuario } = request.body;
+        //const { NroProntuario } = request.body;
         var page = String(request.query.page);
         var pageRequest = parseInt(page) / 10;
         const rows = 10;
         try{
-            const assessments = await knex("Avaliacao").where('NroProntuario', 'like', `%${NroProntuario}%`).offset((pageRequest-1)*rows).limit(rows);
+            const assessments = await knex("Avaliacao").where('NroProntuario', `%${25}%`).offset((pageRequest-1)*rows).limit(rows);
     
             var serializedAssessments = assessments.map(assessment => {
                 return {
