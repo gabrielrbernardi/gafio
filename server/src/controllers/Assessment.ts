@@ -116,7 +116,7 @@ class AvaliacaoController {
                 }
             })
             
-            return response.json({showAssessments: true, assessments: serializedAssessments, });
+            return response.json({showAssessments: true, assessments: serializedAssessments, length: serializedAssessments.length});
         }catch(err){
             return response.json({showAssessments: false, error: err});
         }

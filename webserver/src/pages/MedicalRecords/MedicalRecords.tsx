@@ -162,7 +162,6 @@ const MedicalRecords = () => {
                 getMedicalRecordsFunction(data)
             });
         }, 1000)
-
     }, []);
 
     function getMedicalRecordsFunction(data?: any){

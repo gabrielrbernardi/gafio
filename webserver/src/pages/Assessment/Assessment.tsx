@@ -16,16 +16,15 @@ import {AssessmentService} from './AssessmentService';
 import Loading from '../../components/Loading';
 
 const Assessment = () => {
-    const [MedicalRecords, setMedicalRecords] = useState([]);
+    const [assessment, setAssessment] = useState([]);
     const [datasource, setDatasource] = useState([]);
     const [loading, setLoading] = useState(true);
     const [loading1, setLoading1] = useState(true);
     const [getFirst, setFirst] = useState(0);
-    const [totalRecords, setTotalRecords] = useState(0);
+    const [totalAssessment, setTotalAssessment] = useState(0);
     const [searchInput, setSearchInput] = useState('');
     const [open, setOpen] = useState(false);
     const [getMode, setMode] = useState<string>('N');
-    const [displayDialog, setDisplayDialog] = useState(false);
     const [selectedAssessment, setSelectedAssessment] = useState<any>(null);
     const [getOptionState, setOptionState] = useState<any>(null)
     const [getAssessmentChange, setAssessmentChange] = useState();
@@ -56,28 +55,27 @@ const Assessment = () => {
                 getMedicalRecordsFunction(data)
             });
         }, 1000)
-
     }, []);
 
     function getMedicalRecordsFunction(data?: any){
         setLoading(true);
         if(!data){
             assessmentService.getAssessmentPaginate(10).then(data => {
-                setDatasource(data.assessments);
-                setTotalRecords(data.length);
-                data = data.assessments;
+                setDatasource(data.medicalRecords);
+                setTotalAssessment(data.length);
+                data = data.medicalRecords;
                 
-                setMedicalRecords(data.slice(0, rows));
+                setAssessment(data.slice(0, rows));
                 setLoading(false);
                 setLoading1(false);
                 return
             })
         }else{
-            setDatasource(data.assessments);
-            setTotalRecords(data.length);
-            data = data.assessments;
+            setDatasource(data.medicalRecords);
+            setTotalAssessment(data.length);
+            data = data.medicalRecords;
             
-            setMedicalRecords(data.slice(0, rows));
+            setAssessment(data.slice(0, rows));
             setLoading(false);
             setLoading1(false);
             return
@@ -93,7 +91,7 @@ const Assessment = () => {
             getMedicalRecordsFunction(data);
         });
         setFirst(startIndex);
-        setMedicalRecords(datasource.slice(startIndex, endIndex));
+        setAssessment(datasource.slice(startIndex, endIndex));
         setLoading(false);
     }
 
@@ -109,7 +107,7 @@ const Assessment = () => {
     //     }
     //     setLoading(true);
     //     if(!searchInput){
-    //         assessmentService.getAssessmentPaginate(10).then(data => {
+    //         medicalRecordsService.getMedicalRecordsPaginate(10).then(data => {
     //             getMedicalRecordsFunction(data);
     //             setLoading(false);
     //             showToast('error', 'Erro!', 'Digite algum valor para pesquisar.');
@@ -117,7 +115,7 @@ const Assessment = () => {
     //         return
     //     }
     //     setMode('S');
-    //     assessmentService.searchMedicalRecordsGlobal(searchInput, getOptionState.cod, getFirst+rows).then(data => {
+    //     medicalRecordsService.searchMedicalRecordsGlobal(searchInput, getOptionState.cod, getFirst+rows).then(data => {
     //         if(!data.showMedicalRecords){
     //             setLoading(false);
     //             setMedicalRecords([]);
@@ -144,6 +142,17 @@ const Assessment = () => {
     //         }
     //     })
     // }
+
+    function showToast(messageType: string, messageTitle: string, messageContent: string){
+        setToast(false)
+        setMessageType(messageType);
+        setMessageTitle(messageTitle);
+        setMessageContent(messageContent);
+        setToast(true);
+        setTimeout(() => {
+            setToast(false);
+        }, 4500)
+    }
 
     let newAssessment = true
     function onAssessmentSelect (e: any) {
@@ -180,7 +189,7 @@ const Assessment = () => {
             </Collapse>
             <div className="ml-auto"></div>
 
-            <DataTable value={MedicalRecords} paginator={true} rows={rows} header={header} totalRecords={totalRecords}
+            <DataTable value={assessment} paginator={true} rows={rows} header={header} totalRecords={totalAssessment}
                 emptyMessage="Nenhum resultado encontrado" className="p-datatable-responsive-demo" resizableColumns={true} loading={loading} first={getFirst}
                 onPage={onPage} lazy={true} selectionMode="single" selection={selectedAssessment} onSelectionChange={e => setSelectedAssessment(e.value)}
                 onRowSelect={(e) => {onAssessmentSelect(e);}}>
