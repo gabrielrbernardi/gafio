@@ -1,6 +1,8 @@
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import React, { useEffect, useState } from 'react';
+import { Button } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 import {PatientService} from './PatientService';
 
 const Patient = () => {
@@ -79,7 +81,8 @@ const Patient = () => {
 
     return (
         <>
-            <div className="row m-5 px-5">              
+            <div className="row m-5 px-5">
+                <Link to={location => ({...location, pathname: '/medicalRecords/create'})}><Button variant="outline-dark" className="mb-2" style={{borderRadius: '0', height:'41.5px'}}>Cadastrar Prontuário</Button></Link>        
                 <DataTable value={paciente} paginator={true} rows={rows} header="Dados dos Pacientes" totalRecords={totalRecords}
                     emptyMessage="Nenhum resultado encontrado" className="p-datatable-responsive-demo" resizableColumns={true} loading={loading}
                     first={getFirst} onPage={onPage} lazy={true} selectionMode="single" selection={selectedUser} onSelectionChange={e => setSelectedUser(e.value)}

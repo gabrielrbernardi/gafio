@@ -10,7 +10,7 @@ try {
             database: "gafioDB",
             host: "localhost",
             user: "root",
-            password: "kutsu12",
+            password: "teste123",
          },
          migrations: {
             directory: path.resolve(__dirname, "src", "database", "migrations"),

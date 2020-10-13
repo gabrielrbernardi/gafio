@@ -52,6 +52,8 @@ const Assessment = () => {
         setLoading1(true);
         setTimeout(() => {
             assessmentService.getAssessmentPaginate(10).then(data => {
+                console.log(1)
+                console.log(data)
                 getMedicalRecordsFunction(data)
             });
         }, 1000)
@@ -61,9 +63,9 @@ const Assessment = () => {
         setLoading(true);
         if(!data){
             assessmentService.getAssessmentPaginate(10).then(data => {
-                setDatasource(data.medicalRecords);
+                setDatasource(data.assessments);
                 setTotalAssessment(data.length);
-                data = data.medicalRecords;
+                data = data.assessments;
                 
                 setAssessment(data.slice(0, rows));
                 setLoading(false);
@@ -71,9 +73,9 @@ const Assessment = () => {
                 return
             })
         }else{
-            setDatasource(data.medicalRecords);
+            setDatasource(data.assessments);
             setTotalAssessment(data.length);
-            data = data.medicalRecords;
+            data = data.assessments;
             
             setAssessment(data.slice(0, rows));
             setLoading(false);
