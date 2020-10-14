@@ -5,7 +5,6 @@ export async function up(knex: knex) {
       table.increments("IdAvaliacao").primary();
       table.integer("IdProntuario").references("SeqProntuario").inTable("Prontuario").unsigned();
       table.integer("IdPaciente").references("SeqPaciente").inTable("Paciente").unsigned();
-      table.integer("NroProntuario").notNullable();
       table.integer("NroAvaliacao").notNullable();
       table.string("DataAvaliacao").notNullable();
       table.string("ResultadoCulturas");
