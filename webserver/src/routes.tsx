@@ -33,7 +33,7 @@ import NotFound from './pages/NotFound/NotFound';
 
 import UnderDevelopment from './pages/UnderDevelopment/UnderDevelopment';
 
-import Assessment from './pages/Assessment/Assessment'
+import Assessment from './pages/MedicalRecords/Assessment/Assessment'
 
 const Routes = () => {
     return (
@@ -53,6 +53,8 @@ const Routes = () => {
 
                 <Route path="/medicalRecords/create" render={() => <div><Header/><MedicalRecordsCreate/><Footer/></div>} exact />
                 <Route path="/medicalRecords" render={() => <div><Header/><MedicalRecords/><Footer/></div>} exact />
+                <Route path="/medicalRecords/assessment" render={() => <div><Header/><Assessment/><Footer/></div>} exact/>
+                
                 <Route path="/dashboard" render={() => <div><Header/><Dashboard/><Footer/></div>} exact />
                 
                 <Route path="/history" render={() => <div><Header/><History/><Footer/></div>} exact />
@@ -63,8 +65,6 @@ const Routes = () => {
                 <Route path="/notifications" render={() => <div><Header/><Notifications/><Footer/></div>} exact />
                 <Route path="/notFound" render={() => <div><Header/><NotFound/><Footer/></div>} exact/>
                 <Route path="/underDevelopment" render={() => <div><Header/><UnderDevelopment/><Footer/></div>} exact/>
-
-                <Route path="/assessment" render={() => <div><Header/><Assessment/><Footer/></div>} exact/>
             </Switch>
         </BrowserRouter>
     )

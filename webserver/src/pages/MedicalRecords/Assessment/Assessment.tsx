@@ -7,13 +7,13 @@ import Collapse from 'react-bootstrap/Collapse';
 import {FiSearch} from 'react-icons/fi';
 import {AiOutlineClose} from 'react-icons/ai';
 import { Link } from 'react-router-dom';
-import ToastComponent from '../../components/Toast';
+import ToastComponent from '../../../components/Toast';
 import { Dropdown } from 'primereact/dropdown';
 import {Dropdown as DropdownReact} from 'react-bootstrap';
 import { Dialog } from 'primereact/dialog';
 
 import {AssessmentService} from './AssessmentService';
-import Loading from '../../components/Loading';
+import Loading from '../../../components/Loading';
 
 const Assessment = () => {
     const [assessment, setAssessment] = useState([]);
