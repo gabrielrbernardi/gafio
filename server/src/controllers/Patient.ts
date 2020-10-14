@@ -123,6 +123,24 @@ class PatientController {
         return response.json({patientFound: false, error: "Paciente não encontrado."})
     }
   }
+  
+    async searchPatientData(request: Request, response: Response) {
+        var id = String(request.query.id);
+        var page = String(request.query.page);
+        if(!page){
+            page="10";
+        }
+        var pageRequest = parseInt(page) / 10;
+        const rows = 10;
+        if(id){
+            const medicalRecordsLengthPatient = (await knex("Prontuario").count('NroPaciente').where('NroProntuario', id));
+            return response.json({
+                medicalRecordsLength: medicalRecordsLengthPatient,
+            });
+        }else{
+            return response.json({patientFound: false, error: "NroPaciente não fornecido."})
+        }
+    }
 
     async update(request: Request, response: Response){
         const {NroPaciente} = request.params;

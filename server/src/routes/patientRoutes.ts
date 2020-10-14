@@ -9,6 +9,7 @@ routes.get('/patient/', patient.index);
 routes.get('/patient/name/', patient.indexByName);
 routes.get('/patient/id/', patient.indexById);
 routes.get('/patient/birthday/', patient.indexByBirthday);
+routes.get('/patient/search/searchPatientData/', patient.searchPatientData);
 routes.put('/patient/update/:NroPaciente', patient.update);
 routes.delete('/patient/delete/:NroPaciente', patient.delete);
 

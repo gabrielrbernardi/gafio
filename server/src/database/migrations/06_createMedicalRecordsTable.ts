@@ -4,7 +4,7 @@ export async function up(knex: knex) {
   return knex.schema.createTable("Prontuario", (table) => {
     table.increments("SeqProntuario").primary();
     table.integer("NroProntuario").notNullable();
-    table.integer("NroPaciente").notNullable();
+    table.integer("SeqPaciente").references('SeqPaciente').inTable('Paciente').unsigned();
     table.string("DataInternacao").notNullable();
     table.string("CodDoencaPrincipal").references('CodDoenca').inTable('Doenca').notNullable();
     table.string("CodDoencaSecundario").references('CodDoenca').inTable('Doenca');
