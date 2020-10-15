@@ -7,7 +7,269 @@ import ToastComponent from '../../../../components/Toast';
 import {CreateAssessmentService} from './CreateAssessmentService'
 
 const AssessmentForm = () => {
+    const [getNroAvaliacao, setNroAvaliacao] = useState<any>(null)
+    const [getDataAvaliacao, setDataAvaliacao] = useState<string>('')
+    const [getResultadoCulturas, setResultadoCulturas] = useState<any>(null)
+    const [getResCulturasAcao, setResCulturasAcao] = useState<any>(null)
+    const [getDoseCorreta, setDoseCorreta] = useState<any>(null)
+    const [getPosologiaCorreta, setPosologiaCorreta] = useState<any>(null)
+    const [getAlertaDot, setAlertaDot] = useState<any>(null)
+    const [getAlertaDotDescricao, setAlertaDotDescricao] = useState<any>(null)
+    const [getDisfuncaoRenal, setDisfuncaoRenal] = useState<string>('')
+    const [getAtbContraindicacao, setAtbContraindicacao] = useState<any>(null)
+    const [getAlteracaoPrescricao, setAlteracaoPrescricao] = useState<any>(null)
+    const [getAtbDiluicaoInfusao, setAtbDiluicaoInfusao] = useState<any>(null)
+    const [getInteracaoAtbMedicamento, setInteracaoAtbMedicamento] = useState<any>(null)
+    const [getHemodialise, setHemodialise] = useState<any>(null)
+    const [getAtbOral, setAtbOral] = useState<any>(null)
+    const [getTrocaAtb, setTrocaAtb] = useState<any>(null)
+    const [getNovoAtb, setNovoAtb] = useState<string>('')
 
+    function checkInput(type: number, e: any){
+        if(type == 1){
+            if(e === ''){
+                setResultadoCulturas(null);
+            }else{
+                setResultadoCulturas(e)
+            }
+        }
+        if(type == 2){
+            if(e === ''){
+                setResCulturasAcao(null);
+            }else{
+                setResCulturasAcao(e)
+            }
+        }
+        if(type == 3){
+            if(e === ''){
+                setAlertaDotDescricao(null);
+            }else{
+                setAlertaDotDescricao(e)
+            }
+        }
+    }
+
+    const onDoseCorretaChange = (e: { value: string }) => {
+        setDoseCorreta(e.value);
+    };
+
+    const onPosologiaCorretaChange = (e: { value: string }) => {
+        setPosologiaCorreta(e.value);
+    };
+
+    const onAlertaDotChange = (e: { value: string }) => {
+        setAlertaDot(e.value);
+    };
+
+    const onAlteracaoPrescricaoChange = (e: { value: string }) => {
+        setAlteracaoPrescricao(e.value);
+    };
+
+    const onAtbContraindicacaoChange = (e: { value: string }) => {
+        setAtbContraindicacao(e.value);
+    };
+
+    const onAtbDiluicaoInfusaoChange = (e: { value: string }) => {
+        setAtbDiluicaoInfusao(e.value);
+    };
+
+    const onInteracaoAtbMedicamentoChange = (e: { value: string }) => {
+        setInteracaoAtbMedicamento(e.value);
+    };
+
+    const onHemodialiseChange = (e: { value: string }) => {
+        setHemodialise(e.value);
+    };
+
+    const onAtbOralChange = (e: { value: string }) => {
+        setAtbOral(e.value);
+    };
+
+    const onTrocaAtbChange = (e: { value: string }) => {
+        setTrocaAtb(e.value);
+    };
+
+    let options = [
+        {label: 'Sim', value: 'S'},
+        {label: 'Não', value: 'N'}
+    ]
+
+    let options2 = [
+        {label: 'Sim', value: 'S'},
+        {label: 'Sim intermitente', value: 'SI'},
+        {label: 'Não', value: 'N'}
+    ]
+
+    let options3 = [
+        {label: 'Sim', value: 'S'},
+        {label: 'Não aplica', value: 'NA'},
+        {label: 'Não', value: 'N'}
+    ]
+
+    return (
+        <div className="row m-5">
+            <div className="card shadow-lg p-3 col-sm-6 offset-md-3 border">
+                <p className="text-dark h3 text-center">Cadastro de Avaliação</p>
+                <form className="was-validated">
+                    <div className="form-group">
+
+                        <div className="form-row mt-4">
+                            <div className="col mr-4">
+                                <label htmlFor="NroAvaliacao">Número da Avaliação</label>
+                                <input type="number" className="form-control" id="NroAvaliacao" name="NroAvaliacao"
+                                    defaultValue={getNroAvaliacao} onChange={(e) => setNroAvaliacao(Number((e.target as HTMLInputElement).value))}
+                                    placeholder="Digite o número da avaliação" required autoFocus/>
+                            </div>
+
+                            <div className="col">
+                                <label htmlFor="DataAvaliacao" className="mt">Data da Avaliação</label>
+                                <input type="date" className="form-control" id="DataAvaliacao" name="DataAvaliacao"
+                                    defaultValue={getDataAvaliacao} onChange={(e) => setDataAvaliacao((e.target as HTMLInputElement).value)} required/>
+                            </div>
+                        </div>
+
+                        <label htmlFor="ResultadoCulturas" className="mt-4">Resultado das Culturas</label>
+                        <input type="text" className="form-control" id="ResultadoCulturas" name="ResultadoCulturas"
+                            defaultValue={getResultadoCulturas} onChange={(e) => {checkInput(1, (e.target as HTMLInputElement).value)}}
+                            placeholder="Digite o resultado das culturas"/>
+                        
+                        <label htmlFor="ResCulturasAcao" className="mt-4">Ação do Resultado das Culturas</label>
+                        <input type="text" className="form-control" id="ResCulturasAcao" name="ResCulturasAcao"
+                            defaultValue={getResCulturasAcao} onChange={(e) => {checkInput(2, (e.target as HTMLInputElement).value)}}
+                            placeholder="Digite a ação do resultado das culturas"/>
+
+                        <div className="form-row mt-4">
+                            <div className="col mr-4">
+                                <DropdownReact/>
+                                    <label htmlFor="DoseCorreta">Dose Correta</label>
+                                    <br></br>
+                                    <Dropdown className="" value={getDoseCorreta} options={options} 
+                                    onChange={onDoseCorretaChange} placeholder="Selecione uma opção" style={{width: '100%'}}/>
+
+                                <DropdownReact/>
+                            </div>
+                            
+                            <div className="col mr-4">
+                                <DropdownReact/>
+                                    <label htmlFor="PosologiaCorreta">Posologia Correta</label>
+                                    <br></br>
+                                    <Dropdown className="" value={getPosologiaCorreta} options={options} 
+                                    onChange={onPosologiaCorretaChange} placeholder="Selecione uma opção" style={{width: '100%'}}/>
+
+                                <DropdownReact/>
+                            </div>
+
+                            <div className="col">
+                                <DropdownReact/>
+                                    <label htmlFor="AlertaDot">Alerta Dot</label>
+                                    <br></br>
+                                    <Dropdown className="" value={getAlertaDot} options={options} 
+                                    onChange={onAlertaDotChange} placeholder="Selecione uma opção" style={{width: '100%'}}/>
+
+                                <DropdownReact/>
+                            </div>
+                        </div>
+
+                        <label htmlFor="AlertaDotDescricao" className="mt-4">Descrição do Alerta Dot</label>
+                        <input type="text" className="form-control" id="AlertaDotDescricao" name="AlertaDotDescricao"
+                            defaultValue={getAlertaDotDescricao} onChange={(e) => {checkInput(3, (e.target as HTMLInputElement).value)}}
+                            placeholder="Digite a descrição do alerta dot"/>
+
+                        <label htmlFor="DisfuncaoRenal" className="mt-4">Disfuncao Renal</label>
+                        <input type="text" className="form-control" id="DisfuncaoRenal" name="DisfuncaoRenal"
+                            defaultValue={getDisfuncaoRenal} onChange={(e) => setDisfuncaoRenal((e.target as HTMLInputElement).value)}
+                            placeholder="Digite a disfunção renal" required/>
+
+                        <div className="form-row mt-4">
+                            <div className="col mr-4">
+                                <DropdownReact/>
+                                    <label htmlFor="AtbContraindicacao">Contraindicação de Atb</label>
+                                    <br></br>
+                                    <Dropdown className="" value={getAtbContraindicacao} options={options} 
+                                    onChange={onAtbContraindicacaoChange} placeholder="Selecione uma opção" style={{width: '100%'}} required/>
+
+                                <DropdownReact/>
+                            </div>
+                            
+                            <div className="col">
+                                <DropdownReact/>
+                                    <label htmlFor="AlteracaoPrescricao">Alteração da Prescrição</label>
+                                    <br></br>
+                                    <Dropdown className="" value={getAlteracaoPrescricao} options={options} 
+                                    onChange={onAlteracaoPrescricaoChange} placeholder="Selecione uma opção" style={{width: '100%'}}/>
+
+                                <DropdownReact/>
+                            </div>
+                        </div>
+
+                        <div className="form-row mt-4">
+                            <div className="col mr-4">
+                                <DropdownReact/>
+                                    <label htmlFor="AtbDiluicaoInfusao">Diluição e/ou Infusão de Atb</label>
+                                    <br></br>
+                                    <Dropdown className="" value={getAtbDiluicaoInfusao} options={options} 
+                                    onChange={onAtbDiluicaoInfusaoChange} placeholder="Selecione uma opção" style={{width: '100%'}} required/>
+
+                                <DropdownReact/>
+                            </div>
+                            
+                            <div className="col">
+                                <DropdownReact/>
+                                    <label htmlFor="InteracaoAtbMedicamento">Interação Atb e Medicamento</label>
+                                    <br></br>
+                                    <Dropdown className="" value={getInteracaoAtbMedicamento} options={options} 
+                                    onChange={onInteracaoAtbMedicamentoChange} placeholder="Selecione uma opção" style={{width: '100%'}} required/>
+
+                                <DropdownReact/>
+                            </div>
+                        </div>
+
+                        <div className="form-row mt-4">
+                            <div className="col mr-4">
+                                <DropdownReact/>
+                                    <label htmlFor="Hemodialise">Hemodialise</label>
+                                    <br></br>
+                                    <Dropdown className="" value={getHemodialise} options={options2} 
+                                    onChange={onHemodialiseChange} placeholder="Selecione uma opção" style={{width: '100%'}} required/>
+
+                                <DropdownReact/>
+                            </div>
+                            
+                            <div className="col mr-4">
+                                <DropdownReact/>
+                                    <label htmlFor="AtbOral">Atb Oral</label>
+                                    <br></br>
+                                    <Dropdown className="" value={getAtbOral} options={options3} 
+                                    onChange={onAtbOralChange} placeholder="Selecione uma opção" style={{width: '100%'}} required/>
+
+                                <DropdownReact/>
+                            </div>
+
+                            <div className="col">
+                                <DropdownReact/>
+                                    <label htmlFor="TrocaAtb">Troca do Atb</label>
+                                    <br></br>
+                                    <Dropdown className="" value={getTrocaAtb} options={options} 
+                                    onChange={onTrocaAtbChange} placeholder="Selecione uma opção" style={{width: '100%'}} required/>
+
+                                <DropdownReact/>
+                            </div>
+                        </div>
+
+                        {/* VERIFICAR VALOR */}
+                        <label htmlFor="NovoAtb" className="mt-4">Novo Atb</label>
+                        <input type="text" className="form-control" id="NovoAtb" name="NovoAtb"
+                            defaultValue={getNovoAtb} onChange={(e) => setNovoAtb((e.target as HTMLInputElement).value)}
+                            placeholder="Digite o novo Atb" required/>
+
+                    </div>
+                    
+                    <button type="submit" className="btn btn-info btn-primary mt-3">Cadastrar</button>
+                </form>
+            </div>
+            
+        </div>
+    )
 }
 
 export default AssessmentForm

@@ -11,7 +11,7 @@ class AvaliacaoController {
     //CRIAR AVALIACAO
     async create(request: Request, response: Response){
         const {
-            NroProntuario,
+            SeqProntuario,
             NroAvaliacao,
             DataAvaliacao,
             ResultadoCulturas,
@@ -31,29 +31,23 @@ class AvaliacaoController {
             NovoAtb
         } = request.body
 
-        if (!NroProntuario || !NroAvaliacao || !DataAvaliacao || !DisfuncaoRenal || !Hemodialise || !AtbOral || !AtbContraindicacao || !AtbDiluicaoInfusao || !InteracaoAtbMedicamento || !TrocaAtb){
+        if (!SeqProntuario || !NroAvaliacao || !DataAvaliacao || !DisfuncaoRenal || !Hemodialise || !AtbOral || !AtbContraindicacao || !AtbDiluicaoInfusao || !InteracaoAtbMedicamento || !TrocaAtb){
             return response.json({
                CreatedAssessment: false,
                error: "Preencha todos os campos necessários."
             })
         }else{
-            const medicalRecordsDB = await knex("Prontuario").where("NroProntuario", NroProntuario)
+            const medicalRecordsDB = await knex("Prontuario").where("SeqProntuario", SeqProntuario)
             const medicalRecords = medicalRecordsDB[0]
 
             if(medicalRecords){
                 const assessmentDB = await knex("Avaliacao").where("NroAvaliacao", NroAvaliacao)
                 const assessment = assessmentDB[0]
 
-                if(!assessment){
-                    const IdProntuario = medicalRecords.SeqProntuario
-                    const patientDB = await knex("Paciente").where("NroPaciente", medicalRecords.NroPaciente)
-                    const patient = patientDB[0]
-                    const IdPaciente = patient.SeqPaciente
-                    
+                if(!assessment){               
                     await knex("Avaliacao").insert({
-                        IdProntuario,
-                        IdPaciente,
-                        NroProntuario,
+                        IdProntuario: SeqProntuario,
+                        IdPaciente: medicalRecords.SeqPaciente,
                         NroAvaliacao,
                         DataAvaliacao,
                         ResultadoCulturas,
@@ -85,7 +79,7 @@ class AvaliacaoController {
             }else{
                 return response.json({
                     CreatedAssessment: false,
-                    error: "O número de prontuário não existe."
+                    error: "A sequência de prontuário não existe."
                 })
             }
         }
@@ -99,12 +93,12 @@ class AvaliacaoController {
 
     //PAGINACAO DA LISTA DE AVALIACOES
     async indexPagination(request: Request, response: Response){
-        //const { NroProntuario } = request.body;
+        const { SeqProntuario } = request.body;
         var page = String(request.query.page);
         var pageRequest = parseInt(page) / 10;
         const rows = 10;
         try{
-            const assessments = await knex("Avaliacao").where('NroProntuario', `%${25}%`).offset((pageRequest-1)*rows).limit(rows);
+            const assessments = await knex("Avaliacao").where('IdProntuario', 2).offset((pageRequest-1)*rows).limit(rows);
     
             var serializedAssessments = assessments.map(assessment => {
                 return {
@@ -128,7 +122,7 @@ class AvaliacaoController {
     //UPDATE DE DADOS
     async update(request: Request, response: Response) {
         const {
-            NroProntuario,
+            SeqProntuario,
             NroAvaliacao,
             DataAvaliacao,
             ResultadoCulturas,
@@ -148,25 +142,19 @@ class AvaliacaoController {
             NovoAtb
         } = request.body
 
-        if (!NroProntuario || !NroAvaliacao || !DataAvaliacao || !DisfuncaoRenal || !Hemodialise || !AtbOral || !AtbContraindicacao || !AtbDiluicaoInfusao || !InteracaoAtbMedicamento || !TrocaAtb){
+        if (!SeqProntuario || !NroAvaliacao || !DataAvaliacao || !DisfuncaoRenal || !Hemodialise || !AtbOral || !AtbContraindicacao || !AtbDiluicaoInfusao || !InteracaoAtbMedicamento || !TrocaAtb){
             return response.json({
             updatedAssessment: false,
             error: "Preencha todos os campos necessários."
             })
         }else{
-            const medicalRecordsDB = await knex("Prontuario").where("NroProntuario", NroProntuario)
+            const medicalRecordsDB = await knex("Prontuario").where("SeqProntuario", SeqProntuario)
             const medicalRecords = medicalRecordsDB[0]
 
             if(medicalRecords){
-                    const IdProntuario = medicalRecords.SeqProntuario
-                    const patientDB = await knex("Paciente").where("NroPaciente", medicalRecords.NroPaciente)
-                    const patient = patientDB[0]
-                    const IdPaciente = patient.SeqPaciente
-
                     await knex("Avaliacao").where('NroAvaliacao', NroAvaliacao).update({
-                        IdProntuario: IdProntuario,
-                        IdPaciente: IdPaciente,
-                        NroProntuario: NroProntuario,
+                        IdProntuario: SeqProntuario,
+                        IdPaciente: medicalRecords.SeqPaciente,
                         DataAvaliacao: DataAvaliacao,
                         ResultadoCulturas: ResultadoCulturas,
                         ResCulturasAcao: ResCulturasAcao,
@@ -191,7 +179,7 @@ class AvaliacaoController {
             }else{
                 return response.json({
                     updatedAssessment: false,
-                    error: "O número de prontuário não existe."
+                    error: "A sequência de prontuário não existe."
                 })
             }
         }

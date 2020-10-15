@@ -12,7 +12,7 @@ class ProntuarioController {
    async create(request: Request, response: Response) {
       const {
          NroProntuario,
-         NroPaciente,
+         SeqPaciente,
          DataInternacao,
          CodDoencaPrincipal,
          CodDoencaSecundario,
@@ -32,7 +32,7 @@ class ProntuarioController {
          PosologiaCorreta
       } = request.body
       
-      if (!NroProntuario || !NroPaciente || !DataInternacao || !CodDoencaPrincipal || !SistemaAcometido || !Origem || !Alocacao || !CodAtbPrimario || !TratamentoCCIH || !IndicacaoSepse || !DisfuncaoRenal || !OrigemInfeccao) {
+      if (!NroProntuario || !SeqPaciente || !DataInternacao || !CodDoencaPrincipal || !SistemaAcometido || !Origem || !Alocacao || !CodAtbPrimario || !TratamentoCCIH || !IndicacaoSepse || !DisfuncaoRenal || !OrigemInfeccao) {
          return response.json({
             CreatedMedicalRecords: false,
             error: "Preencha todos os campos necessários."
@@ -42,7 +42,7 @@ class ProntuarioController {
          const MedicalRecord = MedicalRecordDB[0];
          
          if(!MedicalRecord){
-            const patientDB = await knex("Paciente").where("NroPaciente", NroPaciente)
+            const patientDB = await knex("Paciente").where("SeqPaciente", SeqPaciente)
             const patient = patientDB[0]
             
             if(patient){
@@ -51,7 +51,7 @@ class ProntuarioController {
 
                await knex("Prontuario").insert({
                   NroProntuario,
-                  NroPaciente,
+                  SeqPaciente,
                   DataInternacao: dataTratada,
                   CodDoencaPrincipal,
                   CodDoencaSecundario,
@@ -81,7 +81,7 @@ class ProntuarioController {
             }else{
                return response.json({
                   CreatedMedicalRecord: false,
-                  error: "O número de paciente não existe."
+                  error: "A sequência de paciente não existe."
                });
             }
          }else{
@@ -126,8 +126,9 @@ class ProntuarioController {
                }
             }
             return {
+               SeqProntuario: MedicalRecord.SeqProntuario,
                NroProntuario: MedicalRecord.NroProntuario,
-               NroPaciente: MedicalRecord.NroPaciente,
+               SeqPaciente: MedicalRecord.SeqPaciente,
                DataNascimento: null,
                NomePaciente: null,
                Genero: null,
@@ -154,7 +155,7 @@ class ProntuarioController {
             }
          })
          for(let i = 0; i < serializedMedicalRecords.length; i++){
-            const patientDB = await knex("Paciente").where("NroPaciente", serializedMedicalRecords[i]["NroPaciente"]);
+            const patientDB = await knex("Paciente").where("SeqPaciente", serializedMedicalRecords[i]["SeqPaciente"]);
             serializedMedicalRecords[i]['NomePaciente'] = patientDB[0]['NomePaciente'];
             serializedMedicalRecords[i]['Genero'] = patientDB[0]['Genero'];
             serializedMedicalRecords[i]['DataNascimento'] = patientDB[0]['DataNascimento'];
@@ -196,8 +197,9 @@ class ProntuarioController {
                   }
                }
                return {
+                  SeqProntuario: MedicalRecord.SeqProntuario,
                   NroProntuario: MedicalRecord.NroProntuario,
-                  NroPaciente: MedicalRecord.NroPaciente,
+                  SeqPaciente: MedicalRecord.SeqPaciente,
                   DataNascimento: null,
                   NomePaciente: null,
                   Genero: null,
@@ -224,7 +226,7 @@ class ProntuarioController {
                }
             })
             for(let i = 0; i < serializedMedicalRecords.length; i++){
-               const patientDB = await knex("Paciente").where("NroPaciente", serializedMedicalRecords[i]["NroPaciente"]);
+               const patientDB = await knex("Paciente").where("SeqPaciente", serializedMedicalRecords[i]["SeqPaciente"]);
                serializedMedicalRecords[i]['NomePaciente'] = patientDB[0]['NomePaciente'];
                serializedMedicalRecords[i]['Genero'] = patientDB[0]['Genero'];
                serializedMedicalRecords[i]['DataNascimento'] = patientDB[0]['DataNascimento'];
@@ -262,8 +264,9 @@ class ProntuarioController {
                   }
                }
                return {
+                  SeqProntuario: MedicalRecord.SeqProntuario,
                   NroProntuario: MedicalRecord.NroProntuario,
-                  NroPaciente: MedicalRecord.NroPaciente,
+                  SeqPaciente: MedicalRecord.SeqPaciente,
                   DataNascimento: null,
                   NomePaciente: null,
                   Genero: null,
@@ -290,7 +293,7 @@ class ProntuarioController {
                }
             })
             for(let i = 0; i < serializedMedicalRecords.length; i++){
-               const patientDB = await knex("Paciente").where("NroPaciente", serializedMedicalRecords[i]["NroPaciente"]);
+               const patientDB = await knex("Paciente").where("SeqPaciente", serializedMedicalRecords[i]["SeqPaciente"]);
                serializedMedicalRecords[i]['NomePaciente'] = patientDB[0]['NomePaciente'];
                serializedMedicalRecords[i]['Genero'] = patientDB[0]['Genero'];
                serializedMedicalRecords[i]['DataNascimento'] = patientDB[0]['DataNascimento'];
@@ -328,8 +331,9 @@ class ProntuarioController {
                   }
                }
                return {
+                  SeqProntuario: MedicalRecord.SeqProntuario,
                   NroProntuario: MedicalRecord.NroProntuario,
-                  NroPaciente: MedicalRecord.NroPaciente,
+                  SeqPaciente: MedicalRecord.SeqPaciente,
                   DataNascimento: null,
                   NomePaciente: null,
                   Genero: null,
@@ -356,7 +360,7 @@ class ProntuarioController {
                }
             })
             for(let i = 0; i < serializedMedicalRecords.length; i++){
-               const patientDB = await knex("Paciente").where("NroPaciente", serializedMedicalRecords[i]["NroPaciente"]);
+               const patientDB = await knex("Paciente").where("SeqPaciente", serializedMedicalRecords[i]["SeqPaciente"]);
                serializedMedicalRecords[i]['NomePaciente'] = patientDB[0]['NomePaciente'];
                serializedMedicalRecords[i]['Genero'] = patientDB[0]['Genero'];
                serializedMedicalRecords[i]['DataNascimento'] = patientDB[0]['DataNascimento'];
@@ -374,7 +378,7 @@ class ProntuarioController {
    async update(request: Request, response: Response) {
       const {
          NroProntuario,
-         NroPaciente,
+         SeqPaciente,
          DataInternacao,
          CodDoencaPrincipal,
          CodDoencaSecundario,
@@ -394,7 +398,7 @@ class ProntuarioController {
          PosologiaCorreta
       } = request.body
 
-      if (!NroPaciente || !DataInternacao || !CodDoencaPrincipal || !SistemaAcometido || !Origem || !Alocacao || !CodAtbPrimario || !TratamentoCCIH || !IndicacaoSepse || !DisfuncaoRenal || !OrigemInfeccao) {
+      if (!SeqPaciente || !DataInternacao || !CodDoencaPrincipal || !SistemaAcometido || !Origem || !Alocacao || !CodAtbPrimario || !TratamentoCCIH || !IndicacaoSepse || !DisfuncaoRenal || !OrigemInfeccao) {
          return response.json({
             updatedMedicalRecord: false,
             error: "Preencha todos os campos necessários."
@@ -404,7 +408,7 @@ class ProntuarioController {
          const MedicalRecord = MedicalRecordDB[0]
          
          if(MedicalRecord){
-            const patientDB = await knex("Paciente").where("NroPaciente", NroPaciente)
+            const patientDB = await knex("Paciente").where("SeqPaciente", SeqPaciente)
             const patient = patientDB[0]
          
             if(patient){
@@ -412,7 +416,7 @@ class ProntuarioController {
                var dataTratada = res[2] + "/" + res[1] + "/" + res[0]
 
                await knex('Prontuario').where('NroProntuario', NroProntuario).update({
-                  NroPaciente: NroPaciente,
+                  SeqPaciente: SeqPaciente,
                   DataInternacao: dataTratada,
                   CodDoencaPrincipal: CodDoencaPrincipal,
                   CodDoencaSecundario: CodDoencaSecundario,
@@ -432,7 +436,7 @@ class ProntuarioController {
                   PosologiaCorreta : PosologiaCorreta
                }).then(() => {
                   knex('Historico').where('IdProntuario', MedicalRecord.SeqProntuario).update({
-                     IdPaciente: patient.SeqPaciente
+                     IdPaciente: SeqPaciente
                   }).then(() => {
                      return response.json({updatedMedicalRecord: true})
                   }).catch(error => {
@@ -444,7 +448,7 @@ class ProntuarioController {
             }else{
                return response.json({
                   updatedMedicalRecord: false,
-                  error: "O número de paciente não existe."
+                  error: "A sequência de paciente não existe."
                });
             }
          }else{

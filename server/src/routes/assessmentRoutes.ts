@@ -4,12 +4,12 @@ import AvaliacaoController from "../controllers/Assessment"
 const routes = express.Router()
 const assessments = new AvaliacaoController()
 
-routes.post("/assessment", assessments.create)
-routes.get("/assessment", assessments.index)
+routes.post("/medicalRecords/assessment", assessments.create)
+routes.get("/medicalRecords/assessment", assessments.index)
 
-routes.get("/assessment/paginate/", assessments.indexPagination)
+routes.get("/medicalRecords/assessment/paginate/", assessments.indexPagination)
 
-routes.put("/assessment/update", assessments.update)
-routes.post("/assessment/delete", assessments.delete)
+routes.put("/medicalRecords/assessment/update", assessments.update)
+routes.post("/medicalRecords/assessment/delete", assessments.delete)
 
 export default routes;
