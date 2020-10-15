@@ -22,8 +22,8 @@ class CreateMedicalRecordsService {
             Alocacao: Alocacaof, ResultadoColeta, CodAtbPrimario: CodAtbPrimariof,
             CodAtbSecundario, SitioInfeccaoPrimario,
             TratamentoCCIH: TratamentoCCIHf, IndicacaoSepse: IndicacaoSepsef, DisfuncaoRenal: DisfuncaoRenalf,
-            OrigemInfeccao: OrigemInfeccaof, DoseCorreta, PosologiaCorreta})
-        .then(response => response.data);
+            OrigemInfeccao: OrigemInfeccaof, DoseCorreta, PosologiaCorreta
+        }).then(response => response.data);
     }
 }
 

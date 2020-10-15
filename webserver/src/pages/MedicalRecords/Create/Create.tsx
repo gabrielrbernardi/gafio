@@ -103,8 +103,8 @@ const MedicalRecordsForm = () => {
             getSistemaAcometido, getCodComorbidade, getOrigem, getAlocacao,
             getResultadoColeta, getCodAtbPrimario, getCodAtbSecundario,
             getSitioInfeccaoPrimario, getTratamento, getIndicacao,
-            getDisfuncao, getOrigemInfeccao, getDose, getPosologia)
-        .then((response) => {
+            getDisfuncao, getOrigemInfeccao, getDose, getPosologia
+        ).then((response) => {
             if(response.CreatedMedicalRecord){
                 showToast('success', 'Sucesso!', `Prontuário criado com sucesso!`);
                 setTimeout(() => {
@@ -154,14 +154,14 @@ const MedicalRecordsForm = () => {
                                 <label htmlFor="NroProntuario">Número do Prontuário</label>
                                 <input type="number" className="form-control" id="NroProntuario" name="NroProntuario"
                                     defaultValue={getNroProntuario} onChange={(e) => setNroProntuario(Number((e.target as HTMLInputElement).value))}
-                                    placeholder="Digite o número do prontuário" required autoFocus/>
+                                    placeholder="Digite o número do prontuário" min="1" max="999999999" required autoFocus/>
                             </div>
 
                             <div className="col">
                                 <label htmlFor="SeqPaciente">Sequência do Paciente</label>
                                 <input type="number" className="form-control" id="SeqPaciente" name="SeqPaciente"
                                 defaultValue={getSeqPaciente} onChange={(e) => setSeqPaciente(Number((e.target as HTMLInputElement).value))}
-                                placeholder="Digite o número do paciente" required/>
+                                placeholder="Digite o número do paciente" min="1" max="999999999" required/>
                             </div>
                         </div>
 

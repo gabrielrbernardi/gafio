@@ -23,7 +23,14 @@ const AssessmentForm = () => {
     const [getHemodialise, setHemodialise] = useState<any>(null)
     const [getAtbOral, setAtbOral] = useState<any>(null)
     const [getTrocaAtb, setTrocaAtb] = useState<any>(null)
-    const [getNovoAtb, setNovoAtb] = useState<string>('')
+    const [getNovoAtb, setNovoAtb] = useState<any>(null)
+    const [getToast, setToast] = useState<boolean>();
+    const [getMessageType, setMessageType] = useState<string>('');
+    const [getMessageTitle, setMessageTitle] = useState<string>('');
+    const [getMessageContent, setMessageContent] = useState<string>('');
+    const history = useHistory()
+
+    const createAssessmentService = new CreateAssessmentService()
 
     function checkInput(type: number, e: any){
         if(type == 1){
@@ -45,6 +52,13 @@ const AssessmentForm = () => {
                 setAlertaDotDescricao(null);
             }else{
                 setAlertaDotDescricao(e)
+            }
+        }
+        if(type == 4){
+            if(e === ''){
+                setNovoAtb(null);
+            }else{
+                setNovoAtb(e)
             }
         }
     }
@@ -106,11 +120,54 @@ const AssessmentForm = () => {
         {label: 'Não', value: 'N'}
     ]
 
+    function handleSubmit(event: FormEvent){
+        event.preventDefault();
+
+        createAssessmentService.Create(2, getNroAvaliacao, getDataAvaliacao, getResultadoCulturas, getResCulturasAcao,
+            getDoseCorreta, getPosologiaCorreta, getAlertaDot, getAlertaDotDescricao, getDisfuncaoRenal,
+            getHemodialise, getAtbOral, getAtbContraindicacao, getAlteracaoPrescricao, getAtbDiluicaoInfusao, 
+            getInteracaoAtbMedicamento, getTrocaAtb, getNovoAtb)
+        .then((response) => {
+            if(response.CreatedAssessment){
+                showToast('success', 'Sucesso!', `Avaliação criada com sucesso!`);
+                setTimeout(() => {
+                    history.push('/medicalRecords/assessment')
+                }, 3500)
+            }else{
+                if(response.error.sqlMessage){
+                    if(response.error.sqlState == 23000){
+                        console.log(response.error.sqlState)
+                        if(String(response.error.sqlMessage).includes("(`NovoAtb`)")){
+                            showToast('error', 'Erro!', `O campo Novo Atb está incorreto`);
+                        }else{
+                            showToast('error', 'Erro!', String(response.error.sqlMessage));
+                        }
+                    }else{
+                        showToast('error', 'Erro!', String(response.error.sqlMessage));
+                    }
+                }else{
+                    showToast('error', 'Erro!', String(response.error));
+                }
+            }
+        })
+    }
+
+    function showToast(messageType: string, messageTitle: string, messageContent: string){
+        setToast(false)
+        setMessageType(messageType);
+        setMessageTitle(messageTitle);
+        setMessageContent(messageContent);
+        setToast(true);
+        setTimeout(() => {
+            setToast(false);
+        }, 4500)
+    }
+
     return (
         <div className="row m-5">
             <div className="card shadow-lg p-3 col-sm-6 offset-md-3 border">
                 <p className="text-dark h3 text-center">Cadastro de Avaliação</p>
-                <form className="was-validated">
+                <form className="was-validated" onSubmit={handleSubmit}>
                     <div className="form-group">
 
                         <div className="form-row mt-4">
@@ -118,7 +175,7 @@ const AssessmentForm = () => {
                                 <label htmlFor="NroAvaliacao">Número da Avaliação</label>
                                 <input type="number" className="form-control" id="NroAvaliacao" name="NroAvaliacao"
                                     defaultValue={getNroAvaliacao} onChange={(e) => setNroAvaliacao(Number((e.target as HTMLInputElement).value))}
-                                    placeholder="Digite o número da avaliação" required autoFocus/>
+                                    placeholder="Digite o número da avaliação" min="1" max="999999999" required autoFocus/>
                             </div>
 
                             <div className="col">
@@ -256,18 +313,20 @@ const AssessmentForm = () => {
                             </div>
                         </div>
 
-                        {/* VERIFICAR VALOR */}
                         <label htmlFor="NovoAtb" className="mt-4">Novo Atb</label>
                         <input type="text" className="form-control" id="NovoAtb" name="NovoAtb"
-                            defaultValue={getNovoAtb} onChange={(e) => setNovoAtb((e.target as HTMLInputElement).value)}
-                            placeholder="Digite o novo Atb" required/>
+                            defaultValue={getNovoAtb} onChange={(e) => {checkInput(4, (e.target as HTMLInputElement).value)}}
+                            placeholder="Digite o novo Atb"/>
 
                     </div>
                     
                     <button type="submit" className="btn btn-info btn-primary mt-3">Cadastrar</button>
                 </form>
             </div>
-            
+
+            {getToast &&
+                <ToastComponent messageType={getMessageType} messageTitle={getMessageTitle} messageContent={getMessageContent}/>
+            }
         </div>
     )
 }

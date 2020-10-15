@@ -258,8 +258,8 @@ const MedicalRecords = () => {
             getSistemaAcometido, getCodComorbidade, getOrigem, getAlocacao,
             getResultadoColeta, getCodAtbPrimario, getCodAtbSecundario,
             getSitioInfeccaoPrimario, getTratamento, getIndicacao,
-            getDisfuncao, getOrigemInfeccao, getDose, getPosologia)
-        .then((response) => {
+            getDisfuncao, getOrigemInfeccao, getDose, getPosologia
+        ).then((response) => {
             if(response.updatedMedicalRecord){
                 showToast('success', 'Sucesso!', `Prontuário atualizado com sucesso!`);
                 getMedicalRecordsFunction()
@@ -396,8 +396,8 @@ const MedicalRecords = () => {
     function handleSubmit1(event: FormEvent){
         event.preventDefault();
 
-        medicalRecordsService.Desfecho(getNroProntuario, getDesfecho, getDataDesfecho)
-        .then((response) => {
+        medicalRecordsService.Desfecho(getNroProntuario, getDesfecho, getDataDesfecho
+        ).then((response) => {
             console.log(response)
             if(response.updatedMedicalRecord){
                 showToast('success', 'Sucesso!', `Desfecho atualizado com sucesso!`);
@@ -561,7 +561,7 @@ const MedicalRecords = () => {
                                         <label htmlFor="SeqPaciente">Sequência do Paciente</label>
                                         <input type="number" className="form-control" id="SeqPaciente" name="SeqPaciente"
                                         defaultValue={getSeqPaciente} onChange={(e) => setSeqPaciente(Number((e.target as HTMLInputElement).value))}
-                                        placeholder="Digite o número do paciente" required autoFocus/>
+                                        placeholder="Digite o número do paciente" min="1" max="999999999" required autoFocus/>
                                     </div>
                                 </div>
 

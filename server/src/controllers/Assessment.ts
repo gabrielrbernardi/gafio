@@ -11,7 +11,7 @@ class AvaliacaoController {
     //CRIAR AVALIACAO
     async create(request: Request, response: Response){
         const {
-            SeqProntuario,
+            IdProntuario,
             NroAvaliacao,
             DataAvaliacao,
             ResultadoCulturas,
@@ -31,25 +31,28 @@ class AvaliacaoController {
             NovoAtb
         } = request.body
 
-        if (!SeqProntuario || !NroAvaliacao || !DataAvaliacao || !DisfuncaoRenal || !Hemodialise || !AtbOral || !AtbContraindicacao || !AtbDiluicaoInfusao || !InteracaoAtbMedicamento || !TrocaAtb){
+        if (!IdProntuario || !NroAvaliacao || !DataAvaliacao || !DisfuncaoRenal || !Hemodialise || !AtbOral || !AtbContraindicacao || !AtbDiluicaoInfusao || !InteracaoAtbMedicamento || !TrocaAtb){
             return response.json({
                CreatedAssessment: false,
                error: "Preencha todos os campos necessários."
             })
         }else{
-            const medicalRecordsDB = await knex("Prontuario").where("SeqProntuario", SeqProntuario)
+            const medicalRecordsDB = await knex("Prontuario").where("SeqProntuario", IdProntuario)
             const medicalRecords = medicalRecordsDB[0]
 
             if(medicalRecords){
                 const assessmentDB = await knex("Avaliacao").where("NroAvaliacao", NroAvaliacao)
                 const assessment = assessmentDB[0]
 
-                if(!assessment){               
+                if(!assessment){      
+                    var res = DataAvaliacao.split("-")
+                    var dataTratada = res[2] + "/" + res[1] + "/" + res[0]
+
                     await knex("Avaliacao").insert({
-                        IdProntuario: SeqProntuario,
+                        IdProntuario,
                         IdPaciente: medicalRecords.SeqPaciente,
                         NroAvaliacao,
-                        DataAvaliacao,
+                        DataAvaliacao: dataTratada,
                         ResultadoCulturas,
                         ResCulturasAcao,
                         DoseCorreta,
@@ -122,7 +125,7 @@ class AvaliacaoController {
     //UPDATE DE DADOS
     async update(request: Request, response: Response) {
         const {
-            SeqProntuario,
+            IdProntuario,
             NroAvaliacao,
             DataAvaliacao,
             ResultadoCulturas,
@@ -142,20 +145,23 @@ class AvaliacaoController {
             NovoAtb
         } = request.body
 
-        if (!SeqProntuario || !NroAvaliacao || !DataAvaliacao || !DisfuncaoRenal || !Hemodialise || !AtbOral || !AtbContraindicacao || !AtbDiluicaoInfusao || !InteracaoAtbMedicamento || !TrocaAtb){
+        if (!IdProntuario || !NroAvaliacao || !DataAvaliacao || !DisfuncaoRenal || !Hemodialise || !AtbOral || !AtbContraindicacao || !AtbDiluicaoInfusao || !InteracaoAtbMedicamento || !TrocaAtb){
             return response.json({
             updatedAssessment: false,
             error: "Preencha todos os campos necessários."
             })
         }else{
-            const medicalRecordsDB = await knex("Prontuario").where("SeqProntuario", SeqProntuario)
+            const medicalRecordsDB = await knex("Prontuario").where("SeqProntuario", IdProntuario)
             const medicalRecords = medicalRecordsDB[0]
 
             if(medicalRecords){
+                    var res = DataAvaliacao.split("-")
+                    var dataTratada = res[2] + "/" + res[1] + "/" + res[0]
+
                     await knex("Avaliacao").where('NroAvaliacao', NroAvaliacao).update({
-                        IdProntuario: SeqProntuario,
+                        IdProntuario: IdProntuario,
                         IdPaciente: medicalRecords.SeqPaciente,
-                        DataAvaliacao: DataAvaliacao,
+                        DataAvaliacao: dataTratada,
                         ResultadoCulturas: ResultadoCulturas,
                         ResCulturasAcao: ResCulturasAcao,
                         DoseCorreta: DoseCorreta,
