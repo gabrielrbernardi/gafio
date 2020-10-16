@@ -9,6 +9,7 @@ routes.get("/medicines", medicineController.index);
 routes.get("/medicines/principio/:principio", medicineController.indexByPrincipio);
 routes.get("/medicines/ean/:ean", medicineController.indexByEan);
 routes.get("/medicines/classe/:classe", medicineController.indexByClasse);
+routes.get('/medicines/paginate/:page', medicineController.indexByPage);
 
 routes.post("/medicines", medicineController.create);
 

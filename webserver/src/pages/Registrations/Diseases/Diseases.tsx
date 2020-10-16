@@ -21,22 +21,22 @@ const Diseases = () => {
   const rows = 10;
 
   const [searchInput, setSearchInput] = useState('');
-  const [getOptionState, setOptionState] = useState<any>(null)
-  const [getMode, setMode] = useState('N');
-  const [getToast, setToast] = useState<boolean>();
-  const [getMessageType, setMessageType] = useState<string>('');
-  const [getMessageTitle, setMessageTitle] = useState<string>('');
-  const [getMessageContent, setMessageContent] = useState<string>('');
+  const [optionState, setOptionState] = useState<any>(null);
+  const [mode, setMode] = useState('N');
+  const [toast, setToast] = useState<boolean>();
+  const [messageType, setMessageType] = useState<string>('');
+  const [messageTitle, setMessageTitle] = useState<string>('');
+  const [messageContent, setMessageContent] = useState<string>('');
   const [datasource, setDatasource] = useState([]);
-
 
   function getDiseasesFunction(data?: any){
     setLoading(true);
     setDisease([]);
+
     if (!data) {
       diseasesService.getDiseasesPaginate(10).then(data => {
-        console.log(data)
-        console.log(1)
+        console.log(data);
+
         setDatasource(data.diseases);
         setDisease(datasource.slice(0, rows));
         setLoading(false);
@@ -45,7 +45,8 @@ const Diseases = () => {
       });
     }
     else {
-      console.log(data)
+      console.log(data);
+
       setDatasource(data.diseases);
       setDisease(data.diseases.slice(0, rows));
       setLoading(false);
@@ -61,35 +62,38 @@ const Diseases = () => {
 
   const onPage = (event: any) => {
     setLoading(true);
-    setTimeout( () => {
+    setTimeout(() => {
       const startIndex = event.first;
       const endIndex = event.first + rows;
     
       diseasesService.getDiseasesPaginate(endIndex).then(data => {
         getDiseasesFunction(data.diseases);
       });      
+
       setFirst(startIndex);      
       setLoading(false);
     });
   }
 
   function handleSearch() {
-    if (!getOptionState){
+    if (!optionState) {
       showToast('error', 'Erro!', 'Selecione um filtro para buscar.');
       return;
     }
     setLoading(true);
+
     if (!searchInput) {
       diseasesService.getDiseasesPaginate(10).then(data => {
         getDiseasesFunction(data);
         setLoading(false);
         showToast('error', 'Erro!', 'Digite algum valor para pesquisar.');
       });
+      
       return;
     } 
     setMode('S');
-    diseasesService.searchDiseaseGlobal(searchInput, getOptionState.cod, first+rows).then(data => {
-      if(!data.filteredDisease){
+    diseasesService.searchDiseaseGlobal(searchInput, optionState.cod, first+rows).then(data => {
+      if (!data.filteredDisease) {
         setLoading(false);
         return;
       }
@@ -97,7 +101,7 @@ const Diseases = () => {
     });
   }
 
-  function showToast(messageType: string, messageTitle: string, messageContent: string){
+  function showToast(messageType: string, messageTitle: string, messageContent: string) {
     setToast(false);
     setMessageType(messageType);
     setMessageTitle(messageTitle);
@@ -128,14 +132,14 @@ const Diseases = () => {
                     size={50} 
                   />
                   {
-                    getOptionState === null
+                    optionState === null
                     ? <label htmlFor="float-input">Buscar</label>
-                    : <label htmlFor="float-input">Buscar por { getOptionState.name }</label>
+                    : <label htmlFor="float-input">Buscar por { optionState.name }</label>
                   }
                 </span>
                 <Dropdown 
                   className="mx-1" 
-                  value={getOptionState} 
+                  value={optionState} 
                   options={[
                     { name: 'CodDoenca', cod: 'C' },
                     { name: 'Nome', cod: 'N' },
