@@ -1,11 +1,15 @@
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import { Dialog } from 'primereact/dialog';
-import React, { useEffect, useState } from 'react';
+import {Dropdown} from 'primereact/dropdown';
+import React, { useEffect, useState, FormEvent } from 'react';
 import { Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import Loading from '../../../components/Loading';
+import ToastComponent from '../../../components/Toast';
 import {PatientService} from './PatientService';
+import { InputText } from 'primereact/inputtext';
+import { Calendar } from 'primereact/calendar';
 
 const Patient = () => {
     const [totalRecords, setTotalRecords] = useState(0);
@@ -20,23 +24,52 @@ const Patient = () => {
     const [paciente, setPaciente] = useState([]);
     const [getPacienteSelect, setPacienteSelect] = useState<any>(null);
 
+    //const para listagem
     const [getPacienteSeq, setPacienteSeq] = useState<any>('');
     const [getPacienteNro, setPacienteNro] = useState<any>('');
     const [getPacienteGenero, setPacienteGenero] = useState<any>('');
     const [getPacienteNome, setPacienteNome] = useState<any>('');
     const [getPacienteDataNascimento, setPacienteDataNascimento] = useState<any>('');
-
+    const [getPacienteProntuario, setPacienteProntuario] = useState<any>();
+    const [getPacienteAvalicao, setPacienteAvaliacao] = useState<any>();
+    
+    const [getPacienteIdade, setPacienteIdade] = useState<any>('');
+    
     const [selectedUser, setSelectedUser] = useState<any>(null);
 
     const patientService = new PatientService();
     
     const [displayDialog, setDisplayDialog] = useState(false);
     const [displayDialog1, setDisplayDialog1] = useState(false);
+    const [displayDialog2, setDisplayDialog2] = useState(false);
 
     const [getToast, setToast] = useState<boolean>();
     const [getMessageType, setMessageType] = useState<string>('');
     const [getMessageTitle, setMessageTitle] = useState<string>('');
     const [getMessageContent, setMessageContent] = useState<string>('');
+
+    //const para atualizacao
+    const [getPacienteNomeUpdate, setPacienteNomeUpdate] = useState<any>('');
+    const [getPacienteDataNascimentoUpdate, setPacienteDataNascimentoUpdate] = useState<any>('');
+    const [getPacienteGeneroUpdate, setPacienteGeneroUpdate] = useState<any>('');
+
+    let optionsDropdownGenero = [
+        {label: 'Masculino', value: 'M'},
+        {label: 'Feminino', value: 'F'}
+    ];
+
+    //Calendario local
+    const pt_br = {
+        firstDayOfWeek: 1,
+        dayNames: ["domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"],
+        dayNamesShort: ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"],
+        dayNamesMin: ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"],
+        // dayNamesMin: ["D", "S", "T", "Q", "Q", "S", "S"],
+        monthNames: ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"],
+        monthNamesShort: ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"],
+        today: "Hoje",
+        clear: "Limpar",
+    };
 
     useEffect(() => {
         document.title = 'GAFio | Paciente';
@@ -71,21 +104,67 @@ const Patient = () => {
         setLoading1(false);
         return
     }
+
     async function getPatientFunction(data?: any){
         setLoading(true);
         setLoading1(true);
         if(!data){
             await patientService.getPatientPaginate(10).then(data => {
-                getPatientFunction1(data);
+                if(data.patientFound){
+                    getPatientFunction1(data);
+                }else{
+                    showToast('error', 'Erro!', 'Nenhum paciente encontrado.');
+                    setLoading(false);
+                    setLoading1(false);
+                }
             })
         }else{
             getPatientFunction1(data);
         }
     }
 
+    async function getPatientInformation(){
+        var tempoAtual = new Date();
+        var parseDataAniversario = getPacienteDataNascimento.split('/')
+        var dataAniversario = new Date(parseDataAniversario[2], parseDataAniversario[1], parseDataAniversario[0]);
+        var age = tempoAtual.getFullYear() - dataAniversario.getFullYear();
+        var m = tempoAtual.getMonth() - dataAniversario.getMonth();
+        if (m < 0 || (m === 0 && tempoAtual.getDate() < dataAniversario.getDate())) {
+            age--;
+        }
+        if(age < 0){
+            setPacienteIdade(0);
+        }else{
+            setPacienteIdade(age);
+        }
+        
+        await patientService.getPatientInformation(getPacienteSeq).then(response => {
+            if(response.patientFound){
+                setPacienteProntuario(response.medicalRecordsLength);
+                setPacienteAvaliacao(response.assessmentLength);
+            }else{
+                showToast('error', "Erro!", response.error);
+            }
+        })
+    }
+
+    async function handleSubmit(event: FormEvent) {
+        event.preventDefault();
+    }
+
+    function showToast(messageType: string, messageTitle: string, messageContent: string){
+        setToast(false)
+        setMessageType(messageType);
+        setMessageTitle(messageTitle);
+        setMessageContent(messageContent);
+        setToast(true);
+        setTimeout(() => {
+            setToast(false);
+        }, 4500)
+    }
+
     const onUserSelect = (e: any) => {
         newUser = false;
-        console.log(e)
         setPacienteSelect(Object.assign({}, e.data));
         var pacienteData = e.data;
         setPacienteDataNascimento(pacienteData.DataNascimento);
@@ -94,6 +173,10 @@ const Patient = () => {
         setPacienteNro(pacienteData.NroPaciente);
         setPacienteSeq(pacienteData.SeqPaciente);
         setDisplayDialog(true);
+    };
+
+    const onGeneroChange = (e: { value: string }) => {
+        setPacienteGeneroUpdate(e.value);
     };
 
     return (
@@ -113,22 +196,19 @@ const Patient = () => {
             </div>
             <Dialog visible={displayDialog} style={{width: '50%'}} header="Ações" modal={true} onHide={() => setDisplayDialog(false)}>
                 <div className="form-row">
-                    <div className="col ">
-                        <Button variant="info" className="mt-2 mb-2 p-3" onClick={() => {setDisplayDialog1(true); setDisplayDialog(false)}}>Visualizar Paciente</Button>
+                    <div className="col">
+                        <Button variant="info" className="mt-2 mb-2 p-3" style={{width: '100%'}} onClick={() => { getPatientInformation(); setDisplayDialog1(true); setDisplayDialog(false);}}>Visualizar Paciente</Button>
                     </div>
                     <div className="col ml-2">
-                        <Button variant="info" className="mt-2 mb-2 p-3" onClick={() => {setDisplayDialog1(true); setDisplayDialog(false)}}>Visualizar Prontuários</Button>
+                        <Button variant="primary" className="mt-2 mb-2 p-3"  style={{width: '100%'}}  onClick={() => {setDisplayDialog2(true); setDisplayDialog(false)}}>Atualizar paciente</Button>
                     </div>
                     <div className="col ml-2">
-                        <Button variant="info" className="mt-2 mb-2 p-3" onClick={() => {setDisplayDialog1(true); setDisplayDialog(false)}}>Excluir Paciente</Button>
+                        <Button variant="danger" className="mt-2 mb-2 p-3" style={{width: '100%'}} onClick={() => {setDisplayDialog1(true); setDisplayDialog(false)}}>Excluir Paciente</Button>
                     </div>
                     {/* <div className="col mr-4">
                         <Button className="mx-2 mt-2 mb-2 p-3" onClick={() => {setDisplayDialog1(true); setDisplayDialog(false)}}>Atualizar <br></br> prontuário</Button>
                     </div>
 
-                    <div className="col mr-4">
-                        <Button className="mx-2 mt-2 mb-2 p-3" onClick={() => {setDisplayDialog3(true); setDisplayDialog(false)}}>Atualizar <br></br> desfecho</Button>
-                    </div>
 
                     <div className="col">
                         <Button className="mx-2 mt-2 mb-2 mr-2 p-3" onClick={() => {setDisplayDialog2(true); setDisplayDialog(false)}}>Excluir <br></br> prontuário</Button>
@@ -142,9 +222,31 @@ const Patient = () => {
                 <p className="text-dark h5 mt-2">Sequência: {getPacienteSeq}</p>
                 <p className="text-dark h5 mt-2">Nome: {getPacienteNome}</p>
                 <p className="text-dark h5 mt-2">Data de nascimento: {getPacienteDataNascimento}</p>
+                <p className="text-dark h5 mt-2">Idade: {getPacienteIdade}</p>
                 <p className="text-dark h5 mt-2">Gênero: {getPacienteGenero}</p>
+                <br></br>
+                <p className="text-dark h5 mt-2">Quantidade de <b>prontuários</b>: {getPacienteProntuario}</p>
+                <p className="text-dark h5 mt-2">Quantidade de <b>Avaliações</b>: {getPacienteAvalicao}</p>
             </Dialog>
 
+            <Dialog visible={displayDialog2} style={{width: '70%'}} modal={true} onHide={() => setDisplayDialog2(false)} maximizable maximized>
+                <p className="text-dark h3 text-center">Atualização dos dados do(a) paciente {getPacienteNome}</p>
+                <form className="was-validated" onSubmit={handleSubmit}>
+                    <div className="mt-4 mb-2">
+                        <span className="p-float-label">
+                            <InputText id="NomeUpdate" style={{width: '100%'}} value={getPacienteNomeUpdate} onChange={(e) => setPacienteNomeUpdate((e.target as HTMLInputElement).value)} />
+                            <label htmlFor="NomeUpdate">Nome</label>
+                        </span>
+                    </div>
+                    <Dropdown className="my-2" value={getPacienteGeneroUpdate} options={optionsDropdownGenero} onChange={onGeneroChange} placeholder="Selecione uma opção" style={{width: '100%'}} required/>
+                    <Calendar id="DataInternacao" className="mt-2" style={{width: '100%'}} value={getPacienteDataNascimentoUpdate} onChange={(e) => setPacienteDataNascimentoUpdate(e.value)} locale={pt_br} dateFormat="dd/mm/yy" placeholder="Selecione a data de nascimento do paciente" showButtonBar monthNavigator showIcon required/>
+                    <button type="submit" className="btn btn-info btn-primary mt-3">Cadastrar</button>
+                </form>
+            </Dialog>
+            
+            {getToast &&
+                <ToastComponent messageType={getMessageType} messageTitle={getMessageTitle} messageContent={getMessageContent}/>
+            }
             {loading1 &&
                 <Loading/>
             }

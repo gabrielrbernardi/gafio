@@ -14,18 +14,21 @@ class PatientController {
     if(NroPaciente && NomePaciente && DataNascimento && Genero){
         const patientDB = await knex('Paciente').where('NroPaciente', NroPaciente);
         if(!patientDB[0]){
+            var parseDataNascimento0 = DataNascimento.substring(0, 10);
+            parseDataNascimento0 = parseDataNascimento0.split("-");
+            const newDataNascimento = parseDataNascimento0[2] + '/' + parseDataNascimento0[1] + '/' + parseDataNascimento0[0]
             await knex("Paciente").insert({
                 NroPaciente, 
                 NomePaciente, 
-                DataNascimento, 
+                DataNascimento: newDataNascimento, 
                 Genero
             }).then(patientNumber => {
-              return response.json({createdPatient: true, patientData: {NomePaciente, DataNascimento, Genero, patientNumber: patientNumber[0]}})
+                return response.json({createdPatient: true, patientData: {NomePaciente, DataNascimento, Genero, patientNumber: patientNumber[0]}})
             }).catch(err => {
-              return response.json({createdPatient: false, error: "Não foi possível inserir o paciente no banco de dados.", err: err})              
+                return response.json({createdPatient: false, error: "Não foi possível inserir o paciente no banco de dados.", err: err})              
             })
         }else{
-            return response.json({createdPatient: false, error: "Não foi possível inserir o paciente no banco de dados. Código já existente"})
+            return response.json({createdPatient: false, error: "Não foi possível inserir o paciente no banco de dados. Número do paciente já existente."})
         }
     }else{
         return response.json({createdPatient: false, error: "Verifique os dados inseridos e tente novamente."})
@@ -133,9 +136,14 @@ class PatientController {
         var pageRequest = parseInt(page) / 10;
         const rows = 10;
         if(id){
-            const medicalRecordsLengthPatient = (await knex("Prontuario").count('NroPaciente').where('NroProntuario', id));
+            const medicalRecordsLengthPatient = (await knex("Prontuario").count('SeqPaciente').where('SeqPaciente', id));
+            const assessmentsLengthPatient = (await knex("Avaliacao").count('IdPaciente').where('IdPaciente', id));
+            const parseMedicalRecordsLengthPatient = medicalRecordsLengthPatient[0]['count(`SeqPaciente`)'];
+            const parseAssessmentsLengthPatient = assessmentsLengthPatient[0]['count(`IdPaciente`)'];
             return response.json({
-                medicalRecordsLength: medicalRecordsLengthPatient,
+                patientFound: true,
+                medicalRecordsLength: parseMedicalRecordsLengthPatient,
+                assessmentLength: parseAssessmentsLengthPatient
             });
         }else{
             return response.json({patientFound: false, error: "NroPaciente não fornecido."})
@@ -169,7 +177,6 @@ class PatientController {
   async delete(request: Request, response: Response) {
     const { NroPaciente } = request.params;
     const patient = await knex("Paciente").where("NroPaciente", NroPaciente);
-    console.log(patient)
     if (patient) {
       await knex("Paciente").where("NroPaciente", NroPaciente).delete();
       return response.json({ deletedPatient: true });

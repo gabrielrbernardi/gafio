@@ -6,7 +6,9 @@ class PatientService{
         return await api.get(`patient/?page=${endIndex}`).then(response => response.data);
     }
 
-    // async getPatientInformations()
+    async getPatientInformation(idPatient: Number){
+        return await api.get(`patient/search/searchPatientData/?id=${idPatient}&page=10`).then(response => response.data);
+    }
 }
 
 export {PatientService};
