@@ -15,13 +15,13 @@ class MedicalRecordsService {
         }
     }
 
-    async Update(NroProntuariof: any, NroPacientef: any, DataInternacaof: string, CodDoencaPrincipalf: string,
+    async Update(NroProntuariof: any, SeqPacientef: any, DataInternacaof: string, CodDoencaPrincipalf: string,
         CodDoencaSecundariof: any, SistemaAcometidof: string, CodComorbidadef: any, Origemf: string, Alocacaof: string,
         ResultadoColetaf: any, CodAtbPrimariof: string, CodAtbSecundariof: any, SitioInfeccaoPrimariof: any,
         TratamentoCCIHf: string, IndicacaoSepsef: string, DisfuncaoRenalf: string, OrigemInfeccaof: string,
         DoseCorretaf: any, PosologiaCorretaf: any){
         let NroProntuario = NroProntuariof
-        let NroPaciente = NroPacientef
+        let SeqPaciente = SeqPacientef
         let CodDoencaSecundario = CodDoencaSecundariof
         let CodComorbidade = CodComorbidadef
         let ResultadoColeta = ResultadoColetaf
@@ -30,7 +30,7 @@ class MedicalRecordsService {
         let DoseCorreta = DoseCorretaf
         let PosologiaCorreta = PosologiaCorretaf
     return await api.put('medicalRecords/update', {
-        NroProntuario, NroPaciente, DataInternacao: DataInternacaof,
+        NroProntuario, SeqPaciente, DataInternacao: DataInternacaof,
         CodDoencaPrincipal: CodDoencaPrincipalf, CodDoencaSecundario,
         SistemaAcometido: SistemaAcometidof, CodComorbidade, Origem: Origemf, 
         Alocacao: Alocacaof, ResultadoColeta, CodAtbPrimario: CodAtbPrimariof,

@@ -17,7 +17,7 @@ import Loading from '../../components/Loading';
 
 const MedicalRecords = () => {
     const [getNroProntuario, setNroProntuario] = useState<any>(null)
-    const [getNroPaciente, setNroPaciente] = useState<any>(null)
+    const [getSeqPaciente, setSeqPaciente] = useState<any>(null)
     const [getNomePaciente, setNomePaciente] = useState<any>(null)
     const [getDataInternacao, setDataInternacao] = useState<string>('')
     const [getCodDoencaPrincipal, setCodDoencaPrincipal] = useState<string>('')
@@ -253,13 +253,13 @@ const MedicalRecords = () => {
     function handleSubmit(event: FormEvent){
         event.preventDefault();
 
-        medicalRecordsService.Update(getNroProntuario, getNroPaciente,
+        medicalRecordsService.Update(getNroProntuario, getSeqPaciente,
             getDataInternacao, getCodDoencaPrincipal, getCodDoencaSecundario,
             getSistemaAcometido, getCodComorbidade, getOrigem, getAlocacao,
             getResultadoColeta, getCodAtbPrimario, getCodAtbSecundario,
             getSitioInfeccaoPrimario, getTratamento, getIndicacao,
-            getDisfuncao, getOrigemInfeccao, getDose, getPosologia)
-        .then((response) => {
+            getDisfuncao, getOrigemInfeccao, getDose, getPosologia
+        ).then((response) => {
             if(response.updatedMedicalRecord){
                 showToast('success', 'Sucesso!', `Prontuário atualizado com sucesso!`);
                 getMedicalRecordsFunction()
@@ -303,7 +303,7 @@ const MedicalRecords = () => {
         medicalRecordData = e.data;
         
         setNroProntuario(medicalRecordData.NroProntuario)
-        setNroPaciente(medicalRecordData.NroPaciente)
+        setSeqPaciente(medicalRecordData.SeqPaciente)
         setNomePaciente(medicalRecordData.NomePaciente)
         var res = medicalRecordData.DataInternacao.split("/")
         var newData = res[2] + "-" + res[1] + "-" + res[0]
@@ -396,8 +396,8 @@ const MedicalRecords = () => {
     function handleSubmit1(event: FormEvent){
         event.preventDefault();
 
-        medicalRecordsService.Desfecho(getNroProntuario, getDesfecho, getDataDesfecho)
-        .then((response) => {
+        medicalRecordsService.Desfecho(getNroProntuario, getDesfecho, getDataDesfecho
+        ).then((response) => {
             console.log(response)
             if(response.updatedMedicalRecord){
                 showToast('success', 'Sucesso!', `Desfecho atualizado com sucesso!`);
@@ -446,15 +446,16 @@ const MedicalRecords = () => {
                     emptyMessage="Nenhum resultado encontrado" className="p-datatable-responsive-demo" resizableColumns={true} loading={loading} first={getFirst}
                     onPage={onPage} lazy={true} selectionMode="single" selection={selectedMedicalRecord} onSelectionChange={e => setSelectedMedicalRecord(e.value)}
                     onRowSelect={(e) => {onMedicalRecordSelect(e);}}>
-                    <Column field="NroProntuario" header="Nro Prontuário" style={{width:'9.5%', textAlign:'center'}}/>
-                    <Column field="NroPaciente" header="Nro Paciente" style={{width:'9.5%', textAlign:'center'}}/>
+                    <Column field="SeqProntuario" header="Seq Prontuário" style={{width:'8%', textAlign:'center'}}/>
+                    <Column field="NroProntuario" header="Nro Prontuário" style={{width:'8%', textAlign:'center'}}/>
+                    <Column field="SeqPaciente" header="Seq Paciente" style={{width:'8%', textAlign:'center'}}/>
                     <Column field="DataNascimento" header="Nascimento" style={{width:'11%', textAlign:'center'}}/>
-                    <Column field="NomePaciente" header="Nome" style={{width:'12.5%', textAlign:'center'}}/>
+                    <Column field="NomePaciente" header="Nome" style={{width:'11%', textAlign:'center'}}/>
                     <Column field="Genero" header="Gênero" style={{width:'8%', textAlign:'center'}}/>
-                    <Column field="DataInternacao" header="Data Internação" style={{width:'11.5%', textAlign:'center'}}/>
+                    <Column field="DataInternacao" header="Data Internação" style={{width:'11%', textAlign:'center'}}/>
                     <Column field="DiagnosticoPrincipal" header="Diagnostico" style={{width:'13%', textAlign:'center'}}/>
-                    <Column field="Alocacao" header="Alocação" style={{width:'15%', textAlign:'center'}}/>
-                    <Column field="Desfecho" header="Desfecho" style={{width:'10%', textAlign:'center'}}/>
+                    <Column field="Alocacao" header="Alocação" style={{width:'13%', textAlign:'center'}}/>
+                    <Column field="Desfecho" header="Desfecho" style={{width:'9%', textAlign:'center'}}/>
                 </DataTable>
 
                 <Dialog visible={displayDialog} style={{width: '50%'}} header="Ações" modal={true} onHide={() => setDisplayDialog(false)}>
@@ -557,10 +558,10 @@ const MedicalRecords = () => {
                                     </div>
 
                                     <div className="col">
-                                        <label htmlFor="NroPaciente">Número do Paciente</label>
-                                        <input type="number" className="form-control" id="NroPaciente" name="NroPaciente"
-                                        defaultValue={getNroPaciente} onChange={(e) => setNroPaciente(Number((e.target as HTMLInputElement).value))}
-                                        placeholder="Digite o número do paciente" required autoFocus/>
+                                        <label htmlFor="SeqPaciente">Sequência do Paciente</label>
+                                        <input type="number" className="form-control" id="SeqPaciente" name="SeqPaciente"
+                                        defaultValue={getSeqPaciente} onChange={(e) => setSeqPaciente(Number((e.target as HTMLInputElement).value))}
+                                        placeholder="Digite o número do paciente" min="1" max="999999999" required autoFocus/>
                                     </div>
                                 </div>
 

@@ -32,8 +32,10 @@ class DiseaseController {
   async indexByName(request: Request, response: Response) {
     const { name } = request.params;
     const filteredDisease = await knex("Doenca").where('Nome', 'like', `%${name}%`);
-    console.log(filteredDisease)
-    return response.json({filteredDisease: true, diseases: filteredDisease});
+
+    console.log(filteredDisease);
+
+    return response.json({ filteredDisease: true, diseases: filteredDisease });
   }
 
   // Método para listar doenças por código:
@@ -41,7 +43,7 @@ class DiseaseController {
     const { diseaseCode } = request.params;
     const filteredDisease = await knex("Doenca").where("codDoenca", diseaseCode);
 
-    return response.json(filteredDisease);
+    return response.json({ diseases: filteredDisease });
   }
 
   // Método para listar doenças por página
@@ -52,7 +54,7 @@ class DiseaseController {
     const diseases = await knex("Doenca").select("*").offset((pageRequest-1) * rows).limit(rows);
     const diseasesLength = (await knex("Doenca").select("*")).length;
 
-    return response.json({diseases: diseases, length: diseasesLength});
+    return response.json({ diseases, length: diseasesLength });
   }
 
   // Método para deletar uma doença:

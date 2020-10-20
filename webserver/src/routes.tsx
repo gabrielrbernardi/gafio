@@ -21,9 +21,11 @@ import MedicalRecordsCreate from './pages/MedicalRecords/Create/Create';
 
 import Registrations from './pages/Registrations/Registrations';
 
+import Patient from './pages/Registrations/Patient/Patient';
+import PatientCreate from './pages/Registrations/Patient/Create/Create';
+
 import Diseases from './pages/Registrations/Diseases/Diseases';
 import Medicines from './pages/Registrations/Medicines/Medicines';
-import Patient from './pages/Registrations/Patient/Patient';
 
 import CreateMedicine from './pages/Registrations/Medicines/create/CreateMedicine';
 
@@ -34,6 +36,7 @@ import NotFound from './pages/NotFound/NotFound';
 import UnderDevelopment from './pages/UnderDevelopment/UnderDevelopment';
 
 import Assessment from './pages/MedicalRecords/Assessment/Assessment'
+import AssessmentCreate from './pages/MedicalRecords/Assessment/Create/Create'
 
 const Routes = () => {
     return (
@@ -50,10 +53,12 @@ const Routes = () => {
                 <Route path="/registrations/medicines/create" render={() => <div><Header/><CreateMedicine/><Footer/></div>} exact />
                 <Route path="/registrations/diseases" render={() => <div><Header/><Diseases/><Footer/></div>} exact />
                 <Route path="/registrations/patient" render={() => <div><Header/><Patient/><Footer/></div>} exact />
+                <Route path="/registrations/patient/create" render={() => <div><Header/><PatientCreate/><Footer/></div>} exact />
 
                 <Route path="/medicalRecords/create" render={() => <div><Header/><MedicalRecordsCreate/><Footer/></div>} exact />
                 <Route path="/medicalRecords" render={() => <div><Header/><MedicalRecords/><Footer/></div>} exact />
                 <Route path="/medicalRecords/assessment" render={() => <div><Header/><Assessment/><Footer/></div>} exact/>
+                <Route path="/medicalRecords/assessment/create" render={() => <div><Header/><AssessmentCreate/><Footer/></div>} exact/>
                 
                 <Route path="/dashboard" render={() => <div><Header/><Dashboard/><Footer/></div>} exact />
                 

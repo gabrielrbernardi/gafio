@@ -6,6 +6,7 @@
 
 import { Request, Response } from "express";
 import knex from "../database/connection";
+import { parse } from "querystring";
 
 class PatientController {
   // Método para cadastro de um paciente
@@ -14,18 +15,21 @@ class PatientController {
     if(NroPaciente && NomePaciente && DataNascimento && Genero){
         const patientDB = await knex('Paciente').where('NroPaciente', NroPaciente);
         if(!patientDB[0]){
+            var parseDataNascimento0 = DataNascimento.substring(0, 10);
+            parseDataNascimento0 = parseDataNascimento0.split("-");
+            const newDataNascimento = parseDataNascimento0[2] + '/' + parseDataNascimento0[1] + '/' + parseDataNascimento0[0]
             await knex("Paciente").insert({
                 NroPaciente, 
                 NomePaciente, 
-                DataNascimento, 
+                DataNascimento: newDataNascimento, 
                 Genero
             }).then(patientNumber => {
-              return response.json({createdPatient: true, patientData: {NomePaciente, DataNascimento, Genero, patientNumber: patientNumber[0]}})
+                return response.json({createdPatient: true, patientData: {NomePaciente, DataNascimento, Genero, patientNumber: patientNumber[0]}})
             }).catch(err => {
-              return response.json({createdPatient: false, error: "Não foi possível inserir o paciente no banco de dados.", err: err})              
+                return response.json({createdPatient: false, error: "Não foi possível inserir o paciente no banco de dados.", err: err})              
             })
         }else{
-            return response.json({createdPatient: false, error: "Não foi possível inserir o paciente no banco de dados. Código já existente"})
+            return response.json({createdPatient: false, error: "Não foi possível inserir o paciente no banco de dados. Número do paciente já existente."})
         }
     }else{
         return response.json({createdPatient: false, error: "Verifique os dados inseridos e tente novamente."})
@@ -133,9 +137,14 @@ class PatientController {
         var pageRequest = parseInt(page) / 10;
         const rows = 10;
         if(id){
-            const medicalRecordsLengthPatient = (await knex("Prontuario").count('NroPaciente').where('NroProntuario', id));
+            const medicalRecordsLengthPatient = (await knex("Prontuario").count('SeqPaciente').where('SeqPaciente', id));
+            const assessmentsLengthPatient = (await knex("Avaliacao").count('IdPaciente').where('IdPaciente', id));
+            const parseMedicalRecordsLengthPatient = medicalRecordsLengthPatient[0]['count(`SeqPaciente`)'];
+            const parseAssessmentsLengthPatient = assessmentsLengthPatient[0]['count(`IdPaciente`)'];
             return response.json({
-                medicalRecordsLength: medicalRecordsLengthPatient,
+                patientFound: true,
+                medicalRecordsLength: parseMedicalRecordsLengthPatient,
+                assessmentLength: parseAssessmentsLengthPatient
             });
         }else{
             return response.json({patientFound: false, error: "NroPaciente não fornecido."})
@@ -143,13 +152,17 @@ class PatientController {
     }
 
     async update(request: Request, response: Response){
-        const {NroPaciente} = request.params;
+        const {SeqPaciente} = request.params;
         const {NomePaciente, DataNascimento, Genero} = request.body;
-        
+
+        var parseDataNascimento = DataNascimento.substring(0, 10);
+        parseDataNascimento = parseDataNascimento.split("-");
+        parseDataNascimento = parseDataNascimento[2] + '/' + parseDataNascimento[1] + '/' + parseDataNascimento[0]
+
         if(NomePaciente && DataNascimento && Genero){
-            await knex("Paciente").where("NroPaciente", NroPaciente).update({
+            await knex("Paciente").where("SeqPaciente", SeqPaciente).update({
                 NomePaciente: NomePaciente,
-                DataNascimento: DataNascimento,
+                DataNascimento: parseDataNascimento,
                 Genero: Genero
             }).then(responseDB => {
                 if(responseDB === 1){
@@ -169,7 +182,6 @@ class PatientController {
   async delete(request: Request, response: Response) {
     const { NroPaciente } = request.params;
     const patient = await knex("Paciente").where("NroPaciente", NroPaciente);
-    console.log(patient)
     if (patient) {
       await knex("Paciente").where("NroPaciente", NroPaciente).delete();
       return response.json({ deletedPatient: true });

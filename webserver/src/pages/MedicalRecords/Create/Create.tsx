@@ -9,7 +9,7 @@ import {CreateMedicalRecordsService} from './CreateMedicalRecordsService'
 const MedicalRecordsForm = () => {
 
     const [getNroProntuario, setNroProntuario] = useState<any>(null)
-    const [getNroPaciente, setNroPaciente] = useState<any>(null)
+    const [getSeqPaciente, setSeqPaciente] = useState<any>(null)
     const [getDataInternacao, setDataInternacao] = useState<string>('')
     const [getCodDoencaPrincipal, setCodDoencaPrincipal] = useState<string>('')
     const [getCodDoencaSecundario, setCodDoencaSecundario] = useState<any>(null)
@@ -92,19 +92,19 @@ const MedicalRecordsForm = () => {
 
     let options = [
         {label: 'Sim', value: 'S'},
-        {label: 'Não', value: 'N'},
+        {label: 'Não', value: 'N'}
     ];
 
     function handleSubmit(event: FormEvent){
         event.preventDefault();
 
-        createMedicalRecordsService.Create(getNroProntuario, getNroPaciente,
+        createMedicalRecordsService.Create(getNroProntuario, getSeqPaciente,
             getDataInternacao, getCodDoencaPrincipal, getCodDoencaSecundario,
             getSistemaAcometido, getCodComorbidade, getOrigem, getAlocacao,
             getResultadoColeta, getCodAtbPrimario, getCodAtbSecundario,
             getSitioInfeccaoPrimario, getTratamento, getIndicacao,
-            getDisfuncao, getOrigemInfeccao, getDose, getPosologia)
-        .then((response) => {
+            getDisfuncao, getOrigemInfeccao, getDose, getPosologia
+        ).then((response) => {
             if(response.CreatedMedicalRecord){
                 showToast('success', 'Sucesso!', `Prontuário criado com sucesso!`);
                 setTimeout(() => {
@@ -154,14 +154,14 @@ const MedicalRecordsForm = () => {
                                 <label htmlFor="NroProntuario">Número do Prontuário</label>
                                 <input type="number" className="form-control" id="NroProntuario" name="NroProntuario"
                                     defaultValue={getNroProntuario} onChange={(e) => setNroProntuario(Number((e.target as HTMLInputElement).value))}
-                                    placeholder="Digite o número do prontuário" required autoFocus/>
+                                    placeholder="Digite o número do prontuário" min="1" max="999999999" required autoFocus/>
                             </div>
 
                             <div className="col">
-                                <label htmlFor="NroPaciente">Número do Paciente</label>
-                                <input type="number" className="form-control" id="NroPaciente" name="NroPaciente"
-                                defaultValue={getNroPaciente} onChange={(e) => setNroPaciente(Number((e.target as HTMLInputElement).value))}
-                                placeholder="Digite o número do paciente" required/>
+                                <label htmlFor="SeqPaciente">Sequência do Paciente</label>
+                                <input type="number" className="form-control" id="SeqPaciente" name="SeqPaciente"
+                                defaultValue={getSeqPaciente} onChange={(e) => setSeqPaciente(Number((e.target as HTMLInputElement).value))}
+                                placeholder="Digite o número do paciente" min="1" max="999999999" required/>
                             </div>
                         </div>
 
