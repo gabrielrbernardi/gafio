@@ -45,12 +45,11 @@ class MicrobiologyController {
         }
     }
 
-    //Método de listagem
+    //Método para listagem
     async index(req: Request, res: Response) {
-        const { id } = req.params;
-        const rows = 10;
-
         try {
+            const { id } = req.params;
+            const rows = 10;
             const query = knex("Microbiologia").select("*").limit(rows);
 
             if (id) {
@@ -58,9 +57,53 @@ class MicrobiologyController {
             }
             const results = await query;
             if (results.length) return res.json(results);
-            else return res.json({ message: "Não encontrado" });
+            else return res.json({ message: "Não encontrado." });
         } catch (error) {
             return res.json({ error });
+        }
+    }
+
+    //método para atualização de dados
+    async update(req: Request, res: Response) {
+        try {
+            const { id } = req.params;
+            const { IdPaciente, IdProntuario } = req.body;
+
+            if (IdPaciente) {
+                const patientExists = await knex("Paciente").where(
+                    "SeqPaciente",
+                    "like",
+                    `%${IdPaciente}%`
+                );
+                if (!patientExists[0]) {
+                    return res.status(400).json({
+                        createdMicrobiology: false,
+                        message: "Paciente não existe!",
+                    });
+                }
+            }
+
+            if (IdProntuario) {
+                const medicalRecordsExists = await knex("Prontuario").where(
+                    "SeqProntuario",
+                    "like",
+                    `%${IdProntuario}%`
+                );
+                if (!medicalRecordsExists[0]) {
+                    return res.status(400).json({
+                        createdMicrobiology: false,
+                        message: "Prontuário não existe!",
+                    });
+                }
+            }
+
+            await knex("Microbiologia")
+                .update(req.body)
+                .where({ IdMicrobiologia: id });
+
+            return res.json({ updatedMicrobioloogy: true });
+        } catch (error) {
+            return res.status(400).json({ updatedMicrobioloogy: false, error });
         }
     }
 }
