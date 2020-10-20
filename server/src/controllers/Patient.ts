@@ -6,6 +6,7 @@
 
 import { Request, Response } from "express";
 import knex from "../database/connection";
+import { parse } from "querystring";
 
 class PatientController {
   // Método para cadastro de um paciente
@@ -151,13 +152,17 @@ class PatientController {
     }
 
     async update(request: Request, response: Response){
-        const {NroPaciente} = request.params;
+        const {SeqPaciente} = request.params;
         const {NomePaciente, DataNascimento, Genero} = request.body;
-        
+
+        var parseDataNascimento = DataNascimento.substring(0, 10);
+        parseDataNascimento = parseDataNascimento.split("-");
+        parseDataNascimento = parseDataNascimento[2] + '/' + parseDataNascimento[1] + '/' + parseDataNascimento[0]
+
         if(NomePaciente && DataNascimento && Genero){
-            await knex("Paciente").where("NroPaciente", NroPaciente).update({
+            await knex("Paciente").where("SeqPaciente", SeqPaciente).update({
                 NomePaciente: NomePaciente,
-                DataNascimento: DataNascimento,
+                DataNascimento: parseDataNascimento,
                 Genero: Genero
             }).then(responseDB => {
                 if(responseDB === 1){
