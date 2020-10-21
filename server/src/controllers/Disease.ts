@@ -43,7 +43,9 @@ class DiseaseController {
     const { diseaseCode } = request.params;
     const filteredDisease = await knex("Doenca").where("codDoenca", diseaseCode);
 
-    return response.json({ diseases: filteredDisease });
+    console.log(filteredDisease);
+
+    return response.json({ filteredDisease: true, diseases: filteredDisease });
   }
 
   // Método para listar doenças por página
