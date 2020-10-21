@@ -106,6 +106,29 @@ class MicrobiologyController {
             return res.status(400).json({ updatedMicrobioloogy: false, error });
         }
     }
+
+    //Método para deleção
+    async delete(req: Request, res: Response) {
+        try {
+            const { id } = req.params;
+            const microbiology = await knex("Microbiologia").where({
+                IdMicrobiologia: id,
+            });
+            if (microbiology[0]) {
+                await knex("Microbiologia")
+                    .where({ IdMicrobiologia: id })
+                    .delete();
+                return res.json({ deletedMicrobiology: true });
+            } else {
+                return res.status(400).json({
+                    deletedMicrobiology: false,
+                    message: "Microbiollogia não existe!",
+                });
+            }
+        } catch (error) {
+            return res.json({ error });
+        }
+    }
 }
 
 export default new MicrobiologyController();
