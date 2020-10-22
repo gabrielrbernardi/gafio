@@ -8,7 +8,7 @@ import { Request, Response } from "express";
 import knex from "../database/connection";
 import axios from 'axios';
 
-class DiseaseController {
+class DiseasesController {
   // Método para cadastro de uma nova doença:
   async create(request: Request, response: Response) {
     const { codDoenca, nome } = request.body;
@@ -31,21 +31,21 @@ class DiseaseController {
   // Método para listar doenças por nome:
   async indexByName(request: Request, response: Response) {
     const { name } = request.params;
-    const filteredDisease = await knex("Doenca").where('Nome', 'like', `%${name}%`);
+    const filteredDiseases = await knex("Doenca").where('Nome', 'like', `%${name}%`);
 
-    console.log(filteredDisease);
+    console.log(filteredDiseases);
 
-    return response.json({ filteredDisease: true, diseases: filteredDisease });
+    return response.json({ filteredDiseases: true, diseases: filteredDiseases });
   }
 
   // Método para listar doenças por código:
   async indexByCode(request: Request, response: Response) {
     const { diseaseCode } = request.params;
-    const filteredDisease = await knex("Doenca").where("codDoenca", diseaseCode);
+    const filteredDiseases = await knex("Doenca").where("codDoenca", diseaseCode);
 
-    console.log(filteredDisease);
+    console.log(filteredDiseases);
 
-    return response.json({ filteredDisease: true, diseases: filteredDisease });
+    return response.json({ filteredDiseases: true, diseases: filteredDiseases });
   }
 
   // Método para listar doenças por página
@@ -102,4 +102,4 @@ class DiseaseController {
 
 }
 
-export default DiseaseController;
+export default DiseasesController;

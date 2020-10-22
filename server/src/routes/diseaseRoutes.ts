@@ -1,16 +1,16 @@
 import express from 'express';
-import DiseaseController from '../controllers/Disease';
+import DiseasesController from '../controllers/Diseases';
 
 const routes = express.Router();
-const disease = new DiseaseController();
+const diseases = new DiseasesController();
 
-routes.post('/disease', disease.create);
-routes.post('/disease/importDB', disease.importDB);
-routes.get('/disease', disease.index);
-routes.get('/disease/name/:name', disease.indexByName);
-routes.get('/disease/diseaseCode/:diseaseCode', disease.indexByCode);
-routes.get('/disease/paginate/:page', disease.indexByPage);
-routes.delete('/disease', disease.delete);
-routes.delete('/disease/deleteAll', disease.deleteAll);
+routes.post('/diseases', diseases.create);
+routes.post('/diseases/importDB', diseases.importDB);
+routes.get('/diseases', diseases.index);
+routes.get('/diseases/name/:name', diseases.indexByName);
+routes.get('/diseases/diseaseCode/:diseaseCode', diseases.indexByCode);
+routes.get('/diseases/paginate/:page', diseases.indexByPage);
+routes.delete('/diseases', diseases.delete);
+routes.delete('/diseases/deleteAll', diseases.deleteAll);
 
 export default routes;
