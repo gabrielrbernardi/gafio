@@ -2,7 +2,7 @@ import api from '../../../services/api';
 
 class DiseasesService {
 
-  async getDiseasesPaginate(endIndex: Number){
+  async getDiseasesPaginate(endIndex: Number) {
     return await api.get(`diseases/paginate/${endIndex}`).then(response => response.data);
   }
   
