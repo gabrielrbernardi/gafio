@@ -8,7 +8,7 @@ class MedicinesService {
 
   async searchMedicineGlobal(searchKey: String, searchCode: String, first: number){
     if (searchCode === 'E') {
-      return await api.get(`medicines/ean/${searchKey}&page=${first}`).then(response => response.data);
+      return await api.get(`medicines/ean/${searchKey}?page=${first}`).then(response => response.data);
     }
     else if (searchCode === 'P') {
       return await api.get(`medicines/principio/${searchKey}`).then(response => response.data);
