@@ -35,9 +35,15 @@ const Microbiology = () => {
 
     useEffect(() => {
         async function loadMicrobiologies() {
-            const response = await api.get<IMicrobiology[]>("/microbiology");
-            const { data } = response;
-            setMicrobiologies(data);
+            try {
+                const response = await api.get<IMicrobiology[]>(
+                    "/microbiology"
+                );
+                const { data } = response;
+                setMicrobiologies(data);
+            } catch (error) {
+              //  toast.error("Falha ao carregar dados");
+            }
         }
         loadMicrobiologies();
     }, []);

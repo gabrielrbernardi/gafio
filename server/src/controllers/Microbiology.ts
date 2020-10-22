@@ -49,12 +49,17 @@ class MicrobiologyController {
     async index(req: Request, res: Response) {
         try {
             const { id } = req.params;
-            const rows = 10;
-            const query = knex("Microbiologia").select("*").limit(rows);
+            const query = knex("Microbiologia");
 
             if (id) {
                 query.where({ IdMicrobiologia: id }).select("Microbiologia.*");
+            } else {
+                const { page = 1 } = req.query;
+                const pageRequest = Number(page);
+                const rows = 10;
+                query.limit(rows).offset((pageRequest - 1) * rows);
             }
+
             const results = await query;
             if (results.length) return res.json(results);
             else return res.json({ message: "Não encontrado." });
