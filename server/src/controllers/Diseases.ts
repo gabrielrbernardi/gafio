@@ -8,7 +8,8 @@ import { Request, Response } from "express";
 import knex from "../database/connection";
 import axios from 'axios';
 
-class DiseaseController {
+class DiseasesController {
+
   // Método para cadastro de uma nova doença:
   async create(request: Request, response: Response) {
     const { codDoenca, nome } = request.body;
@@ -24,7 +25,6 @@ class DiseaseController {
   // Método para listar doenças:
   async index(request: Request, response: Response) {
     const diseases = await knex.select("*").from('Doenca');
-
     return response.json(diseases);
   }
 
@@ -43,7 +43,9 @@ class DiseaseController {
     const { diseaseCode } = request.params;
     const filteredDisease = await knex("Doenca").where("codDoenca", diseaseCode);
 
-    return response.json({ diseases: filteredDisease });
+    console.log(filteredDisease);
+
+    return response.json({ filteredDisease: true, diseases: filteredDisease });
   }
 
   // Método para listar doenças por página
@@ -92,7 +94,6 @@ class DiseaseController {
         codDoenca,
         nome,
       });
-
       console.log(`${nome} adicionada.`);
     }
     return response.json({ databaseImported: true });
@@ -100,4 +101,4 @@ class DiseaseController {
 
 }
 
-export default DiseaseController;
+export default DiseasesController;

@@ -8,11 +8,11 @@ import { Dropdown } from 'primereact/dropdown';
 
 import Button from 'react-bootstrap/Button';
 
-import { FiCheck, FiSearch } from 'react-icons/fi';
+import { FiSearch } from 'react-icons/fi';
 import { AiOutlineClose } from 'react-icons/ai';
 
 const Diseases = () => {
-  const [disease, setDisease] = useState([]);
+  const [diseases, setDiseases] = useState([]);
   const [loading, setLoading] = useState(true);
   const [totalRecords, setTotalRecords] = useState(0);
   const [first, setFirst] = useState(0);
@@ -31,14 +31,14 @@ const Diseases = () => {
 
   function getDiseasesFunction(data?: any){
     setLoading(true);
-    setDisease([]);
+    setDiseases([]);
 
     if (!data) {
       diseasesService.getDiseasesPaginate(10).then(data => {
         console.log(data);
 
         setDatasource(data.diseases);
-        setDisease(datasource.slice(0, rows));
+        setDiseases(datasource.slice(0, rows));
         setLoading(false);
 
         return;
@@ -48,7 +48,7 @@ const Diseases = () => {
       console.log(data);
 
       setDatasource(data.diseases);
-      setDisease(data.diseases.slice(0, rows));
+      setDiseases(data.diseases.slice(0, rows));
       setLoading(false);
     }
   }
@@ -92,7 +92,7 @@ const Diseases = () => {
       return;
     } 
     setMode('S');
-    diseasesService.searchDiseaseGlobal(searchInput, optionState.cod, first+rows).then(data => {
+    diseasesService.searchDiseasesGlobal(searchInput, optionState.cod, first+rows).then(data => {
       if (!data.filteredDisease) {
         setLoading(false);
         return;
@@ -123,13 +123,18 @@ const Diseases = () => {
                     id="float-input" 
                     type="search" 
                     value={searchInput} 
-                    onChange={
-                      (e) => { setSearchInput((e.target as HTMLInputElement).value) }
-                    } 
-                    onKeyPress={(e) => {
-                      if (e.key === 'Enter') { handleSearch(); e.preventDefault(); }}
-                    } 
                     size={50} 
+                    onChange={
+                      (e) => setSearchInput((e.target as HTMLInputElement).value)
+                    } 
+                    onKeyPress={
+                      (e) => {
+                        if (e.key === 'Enter') { 
+                          handleSearch(); 
+                          e.preventDefault(); 
+                        }
+                      }
+                    } 
                   />
                   {
                     optionState === null
@@ -141,7 +146,7 @@ const Diseases = () => {
                   className="mx-1" 
                   value={optionState} 
                   options={[
-                    { name: 'CodDoenca', cod: 'C' },
+                    { name: 'Código', cod: 'C' },
                     { name: 'Nome', cod: 'N' },
                   ]} 
                   onChange={(e: { value: any }) => { setOptionState(e.value) }}
@@ -149,10 +154,25 @@ const Diseases = () => {
                   optionLabel="name" 
                   style={{width: '12em'}}
                 />
-                <Button tabIndex={2} variant="outline-danger" className="p-0 mr-1" style={{width: '17px'}} onClick={ () => { setSearchInput(''); getDiseasesFunction(); setMode('N'); setOptionState(null)}}><AiOutlineClose size={15}/></Button>
-                <Button onClick={handleSearch}><FiSearch size={20}/></Button>
+                <Button 
+                  tabIndex={2} 
+                  variant="outline-danger" 
+                  className="p-0 mr-1" 
+                  style={{width: '17px'}} 
+                  onClick={() => { 
+                    setSearchInput(''); 
+                    getDiseasesFunction(); 
+                    setMode('N'); 
+                    setOptionState(null)}
+                  }
+                >
+                  <AiOutlineClose size={15}/>
+                </Button>
+                <Button onClick={handleSearch}>
+                  <FiSearch size={20}/>
+                </Button>
               </div>
-              <Button variant="success" onClick={diseasesService.updateDiseaseDB}>Atualizar banco de dados</Button>
+              <Button variant="success" onClick={diseasesService.updateDiseasesDB}>Atualizar banco de dados</Button>
             </div>
           </span>
         </div>
@@ -162,25 +182,24 @@ const Diseases = () => {
 
   return (
     <>
-      <div>
-        <DataTable 
-          value={disease} 
-          style={{ margin: 48 }} 
-          paginator={true} 
-          rows={rows} 
-          header={header} 
-          totalRecords={totalRecords} 
-          emptyMessage="Nenhum resultado encontrado" 
-          className="p-datatable-responsive-demo" 
-          resizableColumns={true} 
-          loading={loading} 
-          first={first} 
-          onPage={onPage} 
-          lazy={true}>
-          <Column field="CodDoenca" header="Código" style={{width: '8%', textAlign: 'center'}}/>
-          <Column field="Nome" header="Nome" style={{width: '20%', textAlign: 'center'}}/>
-        </DataTable>
-      </div>
+      <DataTable 
+        value={diseases} 
+        style={{ margin: 48 }} 
+        paginator={true} 
+        rows={rows} 
+        header={header} 
+        totalRecords={totalRecords} 
+        emptyMessage="Nenhum resultado encontrado" 
+        className="p-datatable-responsive-demo" 
+        resizableColumns={true} 
+        loading={loading} 
+        first={first} 
+        onPage={onPage} 
+        lazy={true}
+      >
+        <Column field="CodDoenca" header="Código" style={{width: '8%', textAlign: 'center'}}/>
+        <Column field="Nome" header="Nome" style={{width: '20%', textAlign: 'center'}}/>
+      </DataTable>
     </>
   )
 }
