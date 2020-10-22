@@ -38,41 +38,265 @@ import UnderDevelopment from './pages/UnderDevelopment/UnderDevelopment';
 import Assessment from './pages/MedicalRecords/Assessment/Assessment'
 import AssessmentCreate from './pages/MedicalRecords/Assessment/Create/Create'
 
+import Microbiology from './pages/Microbiology';
+
 const Routes = () => {
     return (
         <BrowserRouter>
             <Switch>
-                <Route path="/" render={() => <div><HeaderNotLogin/><Root/><Footer/></div>} exact />
-                <Route path="/login" render={() => <div><HeaderNotLogin/><Login/><Footer/></div>} exact />
-                <Route path="/signup" render={() => <div><HeaderNotLogin/><SignUp/><Footer/></div>} exact />
-                
-                <Route path="/home" render={() => <div><Header/><Home/><Footer/></div>} exact />
-                
-                <Route path="/registrations" render={() => <div><Header/><Registrations/><Footer/></div>} exact />
-                <Route path="/registrations/medicines" render={() => <div><Header/><Medicines/><Footer/></div>} exact />
-                <Route path="/registrations/medicines/create" render={() => <div><Header/><CreateMedicine/><Footer/></div>} exact />
-                <Route path="/registrations/diseases" render={() => <div><Header/><Diseases/><Footer/></div>} exact />
-                <Route path="/registrations/patient" render={() => <div><Header/><Patient/><Footer/></div>} exact />
-                <Route path="/registrations/patient/create" render={() => <div><Header/><PatientCreate/><Footer/></div>} exact />
+                <Route
+                    path="/"
+                    render={() => (
+                        <div>
+                            <HeaderNotLogin />
+                            <Root />
+                            <Footer />
+                        </div>
+                    )}
+                    exact
+                />
+                <Route
+                    path="/login"
+                    render={() => (
+                        <div>
+                            <HeaderNotLogin />
+                            <Login />
+                            <Footer />
+                        </div>
+                    )}
+                    exact
+                />
+                <Route
+                    path="/signup"
+                    render={() => (
+                        <div>
+                            <HeaderNotLogin />
+                            <SignUp />
+                            <Footer />
+                        </div>
+                    )}
+                    exact
+                />
 
-                <Route path="/medicalRecords/create" render={() => <div><Header/><MedicalRecordsCreate/><Footer/></div>} exact />
-                <Route path="/medicalRecords" render={() => <div><Header/><MedicalRecords/><Footer/></div>} exact />
-                <Route path="/medicalRecords/assessment" render={() => <div><Header/><Assessment/><Footer/></div>} exact/>
-                <Route path="/medicalRecords/assessment/create" render={() => <div><Header/><AssessmentCreate/><Footer/></div>} exact/>
-                
-                <Route path="/dashboard" render={() => <div><Header/><Dashboard/><Footer/></div>} exact />
-                
-                <Route path="/history" render={() => <div><Header/><History/><Footer/></div>} exact />
+                <Route
+                    path="/home"
+                    render={() => (
+                        <div>
+                            <Header />
+                            <Home />
+                            <Footer />
+                        </div>
+                    )}
+                    exact
+                />
 
-                <Route path="/myProfile" render={() => <div><Header/><MyProfile/><Footer/></div>} exact />
-                <Route path="/users" render={() => <div><Header/><Users/><Footer/></div>} exact />
+                <Route
+                    path="/registrations"
+                    render={() => (
+                        <div>
+                            <Header />
+                            <Registrations />
+                            <Footer />
+                        </div>
+                    )}
+                    exact
+                />
+                <Route
+                    path="/registrations/medicines"
+                    render={() => (
+                        <div>
+                            <Header />
+                            <Medicines />
+                            <Footer />
+                        </div>
+                    )}
+                    exact
+                />
+                <Route
+                    path="/registrations/medicines/create"
+                    render={() => (
+                        <div>
+                            <Header />
+                            <CreateMedicine />
+                            <Footer />
+                        </div>
+                    )}
+                    exact
+                />
+                <Route
+                    path="/registrations/diseases"
+                    render={() => (
+                        <div>
+                            <Header />
+                            <Diseases />
+                            <Footer />
+                        </div>
+                    )}
+                    exact
+                />
+                <Route
+                    path="/registrations/patient"
+                    render={() => (
+                        <div>
+                            <Header />
+                            <Patient />
+                            <Footer />
+                        </div>
+                    )}
+                    exact
+                />
+                <Route
+                    path="/registrations/patient/create"
+                    render={() => (
+                        <div>
+                            <Header />
+                            <PatientCreate />
+                            <Footer />
+                        </div>
+                    )}
+                    exact
+                />
 
-                <Route path="/notifications" render={() => <div><Header/><Notifications/><Footer/></div>} exact />
-                <Route path="/notFound" render={() => <div><Header/><NotFound/><Footer/></div>} exact/>
-                <Route path="/underDevelopment" render={() => <div><Header/><UnderDevelopment/><Footer/></div>} exact/>
+                <Route
+                    path="/medicalRecords/create"
+                    render={() => (
+                        <div>
+                            <Header />
+                            <MedicalRecordsCreate />
+                            <Footer />
+                        </div>
+                    )}
+                    exact
+                />
+                <Route
+                    path="/medicalRecords"
+                    render={() => (
+                        <div>
+                            <Header />
+                            <MedicalRecords />
+                            <Footer />
+                        </div>
+                    )}
+                    exact
+                />
+                <Route
+                    path="/medicalRecords/assessment"
+                    render={() => (
+                        <div>
+                            <Header />
+                            <Assessment />
+                            <Footer />
+                        </div>
+                    )}
+                    exact
+                />
+                <Route
+                    path="/medicalRecords/assessment/create"
+                    render={() => (
+                        <div>
+                            <Header />
+                            <AssessmentCreate />
+                            <Footer />
+                        </div>
+                    )}
+                    exact
+                />
+
+                <Route
+                    path="/dashboard"
+                    render={() => (
+                        <div>
+                            <Header />
+                            <Dashboard />
+                            <Footer />
+                        </div>
+                    )}
+                    exact
+                />
+
+                <Route
+                    path="/history"
+                    render={() => (
+                        <div>
+                            <Header />
+                            <History />
+                            <Footer />
+                        </div>
+                    )}
+                    exact
+                />
+
+                <Route
+                    path="/myProfile"
+                    render={() => (
+                        <div>
+                            <Header />
+                            <MyProfile />
+                            <Footer />
+                        </div>
+                    )}
+                    exact
+                />
+                <Route
+                    path="/users"
+                    render={() => (
+                        <div>
+                            <Header />
+                            <Users />
+                            <Footer />
+                        </div>
+                    )}
+                    exact
+                />
+
+                <Route
+                    path="/notifications"
+                    render={() => (
+                        <div>
+                            <Header />
+                            <Notifications />
+                            <Footer />
+                        </div>
+                    )}
+                    exact
+                />
+                <Route
+                    path="/notFound"
+                    render={() => (
+                        <div>
+                            <Header />
+                            <NotFound />
+                            <Footer />
+                        </div>
+                    )}
+                    exact
+                />
+                <Route
+                    path="/underDevelopment"
+                    render={() => (
+                        <div>
+                            <Header />
+                            <UnderDevelopment />
+                            <Footer />
+                        </div>
+                    )}
+                    exact
+                />
+
+                <Route
+                    path="/microbiology"
+                    render={() => (
+                        <div>
+                            <Header />
+                            <Microbiology />
+                            <Footer />
+                        </div>
+                    )}
+                    exact
+                />
             </Switch>
         </BrowserRouter>
-    )
+    );
 }
 
 export default Routes;
