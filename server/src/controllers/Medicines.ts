@@ -16,7 +16,7 @@ class MedicinesController {
       CNPJ
     } = request.body;
 
-    const medicine = await knex("Medicamentos").insert({
+    const medicines = await knex("Medicamentos").insert({
       EAN,
       PrincipioAtivo,
       Registro,
@@ -27,50 +27,43 @@ class MedicinesController {
       CNPJ
     });
     
-    return response.json(medicine);
+    return response.json(medicines);
   }
 
   async index(request: Request, response: Response) {
     const medicines = await knex("Medicamentos").select("*");
-
     return response.json(medicines); 
   }
 
   async indexByPrincipio(request: Request, response: Response) {
     const { principio } = request.params;
-    const medicine = await knex("Medicamentos").where(
-      "PrincipioAtivo",
-      principio
-    );
+    const filteredMedicines = await knex("Medicamentos").where("PrincipioAtivo", principio);
 
-    return response.json(medicine);
+    return response.json({ filteredMedicines: true, medicines: filteredMedicines });
   }
 
   async indexByClasse(request: Request, response: Response) {
     const { classe } = request.params;
-    const medicine = await knex("Medicamentos").where(
-      "ClasseTerapeutica",
-      classe
-    );
+    const filteredMedicines = await knex("Medicamentos").where("ClasseTerapeutica", classe);
 
-    return response.json(medicine);
+    return response.json({ filteredMedicines: true, medicines: filteredMedicines });
   }
 
   async indexByEan(request: Request, response: Response) {
     const { ean } = request.params;
-    const medicine = await knex("Medicamentos").where("EAN", ean);
+    const filteredMedicines = await knex("Medicamentos").where("EAN", ean);
 
-    return response.json(medicine);
+    return response.json({ filteredMedicines: true, medicines: filteredMedicines });
   }
 
   async indexByPage(request: Request, response: Response) {
     const { page } = request.params;
     const pageRequest = parseInt(page) / 10;
     const rows = 10;
-    const medicine = await knex("Medicamentos").select("*").offset((pageRequest-1) * rows).limit(rows);
+    const medicines = await knex("Medicamentos").select("*").offset((pageRequest-1) * rows).limit(rows);
     const medicinesLength = (await knex("Medicamentos").select("*")).length;
 
-    return response.json({ medicine: medicine, length: medicinesLength });
+    return response.json({ medicines, length: medicinesLength });
   }
 
   async delete(request: Request, response: Response) {

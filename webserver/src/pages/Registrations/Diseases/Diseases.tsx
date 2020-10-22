@@ -93,7 +93,7 @@ const Diseases = () => {
     } 
     setMode('S');
     diseasesService.searchDiseasesGlobal(searchInput, optionState.cod, first+rows).then(data => {
-      if (!data.filteredDisease) {
+      if (!data.diseases) {
         setLoading(false);
         return;
       }

@@ -1,6 +1,6 @@
 import api from "../../../services/api";
 
-class MedicineService {
+class MedicinesService {
 
   async getMedicinesPaginate(endIndex: Number){
     return await api.get(`medicines/paginate/${endIndex}`).then(response => response.data);
@@ -24,4 +24,4 @@ class MedicineService {
 
 }
 
-export { MedicineService };
+export { MedicinesService };
