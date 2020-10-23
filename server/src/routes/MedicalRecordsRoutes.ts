@@ -10,7 +10,7 @@ routes.get("/medicalRecords", records.index)
 routes.get("/medicalRecords/paginate/", records.indexPagination)
 
 routes.get("/medicalRecords/nroProntuario/", records.indexByNroProntuario)
-routes.get("/medicalRecords/nroPaciente/", records.indexByNroPaciente)
+routes.get("/medicalRecords/seqPaciente/", records.indexBySeqPaciente)
 routes.get("/medicalRecords/dataInternacao/", records.indexByDataInternacao)
 
 routes.put("/medicalRecords/desfecho", records.updateDesfecho)

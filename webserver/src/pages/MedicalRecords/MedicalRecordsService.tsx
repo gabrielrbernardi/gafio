@@ -9,7 +9,7 @@ class MedicalRecordsService {
         if(searchCode === 'Pro'){
             return await api.get(`medicalRecords/nroProntuario/?nroProntuario=${searchKey}&page=${first}`).then(response => response.data);
         }else if(searchCode === 'Pac'){
-            return await api.get(`medicalRecords/nroPaciente/?nroPaciente=${searchKey}&page=${first}`).then(response => response.data);
+            return await api.get(`medicalRecords/seqPaciente/?seqPaciente=${searchKey}&page=${first}`).then(response => response.data);
         }else if(searchCode === 'Int'){
             return await api.get(`medicalRecords/dataInternacao/?dataInternacao=${searchKey}&page=${first}`).then(response => response.data);
         }

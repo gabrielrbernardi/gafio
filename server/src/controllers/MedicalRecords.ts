@@ -240,14 +240,17 @@ class ProntuarioController {
          }
       }
    
-      //FILTRAR POR NroPaciente
-      async indexByNroPaciente(request: Request, response: Response) {
-         const {nroPaciente} = request.query;
+      //FILTRAR POR SeqPaciente
+      async indexBySeqPaciente(request: Request, response: Response) {
+         const { seqPaciente } = request.query;
          var page = String(request.query.page);
+         if(!page){
+            page = "10"
+         }
          var pageRequest = parseInt(page) / 10;
          const rows = 10;
          try{
-            const MedicalRecord = await knex("Prontuario").where('NroPaciente', 'like', `%${nroPaciente}%`).offset((pageRequest-1)*rows).limit(rows);
+            const MedicalRecord = await knex("Prontuario").where('SeqPaciente', 'like', `%${seqPaciente}%`).offset((pageRequest-1)*rows).limit(rows);
             var serializedMedicalRecords = MedicalRecord.map(MedicalRecord => {
                var newDesfecho
                if(MedicalRecord.Desfecho == null){
@@ -300,7 +303,7 @@ class ProntuarioController {
                const diseaseDB = await knex("Doenca").where("CodDoenca", serializedMedicalRecords[i]["DiagnosticoPrincipal"]);
                serializedMedicalRecords[i]['DiagnosticoPrincipal'] = diseaseDB[0]['Nome'];
             }
-            const MedicalRecordsLength = (await knex("Prontuario").count('NroPaciente').where('NroPaciente', 'like', `%${nroPaciente}%`));
+            const MedicalRecordsLength = (await knex("Prontuario").count('SeqPaciente').where('SeqPaciente', 'like', `%${seqPaciente}%`));
             return response.json({showMedicalRecords: true, medicalRecords: serializedMedicalRecords, length: MedicalRecordsLength, length1: serializedMedicalRecords.length});
          }catch(err){
             return response.json({showMedicalRecords: false, error: err});
@@ -311,6 +314,9 @@ class ProntuarioController {
       async indexByDataInternacao(request: Request, response: Response) {
          const {dataInternacao} = request.query;
          var page = String(request.query.page);
+         if(!page){
+            page = "10"
+         }
          var pageRequest = parseInt(page) / 10;
          const rows = 10;
          try{

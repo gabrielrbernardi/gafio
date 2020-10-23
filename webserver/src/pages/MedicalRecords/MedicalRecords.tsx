@@ -6,7 +6,7 @@ import Button from 'react-bootstrap/Button';
 import Collapse from 'react-bootstrap/Collapse';
 import {FiSearch} from 'react-icons/fi';
 import {AiOutlineClose} from 'react-icons/ai';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import ToastComponent from '../../components/Toast';
 import { Dropdown } from 'primereact/dropdown';
 import {Dropdown as DropdownReact} from 'react-bootstrap';
@@ -16,6 +16,7 @@ import {MedicalRecordsService} from './MedicalRecordsService';
 import Loading from '../../components/Loading';
 
 const MedicalRecords = () => {
+    const [getSeqProntuario, setSeqProntuario] = useState<any>(null)
     const [getNroProntuario, setNroProntuario] = useState<any>(null)
     const [getSeqPaciente, setSeqPaciente] = useState<any>(null)
     const [getNomePaciente, setNomePaciente] = useState<any>(null)
@@ -70,6 +71,8 @@ const MedicalRecords = () => {
     const [displayDialog3, setDisplayDialog3] = useState(false);
     const [displayDialog4, setDisplayDialog4] = useState(false);
 
+    const history = useHistory()
+
     const medicalRecordsService = new MedicalRecordsService()
     var medicalRecordData:any = {};
 
@@ -82,7 +85,7 @@ const MedicalRecords = () => {
 
     let options2 = [
         {name: 'Nro Prontuário', cod: 'Pro'},
-        {name: 'Nro Paciente', cod: 'Pac'},
+        {name: 'Seq Paciente', cod: 'Pac'},
         {name: 'Data Internação', cod: 'Int'}
     ];
 
@@ -233,8 +236,8 @@ const MedicalRecords = () => {
             let searchType;
             if(getOptionState.name === 'Nro Prontuário'){
                 searchType = 'NroProntuario';
-            }else if(getOptionState.name === 'Nro Paciente'){
-                searchType = 'NroPaciente';
+            }else if(getOptionState.name === 'Seq Paciente'){
+                searchType = 'SeqPaciente';
             }else if(getOptionState.name === 'Data Internação'){
                 searchType = 'DataInternacao'
             }else{
@@ -302,6 +305,7 @@ const MedicalRecords = () => {
         setMedicalRecordChange(e.value)
         medicalRecordData = e.data;
         
+        setSeqProntuario(medicalRecordData.SeqProntuario)
         setNroProntuario(medicalRecordData.NroProntuario)
         setSeqPaciente(medicalRecordData.SeqPaciente)
         setNomePaciente(medicalRecordData.NomePaciente)
@@ -459,20 +463,29 @@ const MedicalRecords = () => {
                 </DataTable>
 
                 <Dialog visible={displayDialog} style={{width: '50%'}} header="Ações" modal={true} onHide={() => setDisplayDialog(false)}>
-                    <div className="form-row">
-                    <div className="col mr-4 ml-1">
-                            <Button className="mx-2 mt-2 mb-2 p-3" onClick={() => {setDisplayDialog4(true); setDisplayDialog(false)}}>Visualizar <br></br> prontuário</Button>
+                    <div className="form-row text-center">
+                        <div className="col">
+                            <Button className="mx-2 p-3" onClick={() => {setDisplayDialog4(true); setDisplayDialog(false)}}>Visualizar <br></br> prontuário</Button>
                         </div>
-                        <div className="col mr-4">
-                            <Button className="mx-2 mt-2 mb-2 p-3" onClick={() => {setDisplayDialog1(true); setDisplayDialog(false)}}>Atualizar <br></br> prontuário</Button>
-                        </div>
-
-                        <div className="col mr-4">
-                            <Button className="mx-2 mt-2 mb-2 p-3" onClick={() => {setDisplayDialog3(true); setDisplayDialog(false)}}>Atualizar <br></br> desfecho</Button>
+                        <div className="col">
+                            <Button className="mx-2 p-3" onClick={() => {setDisplayDialog1(true); setDisplayDialog(false)}}>Atualizar <br></br> prontuário</Button>
                         </div>
 
                         <div className="col">
-                            <Button className="mx-2 mt-2 mb-2 mr-2 p-3" onClick={() => {setDisplayDialog2(true); setDisplayDialog(false)}}>Excluir <br></br> prontuário</Button>
+                            <Button className="mx-2 p-3" onClick={() => {setDisplayDialog3(true); setDisplayDialog(false)}}>Atualizar <br></br> desfecho</Button>
+                        </div>
+
+                        <div className="col">
+                            <Button className="mx-2 p-3" onClick={() => {setDisplayDialog2(true); setDisplayDialog(false)}}>Excluir <br></br> prontuário</Button>
+                        </div>
+                    </div>
+
+                    <div className="form-row mt-4 text-center">
+                        <div className="col">
+                            <Button className="mx-2 p-3" onClick={() => {setDisplayDialog(false); history.push(`/medicalRecords/assessment/create/?seqProntuario=${getSeqProntuario}`)}}>Cadastrar <br></br> avaliação</Button>
+                        </div>
+                        <div className="col">
+                            <Button className="mx-2 p-3" onClick={() => {setDisplayDialog(false); history.push(`/medicalRecords/assessment/?seqProntuario=${getSeqProntuario}`)}}>Visualizar <br></br> avaliações</Button>
                         </div>
                     </div>
                 </Dialog>

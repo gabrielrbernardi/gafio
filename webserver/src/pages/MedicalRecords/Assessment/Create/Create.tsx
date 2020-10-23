@@ -1,12 +1,15 @@
 import React, { useState, FormEvent } from 'react';
 import {Dropdown} from 'primereact/dropdown';
 import {Dropdown as DropdownReact} from 'react-bootstrap';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 import ToastComponent from '../../../../components/Toast';
 
 import {CreateAssessmentService} from './CreateAssessmentService'
 
 const AssessmentForm = () => {
+    const query = new URLSearchParams(useLocation().search)
+    const queryResponse = query.get("seqProntuario") || ""
+
     const [getNroAvaliacao, setNroAvaliacao] = useState<any>(null)
     const [getDataAvaliacao, setDataAvaliacao] = useState<string>('')
     const [getResultadoCulturas, setResultadoCulturas] = useState<any>(null)
@@ -123,7 +126,7 @@ const AssessmentForm = () => {
     function handleSubmit(event: FormEvent){
         event.preventDefault();
 
-        createAssessmentService.Create(2, getNroAvaliacao, getDataAvaliacao, getResultadoCulturas, getResCulturasAcao,
+        createAssessmentService.Create(queryResponse, getNroAvaliacao, getDataAvaliacao, getResultadoCulturas, getResCulturasAcao,
             getDoseCorreta, getPosologiaCorreta, getAlertaDot, getAlertaDotDescricao, getDisfuncaoRenal,
             getHemodialise, getAtbOral, getAtbContraindicacao, getAlteracaoPrescricao, getAtbDiluicaoInfusao, 
             getInteracaoAtbMedicamento, getTrocaAtb, getNovoAtb)
@@ -131,7 +134,7 @@ const AssessmentForm = () => {
             if(response.CreatedAssessment){
                 showToast('success', 'Sucesso!', `Avaliação criada com sucesso!`);
                 setTimeout(() => {
-                    history.push('/medicalRecords/assessment')
+                    history.push(`/medicalRecords/assessment/?seqProntuario=${queryResponse}`)
                 }, 3500)
             }else{
                 if(response.error.sqlMessage){

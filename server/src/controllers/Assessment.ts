@@ -31,59 +31,66 @@ class AvaliacaoController {
             NovoAtb
         } = request.body
 
-        if (!IdProntuario || !NroAvaliacao || !DataAvaliacao || !DisfuncaoRenal || !Hemodialise || !AtbOral || !AtbContraindicacao || !AtbDiluicaoInfusao || !InteracaoAtbMedicamento || !TrocaAtb){
+        if(!IdProntuario){
             return response.json({
-               CreatedAssessment: false,
-               error: "Preencha todos os campos necessários."
+                CreatedAssessment: false,
+                error: "Prontuário não encontrado."
             })
         }else{
-            const medicalRecordsDB = await knex("Prontuario").where("SeqProntuario", IdProntuario)
-            const medicalRecords = medicalRecordsDB[0]
-
-            if(medicalRecords){
-                const assessmentDB = await knex("Avaliacao").where("NroAvaliacao", NroAvaliacao)
-                const assessment = assessmentDB[0]
-
-                if(!assessment){      
-                    var res = DataAvaliacao.split("-")
-                    var dataTratada = res[2] + "/" + res[1] + "/" + res[0]
-
-                    await knex("Avaliacao").insert({
-                        IdProntuario,
-                        IdPaciente: medicalRecords.SeqPaciente,
-                        NroAvaliacao,
-                        DataAvaliacao: dataTratada,
-                        ResultadoCulturas,
-                        ResCulturasAcao,
-                        DoseCorreta,
-                        PosologiaCorreta,
-                        AlertaDot,
-                        AlertaDotDescricao,
-                        DisfuncaoRenal,
-                        Hemodialise,
-                        AtbOral,
-                        AtbContraindicacao,
-                        AlteracaoPrescricao,
-                        AtbDiluicaoInfusao,
-                        InteracaoAtbMedicamento,
-                        TrocaAtb,
-                        NovoAtb
-                    }).then(() => {
-                        return response.json({CreatedAssessment: true})
-                    }).catch((error) => {
-                        return response.json({CreatedAssessment: false, error})
-                    })
+            if (!NroAvaliacao || !DataAvaliacao || !DisfuncaoRenal || !Hemodialise || !AtbOral || !AtbContraindicacao || !AtbDiluicaoInfusao || !InteracaoAtbMedicamento || !TrocaAtb){
+                return response.json({
+                   CreatedAssessment: false,
+                   error: "Preencha todos os campos necessários."
+                })
+            }else{
+                const medicalRecordsDB = await knex("Prontuario").where("SeqProntuario", IdProntuario)
+                const medicalRecords = medicalRecordsDB[0]
+    
+                if(medicalRecords){
+                    const assessmentDB = await knex("Avaliacao").where("NroAvaliacao", NroAvaliacao)
+                    const assessment = assessmentDB[0]
+    
+                    if(!assessment){      
+                        var res = DataAvaliacao.split("-")
+                        var dataTratada = res[2] + "/" + res[1] + "/" + res[0]
+    
+                        await knex("Avaliacao").insert({
+                            IdProntuario,
+                            IdPaciente: medicalRecords.SeqPaciente,
+                            NroAvaliacao,
+                            DataAvaliacao: dataTratada,
+                            ResultadoCulturas,
+                            ResCulturasAcao,
+                            DoseCorreta,
+                            PosologiaCorreta,
+                            AlertaDot,
+                            AlertaDotDescricao,
+                            DisfuncaoRenal,
+                            Hemodialise,
+                            AtbOral,
+                            AtbContraindicacao,
+                            AlteracaoPrescricao,
+                            AtbDiluicaoInfusao,
+                            InteracaoAtbMedicamento,
+                            TrocaAtb,
+                            NovoAtb
+                        }).then(() => {
+                            return response.json({CreatedAssessment: true})
+                        }).catch((error) => {
+                            return response.json({CreatedAssessment: false, error})
+                        })
+                    }else{
+                        return response.json({
+                            CreatedAssessment: false,
+                            error: "O número da avaliação já existe."
+                        })
+                    }
                 }else{
                     return response.json({
                         CreatedAssessment: false,
-                        error: "O número da avaliação já existe."
+                        error: "A sequência de prontuário não existe."
                     })
                 }
-            }else{
-                return response.json({
-                    CreatedAssessment: false,
-                    error: "A sequência de prontuário não existe."
-                })
             }
         }
     }
@@ -96,26 +103,57 @@ class AvaliacaoController {
 
     //PAGINACAO DA LISTA DE AVALIACOES
     async indexPagination(request: Request, response: Response){
-        const { SeqProntuario } = request.body;
+        var { seqProntuario } = request.query;
+        if(!seqProntuario){
+            return response.json({showAssessments: false, error: "Prontuário não encontrado."})
+        }
         var page = String(request.query.page);
+        if(!page){
+            page = "10"
+        }
         var pageRequest = parseInt(page) / 10;
         const rows = 10;
-        try{
-            const assessments = await knex("Avaliacao").where('IdProntuario', 2).offset((pageRequest-1)*rows).limit(rows);
-    
-            var serializedAssessments = assessments.map(assessment => {
-                return {
-                    NroAvaliacao: assessment.NroAvaliacao,
-                    DataAvaliacao: assessment.DataAvaliacao,
-                    AtbOral: assessment.AtbOral,
-                    AtbContraindicacao: assessment.AtbContraindicacao,
-                    TrocaAtb: assessment.TrocaAtb
+        
+        const medicalRecordsDB = await knex("Prontuario").where("SeqProntuario", `${seqProntuario}`)
+        const medicalRecords = medicalRecordsDB[0]
+
+        if(medicalRecords){
+            try{
+                const assessments = await knex("Avaliacao").where('IdProntuario', `${seqProntuario}`).offset((pageRequest-1)*rows).limit(rows);
+        
+                var serializedAssessments = assessments.map(assessment => {
+                    return {
+                        NroAvaliacao: assessment.NroAvaliacao,
+                        DataAvaliacao: assessment.DataAvaliacao,
+                        AtbOral: assessment.AtbOral,
+                        AtbContraindicacao: assessment.AtbContraindicacao,
+                        TrocaAtb: assessment.TrocaAtb,
+                        IdPaciente: medicalRecords.SeqPaciente,
+                        ResultadoCulturas: assessment.ResultadoCulturas,
+                        ResCulturasAcao: assessment.ResCulturasAcao,
+                        DoseCorreta: assessment.DoseCorreta,
+                        PosologiaCorreta: assessment.PosologiaCorreta,
+                        AlertaDot: assessment.AlertaDot,
+                        AlertaDotDescricao: assessment.AlertaDotDescricao,
+                        DisfuncaoRenal: assessment.DisfuncaoRenal,
+                        Hemodialise: assessment.Hemodialise,
+                        AlteracaoPrescricao: assessment.AlteracaoPrescricao,
+                        AtbDiluicaoInfusao: assessment.AtbDiluicaoInfusao,
+                        InteracaoAtbMedicamento: assessment.InteracaoAtbMedicamento,
+                        NovoAtb: assessment.NovoAtb,
+                        NomePaciente: null
+                    }
+                })
+                for(let i = 0; i < serializedAssessments.length; i++){
+                    const patientDB = await knex("Paciente").where("SeqPaciente", serializedAssessments[i]["IdPaciente"]);
+                    serializedAssessments[i]['NomePaciente'] = patientDB[0]['NomePaciente'];
                 }
-            })
-            
-            return response.json({showAssessments: true, assessments: serializedAssessments, length: serializedAssessments.length});
-        }catch(err){
-            return response.json({showAssessments: false, error: err});
+                return response.json({showAssessments: true, assessments: serializedAssessments, length: serializedAssessments.length});
+            }catch(err){
+                return response.json({showAssessments: false, error: err});
+            }
+        }else{
+            return response.json({showAssessments: false, error: "Prontuário não encontrado."});
         }
     }
 
@@ -145,48 +183,55 @@ class AvaliacaoController {
             NovoAtb
         } = request.body
 
-        if (!IdProntuario || !NroAvaliacao || !DataAvaliacao || !DisfuncaoRenal || !Hemodialise || !AtbOral || !AtbContraindicacao || !AtbDiluicaoInfusao || !InteracaoAtbMedicamento || !TrocaAtb){
+        if(!IdProntuario){
             return response.json({
-            updatedAssessment: false,
-            error: "Preencha todos os campos necessários."
+                updatedAssessment: false,
+                error: "Prontuário não encontrado."
             })
         }else{
-            const medicalRecordsDB = await knex("Prontuario").where("SeqProntuario", IdProntuario)
-            const medicalRecords = medicalRecordsDB[0]
-
-            if(medicalRecords){
-                    var res = DataAvaliacao.split("-")
-                    var dataTratada = res[2] + "/" + res[1] + "/" + res[0]
-
-                    await knex("Avaliacao").where('NroAvaliacao', NroAvaliacao).update({
-                        IdProntuario: IdProntuario,
-                        IdPaciente: medicalRecords.SeqPaciente,
-                        DataAvaliacao: dataTratada,
-                        ResultadoCulturas: ResultadoCulturas,
-                        ResCulturasAcao: ResCulturasAcao,
-                        DoseCorreta: DoseCorreta,
-                        PosologiaCorreta: PosologiaCorreta,
-                        AlertaDot: AlertaDot,
-                        AlertaDotDescricao: AlertaDotDescricao,
-                        DisfuncaoRenal: DisfuncaoRenal,
-                        Hemodialise: Hemodialise,
-                        AtbOral: AtbOral,
-                        AtbContraindicacao: AtbContraindicacao,
-                        AlteracaoPrescricao: AlteracaoPrescricao,
-                        AtbDiluicaoInfusao: AtbDiluicaoInfusao,
-                        InteracaoAtbMedicamento: InteracaoAtbMedicamento,
-                        TrocaAtb: TrocaAtb,
-                        NovoAtb: NovoAtb
-                    }).then(() => {
-                        return response.json({updatedAssessment: true})
-                    }).catch((error) => {
-                        return response.json({updatedAssessment: false, error})
-                    })
-            }else{
+            if (!NroAvaliacao || !DataAvaliacao || !DisfuncaoRenal || !Hemodialise || !AtbOral || !AtbContraindicacao || !AtbDiluicaoInfusao || !InteracaoAtbMedicamento || !TrocaAtb){
                 return response.json({
-                    updatedAssessment: false,
-                    error: "A sequência de prontuário não existe."
+                updatedAssessment: false,
+                error: "Preencha todos os campos necessários."
                 })
+            }else{
+                const medicalRecordsDB = await knex("Prontuario").where("SeqProntuario", IdProntuario)
+                const medicalRecords = medicalRecordsDB[0]
+    
+                if(medicalRecords){
+                        var res = DataAvaliacao.split("-")
+                        var dataTratada = res[2] + "/" + res[1] + "/" + res[0]
+    
+                        await knex("Avaliacao").where('NroAvaliacao', NroAvaliacao).update({
+                            IdProntuario: IdProntuario,
+                            IdPaciente: medicalRecords.SeqPaciente,
+                            DataAvaliacao: dataTratada,
+                            ResultadoCulturas: ResultadoCulturas,
+                            ResCulturasAcao: ResCulturasAcao,
+                            DoseCorreta: DoseCorreta,
+                            PosologiaCorreta: PosologiaCorreta,
+                            AlertaDot: AlertaDot,
+                            AlertaDotDescricao: AlertaDotDescricao,
+                            DisfuncaoRenal: DisfuncaoRenal,
+                            Hemodialise: Hemodialise,
+                            AtbOral: AtbOral,
+                            AtbContraindicacao: AtbContraindicacao,
+                            AlteracaoPrescricao: AlteracaoPrescricao,
+                            AtbDiluicaoInfusao: AtbDiluicaoInfusao,
+                            InteracaoAtbMedicamento: InteracaoAtbMedicamento,
+                            TrocaAtb: TrocaAtb,
+                            NovoAtb: NovoAtb
+                        }).then(() => {
+                            return response.json({updatedAssessment: true})
+                        }).catch((error) => {
+                            return response.json({updatedAssessment: false, error})
+                        })
+                }else{
+                    return response.json({
+                        updatedAssessment: false,
+                        error: "A sequência de prontuário não existe."
+                    })
+                }
             }
         }
     }
