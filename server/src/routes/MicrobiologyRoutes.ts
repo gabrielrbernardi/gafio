@@ -9,6 +9,7 @@ routes.put("/microbiology/update/:id", MicrobiologyController.update);
 
 routes.get("/microbiology", MicrobiologyController.index);
 routes.get("/microbiology/:id", MicrobiologyController.index);
+routes.get("/microbiology/data/length/", MicrobiologyController.getLength);
 
 routes.delete("/microbiology/delete/:id", MicrobiologyController.delete);
 

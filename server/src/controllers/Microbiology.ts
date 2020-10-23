@@ -134,6 +134,19 @@ class MicrobiologyController {
             return res.json({ error });
         }
     }
+
+    //método para obter a quantidade total 
+    async getLength(req: Request, res: Response) {
+        try {
+            const microbiologyLength = await knex("Microbiologia").count({
+                count: "*",
+            });
+            const [count] = microbiologyLength;
+            return res.json(count);
+        } catch (error) {
+            return res.json({error})
+        }
+    }
 }
 
 export default new MicrobiologyController();

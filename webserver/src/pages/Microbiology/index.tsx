@@ -1,9 +1,7 @@
-import React, { useState, useEffect, FormEvent } from "react";
+import React, { useState, useEffect } from "react";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
-import { InputText } from "primereact/inputtext";
 import Button from "react-bootstrap/Button";
-import { AiOutlineClose } from "react-icons/ai";
 import { Link } from "react-router-dom";
 import ToastComponent from "../../components/Toast";
 
