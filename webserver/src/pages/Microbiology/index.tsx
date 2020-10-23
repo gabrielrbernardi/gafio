@@ -30,8 +30,25 @@ interface IMicrobiology {
 
 const Microbiology = () => {
     const [microbiologies, setMicrobiologies] = useState<IMicrobiology[]>([]);
+    const [records, setRecords] = useState<number>(0);
+    const [first, setFirst] = useState<number>(0);
+
+    const rows = 10;
 
     useEffect(() => {
+        //carrega a quantidade total de registros para a paginação da tabela
+        async function loadRecords() {
+            try {
+                const response = await api.get("microbiology/data/length/");
+                const { count } = response.data;
+                const records = Number(count);
+                setRecords(records);
+            } catch (error) {
+                //  toast.error("Falha ao carregar dados");
+            }
+        }
+
+        //carrega os dados da tabela
         async function loadMicrobiologies() {
             try {
                 const response = await api.get<IMicrobiology[]>(
@@ -40,11 +57,29 @@ const Microbiology = () => {
                 const { data } = response;
                 setMicrobiologies(data);
             } catch (error) {
-              //  toast.error("Falha ao carregar dados");
+                //  toast.error("Falha ao carregar dados");
             }
         }
+
+        loadRecords();
         loadMicrobiologies();
     }, []);
+
+    async function handlePage(event: any) {
+        try {
+             const index = event.first;
+             const page = Number(index) / 10 + 1;
+             const response = await api.get("microbiology", {
+                 params: { page },
+             });
+             const { data } = response;
+             setMicrobiologies(data);
+             setFirst(index);
+        } catch (error) {
+         //toast de erro   
+         console.log(error)
+        }
+    }
 
     const header = (
         <>
@@ -56,6 +91,7 @@ const Microbiology = () => {
 
     return (
         <div className="row m-5 px-5">
+            {first}
             <Button
                 variant="outline-dark"
                 className="mb-2"
@@ -75,9 +111,14 @@ const Microbiology = () => {
             <DataTable
                 value={microbiologies}
                 paginator={true}
-                rows={10}
+                rows={rows}
+                totalRecords={records}
+                first={first}
+                onPage={handlePage}
                 header={header}
                 emptyMessage="Nenhum resultado encontrado"
+                lazy={true}
+                selectionMode="single"
                 className="p-datatable-responsive-demo"
                 resizableColumns={true}
             >
