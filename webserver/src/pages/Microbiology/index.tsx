@@ -131,13 +131,16 @@ const Microbiology = () => {
     return (
         <>
             <div className="row m-5 px-5">
-                <Button
-                    variant="outline-dark"
-                    className="mb-2"
-                    style={{ borderRadius: "0", height: "41.5px" }}
-                >
-                    Cadastrar Microbiologia
-                </Button>
+                <Link to="/microbiology/create">
+                    <Button
+                        variant="outline-dark"
+                        className="mb-2"
+                        style={{ borderRadius: "0", height: "41.5px" }}
+                    >
+                        Cadastrar Microbiologia
+                    </Button>
+                </Link>
+
                 <Button
                     variant="outline-secondary"
                     className="mb-2 ml-2"

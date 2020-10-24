@@ -68,7 +68,7 @@ const Header = () => {
         
         getNotifications();
 
-    }, [])
+    }, [cookies.userData])
 
     function showToast(messageType: string, messageTitle: string, messageContent: string, lifeTime?: number){
         setToast(false)
@@ -176,7 +176,7 @@ const Header = () => {
                         </Link>
                     </div>
                     <div className="col-md-auto mx-2">
-                        <Link className="text-decoration-none" to="/underDevelopment">
+                        <Link className="text-decoration-none" to="/microbiology">
                             MICROBIOLOGIA
                         </Link>
                     </div>
