@@ -11,9 +11,21 @@ interface Props {
     label: string;
     htmlFor: string;
     name: string;
+    value: string;
+    inputValue: any;
+    onChange: any;
+    inputOnChange:any;
 }
 
-const Select: React.FC<Props> = ({ label, htmlFor, name }) => {
+const Select: React.FC<Props> = ({
+    label,
+    htmlFor,
+    name,
+    value,
+    inputValue,
+    onChange,
+    inputOnChange,
+}) => {
     return (
         <div className="form-row mt-4">
             <div className="col mr-2">
@@ -23,6 +35,8 @@ const Select: React.FC<Props> = ({ label, htmlFor, name }) => {
                 <Dropdown
                     options={options}
                     placeholder="Selecione uma opção"
+                    value={value}
+                    onChange={onChange}
                     style={{ width: "100%" }}
                     required
                 />
@@ -36,8 +50,9 @@ const Select: React.FC<Props> = ({ label, htmlFor, name }) => {
                     id={name}
                     name={name}
                     placeholder="Observação"
+                    defaultValue={inputValue}
+                    onChange={inputOnChange}
                     autoFocus
-                    required
                 />
             </div>
         </div>

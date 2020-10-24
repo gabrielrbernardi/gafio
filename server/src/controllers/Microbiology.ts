@@ -28,7 +28,7 @@ class MicrobiologyController {
         if (!(patientExists[0] && medicalRecordsExists[0])) {
             return res.status(400).json({
                 createdMicrobiology: false,
-                message: "Paciente ou prontuário não corresponde.",
+               error: "Paciente ou prontuário não corresponde.",
             });
         } else {
             try {
@@ -62,7 +62,7 @@ class MicrobiologyController {
 
             const results = await query;
             if (results.length) return res.json(results);
-            else return res.json({ message: "Não encontrado." });
+            else return res.json({error: "Não encontrado." });
         } catch (error) {
             return res.json({ error });
         }
@@ -83,7 +83,7 @@ class MicrobiologyController {
                 if (!patientExists[0]) {
                     return res.status(400).json({
                         createdMicrobiology: false,
-                        message: "Paciente não existe!",
+                        error: "Paciente não existe!",
                     });
                 }
             }
@@ -97,7 +97,7 @@ class MicrobiologyController {
                 if (!medicalRecordsExists[0]) {
                     return res.status(400).json({
                         createdMicrobiology: false,
-                        message: "Prontuário não existe!",
+                       error: "Prontuário não existe!",
                     });
                 }
             }
@@ -127,7 +127,7 @@ class MicrobiologyController {
             } else {
                 return res.status(400).json({
                     deletedMicrobiology: false,
-                    message: "Microbiollogia não existe!",
+                   error: "Microbiollogia não existe!",
                 });
             }
         } catch (error) {

@@ -15,21 +15,20 @@ interface IMicrobiology {
     IdProntuario: number;
     DataColeta: string;
     DataResultado: string;
-    SwabNasal: any;
-    SwabNasalObservacoes?: string;
-    SwabRetal: any;
-    SwabRetalObservacoes?: string;
-    Sangue: any;
-    SangueObservacoes?: string;
-    Urina: any;
-    UrinaObservacoes?: string;
-    SecrecaoTraqueal: any;
-    SecrecaoTraquealObservacoes?: string;
-    Outros: any;
-    OutrosObservacoes?: string;
+    SwabNasal: string;
+    SwabNasalObservacoes: string;
+    SwabRetal: string;
+    SwabRetalObservacoes: string;
+    Sangue: string;
+    SangueObservacoes: string;
+    Urina: string;
+    UrinaObservacoes: string;
+    SecrecaoTraqueal: string;
+    SecrecaoTraquealObservacoes: string;
+    Outros: string;
+    OutrosObservacoes: string;
     PerfilSensibilidade: string;
 }
-
 const Microbiology = () => {
     const [microbiologies, setMicrobiologies] = useState<IMicrobiology[]>([]);
     const [records, setRecords] = useState<number>(0);
