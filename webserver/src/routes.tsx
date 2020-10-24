@@ -39,6 +39,8 @@ import Assessment from './pages/MedicalRecords/Assessment/Assessment'
 import AssessmentCreate from './pages/MedicalRecords/Assessment/Create/Create'
 
 import Microbiology from './pages/Microbiology';
+import MicrobiologyForm from "./pages/Microbiology/MicrobiologyForm";
+
 
 const Routes = () => {
     return (
@@ -294,6 +296,17 @@ const Routes = () => {
                     )}
                     exact
                 />
+
+                <Route
+                    path="/microbiology/create"
+                    component={MicrobiologyForm}
+                />
+
+                <Route
+                    path="/microbiology/edit/:id"
+                    component={MicrobiologyForm}
+                />
+                
             </Switch>
         </BrowserRouter>
     );
