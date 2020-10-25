@@ -38,7 +38,6 @@ const Select: React.FC<Props> = ({
                     value={value}
                     onChange={onChange}
                     style={{ width: "100%" }}
-                    required
                 />
                 <DropdownReact />
             </div>

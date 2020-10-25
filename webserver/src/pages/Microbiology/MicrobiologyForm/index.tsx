@@ -1,7 +1,6 @@
 import React, { useState, useEffect, FormEvent } from "react";
 import { RouteComponentProps } from "react-router-dom";
 import * as Yup from "yup";
-import { useHistory } from "react-router-dom";
 
 import Loading from "../../../components/Loading";
 import ToastComponent from "../../../components/Toast";
@@ -72,7 +71,6 @@ const MicrobiologyForm = ({ match }: RouteComponentProps<Props>) => {
     const [loading, setLoading] = useState<boolean>(false);
 
     const { id } = match.params;
-    const history = useHistory();
 
     useEffect(() => {
         async function loadMicrobiologyInfo() {
@@ -86,19 +84,25 @@ const MicrobiologyForm = ({ match }: RouteComponentProps<Props>) => {
                 setDataColeta(microbiology.DataColeta);
                 setDataResultado(microbiology.DataResultado);
                 setSwabNasal(microbiology.SwabNasal);
-                setSwabNasalObservacoes(microbiology.SwabNasalObservacoes);
+                if (microbiology.SwabNasalObservacoes)
+                    setSwabNasalObservacoes(microbiology.SwabNasalObservacoes);
                 setSwabRetal(microbiology.SwabRetal);
-                setSwabRetalObservacoes(microbiology.SwabRetalObservacoes);
+                if (microbiology.SwabRetalObservacoes)
+                    setSwabRetalObservacoes(microbiology.SwabRetalObservacoes);
                 setSangue(microbiology.Sangue);
-                setSangueObservacoes(microbiology.SangueObservacoes);
+               if (microbiology.SangueObservacoes)
+                   setSangueObservacoes(microbiology.SangueObservacoes);
                 setUrina(microbiology.Urina);
-                setUrinaObservacoes(microbiology.UrinaObservacoes);
+                if (microbiology.UrinaObservacoes)
+                    setUrinaObservacoes(microbiology.UrinaObservacoes);
                 setSecrecaoTraqueal(microbiology.SecrecaoTraqueal);
-                setSecrecaoTraquealObservacoes(
-                    microbiology.SecrecaoTraquealObservacoes
-                );
+                if (microbiology.SecrecaoTraquealObservacoes)
+                    setSecrecaoTraquealObservacoes(
+                        microbiology.SecrecaoTraquealObservacoes
+                    );
                 setOutros(microbiology.Outros);
-                setOutrosObservacoes(microbiology.OutrosObservacoes);
+                if (microbiology.OutrosObservacoes)
+                    setOutrosObservacoes(microbiology.OutrosObservacoes);
                 setPerfilSensibilidade(microbiology.PerfilSensibilidade);
 
                 setLoading(false);
@@ -180,7 +184,6 @@ const MicrobiologyForm = ({ match }: RouteComponentProps<Props>) => {
                 );
             }
             setLoading(false);
-            history.goBack();
         } catch (err) {
             setLoading(false);
             if (err instanceof Yup.ValidationError) {
@@ -241,7 +244,7 @@ const MicrobiologyForm = ({ match }: RouteComponentProps<Props>) => {
                                                     )
                                                 )
                                             }
-                                            defaultValue={IdPaciente}
+                                            value={IdPaciente}
                                             autoFocus
                                             required
                                         />
@@ -267,7 +270,7 @@ const MicrobiologyForm = ({ match }: RouteComponentProps<Props>) => {
                                                     )
                                                 )
                                             }
-                                            defaultValue={IdProntuario}
+                                            value={IdProntuario}
                                             autoFocus
                                             required
                                         />
