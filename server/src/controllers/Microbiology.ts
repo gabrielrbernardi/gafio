@@ -68,7 +68,7 @@ class MicrobiologyController {
                     )
                     .select(
                         "Microbiologia.*",
-                        "Prontuario.*",
+                        "Prontuario.NroProntuario",
                         "Paciente.NomePaciente",
                         "Paciente.NroPaciente"
                     );

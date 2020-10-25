@@ -6,7 +6,10 @@ import { Column } from "primereact/column";
 import Button from "react-bootstrap/Button";
 import ToastComponent from "../../components/Toast";
 import Loading from "../../components/Loading";
+import { Dialog } from "primereact/dialog";
+import View from "./MicrobiologyView";
 
+import { useHistory } from "react-router-dom";
 import api from "../../services/api";
 
 interface IMicrobiology {
@@ -33,6 +36,10 @@ const Microbiology = () => {
     const [microbiologies, setMicrobiologies] = useState<IMicrobiology[]>([]);
     const [records, setRecords] = useState<number>(0);
     const [first, setFirst] = useState<number>(0);
+    const [id, setId] = useState<number>(0);
+    const [view, setView] = useState<boolean>(false);
+    const [displayDialog, setDisplayDialog] = useState(false);
+    const [selectedMicrobiology, setselectedMicrobiology] = useState<any>(null);
 
     const [toast, setToast] = useState<boolean>(false);
     const [getMessageType, setMessageType] = useState<string>("");
@@ -42,6 +49,7 @@ const Microbiology = () => {
     const [tableloading, setTableLoading] = useState<boolean>(true);
     const [loading, setLoading] = useState<boolean>(true);
 
+    const history = useHistory();
     const rows = 10;
 
     useEffect(() => {
@@ -104,6 +112,22 @@ const Microbiology = () => {
         }
     }
 
+    function onMicrobiologySelect(e: any) {
+        const microbiologyData = e.data;
+        const { IdMicrobiologia } = microbiologyData;
+        setId(IdMicrobiologia);
+        setDisplayDialog(true);
+    }
+
+    async function handleDelete() {
+        try {
+            await api.delete(`/microbiology/delete/${id}`);
+            history.go(0);
+        } catch (error) {
+            HandleToast("error", "Erro!", "Falha ao excluir a microbiologia.");
+        }
+    }
+
     function HandleToast(
         messageType: string,
         messageTitle: string,
@@ -163,6 +187,11 @@ const Microbiology = () => {
                     selectionMode="single"
                     className="p-datatable-responsive-demo"
                     resizableColumns={true}
+                    selection={selectedMicrobiology}
+                    onSelectionChange={(e) => setselectedMicrobiology(e.value)}
+                    onRowSelect={(e) => {
+                        onMicrobiologySelect(e);
+                    }}
                 >
                     <Column
                         field="IdMicrobiologia"
@@ -225,6 +254,54 @@ const Microbiology = () => {
                         style={{ width: "12%", textAlign: "center" }}
                     />
                 </DataTable>
+
+                <Dialog
+                    visible={displayDialog}
+                    style={{ width: "50%" }}
+                    header="Ações"
+                    modal={true}
+                    onHide={() => setDisplayDialog(false)}
+                >
+                    <div className="form-row text-center">
+                        <div className="col">
+                            <Button
+                                className="mx-2 p-3"
+                                onClick={() => {
+                                    setDisplayDialog(false);
+                                    setView(true);
+                                }}
+                            >
+                                Visualizar <br></br> microbiologia
+                            </Button>
+                        </div>
+                        <div className="col">
+                            <Button
+                                className="mx-2 p-3"
+                                onClick={() => {
+                                    setDisplayDialog(false);
+                                    history.push(`microbiology/edit/${id}`);
+                                }}
+                            >
+                                Atualizar <br></br> microbiologia
+                            </Button>
+                        </div>
+
+                        <div className="col">
+                            <Button
+                                className="mx-2 p-3"
+                                onClick={() => {
+                                    setDisplayDialog(false);
+                                    handleDelete();
+                                }}
+                            >
+                                Excluir <br></br> microbiologia
+                            </Button>
+                        </div>
+                    </div>
+                </Dialog>
+                {view && (
+                    <View view={view} id={id} setView={() => setView(false)} />
+                )}
             </div>
             {toast && (
                 <ToastComponent
