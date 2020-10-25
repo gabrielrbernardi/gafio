@@ -28,7 +28,7 @@ class MicrobiologyController {
         if (!(patientExists[0] && medicalRecordsExists[0])) {
             return res.status(400).json({
                 createdMicrobiology: false,
-               error: "Paciente ou prontuário não corresponde.",
+                error: "Paciente ou prontuário não corresponde.",
             });
         } else {
             try {
@@ -52,17 +52,35 @@ class MicrobiologyController {
             const query = knex("Microbiologia");
 
             if (id) {
-                query.where({ IdMicrobiologia: id }).select("Microbiologia.*");
+                query
+                    .where({ IdMicrobiologia: id })
+                    .join(
+                        "Prontuario",
+                        "Prontuario.SeqProntuario",
+                        "=",
+                        "Microbiologia.IdProntuario"
+                    )
+                    .join(
+                        "Paciente",
+                        "Paciente.SeqPaciente",
+                        "=",
+                        "Microbiologia.IdPaciente"
+                    )
+                    .select(
+                        "Microbiologia.*",
+                        "Prontuario.*",
+                        "Paciente.NomePaciente",
+                        "Paciente.NroPaciente"
+                    );
             } else {
                 const { page = 1 } = req.query;
                 const pageRequest = Number(page);
                 const rows = 10;
                 query.limit(rows).offset((pageRequest - 1) * rows);
             }
-
             const results = await query;
             if (results.length) return res.json(results);
-            else return res.json({error: "Não encontrado." });
+            else return res.json({ error: "Não encontrado." });
         } catch (error) {
             return res.json({ error });
         }
@@ -97,7 +115,7 @@ class MicrobiologyController {
                 if (!medicalRecordsExists[0]) {
                     return res.status(400).json({
                         createdMicrobiology: false,
-                       error: "Prontuário não existe!",
+                        error: "Prontuário não existe!",
                     });
                 }
             }
@@ -127,7 +145,7 @@ class MicrobiologyController {
             } else {
                 return res.status(400).json({
                     deletedMicrobiology: false,
-                   error: "Microbiollogia não existe!",
+                    error: "Microbiollogia não existe!",
                 });
             }
         } catch (error) {
@@ -135,7 +153,7 @@ class MicrobiologyController {
         }
     }
 
-    //método para obter a quantidade total 
+    //método para obter a quantidade total
     async getLength(req: Request, res: Response) {
         try {
             const microbiologyLength = await knex("Microbiologia").count({
@@ -144,7 +162,7 @@ class MicrobiologyController {
             const [count] = microbiologyLength;
             return res.json(count);
         } catch (error) {
-            return res.json({error})
+            return res.json({ error });
         }
     }
 }
