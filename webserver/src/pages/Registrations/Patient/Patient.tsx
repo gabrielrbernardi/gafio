@@ -11,7 +11,9 @@ import {PatientService} from './PatientService';
 import { InputText } from 'primereact/inputtext';
 import { Calendar } from 'primereact/calendar';
 
-const Patient = () => {
+import './Patient.css';
+
+const Patient = (props: any) => {
     const [totalRecords, setTotalRecords] = useState(0);
     const [loading, setLoading] = useState<boolean>(false);
     const [loading1, setLoading1] = useState<boolean>(false);
@@ -42,6 +44,7 @@ const Patient = () => {
     const [displayDialog, setDisplayDialog] = useState(false);
     const [displayDialog1, setDisplayDialog1] = useState(false);
     const [displayDialog2, setDisplayDialog2] = useState(false);
+    const [displayDialog3, setDisplayDialog3] = useState(false);
 
     const [getToast, setToast] = useState<boolean>();
     const [getMessageType, setMessageType] = useState<string>('');
@@ -73,6 +76,12 @@ const Patient = () => {
 
     useEffect(() => {
         document.title = 'GAFio | Paciente';
+        try{
+            const id = props.match.params.idPatient
+            console.log( id)
+        }catch(err){
+            console.log(err)
+        }
         getPatientFunction();
     }, [])
     
@@ -153,7 +162,7 @@ const Patient = () => {
     function getPatientInformationUpdate(){
         setPacienteNomeUpdate(getPacienteNome);
         var parseDataAniversario = getPacienteDataNascimento.split('/')
-        var dataNascimento = new Date(parseDataAniversario[2], parseDataAniversario[1], parseDataAniversario[0]);
+        var dataNascimento = new Date(parseDataAniversario[2], parseDataAniversario[1]-1, parseDataAniversario[0]);
         setPacienteDataNascimentoUpdate(dataNascimento);
         setPacienteGeneroUpdate(getPacienteGenero[0]);
     }
@@ -166,10 +175,26 @@ const Patient = () => {
                 setDisplayDialog2(false);
                 getPatientFunction();
             }else{
-                console.log(response.error)
                 showToast('error', "Erro!", String(response.error));
             }
         })
+    }
+
+    async function deletePatient(){
+        await patientService.deletePatient(getPacienteSeq).then(response => {
+            if(response.deletedPatient){
+                showToast('success', "Atualização!", "Paciente excluído com sucesso.");
+                setDisplayDialog3(false);
+                getPatientFunction();
+            }else{
+                console.log(response.error)
+                if(response.error.code){
+                    showToast('error', "Erro!", String(response.error.code) + ' ' + String(response.error.sqlMessage));                    
+                }else{
+                    showToast('error', "Erro!", String(response.error));
+                }
+            }    
+        });
     }
 
     function showToast(messageType: string, messageTitle: string, messageContent: string){
@@ -199,31 +224,75 @@ const Patient = () => {
         setPacienteGeneroUpdate(e.value);
     };
 
+    const seqPacienteBodyTemplate = (rowData:any) => {
+        return (
+            <React.Fragment>
+                <span className="p-column-title">SeqPaciente</span>
+                <a>{rowData.SeqPaciente}</a>
+            </React.Fragment>
+        );
+    }
+    const nroPacienteBodyTemplate = (rowData:any) => {
+        return (
+            <React.Fragment>
+                <span className="p-column-title">SeqPaciente</span>
+                <a>{rowData.NroPaciente}</a>
+            </React.Fragment>
+        );
+    }
+    const generoPacienteBodyTemplate = (rowData:any) => {
+        return (
+            <React.Fragment>
+                <span className="p-column-title">SeqPaciente</span>
+                <a>{rowData.Genero}</a>
+            </React.Fragment>
+        );
+    }
+    const nomePacienteBodyTemplate = (rowData:any) => {
+        return (
+            <React.Fragment>
+                <span className="p-column-title">SeqPaciente</span>
+                <a>{rowData.NomePaciente}</a>
+            </React.Fragment>
+        );
+    }
+    const dataNascimentoPacienteBodyTemplate = (rowData:any) => {
+        return (
+            <React.Fragment>
+                <span className="p-column-title">SeqPaciente</span>
+                <a>{rowData.DataNascimento}</a>
+            </React.Fragment>
+        );
+    }
+    
+
     return (
         <>
             <div className="row m-5 px-5">
-                <Link to={location => ({...location, pathname: '/registrations/patient/create'})}><Button variant="outline-dark" className="mb-2" style={{borderRadius: '0', height:'41.5px'}}>Cadastrar Paciente</Button></Link>        
-                <DataTable value={paciente} paginator={true} rows={rows} header="Pacientes" totalRecords={totalRecords}
-                    emptyMessage="Nenhum resultado encontrado" className="p-datatable-responsive-demo" resizableColumns={true} loading={loading}
-                    first={getFirst} onPage={onPage} lazy={true} selectionMode="single" selection={selectedUser} onSelectionChange={e => setSelectedUser(e.value)}
-                    onRowSelect={onUserSelect}>
-                    <Column field="SeqPaciente" header="SeqPaciente" style={{width: '10%', textAlign: 'center'}}/>
-                    <Column field="NroPaciente" header="NroPaciente" style={{width: '10%', textAlign: 'center'}}/>
-                    <Column field="Genero" header="Gênero" style={{width: '10%', textAlign: 'center'}}/>
-                    <Column field="NomePaciente" header="NomePaciente" style={{width: '20%', textAlign: 'center'}}/>
-                    <Column field="DataNascimento" header="DataNascimento" style={{width: '20%', textAlign: 'center'}}/>
-                </DataTable>
+                <Link to={location => ({...location, pathname: '/registrations/patient/create'})}><Button variant="outline-dark" className="mb-2" style={{borderRadius: '0', height:'41.5px'}}>Cadastrar Paciente</Button></Link>
+                <div className="datatable-responsive-demo">
+                    <DataTable value={paciente} paginator={true} rows={rows} header="Pacientes" totalRecords={totalRecords}
+                        emptyMessage="Nenhum resultado encontrado" className="p-datatable-responsive-demo" resizableColumns={true} loading={loading}
+                        first={getFirst} onPage={onPage} lazy={true} selectionMode="single" selection={selectedUser} onSelectionChange={e => setSelectedUser(e.value)}
+                        onRowSelect={onUserSelect}>
+                        <Column field="SeqPaciente" header="SeqPaciente" body={seqPacienteBodyTemplate}/>
+                        <Column field="NroPaciente" header="NroPaciente" body={nroPacienteBodyTemplate}/>
+                        <Column field="Genero" header="Gênero" body={generoPacienteBodyTemplate}/>
+                        <Column field="NomePaciente" header="NomePaciente"body={nomePacienteBodyTemplate}/>
+                        <Column field="DataNascimento" header="DataNascimento" body={dataNascimentoPacienteBodyTemplate}/>
+                    </DataTable>
+                </div>
             </div>
             <Dialog visible={displayDialog} style={{width: '50%'}} header="Ações" modal={true} onHide={() => setDisplayDialog(false)}>
                 <div className="form-row">
                     <div className="col">
-                        <Button variant="info" className="mt-2 mb-2 p-3" style={{width: '100%'}} onClick={() => { getPatientInformation(); setDisplayDialog1(true); setDisplayDialog(false);}}>Visualizar Paciente</Button>
+                        <Button variant="info" className="mt-2 mb-2 p-3" style={{width: '100%'}} onClick={() => {getPatientInformation(); setDisplayDialog1(true); setDisplayDialog(false)}}>Visualizar Paciente</Button>
                     </div>
                     <div className="col ml-2">
                         <Button variant="primary" className="mt-2 mb-2 p-3"  style={{width: '100%'}}  onClick={() => {getPatientInformationUpdate(); setDisplayDialog2(true); setDisplayDialog(false)}}>Atualizar paciente</Button>
                     </div>
                     <div className="col ml-2">
-                        <Button variant="danger" className="mt-2 mb-2 p-3" style={{width: '100%'}} onClick={() => {setDisplayDialog1(true); setDisplayDialog(false)}}>Excluir Paciente</Button>
+                        <Button variant="danger" className="mt-2 mb-2 p-3" style={{width: '100%'}} onClick={() => {setDisplayDialog3(true); setDisplayDialog(false)}}>Excluir Paciente</Button>
                     </div>
                     {/* <div className="col mr-4">
                         <Button className="mx-2 mt-2 mb-2 p-3" onClick={() => {setDisplayDialog1(true); setDisplayDialog(false)}}>Atualizar <br></br> prontuário</Button>
@@ -272,6 +341,18 @@ const Patient = () => {
                     </div>
                     <button type="submit" className="btn btn-info btn-primary mt-3">Cadastrar</button>
                 </form>
+            </Dialog>
+
+            <Dialog visible={displayDialog3} style={{width: '50%'}} modal={true} header="Exclusão de paciente" onHide={() => setDisplayDialog3(false)}>
+                <p className="text-dark h5 mt-2">Deseja exluir o paciente {getPacienteNome} de código {getPacienteSeq}?</p>
+                <div className="row">
+                    <div className="col">
+                        <Button variant="outline-danger" onClick={() => deletePatient()} style={{width: '100%'}}>Sim</Button>
+                    </div>
+                    <div className="col">
+                        <Button variant="outline-info" onClick={() => setDisplayDialog3(false)} style={{width: '100%'}}>Não</Button>
+                    </div>
+                </div>
             </Dialog>
             
             {getToast &&

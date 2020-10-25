@@ -178,19 +178,38 @@ class PatientController {
         }
     }
 
-  // Método para deletar um paciente:
+  // Método para exluir um paciente:
   async delete(request: Request, response: Response) {
-    const { NroPaciente } = request.params;
-    const patient = await knex("Paciente").where("NroPaciente", NroPaciente);
-    if (patient) {
-      await knex("Paciente").where("NroPaciente", NroPaciente).delete();
-      return response.json({ deletedPatient: true });
-    }
-    else {
-      return response.json({
-        deletedPatient: false,
-        error: "Paciente não encontrado.",
-      });
+    const { SeqPaciente } = request.params;
+    try{
+        const patient = await knex("Paciente").where("SeqPaciente", SeqPaciente);
+        if (patient) {
+            const assessmentsPatient = await knex("Avaliacao").where("IdPaciente", SeqPaciente);
+            if(assessmentsPatient != []){
+                await knex("Avaliacao").where("IdPaciente", SeqPaciente).delete();
+                await knex("Historico").where("IdPaciente", SeqPaciente).delete();
+                await knex("Prontuario").where("SeqPaciente", SeqPaciente).delete();
+                await knex("Paciente").where("SeqPaciente", SeqPaciente).delete();
+                return response.json({ deletedPatient: true});
+            }else{
+                const medicalRecordsPatient = await knex("Prontuario").where("SeqPaciente", SeqPaciente);
+                if(medicalRecordsPatient != []){
+                    await knex("Prontuario").where("SeqPaciente", SeqPaciente).delete();
+                    await knex("Paciente").where("SeqPaciente", SeqPaciente).delete();
+                    return response.json({ deletedPatient: true});
+                }else{
+                    await knex("Paciente").where("SeqPaciente", SeqPaciente).delete();
+                    return response.json({ deletedPatient: true});
+                }
+            }
+        } else {
+            return response.json({
+                deletedPatient: false,
+                error: "Paciente não encontrado.",
+            });
+        }
+    }catch(err){
+        return response.json({deletedPatient: false, error: err});
     }
   }
 }

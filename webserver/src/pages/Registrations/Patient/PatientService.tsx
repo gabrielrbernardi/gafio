@@ -17,6 +17,14 @@ class PatientService{
             return {error: err};
         })
     }
+
+    async deletePatient(IdPaciente: Number){
+        return await api.delete(`/patient/delete/${IdPaciente}`).then(response => {
+            return response.data;
+        }).catch(err => {
+            return {error: err};
+        })
+    }
 }
 
 export {PatientService};
