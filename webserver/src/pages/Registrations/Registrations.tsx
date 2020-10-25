@@ -9,7 +9,9 @@ const Registrations = () => {
     }, []);
 
     return (
-        <div className="m-5 p-3 row">
+        <>
+        <p className="h3 text-center">Cadastros</p>
+        <div className="mx-5 p-3 mt-0 pt-0 row">
             <Link className="text-decoration-none col-sm-4 mx-auto" to="/registrations/patient">
                 <div className="card text-center shadow zoom-hover">
                     <p className="h6">
@@ -22,7 +24,7 @@ const Registrations = () => {
                 <div className="card text-center shadow zoom-hover">
                     <p className="h6">
                         <GiMedicines className="mt-3 mb-3 ml-auto mr-auto" size={40} /><br/>
-                        <strong>CADASTRO DE MEDICAMENTOS</strong>
+                        <strong>MEDICAMENTOS</strong>
                     </p>
                 </div>
             </Link>
@@ -30,11 +32,12 @@ const Registrations = () => {
                 <div className="card text-center shadow zoom-hover">
                     <p className="h6">
                         <GiVirus className="mt-3 mb-3 ml-auto mr-auto" size={40} /><br/>
-                        <strong>CADASTRO DE DOENÇAS</strong>
+                        <strong>DOENÇAS</strong>
                     </p>
                 </div>
             </Link>
         </div>
+        </>
     )
 }
 
