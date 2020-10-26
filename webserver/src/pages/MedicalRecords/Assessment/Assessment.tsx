@@ -32,7 +32,6 @@ const Assessment = () => {
     const [getAlertaDotDescricao, setAlertaDotDescricao] = useState<any>(null)
     const [getDisfuncaoRenal, setDisfuncaoRenal] = useState<string>('')
     const [getAtbContraindicacao, setAtbContraindicacao] = useState<any>(null)
-    const [getAtbContraindicacaoString, setAtbContraindicacaoString] = useState<any>(null)
     const [getAlteracaoPrescricao, setAlteracaoPrescricao] = useState<any>(null)
     const [getAlteracaoPrescricaoString, setAlteracaoPrescricaoString] = useState<any>(null)
     const [getAtbDiluicaoInfusao, setAtbDiluicaoInfusao] = useState<any>(null)
@@ -42,9 +41,7 @@ const Assessment = () => {
     const [getHemodialise, setHemodialise] = useState<any>(null)
     const [getHemodialiseString, setHemodialiseString] = useState<any>(null)
     const [getAtbOral, setAtbOral] = useState<any>(null)
-    const [getAtbOralString, setAtbOralString] = useState<any>(null)
     const [getTrocaAtb, setTrocaAtb] = useState<any>(null)
-    const [getTrocaAtbString, setTrocaAtbString] = useState<any>(null)
     const [getNovoAtb, setNovoAtb] = useState<any>(null)
     const [getNomePaciente, setNomePaciente] = useState<string>('')
     const [getDataAvaliacaoTratada, setDataAvaliacaoTratada] = useState<string>('')
@@ -144,48 +141,46 @@ const Assessment = () => {
             <p style={{textAlign:'left'}} className="p-clearfix d-inline">Avaliações</p>
         </>;
 
-    // function handleSearch(){
-    //     if(!getOptionState){
-    //         showToast('error', 'Erro!', 'Selecione um filtro para buscar.');
-    //         return
-    //     }
-    //     setLoading(true);
-    //     if(!searchInput){
-    //         medicalRecordsService.getMedicalRecordsPaginate(10).then(data => {
-    //             getAssessmentFunction(data);
-    //             setLoading(false);
-    //             showToast('error', 'Erro!', 'Digite algum valor para pesquisar.');
-    //         })
-    //         return
-    //     }
-    //     setMode('S');
-    //     medicalRecordsService.searchMedicalRecordsGlobal(searchInput, getOptionState.cod, getFirst+rows).then(data => {
-    //         if(!data.showMedicalRecords){
-    //             setLoading(false);
-    //             setMedicalRecords([]);
-    //             showToast('warn', 'Resultados não encontrados!', 'Não foram encontrados resultados para a busca desejada')
-    //             return
-    //         }
-    //         getAssessmentFunction(data)
-    //         let searchType;
-    //         if(getOptionState.name === 'Nro Prontuário'){
-    //             searchType = 'NroProntuario';
-    //         }else if(getOptionState.name === 'Nro Paciente'){
-    //             searchType = 'NroPaciente';
-    //         }else if(getOptionState.name === 'Data Internação'){
-    //             searchType = 'DataInternacao'
-    //         }else{
-    //             searchType = getOptionState.name
-    //         }
-    //         console.log(data)
-    //         let dataSize = data.length[0]['count(`' + searchType + '`)']
-    //         if(dataSize == 1){
-    //             showToast('info', 'Resultado Encontrado!', `Foi encontrado ${dataSize} resultado.`)
-    //         }else{
-    //             showToast('info', 'Resultados Encontrados!', `Foram encontrados ${dataSize} resultados.`)
-    //         }
-    //     })
-    // }
+    function handleSearch(){
+        if(!getOptionState){
+            showToast('error', 'Erro!', 'Selecione um filtro para buscar.');
+            return
+        }
+        setLoading(true);
+        if(!searchInput){
+            assessmentService.getAssessmentPaginate(queryResponse, 10).then(data => {
+                getAssessmentFunction(data);
+                setLoading(false);
+                showToast('error', 'Erro!', 'Digite algum valor para pesquisar.');
+            })
+            return
+        }
+        setMode('S');
+        assessmentService.searchAssessmentGlobal(queryResponse, searchInput, getOptionState.cod, getFirst+rows).then(data => {
+            if(!data.showAssessments){
+                setLoading(false);
+                setAssessment([]);
+                showToast('warn', 'Resultados não encontrados!', 'Não foram encontrados resultados para a busca desejada')
+                return
+            }
+            getAssessmentFunction(data)
+            let searchType;
+            if(getOptionState.name === 'Nro Avaliação'){
+                searchType = 'NroAvaliacao';
+            }else if(getOptionState.name === 'Data Avaliação'){
+                searchType = 'DataAvaliacao';
+            }else{
+                searchType = getOptionState.name
+            }
+            console.log(data)
+            let dataSize = data.length[0]['count(`' + searchType + '`)']
+            if(dataSize == 1){
+                showToast('info', 'Resultado Encontrado!', `Foi encontrado ${dataSize} resultado.`)
+            }else{
+                showToast('info', 'Resultados Encontrados!', `Foram encontrados ${dataSize} resultados.`)
+            }
+        })
+    }
 
     function showToast(messageType: string, messageTitle: string, messageContent: string){
         setToast(false)
@@ -281,15 +276,20 @@ const Assessment = () => {
     ]
 
     let options3 = [
-        {label: 'Sim', value: 'S'},
-        {label: 'Não aplica', value: 'NA'},
-        {label: 'Não', value: 'N'}
+        {label: 'Sim', value: 'Sim'},
+        {label: 'Não aplica', value: 'Não aplica'},
+        {label: 'Não', value: 'Não'}
     ]
 
     let options4 = [
         {name: 'Nro Avaliação', cod: 'Nro'},
         {name: 'Data Avaliação', cod: 'Dat'}
-    ];
+    ]
+
+    let options5 = [
+        {label: 'Sim', value: 'Sim'},
+        {label: 'Não', value: 'Não'}
+    ]
 
     function handleSubmit(event: FormEvent){
         event.preventDefault();
@@ -377,12 +377,6 @@ const Assessment = () => {
         setAlertaDot(assessmentData.AlertaDot)
         setAlertaDotDescricao(assessmentData.AlertaDotDescricao)
         setDisfuncaoRenal(assessmentData.DisfuncaoRenal)
-        if(assessmentData.AtbContraindicacao == "S"){
-            setAtbContraindicacaoString("Sim")
-        }
-        if(assessmentData.AtbContraindicacao == "N"){
-            setAtbContraindicacaoString("Não")
-        }
         setAtbContraindicacao(assessmentData.AtbContraindicacao)
         if(assessmentData.AlteracaoPrescricao == "S"){
             setAlteracaoPrescricaoString("Sim")
@@ -415,22 +409,7 @@ const Assessment = () => {
             setHemodialiseString("Não")
         }
         setHemodialise(assessmentData.Hemodialise)
-        if(assessmentData.AtbOral == "S"){
-            setAtbOralString("Sim")
-        }
-        if(assessmentData.AtbOral == "NA"){
-            setAtbOralString("Não aplica")
-        }
-        if(assessmentData.AtbOral == "N"){
-            setAtbOralString("Não")
-        }
         setAtbOral(assessmentData.AtbOral)
-        if(assessmentData.TrocaAtb == "S"){
-            setTrocaAtbString("Sim")
-        }
-        if(assessmentData.TrocaAtb == "N"){
-            setTrocaAtbString("Não")
-        }
         setTrocaAtb(assessmentData.TrocaAtb)
         setNovoAtb(assessmentData.NovoAtb)
         setNomePaciente(assessmentData.NomePaciente)
@@ -458,7 +437,7 @@ const Assessment = () => {
                                 <>
                                     <Dropdown className="mx-1" value={getOptionState} options={options4} onChange={onOptionChange} placeholder="Selecione um filtro" optionLabel="name" style={{width: '12em'}}/>
                                     <Button tabIndex={2} variant="outline-danger" className="p-0 mr-1" style={{width: '17px', borderRadius: '0'}} onClick={() => {setSearchInput(''); getAssessmentFunction(); setMode('N'); setOptionState(null)}}><AiOutlineClose size={15}/></Button>
-                                    {/* <Button onClick={handleSearch} style={{borderRadius: '0'}}><FiSearch size={15}/></Button> */}
+                                    <Button onClick={handleSearch} style={{borderRadius: '0'}}><FiSearch size={15}/></Button>
                                 </>
                         }
                     </div>
@@ -519,16 +498,15 @@ const Assessment = () => {
                     <p className="text-dark h5 mt-3">Descrição do Alerta Dot: {getAlertaDotDescricao}</p>
                 }
                 <p className="text-dark h5 mt-3">Disfuncao Renal: {getDisfuncaoRenal}</p>
-                <p className="text-dark h5 mt-3">Contraindicação de Atb: {getAtbContraindicacaoString}</p>
+                <p className="text-dark h5 mt-3">Contraindicação de Atb: {getAtbContraindicacao}</p>
                 {getAlteracaoPrescricao &&
                     <p className="text-dark h5 mt-3">Alteração da Prescrição: {getAlteracaoPrescricaoString}</p>
                 }
                 <p className="text-dark h5 mt-3">Diluição e/ou Infusão de Atb: {getAtbDiluicaoInfusaoString}</p>
                 <p className="text-dark h5 mt-3">Interação Atb e Medicamento: {getInteracaoAtbMedicamentoString}</p>
                 <p className="text-dark h5 mt-3">Hemodialise: {getHemodialiseString}</p>
-                <p className="text-dark h5 mt-3">Atb Oral: {getAtbOralString}</p>
-                <p className="text-dark h5 mt-3">Troca do Atb: {getTrocaAtbString}</p>
-
+                <p className="text-dark h5 mt-3">Atb Oral: {getAtbOral}</p>
+                <p className="text-dark h5 mt-3">Troca do Atb: {getTrocaAtb}</p>
                 {getNovoAtb &&
                     <p className="text-dark h5 mt-3">Novo Atb: {getNovoAtb}</p>
                 }
@@ -545,13 +523,13 @@ const Assessment = () => {
                                     <label htmlFor="NroAvaliacao">Número da Avaliação</label>
                                     <input type="number" className="form-control" id="NroAvaliacao" name="NroAvaliacao"
                                         defaultValue={getNroAvaliacao} onChange={(e) => setNroAvaliacao(Number((e.target as HTMLInputElement).value))}
-                                        placeholder="Digite o número da avaliação" min="1" max="999999999" required autoFocus/>
+                                        placeholder="Digite o número da avaliação" min="1" max="999999999" required readOnly/>
                                 </div>
 
                                 <div className="col">
                                     <label htmlFor="DataAvaliacao" className="mt">Data da Avaliação</label>
                                     <input type="date" className="form-control" id="DataAvaliacao" name="DataAvaliacao"
-                                        defaultValue={getDataAvaliacao} onChange={(e) => setDataAvaliacao((e.target as HTMLInputElement).value)} required/>
+                                        defaultValue={getDataAvaliacao} onChange={(e) => setDataAvaliacao((e.target as HTMLInputElement).value)} autoFocus required/>
                                 </div>
                             </div>
 
@@ -612,7 +590,7 @@ const Assessment = () => {
                                     <DropdownReact/>
                                         <label htmlFor="AtbContraindicacao">Contraindicação de Atb</label>
                                         <br></br>
-                                        <Dropdown className="" value={getAtbContraindicacao} options={options} 
+                                        <Dropdown className="" value={getAtbContraindicacao} options={options5} 
                                         onChange={onAtbContraindicacaoChange} placeholder="Selecione uma opção" style={{width: '100%'}} required/>
 
                                     <DropdownReact/>
@@ -676,7 +654,7 @@ const Assessment = () => {
                                     <DropdownReact/>
                                         <label htmlFor="TrocaAtb">Troca do Atb</label>
                                         <br></br>
-                                        <Dropdown className="" value={getTrocaAtb} options={options} 
+                                        <Dropdown className="" value={getTrocaAtb} options={options5} 
                                         onChange={onTrocaAtbChange} placeholder="Selecione uma opção" style={{width: '100%'}} required/>
 
                                     <DropdownReact/>

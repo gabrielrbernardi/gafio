@@ -5,6 +5,14 @@ class AssessmentService {
         return await api.get(`/medicalRecords/assessment/paginate/?seqProntuario=${queryResponse}&page=${endIndex}`).then(response => {console.log(response); return response.data});
     }
 
+    async searchAssessmentGlobal(queryResponse: any, searchKey: String, searchCode: String, first: number){
+        if(searchCode === 'Nro'){
+            return await api.get(`/medicalRecords/assessment/nroAvaliacao/?seqProntuario=${queryResponse}&nroAvaliacao=${searchKey}&page=${first}`).then(response => response.data);
+        }else if(searchCode === 'Dat'){
+            return await api.get(`/medicalRecords/assessment/dataAvaliacao/?seqProntuario=${queryResponse}&dataAvaliacao=${searchKey}&page=${first}`).then(response => response.data);
+        }
+    }
+
     async Update(IdProntuariof: any, NroAvaliacaof: any, DataAvaliacaof: string, ResultadoCulturasf: any, ResCulturasAcaof: any,
         DoseCorretaf: any, PosologiaCorretaf: any, AlertaDotf: any, AlertaDotDescricaof: any, DisfuncaoRenalf: string, Hemodialisef: string,
         AtbOralf: string, AtbContraindicacaof: string, AlteracaoPrescricaof: any, AtbDiluicaoInfusaof: string, InteracaoAtbMedicamentof: string,
