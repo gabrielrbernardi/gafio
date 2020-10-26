@@ -8,6 +8,7 @@ import ToastComponent from "../../components/Toast";
 import Loading from "../../components/Loading";
 import { Dialog } from "primereact/dialog";
 import View from "./MicrobiologyView";
+import Form from "./MicrobiologyForm";
 
 import { useHistory } from "react-router-dom";
 import api from "../../services/api";
@@ -38,6 +39,7 @@ const Microbiology = () => {
     const [first, setFirst] = useState<number>(0);
     const [id, setId] = useState<number>(0);
     const [view, setView] = useState<boolean>(false);
+    const [update, setUpdate] = useState<boolean>(false);
     const [deleteDialog, setDeleteDialog] = useState<boolean>(false);
     const [displayDialog, setDisplayDialog] = useState(false);
     const [selectedMicrobiology, setselectedMicrobiology] = useState<any>(null);
@@ -109,10 +111,16 @@ const Microbiology = () => {
             await api.delete(`/microbiology/delete/${id}`);
             setDeleteDialog(false);
             history.go(0);
+            // HandleToast("success", "Sucesso!", "A microbiologia foi excluída.");
         } catch (error) {
             setDeleteDialog(false);
             HandleToast("error", "Erro!", "Falha ao excluir a microbiologia.");
         }
+    }
+
+    function handleUpdate() {
+        setUpdate(false);
+        history.go(0);
     }
 
     function HandleToast(
@@ -268,7 +276,7 @@ const Microbiology = () => {
                                 className="mt-2 mb-2 p-3"
                                 onClick={() => {
                                     setDisplayDialog(false);
-                                    history.push(`microbiology/edit/${id}`);
+                                    setUpdate(true);
                                 }}
                             >
                                 Atualizar microbiologia
@@ -320,6 +328,17 @@ const Microbiology = () => {
                             </Button>
                         </div>
                     </div>
+                </Dialog>
+
+                <Dialog
+                    visible={update}
+                    style={{ width: "80%" }}
+                    modal={true}
+                    maximizable
+                    maximized
+                    onHide={() => handleUpdate()}
+                >
+                    <Form id={id} />
                 </Dialog>
 
                 {view && (

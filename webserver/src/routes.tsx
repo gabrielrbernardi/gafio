@@ -299,14 +299,14 @@ const Routes = () => {
 
                 <Route
                     path="/microbiology/create"
-                    component={MicrobiologyForm}
+                    render={() => (
+                        <div>
+                            <Header />
+                            <MicrobiologyForm />
+                            <Footer />
+                        </div>
+                    )}
                 />
-
-                <Route
-                    path="/microbiology/edit/:id"
-                    component={MicrobiologyForm}
-                />
-                
             </Switch>
         </BrowserRouter>
     );
