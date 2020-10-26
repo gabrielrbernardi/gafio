@@ -122,12 +122,36 @@ class AvaliacaoController {
                 const assessments = await knex("Avaliacao").where('IdProntuario', `${seqProntuario}`).offset((pageRequest-1)*rows).limit(rows);
         
                 var serializedAssessments = assessments.map(assessment => {
+                    var newAtbOral
+                    if(assessment.AtbOral == "S"){
+                        newAtbOral = "Sim"
+                    }
+                    if(assessment.AtbOral == "NA"){
+                        newAtbOral = "Não aplica"
+                    }
+                    if(assessment.AtbOral == "N"){
+                        newAtbOral = "Não"
+                    }
+                    var newTrocaAtb
+                    if(assessment.TrocaAtb == "S"){
+                        newTrocaAtb = "Sim"
+                    }
+                    if(assessment.TrocaAtb == "N"){
+                        newTrocaAtb = "Não"
+                    }
+                    var newAtbContraindicacao
+                    if(assessment.AtbContraindicacao == "S"){
+                        newAtbContraindicacao = "Sim"
+                    }
+                    if(assessment.AtbContraindicacao == "N"){
+                        newAtbContraindicacao = "Não"
+                    }
                     return {
                         NroAvaliacao: assessment.NroAvaliacao,
                         DataAvaliacao: assessment.DataAvaliacao,
-                        AtbOral: assessment.AtbOral,
-                        AtbContraindicacao: assessment.AtbContraindicacao,
-                        TrocaAtb: assessment.TrocaAtb,
+                        AtbOral: newAtbOral,
+                        AtbContraindicacao: newAtbContraindicacao,
+                        TrocaAtb: newTrocaAtb,
                         IdPaciente: medicalRecords.SeqPaciente,
                         ResultadoCulturas: assessment.ResultadoCulturas,
                         ResCulturasAcao: assessment.ResCulturasAcao,
@@ -158,7 +182,169 @@ class AvaliacaoController {
     }
 
     //FILTROS DE BUSCA
-    
+        //FILTRAR POR NroAvaliacao
+        async indexByNroAvaliacao(request: Request, response: Response) {
+            var { seqProntuario, nroAvaliacao } = request.query;
+            if(!seqProntuario){
+                return response.json({showAssessments: false, error: "Prontuário não encontrado."})
+            }
+            var page = String(request.query.page);
+            if(!page){
+                page = "10"
+            }
+            var pageRequest = parseInt(page) / 10;
+            const rows = 10;
+
+            const medicalRecordsDB = await knex("Prontuario").where("SeqProntuario", `${seqProntuario}`)
+            const medicalRecords = medicalRecordsDB[0]
+
+            if(medicalRecords){
+                try{
+                    const assessments = await knex("Avaliacao").where("IdProntuario", `${seqProntuario}`).andWhere("NroAvaliacao", "like", `%${nroAvaliacao}%`)
+                    .offset((pageRequest-1)*rows).limit(rows);
+                    
+                    var serializedAssessments = assessments.map(assessment => {
+                        var newAtbOral
+                        if(assessment.AtbOral == "S"){
+                            newAtbOral = "Sim"
+                        }
+                        if(assessment.AtbOral == "NA"){
+                            newAtbOral = "Não aplica"
+                        }
+                        if(assessment.AtbOral == "N"){
+                            newAtbOral = "Não"
+                        }
+                        var newTrocaAtb
+                        if(assessment.TrocaAtb == "S"){
+                            newTrocaAtb = "Sim"
+                        }
+                        if(assessment.TrocaAtb == "N"){
+                            newTrocaAtb = "Não"
+                        }
+                        var newAtbContraindicacao
+                        if(assessment.AtbContraindicacao == "S"){
+                            newAtbContraindicacao = "Sim"
+                        }
+                        if(assessment.AtbContraindicacao == "N"){
+                            newAtbContraindicacao = "Não"
+                        }
+                        return {
+                            NroAvaliacao: assessment.NroAvaliacao,
+                            DataAvaliacao: assessment.DataAvaliacao,
+                            AtbOral: newAtbOral,
+                            AtbContraindicacao: newAtbContraindicacao,
+                            TrocaAtb: newTrocaAtb,
+                            IdPaciente: medicalRecords.SeqPaciente,
+                            ResultadoCulturas: assessment.ResultadoCulturas,
+                            ResCulturasAcao: assessment.ResCulturasAcao,
+                            DoseCorreta: assessment.DoseCorreta,
+                            PosologiaCorreta: assessment.PosologiaCorreta,
+                            AlertaDot: assessment.AlertaDot,
+                            AlertaDotDescricao: assessment.AlertaDotDescricao,
+                            DisfuncaoRenal: assessment.DisfuncaoRenal,
+                            Hemodialise: assessment.Hemodialise,
+                            AlteracaoPrescricao: assessment.AlteracaoPrescricao,
+                            AtbDiluicaoInfusao: assessment.AtbDiluicaoInfusao,
+                            InteracaoAtbMedicamento: assessment.InteracaoAtbMedicamento,
+                            NovoAtb: assessment.NovoAtb,
+                            NomePaciente: null
+                        }
+                    })
+                    for(let i = 0; i < serializedAssessments.length; i++){
+                        const patientDB = await knex("Paciente").where("SeqPaciente", serializedAssessments[i]["IdPaciente"]);
+                        serializedAssessments[i]['NomePaciente'] = patientDB[0]['NomePaciente'];
+                    }
+                    const AssessmentLength = (await knex("Avaliacao").count('NroAvaliacao').where('NroAvaliacao', 'like', `%${nroAvaliacao}%`));
+                    return response.json({showAssessments: true, assessments: serializedAssessments, length: AssessmentLength, length1: serializedAssessments.length});
+                }catch(err){
+                    return response.json({showAssessments: false, error: err});
+                }
+            }else{
+                return response.json({showAssessments: false, error: "Prontuário não encontrado."});
+            }         
+        }
+
+        //FILTRAR POR DataAvaliacao
+        async indexByDataAvaliacao(request: Request, response: Response) {
+            var { seqProntuario, dataAvaliacao } = request.query;
+            if(!seqProntuario){
+                return response.json({showAssessments: false, error: "Prontuário não encontrado."})
+            }
+            var page = String(request.query.page);
+            if(!page){
+                page = "10"
+            }
+            var pageRequest = parseInt(page) / 10;
+            const rows = 10;
+
+            const medicalRecordsDB = await knex("Prontuario").where("SeqProntuario", `${seqProntuario}`)
+            const medicalRecords = medicalRecordsDB[0]
+
+            if(medicalRecords){
+                try{
+                    const assessments = await knex("Avaliacao").where("IdProntuario", `${seqProntuario}`).andWhere("DataAvaliacao", "like", `%${dataAvaliacao}%`)
+                    .offset((pageRequest-1)*rows).limit(rows);
+            
+                    var serializedAssessments = assessments.map(assessment => {
+                        var newAtbOral
+                        if(assessment.AtbOral == "S"){
+                            newAtbOral = "Sim"
+                        }
+                        if(assessment.AtbOral == "NA"){
+                            newAtbOral = "Não aplica"
+                        }
+                        if(assessment.AtbOral == "N"){
+                            newAtbOral = "Não"
+                        }
+                        var newTrocaAtb
+                        if(assessment.TrocaAtb == "S"){
+                            newTrocaAtb = "Sim"
+                        }
+                        if(assessment.TrocaAtb == "N"){
+                            newTrocaAtb = "Não"
+                        }
+                        var newAtbContraindicacao
+                        if(assessment.AtbContraindicacao == "S"){
+                            newAtbContraindicacao = "Sim"
+                        }
+                        if(assessment.AtbContraindicacao == "N"){
+                            newAtbContraindicacao = "Não"
+                        }
+                        return {
+                            NroAvaliacao: assessment.NroAvaliacao,
+                            DataAvaliacao: assessment.DataAvaliacao,
+                            AtbOral: newAtbOral,
+                            AtbContraindicacao: newAtbContraindicacao,
+                            TrocaAtb: newTrocaAtb,
+                            IdPaciente: medicalRecords.SeqPaciente,
+                            ResultadoCulturas: assessment.ResultadoCulturas,
+                            ResCulturasAcao: assessment.ResCulturasAcao,
+                            DoseCorreta: assessment.DoseCorreta,
+                            PosologiaCorreta: assessment.PosologiaCorreta,
+                            AlertaDot: assessment.AlertaDot,
+                            AlertaDotDescricao: assessment.AlertaDotDescricao,
+                            DisfuncaoRenal: assessment.DisfuncaoRenal,
+                            Hemodialise: assessment.Hemodialise,
+                            AlteracaoPrescricao: assessment.AlteracaoPrescricao,
+                            AtbDiluicaoInfusao: assessment.AtbDiluicaoInfusao,
+                            InteracaoAtbMedicamento: assessment.InteracaoAtbMedicamento,
+                            NovoAtb: assessment.NovoAtb,
+                            NomePaciente: null
+                        }
+                    })
+                    for(let i = 0; i < serializedAssessments.length; i++){
+                        const patientDB = await knex("Paciente").where("SeqPaciente", serializedAssessments[i]["IdPaciente"]);
+                        serializedAssessments[i]['NomePaciente'] = patientDB[0]['NomePaciente'];
+                    }
+                    const AssessmentLength = (await knex("Avaliacao").count('DataAvaliacao').where('DataAvaliacao', 'like', `%${dataAvaliacao}%`));
+                    return response.json({showAssessments: true, assessments: serializedAssessments, length: AssessmentLength, length1: serializedAssessments.length});
+                }catch(err){
+                    return response.json({showAssessments: false, error: err});
+                }
+            }else{
+                return response.json({showAssessments: false, error: "Prontuário não encontrado."});
+            }         
+        }
     
     //UPDATE DE DADOS
     async update(request: Request, response: Response) {
@@ -201,7 +387,15 @@ class AvaliacaoController {
                 if(medicalRecords){
                         var res = DataAvaliacao.split("-")
                         var dataTratada = res[2] + "/" + res[1] + "/" + res[0]
-    
+                        var AtbOralChar
+                        if(AtbOral.length == 3){
+                            AtbOralChar = AtbOral[0][0]
+                        }else{
+                            AtbOralChar = "NA"
+                        }
+                        const TrocaAtbChar = TrocaAtb[0][0]
+                        const AtbContraindicacaoChar = AtbContraindicacao[0][0]
+
                         await knex("Avaliacao").where('NroAvaliacao', NroAvaliacao).update({
                             IdProntuario: IdProntuario,
                             IdPaciente: medicalRecords.SeqPaciente,
@@ -214,12 +408,12 @@ class AvaliacaoController {
                             AlertaDotDescricao: AlertaDotDescricao,
                             DisfuncaoRenal: DisfuncaoRenal,
                             Hemodialise: Hemodialise,
-                            AtbOral: AtbOral,
-                            AtbContraindicacao: AtbContraindicacao,
+                            AtbOral: AtbOralChar,
+                            AtbContraindicacao: AtbContraindicacaoChar,
                             AlteracaoPrescricao: AlteracaoPrescricao,
                             AtbDiluicaoInfusao: AtbDiluicaoInfusao,
                             InteracaoAtbMedicamento: InteracaoAtbMedicamento,
-                            TrocaAtb: TrocaAtb,
+                            TrocaAtb: TrocaAtbChar,
                             NovoAtb: NovoAtb
                         }).then(() => {
                             return response.json({updatedAssessment: true})

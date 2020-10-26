@@ -9,6 +9,9 @@ routes.get("/medicalRecords/assessment", assessments.index)
 
 routes.get("/medicalRecords/assessment/paginate/", assessments.indexPagination)
 
+routes.get("/medicalRecords/assessment/nroAvaliacao/", assessments.indexByNroAvaliacao)
+routes.get("/medicalRecords/assessment/dataAvaliacao/", assessments.indexByDataAvaliacao)
+
 routes.put("/medicalRecords/assessment/update", assessments.update)
 routes.post("/medicalRecords/assessment/delete", assessments.delete)
 
