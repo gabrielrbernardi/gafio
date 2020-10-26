@@ -53,30 +53,17 @@ const Microbiology = () => {
     const rows = 10;
 
     useEffect(() => {
-        //carrega a quantidade total de registros para a paginação da tabela
-        async function loadRecords() {
-            try {
-                const response = await api.get("microbiology/data/length/");
-                const { count } = response.data;
-                const records = Number(count);
-                setRecords(records);
-            } catch (error) {
-                HandleToast(
-                    "error",
-                    "Erro!",
-                    "Falha ao carregar os registros."
-                );
-            }
-        }
-
-        //carrega os dados da tabela
+        //carrega os dados da tabela e a quantidade total de registros
         async function loadMicrobiologies() {
             try {
-                const response = await api.get<IMicrobiology[]>(
+                const response = await api.get(
                     "/microbiology"
                 );
-                const { data } = response;
-                setMicrobiologies(data);
+                const { results } = response.data;
+                const { count } = response.data.count;
+                console.log(count)
+                setRecords(Number(count));
+                setMicrobiologies(results);
                 setLoading(false);
                 setTableLoading(false);
             } catch (error) {
@@ -90,7 +77,6 @@ const Microbiology = () => {
             }
         }
 
-        loadRecords();
         loadMicrobiologies();
     }, []);
 
@@ -102,8 +88,8 @@ const Microbiology = () => {
             const response = await api.get("microbiology", {
                 params: { page },
             });
-            const { data } = response;
-            setMicrobiologies(data);
+            const { results } = response.data;
+            setMicrobiologies(results);
             setFirst(index);
             setTableLoading(false);
         } catch (error) {

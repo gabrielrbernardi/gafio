@@ -75,7 +75,7 @@ const MicrobiologyView: React.FC<Props> = ({ view, id, setView }) => {
         async function loadMicrobiology() {
             try {
                 const response = await api.get<IMicrobiology[]>(
-                    `/microbiology/${id}`
+                    `/microbiology/view/${id}`
                 );
                 const [microbiologyData] = response.data;
                 setIdMicrobiologia(microbiologyData.IdMicrobiologia);
