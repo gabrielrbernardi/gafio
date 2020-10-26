@@ -8,7 +8,7 @@ routes.post("/microbiology", MicrobiologyController.create);
 routes.put("/microbiology/update/:id", MicrobiologyController.update);
 
 routes.get("/microbiology", MicrobiologyController.index);
-routes.get("/microbiology/:id", MicrobiologyController.index);
+routes.get("/microbiology/:id", MicrobiologyController.showById);
 routes.get("/microbiology/view/:id", MicrobiologyController.view);
 
 

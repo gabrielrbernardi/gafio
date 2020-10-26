@@ -8,7 +8,7 @@ import { Request, Response } from "express";
 import knex from "../database/connection";
 
 class MicrobiologyController {
-    // Método para cadastro
+    // Método de cadastro
     async create(req: Request, res: Response) {
         const { IdPaciente, IdProntuario } = req.body;
 
@@ -45,7 +45,7 @@ class MicrobiologyController {
         }
     }
 
-    //Método para listagem
+    //Método de listagem
     async index(req: Request, res: Response) {
         try {
             const { page = 1 } = req.query;
@@ -64,12 +64,29 @@ class MicrobiologyController {
         }
     }
 
+    //método de listagem por id
+    async showById(req: Request, res: Response) {
+        try {
+            const { id } = req.params;
+            const microbiology = await knex("Microbiologia").where({
+                IdMicrobiologia: id,
+            });
+            if (!microbiology[0]) {
+                return res.status(400).json({
+                    error: "Microbiologia não existe!",
+                });
+            }
+            return res.json(microbiology);
+        } catch (error) {
+            return res.json({ error: "Erro ao carregar os dados" });
+        }
+    }
+
     //método para atualização de dados
     async update(req: Request, res: Response) {
         try {
             const { id } = req.params;
             const { IdPaciente, IdProntuario } = req.body;
-
             if (IdPaciente) {
                 const patientExists = await knex("Paciente").where(
                     "SeqPaciente",
@@ -108,7 +125,7 @@ class MicrobiologyController {
         }
     }
 
-    //Método para exclusão
+    //Método de exclusão
     async delete(req: Request, res: Response) {
         try {
             const { id } = req.params;
