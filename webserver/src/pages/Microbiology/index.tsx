@@ -38,6 +38,7 @@ const Microbiology = () => {
     const [first, setFirst] = useState<number>(0);
     const [id, setId] = useState<number>(0);
     const [view, setView] = useState<boolean>(false);
+    const [deleteDialog, setDeleteDialog] = useState<boolean>(false);
     const [displayDialog, setDisplayDialog] = useState(false);
     const [selectedMicrobiology, setselectedMicrobiology] = useState<any>(null);
 
@@ -56,12 +57,10 @@ const Microbiology = () => {
         //carrega os dados da tabela e a quantidade total de registros
         async function loadMicrobiologies() {
             try {
-                const response = await api.get(
-                    "/microbiology"
-                );
+                const response = await api.get("/microbiology");
                 const { results } = response.data;
                 const { count } = response.data.count;
-                console.log(count)
+                console.log(count);
                 setRecords(Number(count));
                 setMicrobiologies(results);
                 setLoading(false);
@@ -108,8 +107,10 @@ const Microbiology = () => {
     async function handleDelete() {
         try {
             await api.delete(`/microbiology/delete/${id}`);
+            setDeleteDialog(false);
             history.go(0);
         } catch (error) {
+            setDeleteDialog(false);
             HandleToast("error", "Erro!", "Falha ao excluir a microbiologia.");
         }
     }
@@ -251,40 +252,76 @@ const Microbiology = () => {
                     <div className="form-row text-center">
                         <div className="col">
                             <Button
-                                className="mx-2 p-3"
+                                variant="info"
+                                className="mt-2 mb-2 p-3"
                                 onClick={() => {
                                     setDisplayDialog(false);
                                     setView(true);
                                 }}
                             >
-                                Visualizar <br></br> microbiologia
+                                Visualizar microbiologia
                             </Button>
                         </div>
                         <div className="col">
                             <Button
-                                className="mx-2 p-3"
+                                variant="primary"
+                                className="mt-2 mb-2 p-3"
                                 onClick={() => {
                                     setDisplayDialog(false);
                                     history.push(`microbiology/edit/${id}`);
                                 }}
                             >
-                                Atualizar <br></br> microbiologia
+                                Atualizar microbiologia
                             </Button>
                         </div>
 
                         <div className="col">
                             <Button
-                                className="mx-2 p-3"
+                                variant="danger"
+                                className="mt-2 mb-2 p-3"
                                 onClick={() => {
                                     setDisplayDialog(false);
-                                    handleDelete();
+                                    setDeleteDialog(true);
                                 }}
                             >
-                                Excluir <br></br> microbiologia
+                                Excluir microbiologia
                             </Button>
                         </div>
                     </div>
                 </Dialog>
+
+                <Dialog
+                    visible={deleteDialog}
+                    style={{ width: "50%" }}
+                    modal={true}
+                    header="Exclusão de microbiologia"
+                    onHide={() => setDeleteDialog(false)}
+                >
+                    <p className="text-dark h5 mt-2">
+                        Deseja realmente exluir esta microbiologia?
+                    </p>
+                    <div className="row">
+                        <div className="col">
+                            <Button
+                                variant="outline-danger"
+                                onClick={() => handleDelete()}
+                                style={{ width: "100%" }}
+                            >
+                                Sim
+                            </Button>
+                        </div>
+                        <div className="col">
+                            <Button
+                                variant="outline-info"
+                                onClick={() => setDeleteDialog(false)}
+                                style={{ width: "100%" }}
+                            >
+                                Não
+                            </Button>
+                        </div>
+                    </div>
+                </Dialog>
+
                 {view && (
                     <View view={view} id={id} setView={() => setView(false)} />
                 )}
