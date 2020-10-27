@@ -66,12 +66,6 @@ const MicrobiologyView: React.FC<Props> = ({ view, id, setView }) => {
     const [loading, setLoading] = useState<boolean>(true);
 
     useEffect(() => {
-        function FormatDate(date:string){
-            const datePrev= date.split("-")
-            const newDate = datePrev[2] + "/" + datePrev[1] + "/" + datePrev[0];
-            return newDate;
-        }
-
         async function loadMicrobiology() {
             try {
                 const response = await api.get<IMicrobiology[]>(
@@ -83,12 +77,8 @@ const MicrobiologyView: React.FC<Props> = ({ view, id, setView }) => {
                 setNroProntuario(microbiologyData.NroProntuario);
                 setIdPaciente(microbiologyData.IdPaciente);
                 setIdProntuario(microbiologyData.IdProntuario);
-
-                //formatação de datas
-                let date = FormatDate(microbiologyData.DataColeta);
-                setDataColeta(date);
-                date = FormatDate(microbiologyData.DataResultado);
-                setDataResultado(date);
+                setDataColeta(microbiologyData.DataColeta);
+                setDataResultado(microbiologyData.DataResultado);
 
                 setNomePaciente(microbiologyData.NomePaciente);
                 setSwabNasalObservacoes(microbiologyData.SwabNasalObservacoes);

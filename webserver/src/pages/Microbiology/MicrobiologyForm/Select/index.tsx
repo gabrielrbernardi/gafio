@@ -1,6 +1,7 @@
 import React from "react";
 import { Dropdown } from "primereact/dropdown";
 import { Dropdown as DropdownReact } from "react-bootstrap";
+import { InputText } from "primereact/inputtext";
 
 const options = [
     { label: "Sim", value: "S" },
@@ -43,12 +44,12 @@ const Select: React.FC<Props> = ({
             </div>
             <div className="col">
                 <label htmlFor={name}>Observações</label>
-                <input
-                    type="text"
-                    className="form-control"
+                <InputText
+                    keyfilter="alpha"
+                    style={{ width: "100%" }}
                     id={name}
                     name={name}
-                    placeholder="Observação"
+                    placeholder="Digite a observação"
                     defaultValue={inputValue}
                     onChange={inputOnChange}
                     autoFocus

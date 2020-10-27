@@ -4,9 +4,11 @@ import * as Yup from "yup";
 import Loading from "../../../components/Loading";
 import ToastComponent from "../../../components/Toast";
 import Select from "./Select";
+import { InputText } from "primereact/inputtext";
+import { InputNumber } from "primereact/inputnumber";
+import { Calendar } from "primereact/calendar";
 
 import api from "../../../services/api";
-
 
 interface IMicrobiology {
     IdMicrobiologia: number;
@@ -33,7 +35,7 @@ interface Props {
     id?: number;
 }
 
-const MicrobiologyForm:React.FC<Props> = ({ id }) => {
+const MicrobiologyForm: React.FC<Props> = ({ id }) => {
     const [title, setTitle] = useState<string>("Cadastro de microbiologia");
     const [buttonLabel, setButtonLabel] = useState<string>("Cadastrar");
     const [toast, setToast] = useState<boolean>(false);
@@ -43,8 +45,8 @@ const MicrobiologyForm:React.FC<Props> = ({ id }) => {
 
     const [IdPaciente, setIdPaciente] = useState<number>(0);
     const [IdProntuario, setIdProntuario] = useState<number>(0);
-    const [DataColeta, setDataColeta] = useState<string>("");
-    const [DataResultado, setDataResultado] = useState<string>("");
+    const [DataColeta, setDataColeta] = useState<any>();
+    const [DataResultado, setDataResultado] = useState<any>();
     const [SwabNasal, setSwabNasal] = useState<string>("");
     const [SwabNasalObservacoes, setSwabNasalObservacoes] = useState<string>(
         ""
@@ -67,6 +69,52 @@ const MicrobiologyForm:React.FC<Props> = ({ id }) => {
     const [PerfilSensibilidade, setPerfilSensibilidade] = useState<string>("");
 
     const [loading, setLoading] = useState<boolean>(false);
+
+    const pt_br = {
+        firstDayOfWeek: 1,
+        dayNames: [
+            "domingo",
+            "Segunda",
+            "Terça",
+            "Quarta",
+            "Quinta",
+            "Sexta",
+            "Sábado",
+        ],
+        dayNamesShort: ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"],
+        dayNamesMin: ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"],
+        // dayNamesMin: ["D", "S", "T", "Q", "Q", "S", "S"],
+        monthNames: [
+            "Janeiro",
+            "Fevereiro",
+            "Março",
+            "Abril",
+            "Maio",
+            "Junho",
+            "Julho",
+            "Agosto",
+            "Setembro",
+            "Outubro",
+            "Novembro",
+            "Dezembro",
+        ],
+        monthNamesShort: [
+            "Jan",
+            "Fev",
+            "Mar",
+            "Abr",
+            "Mai",
+            "Jun",
+            "Jul",
+            "Ago",
+            "Set",
+            "Out",
+            "Nov",
+            "Dez",
+        ],
+        today: "Hoje",
+        clear: "Limpar",
+    };
 
     useEffect(() => {
         async function loadMicrobiologyInfo() {
@@ -143,8 +191,8 @@ const MicrobiologyForm:React.FC<Props> = ({ id }) => {
             const schema = Yup.object().shape({
                 IdPaciente: Yup.number().required(),
                 IdProntuario: Yup.number().required(),
-                DataColeta: Yup.string().required(),
-                DataResultado: Yup.string().required(),
+                DataColeta: Yup.date().required(),
+                DataResultado: Yup.date().required(),
                 SwabNasal: Yup.string().required(),
                 SwabNasalObservacoes: Yup.string(),
                 SwabRetal: Yup.string().required(),
@@ -223,24 +271,18 @@ const MicrobiologyForm:React.FC<Props> = ({ id }) => {
                                         <label htmlFor="IdPaciente">
                                             Número do Paciente
                                         </label>
-                                        <input
-                                            type="number"
-                                            className="form-control"
+                                        <InputNumber
                                             id="IdPaciente"
                                             name="IdPaciente"
-                                            placeholder="Digite o número do paciente"
-                                            min="1"
-                                            max="999999999"
-                                            onChange={(e) =>
-                                                setIdPaciente(
-                                                    Number(
-                                                        (e.target as HTMLInputElement)
-                                                            .value
-                                                    )
-                                                )
-                                            }
                                             value={IdPaciente}
-                                            autoFocus
+                                            min={1}
+                                            max={9999999999}
+                                            onChange={(e) =>
+                                                setIdPaciente(Number(e.value))
+                                            }
+                                            showButtons
+                                            style={{ width: "100%" }}
+                                            placeholder="Digite o número do paciente"
                                             required
                                         />
                                     </div>
@@ -249,24 +291,18 @@ const MicrobiologyForm:React.FC<Props> = ({ id }) => {
                                         <label htmlFor="IdProntuario">
                                             Número do Prontuário
                                         </label>
-                                        <input
-                                            type="number"
-                                            className="form-control"
+                                        <InputNumber
                                             id="IdProntuario"
                                             name="IdProntuario"
-                                            placeholder="Digite o número do prontuário"
-                                            min="1"
-                                            max="999999999"
-                                            onChange={(e) =>
-                                                setIdProntuario(
-                                                    Number(
-                                                        (e.target as HTMLInputElement)
-                                                            .value
-                                                    )
-                                                )
-                                            }
                                             value={IdProntuario}
-                                            autoFocus
+                                            min={1}
+                                            max={9999999999}
+                                            onChange={(e) =>
+                                                setIdProntuario(Number(e.value))
+                                            }
+                                            showButtons
+                                            style={{ width: "100%" }}
+                                            placeholder="Digite o número do prontuário"
                                             required
                                         />
                                     </div>
@@ -280,19 +316,22 @@ const MicrobiologyForm:React.FC<Props> = ({ id }) => {
                                         >
                                             Data da Coleta
                                         </label>
-                                        <input
-                                            type="date"
-                                            className="form-control"
+                                        <br></br>
+                                        <Calendar
                                             id="DataColeta"
                                             name="DataColeta"
+                                            value={DataColeta}
                                             onChange={(e) =>
-                                                setDataColeta(
-                                                    (e.target as HTMLInputElement)
-                                                        .value
-                                                )
+                                                setDataColeta(e.value)
                                             }
-                                            defaultValue={DataColeta}
-                                            autoFocus
+                                            style={{ width: "100%" }}
+                                            locale={pt_br}
+                                            dateFormat="dd/mm/yy"
+                                            placeholder="Selecione a data de coleta"
+                                            showButtonBar
+                                            monthNavigator
+                                            showIcon
+                                            showOnFocus={false}
                                             required
                                         />
                                     </div>
@@ -304,19 +343,22 @@ const MicrobiologyForm:React.FC<Props> = ({ id }) => {
                                         >
                                             Data do resultado
                                         </label>
-                                        <input
-                                            type="date"
-                                            className="form-control"
+                                        <br></br>
+                                        <Calendar
                                             id="DataResultado"
                                             name="DataResultado"
+                                            value={DataResultado}
                                             onChange={(e) =>
-                                                setDataResultado(
-                                                    (e.target as HTMLInputElement)
-                                                        .value
-                                                )
+                                                setDataResultado(e.value)
                                             }
-                                            defaultValue={DataResultado}
-                                            autoFocus
+                                            style={{ width: "100%" }}
+                                            locale={pt_br}
+                                            dateFormat="dd/mm/yy"
+                                            placeholder="Selecione a data do resultado"
+                                            showButtonBar
+                                            monthNavigator
+                                            showOnFocus={false}
+                                            showIcon
                                             required
                                         />
                                     </div>
@@ -419,18 +461,18 @@ const MicrobiologyForm:React.FC<Props> = ({ id }) => {
                                 >
                                     Perfil Sensibilidade
                                 </label>
-                                <input
-                                    type="text"
-                                    className="form-control"
+                                <InputText
                                     id="PerfilSensibilidade"
                                     name="PerfilSensibilidade"
-                                    placeholder="Digite o perfil de sensibilidade"
+                                    defaultValue={PerfilSensibilidade}
                                     onChange={(e) =>
                                         setPerfilSensibilidade(
                                             (e.target as HTMLInputElement).value
                                         )
                                     }
-                                    defaultValue={PerfilSensibilidade}
+                                    keyfilter="alpha"
+                                    style={{ width: "100%" }}
+                                    placeholder="Digite o perfil de sensibilidade"
                                     autoFocus
                                     required
                                 />
