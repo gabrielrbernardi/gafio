@@ -68,14 +68,14 @@ const MicrobiologyView: React.FC<Props> = ({ view, id, setView }) => {
     useEffect(() => {
         function FormatDate(date:string){
             const datePrev= date.split("-")
-            const newDate = datePrev[2] + "-" + datePrev[1] + "-" + datePrev[0];
+            const newDate = datePrev[2] + "/" + datePrev[1] + "/" + datePrev[0];
             return newDate;
         }
 
         async function loadMicrobiology() {
             try {
                 const response = await api.get<IMicrobiology[]>(
-                    `/microbiology/${id}`
+                    `/microbiology/view/${id}`
                 );
                 const [microbiologyData] = response.data;
                 setIdMicrobiologia(microbiologyData.IdMicrobiologia);

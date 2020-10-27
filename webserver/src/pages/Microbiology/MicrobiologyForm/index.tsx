@@ -1,18 +1,12 @@
 import React, { useState, useEffect, FormEvent } from "react";
-import { RouteComponentProps } from "react-router-dom";
 import * as Yup from "yup";
 
 import Loading from "../../../components/Loading";
 import ToastComponent from "../../../components/Toast";
 import Select from "./Select";
-import Header from "../../Header/Header";
-import Footer from "../../Footer/Footer";
 
 import api from "../../../services/api";
 
-type Props = {
-    id?: string;
-};
 
 interface IMicrobiology {
     IdMicrobiologia: number;
@@ -35,7 +29,11 @@ interface IMicrobiology {
     PerfilSensibilidade: string;
 }
 
-const MicrobiologyForm = ({ match }: RouteComponentProps<Props>) => {
+interface Props {
+    id?: number;
+}
+
+const MicrobiologyForm:React.FC<Props> = ({ id }) => {
     const [title, setTitle] = useState<string>("Cadastro de microbiologia");
     const [buttonLabel, setButtonLabel] = useState<string>("Cadastrar");
     const [toast, setToast] = useState<boolean>(false);
@@ -70,8 +68,6 @@ const MicrobiologyForm = ({ match }: RouteComponentProps<Props>) => {
 
     const [loading, setLoading] = useState<boolean>(false);
 
-    const { id } = match.params;
-
     useEffect(() => {
         async function loadMicrobiologyInfo() {
             try {
@@ -90,8 +86,8 @@ const MicrobiologyForm = ({ match }: RouteComponentProps<Props>) => {
                 if (microbiology.SwabRetalObservacoes)
                     setSwabRetalObservacoes(microbiology.SwabRetalObservacoes);
                 setSangue(microbiology.Sangue);
-               if (microbiology.SangueObservacoes)
-                   setSangueObservacoes(microbiology.SangueObservacoes);
+                if (microbiology.SangueObservacoes)
+                    setSangueObservacoes(microbiology.SangueObservacoes);
                 setUrina(microbiology.Urina);
                 if (microbiology.UrinaObservacoes)
                     setUrinaObservacoes(microbiology.UrinaObservacoes);
@@ -217,7 +213,6 @@ const MicrobiologyForm = ({ match }: RouteComponentProps<Props>) => {
     return (
         <>
             <div>
-                <Header />
                 <div className="row m-5">
                     <div className="card shadow-lg p-3 col-sm-6 offset-md-3 border">
                         <p className="text-dark h3 text-center">{title}</p>
@@ -449,7 +444,6 @@ const MicrobiologyForm = ({ match }: RouteComponentProps<Props>) => {
                         </form>
                     </div>
                 </div>
-                <Footer />
             </div>
             {toast && (
                 <ToastComponent

@@ -8,7 +8,7 @@ import { Request, Response } from "express";
 import knex from "../database/connection";
 
 class MicrobiologyController {
-    // Método para cadastro
+    // Método de cadastro
     async create(req: Request, res: Response) {
         const { IdPaciente, IdProntuario } = req.body;
 
@@ -45,44 +45,40 @@ class MicrobiologyController {
         }
     }
 
-    //Método para listagem
+    //Método de listagem
     async index(req: Request, res: Response) {
         try {
-            const { id } = req.params;
-            const query = knex("Microbiologia");
-
-            if (id) {
-                query
-                    .where({ IdMicrobiologia: id })
-                    .join(
-                        "Prontuario",
-                        "Prontuario.SeqProntuario",
-                        "=",
-                        "Microbiologia.IdProntuario"
-                    )
-                    .join(
-                        "Paciente",
-                        "Paciente.SeqPaciente",
-                        "=",
-                        "Microbiologia.IdPaciente"
-                    )
-                    .select(
-                        "Microbiologia.*",
-                        "Prontuario.NroProntuario",
-                        "Paciente.NomePaciente",
-                        "Paciente.NroPaciente"
-                    );
-            } else {
-                const { page = 1 } = req.query;
-                const pageRequest = Number(page);
-                const rows = 10;
-                query.limit(rows).offset((pageRequest - 1) * rows);
-            }
-            const results = await query;
-            if (results.length) return res.json(results);
-            else return res.json({ error: "Não encontrado." });
+            const { page = 1 } = req.query;
+            const pageRequest = Number(page);
+            const rows = 10;
+            const results = await knex("Microbiologia")
+                .limit(rows)
+                .offset((pageRequest - 1) * rows);
+            const microbiologyLength = await knex("Microbiologia").count({
+                count: "*",
+            });
+            const [count] = microbiologyLength;
+            return res.json({ results, count });
         } catch (error) {
-            return res.json({ error });
+            return res.json({ error: "Erro ao carregar os registros" });
+        }
+    }
+
+    //método de listagem por id
+    async showById(req: Request, res: Response) {
+        try {
+            const { id } = req.params;
+            const microbiology = await knex("Microbiologia").where({
+                IdMicrobiologia: id,
+            });
+            if (!microbiology[0]) {
+                return res.status(400).json({
+                    error: "Microbiologia não existe!",
+                });
+            }
+            return res.json(microbiology);
+        } catch (error) {
+            return res.json({ error: "Erro ao carregar os dados" });
         }
     }
 
@@ -91,7 +87,6 @@ class MicrobiologyController {
         try {
             const { id } = req.params;
             const { IdPaciente, IdProntuario } = req.body;
-
             if (IdPaciente) {
                 const patientExists = await knex("Paciente").where(
                     "SeqPaciente",
@@ -130,7 +125,7 @@ class MicrobiologyController {
         }
     }
 
-    //Método para deleção
+    //Método de exclusão
     async delete(req: Request, res: Response) {
         try {
             const { id } = req.params;
@@ -153,16 +148,36 @@ class MicrobiologyController {
         }
     }
 
-    //método para obter a quantidade total
-    async getLength(req: Request, res: Response) {
+    //método para visualização
+    async view(req: Request, res: Response) {
         try {
-            const microbiologyLength = await knex("Microbiologia").count({
-                count: "*",
-            });
-            const [count] = microbiologyLength;
-            return res.json(count);
+            const { id } = req.params;
+            const microbiology = await knex("Microbiologia")
+                .where({ IdMicrobiologia: id })
+                .join(
+                    "Prontuario",
+                    "Prontuario.SeqProntuario",
+                    "=",
+                    "Microbiologia.IdProntuario"
+                )
+                .join(
+                    "Paciente",
+                    "Paciente.SeqPaciente",
+                    "=",
+                    "Microbiologia.IdPaciente"
+                )
+                .select(
+                    "Microbiologia.*",
+                    "Prontuario.NroProntuario",
+                    "Paciente.NomePaciente",
+                    "Paciente.NroPaciente"
+                );
+
+            return res.json(microbiology);
         } catch (error) {
-            return res.json({ error });
+            return res.json({
+                error: "Erro ao carregar os dados",
+            });
         }
     }
 }

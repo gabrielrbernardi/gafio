@@ -8,8 +8,9 @@ routes.post("/microbiology", MicrobiologyController.create);
 routes.put("/microbiology/update/:id", MicrobiologyController.update);
 
 routes.get("/microbiology", MicrobiologyController.index);
-routes.get("/microbiology/:id", MicrobiologyController.index);
-routes.get("/microbiology/data/length/", MicrobiologyController.getLength);
+routes.get("/microbiology/:id", MicrobiologyController.showById);
+routes.get("/microbiology/view/:id", MicrobiologyController.view);
+
 
 routes.delete("/microbiology/delete/:id", MicrobiologyController.delete);
 
