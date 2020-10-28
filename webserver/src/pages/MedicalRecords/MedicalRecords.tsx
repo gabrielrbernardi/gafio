@@ -1,7 +1,6 @@
 import React, { useState, useEffect, FormEvent } from 'react';
 import {DataTable} from 'primereact/datatable';
 import {Column} from 'primereact/column';
-import {InputText} from 'primereact/inputtext';
 import Button from 'react-bootstrap/Button';
 import Collapse from 'react-bootstrap/Collapse';
 import {FiSearch} from 'react-icons/fi';
@@ -11,6 +10,8 @@ import ToastComponent from '../../components/Toast';
 import { Dropdown } from 'primereact/dropdown';
 import {Dropdown as DropdownReact} from 'react-bootstrap';
 import { Dialog } from 'primereact/dialog';
+import {InputText} from 'primereact/inputtext';
+import { Calendar } from 'primereact/calendar';
 
 import {MedicalRecordsService} from './MedicalRecordsService';
 import Loading from '../../components/Loading';
@@ -20,7 +21,7 @@ const MedicalRecords = () => {
     const [getNroProntuario, setNroProntuario] = useState<any>(null)
     const [getSeqPaciente, setSeqPaciente] = useState<any>(null)
     const [getNomePaciente, setNomePaciente] = useState<any>(null)
-    const [getDataInternacao, setDataInternacao] = useState<string>('')
+    const [getDataInternacao, setDataInternacao] = useState<any>(null)
     const [getCodDoencaPrincipal, setCodDoencaPrincipal] = useState<string>('')
     const [getCodDoencaSecundario, setCodDoencaSecundario] = useState<any>(null)
     const [getSistemaAcometido, setSistemaAcometido] = useState<string>('')
@@ -42,11 +43,11 @@ const MedicalRecords = () => {
     
     const [getDataTratadaInternacao, setDataTratadaInternacao] = useState<string>('')
     const [getResultadoColetaString, setResultadoColetaString] = useState<string>('')
-    const [getTratamentoString, setTratamentoString] = useState<string>('')
-    const [getIndicacaoString, setIndicacaoString] = useState<string>('')
-    const [getDisfuncaoString, setDisfuncaoString] = useState<string>('')
-    const [getDoseString, setDoseString] = useState<string>('')
-    const [getPosologiaString, setPosologiaString] = useState<string>('')
+    const [getTratamentoCCIHString, setTratamentoCCIHString] = useState<string>('')
+    const [getIndicacaoSepseString, setIndicacaoSepseString] = useState<string>('')
+    const [getDisfuncaoRenalString, setDisfuncaoRenalString] = useState<string>('')
+    const [getDoseCorretaString, setDoseCorretaString] = useState<string>('')
+    const [getPosologiaCorretaString, setPosologiaCorretaString] = useState<string>('')
     const [getDataTratadaDesfecho, setDataTratadaDesfecho] = useState<string>('')
     
     const [MedicalRecords, setMedicalRecords] = useState([]);
@@ -94,6 +95,18 @@ const MedicalRecords = () => {
         {label: 'Alta', value: 'Alta'},
         {label: 'Tranferência', value: 'Transferência'}
     ]
+
+    const pt_br = {
+        firstDayOfWeek: 1,
+        dayNames: ["domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"],
+        dayNamesShort: ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"],
+        dayNamesMin: ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"],
+        // dayNamesMin: ["D", "S", "T", "Q", "Q", "S", "S"],
+        monthNames: ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"],
+        monthNamesShort: ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"],
+        today: "Hoje",
+        clear: "Limpar",
+    };
 
     const onResultadoChange = (e: { value: string }) => {
         setResultadoColeta(e.value);
@@ -310,7 +323,7 @@ const MedicalRecords = () => {
         setSeqPaciente(medicalRecordData.SeqPaciente)
         setNomePaciente(medicalRecordData.NomePaciente)
         var res = medicalRecordData.DataInternacao.split("/")
-        var newData = res[2] + "-" + res[1] + "-" + res[0]
+        var newData = new Date(res[2], res[1]-1, res[0]);
         setDataTratadaInternacao(medicalRecordData.DataInternacao)
         setDataInternacao(newData)
         setCodDoencaPrincipal(medicalRecordData.CodDoencaPrincipal)
@@ -319,51 +332,21 @@ const MedicalRecords = () => {
         setCodComorbidade(medicalRecordData.CodComorbidade)
         setOrigem(medicalRecordData.Origem)
         setAlocacao(medicalRecordData.Alocacao)
-        if(medicalRecordData.ResultadoColeta == "S"){
-            setResultadoColetaString("Sim")
-        }
-        if(medicalRecordData.ResultadoColeta == "N"){
-            setResultadoColetaString("Não")
-        }
+        tratarDados("ResultadoColeta")
         setResultadoColeta(medicalRecordData.ResultadoColeta)
         setCodAtbPrimario(medicalRecordData.CodAtbPrimario)
         setCodAtbSecundario(medicalRecordData.CodAtbSecundario)
         setSitioInfeccaoPrimario(medicalRecordData.SitioInfeccaoPrimario)
-        if(medicalRecordData.TratamentoCCIH == "S"){
-            setTratamentoString("Sim")
-        }
-        if(medicalRecordData.TratamentoCCIH == "N"){
-            setTratamentoString("Não")
-        }
+        tratarDados("TratamentoCCIH")
         setTratamento(medicalRecordData.TratamentoCCIH)
-        if(medicalRecordData.IndicacaoSepse == "S"){
-            setIndicacaoString("Sim")
-        }
-        if(medicalRecordData.IndicacaoSepse == "N"){
-            setIndicacaoString("Não")
-        }
+        tratarDados("IndicacaoSepse")
         setIndicacao(medicalRecordData.IndicacaoSepse)
-        if(medicalRecordData.DisfuncaoRenal == "S"){
-            setDisfuncaoString("Sim")
-        }
-        if(medicalRecordData.DisfuncaoRenal == "N"){
-            setDisfuncaoString("Não")
-        }
+        tratarDados("DisfuncaoRenal")
         setDisfuncao(medicalRecordData.DisfuncaoRenal)
         setOrigemInfeccao(medicalRecordData.OrigemInfeccao)
-        if(medicalRecordData.DoseCorreta == "S"){
-            setDoseString("Sim")
-        }
-        if(medicalRecordData.DoseCorreta == "N"){
-            setDoseString("Não")
-        }
+        tratarDados("DoseCorreta")
         setDose(medicalRecordData.DoseCorreta)
-        if(medicalRecordData.PosologiaCorreta == "S"){
-            setPosologiaString("Sim")
-        }
-        if(medicalRecordData.PosologiaCorreta == "N"){
-            setPosologiaString("Não")
-        }
+        tratarDados("PosologiaCorreta")
         setPosologia(medicalRecordData.PosologiaCorreta)
         setDesfecho(medicalRecordData.Desfecho)
         if(medicalRecordData.DataDesfecho == null){
@@ -371,12 +354,19 @@ const MedicalRecords = () => {
         }else{
             setDataTratadaDesfecho(medicalRecordData.DataDesfecho)
             var res1 = medicalRecordData.DataDesfecho.split("/")
-            var newData1 = res1[2] + "-" + res1[1] + "-" + res1[0]
+            var newData1 = new Date(res1[2], res1[1]-1, res1[0]);
             setDataDesfecho(newData1)
         }
 
         setDisplayDialog(true);
     };
+
+    function tratarDados (e: string) {
+        if(eval("medicalRecordData." + e) == "S")
+            eval("set" + e + "String" + "(" + '"Sim"' + ")")
+        if(eval("medicalRecordData." + e) == "N")
+            eval("set" + e + "String" + "(" + '"Não"' + ")")
+    }
 
     function onClickDelete(){
         medicalRecordsService.Delete(getNroProntuario)
@@ -463,29 +453,31 @@ const MedicalRecords = () => {
                 </DataTable>
 
                 <Dialog visible={displayDialog} style={{width: '50%'}} header="Ações" modal={true} onHide={() => setDisplayDialog(false)}>
-                    <div className="form-row text-center">
+                    <div className="form-row">
                         <div className="col">
-                            <Button className="mx-2 p-3" onClick={() => {setDisplayDialog4(true); setDisplayDialog(false)}}>Visualizar <br></br> prontuário</Button>
+                            <Button variant="info" className="mt-2 mb-2 p-3" style={{width: '100%'}} onClick={() => {setDisplayDialog4(true); setDisplayDialog(false)}}>Visualizar prontuário</Button>
                         </div>
-                        <div className="col">
-                            <Button className="mx-2 p-3" onClick={() => {setDisplayDialog1(true); setDisplayDialog(false)}}>Atualizar <br></br> prontuário</Button>
-                        </div>
-
-                        <div className="col">
-                            <Button className="mx-2 p-3" onClick={() => {setDisplayDialog3(true); setDisplayDialog(false)}}>Atualizar <br></br> desfecho</Button>
-                        </div>
-
-                        <div className="col">
-                            <Button className="mx-2 p-3" onClick={() => {setDisplayDialog2(true); setDisplayDialog(false)}}>Excluir <br></br> prontuário</Button>
+                        <div className="col ml-2">
+                            <Button variant="primary" className="mt-2 mb-2 p-3" style={{width: '100%'}} onClick={() => {setDisplayDialog1(true); setDisplayDialog(false)}}>Atualizar prontuário</Button>
                         </div>
                     </div>
 
-                    <div className="form-row mt-4 text-center">
+                    <div className="form-row mt-3">
                         <div className="col">
-                            <Button className="mx-2 p-3" onClick={() => {setDisplayDialog(false); history.push(`/medicalRecords/assessment/create/?seqProntuario=${getSeqProntuario}`)}}>Cadastrar <br></br> avaliação</Button>
+                            <Button variant="primary" className="mt-2 mb-2 p-3" style={{width: '100%'}} onClick={() => {setDisplayDialog3(true); setDisplayDialog(false)}}>Atualizar desfecho</Button>
                         </div>
+
+                        <div className="col ml-2">
+                            <Button variant="danger" className="mt-2 mb-2 p-3" style={{width: '100%'}} onClick={() => {setDisplayDialog2(true); setDisplayDialog(false)}}>Excluir prontuário</Button>
+                        </div>
+                    </div>
+
+                    <div className="form-row mt-3">
                         <div className="col">
-                            <Button className="mx-2 p-3" onClick={() => {setDisplayDialog(false); history.push(`/medicalRecords/assessment/?seqProntuario=${getSeqProntuario}`)}}>Visualizar <br></br> avaliações</Button>
+                            <Button variant="primary" className="mt-2 mb-2 p-3" style={{width: '100%'}} onClick={() => {setDisplayDialog(false); history.push(`/medicalRecords/assessment/create/?seqProntuario=${getSeqProntuario}`)}}>Cadastrar avaliação</Button>
+                        </div>
+                        <div className="col ml-2">
+                            <Button variant="info" className="mt-2 mb-2 p-3" style={{width: '100%'}} onClick={() => {setDisplayDialog(false); history.push(`/medicalRecords/assessment/?seqProntuario=${getSeqProntuario}`)}}>Visualizar avaliação</Button>
                         </div>
                     </div>
                 </Dialog>
@@ -507,9 +499,10 @@ const MedicalRecords = () => {
                             <DropdownReact/>
                             
                             <label htmlFor="DataDesfecho" className="mt-4">Data do Desfecho</label>
-                            <input type="date" className="form-control" id="DataDesfecho" name="DataDesfecho"
-                                defaultValue={getDataDesfecho} onChange={(e) => setDataDesfecho((e.target as HTMLInputElement).value)}
-                                required/>
+                            <Calendar id="DataInternacao" style={{width: '100%'}} value={getDataDesfecho} 
+                                    onChange={(e) => setDataDesfecho(e.value)} locale={pt_br} dateFormat="dd/mm/yy" 
+                                    placeholder="Selecione a data do desfecho" showButtonBar monthNavigator 
+                                    showIcon showOnFocus={false} required/>
 
                             <button type="submit" className="btn btn-info btn-primary mt-4 mb-4">Atualizar</button>
                         </form>
@@ -540,14 +533,14 @@ const MedicalRecords = () => {
                     {getResultadoColeta &&
                         <p className="text-dark h5 text-left mt-3">Resultado Coleta: {getResultadoColetaString}</p>
                     }
-                    <p className="text-dark h5 text-left mt-3">Tratamento CCIH: {getTratamentoString}</p>
-                    <p className="text-dark h5 text-left mt-3">Indicação Sepse: {getIndicacaoString}</p>
-                    <p className="text-dark h5 text-left mt-3">Disfunção Renal: {getDisfuncaoString}</p>
+                    <p className="text-dark h5 text-left mt-3">Tratamento CCIH: {getTratamentoCCIHString}</p>
+                    <p className="text-dark h5 text-left mt-3">Indicação Sepse: {getIndicacaoSepseString}</p>
+                    <p className="text-dark h5 text-left mt-3">Disfunção Renal: {getDisfuncaoRenalString}</p>
                     {getDose &&
-                        <p className="text-dark h5 text-left mt-3">Dose Correta: {getDoseString}</p>
+                        <p className="text-dark h5 text-left mt-3">Dose Correta: {getDoseCorretaString}</p>
                     }
                     {getPosologia &&
-                        <p className="text-dark h5 text-left mt-3">Posologia Correta: {getPosologiaString}</p>
+                        <p className="text-dark h5 text-left mt-3">Posologia Correta: {getPosologiaCorretaString}</p>
                     }
                     {getDataDesfecho &&
                         <p className="text-dark h5 text-left mt-3">Data do Desfecho: {getDataTratadaDesfecho}</p>
@@ -559,83 +552,84 @@ const MedicalRecords = () => {
 
                 <Dialog visible={displayDialog1} style={{width: '50%'}} modal={true} onHide={() => {setDisplayDialog1(false); showToast('warn', 'Aviso!', 'Operação cancelada pelo usuário.');}} maximizable>
                     <div className="">
-                        <p className="text-dark h3 text-center">Atualização de Prontuário</p>
+                    <p className="text-dark h3 text-center">Atualização de Prontuário</p>
                         <form className="was-validated" onSubmit={handleSubmit}>
                             <div className="form-group">
-                                
                                 <div className="form-row mt-4">
                                     <div className="col mr-4">
                                         <label htmlFor="NroProntuario">Número do Prontuário</label>
-                                        <input type="text" className="form-control" id="NroProntuario" name="NroProntuario"
-                                            defaultValue={getNroProntuario} readOnly/>
+                                        <InputText keyfilter="pint" style={{width: '100%'}} id="NroProntuario" name="NroProntuario"
+                                            defaultValue={getNroProntuario} onChange={(e) => setNroProntuario(Number((e.target as HTMLInputElement).value))}
+                                            placeholder="Digite o número do prontuário" min="1" max="999999999" readOnly required autoFocus/>
                                     </div>
 
                                     <div className="col">
                                         <label htmlFor="SeqPaciente">Sequência do Paciente</label>
-                                        <input type="number" className="form-control" id="SeqPaciente" name="SeqPaciente"
+                                        <InputText keyfilter="pint" style={{width: '100%'}} id="SeqPaciente" name="SeqPaciente"
                                         defaultValue={getSeqPaciente} onChange={(e) => setSeqPaciente(Number((e.target as HTMLInputElement).value))}
-                                        placeholder="Digite o número do paciente" min="1" max="999999999" required autoFocus/>
+                                        placeholder="Digite o número do paciente" min="1" max="999999999" required/>
                                     </div>
                                 </div>
 
                                 <div className="form-row mt-4">
                                     <div className="col mr-4">
                                         <label htmlFor="Origem">Origem</label>
-                                        <input type="text" className="form-control" id="Origem" name="Origem"
+                                        <InputText style={{width: '100%'}} id="Origem" name="Origem"
                                             defaultValue={getOrigem} onChange={(e) => setOrigem((e.target as HTMLInputElement).value)}
                                             placeholder="Digite a origem" required/>
                                     </div>
 
                                     <div className="col">
                                         <label htmlFor="Alocacao">Alocação</label>
-                                        <input type="text" className="form-control" id="Alocacao" name="Alocacao"
+                                        <InputText style={{width: '100%'}} id="Alocacao" name="Alocacao"
                                             defaultValue={getAlocacao} onChange={(e) => setAlocacao((e.target as HTMLInputElement).value)}
                                             placeholder="Digite a alocação" required/>
                                     </div>
                                 </div>
 
                                 <label htmlFor="DataInternacao" className="mt-4">Data da Internação</label>
-                                <input type="date" className="form-control" id="DataInternacao" name="DataInternacao"
-                                    defaultValue={getDataInternacao} onChange={(e) => setDataInternacao((e.target as HTMLInputElement).value)}
-                                    placeholder="Digite a data de internação" required/>
+                                <Calendar id="DataInternacao" style={{width: '100%'}} value={getDataInternacao} 
+                                    onChange={(e) => setDataInternacao(e.value)} locale={pt_br} dateFormat="dd/mm/yy" 
+                                    placeholder="Selecione a data da internação" showButtonBar monthNavigator 
+                                    showIcon showOnFocus={false} required/>
                                 
                                 <label htmlFor="CodDoencaPrincipal" className="mt-4">Código de Doença Primário</label>
-                                <input type="text" className="form-control" id="CodDoencaPrincipal" name="CodDoencaPrincipal"
+                                <InputText style={{width: '100%'}} id="CodDoencaPrincipal" name="CodDoencaPrincipal"
                                     defaultValue={getCodDoencaPrincipal} onChange={(e) => setCodDoencaPrincipal((e.target as HTMLInputElement).value)}
                                     placeholder="Digite o código de doença primário" required/>
                                 
                                 <label htmlFor="CodDoencaSecundario" className="mt-4">Código de Doença Secundário</label>
-                                <input type="text" className="form-control" id="CodDoencaSecundario" name="CodDoencaSecundario"
+                                <InputText style={{width: '100%'}} id="CodDoencaSecundario" name="CodDoencaSecundario"
                                     defaultValue={getCodDoencaSecundario} onChange={(e) => {checkInput(1, (e.target as HTMLInputElement).value)}}
                                     placeholder="Digite o código de doença secundário" />
                                 
                                 <label htmlFor="SistemaAcometido" className="mt-4">Sistema Acometido</label>
-                                <input type="text" className="form-control" id="SistemaAcometido" name="SistemaAcometido"
+                                <InputText style={{width: '100%'}} id="SistemaAcometido" name="SistemaAcometido"
                                     defaultValue={getSistemaAcometido} onChange={(e) => setSistemaAcometido((e.target as HTMLInputElement).value)}
                                     placeholder="Digite o sistema acometido" required/>
                                 
                                 <label htmlFor="CodComorbidade" className="mt-4">Código de Comorbidade</label>
-                                <input type="text" className="form-control" id="CodComorbidade" name="CodComorbidade"
+                                <InputText style={{width: '100%'}} id="CodComorbidade" name="CodComorbidade"
                                     defaultValue={getCodComorbidade} onChange={(e) => {checkInput(2, (e.target as HTMLInputElement).value)}}
                                     placeholder="Digite o código de comorbidade" />
                                 
                                 <label htmlFor="CodAtbPrimario" className="mt-4">Código de Medicamento Primário</label>
-                                <input type="text" className="form-control" id="CodAtbPrimario" name="CodAtbPrimario"
+                                <InputText style={{width: '100%'}} id="CodAtbPrimario" name="CodAtbPrimario"
                                     defaultValue={getCodAtbPrimario} onChange={(e) => setCodAtbPrimario((e.target as HTMLInputElement).value)}
                                     placeholder="Digite o código de medicamento primário" required/>
 
                                 <label htmlFor="CodAtbSecundario" className="mt-4">Código de Medicamento Secundário</label>
-                                <input type="text" className="form-control" id="CodAtbSecundario" name="CodAtbSecundario"
+                                <InputText style={{width: '100%'}} id="CodAtbSecundario" name="CodAtbSecundario"
                                     defaultValue={getCodAtbSecundario} onChange={(e) => {checkInput(3, (e.target as HTMLInputElement).value)}}
                                     placeholder="Digite o código de medicamento secundário" />
 
                                 <label htmlFor="SitioInfeccaoPrimario" className="mt-4">Sítio de Infecção Primário</label>
-                                <input type="text" className="form-control" id="SitioInfeccaoPrimario" name="SitioInfeccaoPrimario"
+                                <InputText style={{width: '100%'}} id="SitioInfeccaoPrimario" name="SitioInfeccaoPrimario"
                                     defaultValue={getSitioInfeccaoPrimario} onChange={(e) => {checkInput(4, (e.target as HTMLInputElement).value)}}
                                     placeholder="Digite o sítio de infecção primário" />
 
                                 <label htmlFor="OrigemInfeccao" className="mt-4">Origem da Infecção</label>
-                                <input type="text" className="form-control" id="OrigemInfeccao" name="OrigemInfeccao"
+                                <InputText style={{width: '100%'}} id="OrigemInfeccao" name="OrigemInfeccao"
                                     defaultValue={getOrigemInfeccao} onChange={(e) => setOrigemInfeccao((e.target as HTMLInputElement).value)}
                                     placeholder="Digite a origem da infecção" required/>
 
