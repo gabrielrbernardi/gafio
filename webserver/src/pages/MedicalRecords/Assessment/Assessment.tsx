@@ -1,7 +1,6 @@
 import React, { useState, useEffect, FormEvent } from 'react';
 import {DataTable} from 'primereact/datatable';
 import {Column} from 'primereact/column';
-import {InputText} from 'primereact/inputtext';
 import Button from 'react-bootstrap/Button';
 import Collapse from 'react-bootstrap/Collapse';
 import {FiSearch} from 'react-icons/fi';
@@ -11,6 +10,8 @@ import ToastComponent from '../../../components/Toast';
 import { Dropdown } from 'primereact/dropdown';
 import {Dropdown as DropdownReact} from 'react-bootstrap';
 import { Dialog } from 'primereact/dialog';
+import { InputText } from 'primereact/inputtext';
+import { Calendar } from 'primereact/calendar';
 
 import {AssessmentService} from './AssessmentService';
 import Loading from '../../../components/Loading';
@@ -20,7 +21,7 @@ const Assessment = () => {
     const queryResponse = query.get("seqProntuario") || ""
 
     const [getNroAvaliacao, setNroAvaliacao] = useState<any>(null)
-    const [getDataAvaliacao, setDataAvaliacao] = useState<string>('')
+    const [getDataAvaliacao, setDataAvaliacao] = useState<any>(null)
     const [getResultadoCulturas, setResultadoCulturas] = useState<any>(null)
     const [getResCulturasAcao, setResCulturasAcao] = useState<any>(null)
     const [getDoseCorreta, setDoseCorreta] = useState<any>(null)
@@ -291,6 +292,18 @@ const Assessment = () => {
         {label: 'Não', value: 'Não'}
     ]
 
+    const pt_br = {
+        firstDayOfWeek: 1,
+        dayNames: ["domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"],
+        dayNamesShort: ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"],
+        dayNamesMin: ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"],
+        // dayNamesMin: ["D", "S", "T", "Q", "Q", "S", "S"],
+        monthNames: ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"],
+        monthNamesShort: ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"],
+        today: "Hoje",
+        clear: "Limpar",
+    };
+
     function handleSubmit(event: FormEvent){
         event.preventDefault();
 
@@ -349,65 +362,27 @@ const Assessment = () => {
 
         setNroAvaliacao(assessmentData.NroAvaliacao)
         var res = assessmentData.DataAvaliacao.split("/")
-        var newData = res[2] + "-" + res[1] + "-" + res[0]
+        var newData = new Date(res[2], res[1]-1, res[0]);
         setDataAvaliacaoTratada(assessmentData.DataAvaliacao)
         setDataAvaliacao(newData)
         setResultadoCulturas(assessmentData.ResultadoCulturas)
         setResCulturasAcao(assessmentData.ResCulturasAcao)
-        if(assessmentData.DoseCorreta == "S"){
-            setDoseCorretaString("Sim")
-        }
-        if(assessmentData.DoseCorreta == "N"){
-            setDoseCorretaString("Não")
-        }
+        tratarDados("DoseCorreta")
         setDoseCorreta(assessmentData.DoseCorreta)
-        if(assessmentData.PosologiaCorreta == "S"){
-            setPosologiaCorretaString("Sim")
-        }
-        if(assessmentData.PosologiaCorreta == "N"){
-            setPosologiaCorretaString("Não")
-        }
+        tratarDados("PosologiaCorreta")
         setPosologiaCorreta(assessmentData.PosologiaCorreta)
-        if(assessmentData.AlertaDot == "S"){
-            setAlertaDotString("Sim")
-        }
-        if(assessmentData.AlertaDot == "N"){
-            setAlertaDotString("Não")
-        }
+        tratarDados("AlertaDot")
         setAlertaDot(assessmentData.AlertaDot)
         setAlertaDotDescricao(assessmentData.AlertaDotDescricao)
         setDisfuncaoRenal(assessmentData.DisfuncaoRenal)
         setAtbContraindicacao(assessmentData.AtbContraindicacao)
-        if(assessmentData.AlteracaoPrescricao == "S"){
-            setAlteracaoPrescricaoString("Sim")
-        }
-        if(assessmentData.AlteracaoPrescricao == "N"){
-            setAlteracaoPrescricaoString("Não")
-        }
+        tratarDados("AlteracaoPrescricao")
         setAlteracaoPrescricao(assessmentData.AlteracaoPrescricao)
-        if(assessmentData.AtbDiluicaoInfusao == "S"){
-            setAtbDiluicaoInfusaoString("Sim")
-        }
-        if(assessmentData.AtbDiluicaoInfusao == "N"){
-            setAtbDiluicaoInfusaoString("Não")
-        }
+        tratarDados("AtbDiluicaoInfusao")
         setAtbDiluicaoInfusao(assessmentData.AtbDiluicaoInfusao)
-        if(assessmentData.InteracaoAtbMedicamento == "S"){
-            setInteracaoAtbMedicamentoString("Sim")
-        }
-        if(assessmentData.InteracaoAtbMedicamento == "N"){
-            setInteracaoAtbMedicamentoString("Não")
-        }
+        tratarDados("InteracaoAtbMedicamento")
         setInteracaoAtbMedicamento(assessmentData.InteracaoAtbMedicamento)
-        if(assessmentData.Hemodialise == "S"){
-            setHemodialiseString("Sim")
-        }
-        if(assessmentData.Hemodialise == "SI"){
-            setHemodialiseString("Sim intermitente")
-        }
-        if(assessmentData.Hemodialise == "N"){
-            setHemodialiseString("Não")
-        }
+        tratarDados("Hemodialise")
         setHemodialise(assessmentData.Hemodialise)
         setAtbOral(assessmentData.AtbOral)
         setTrocaAtb(assessmentData.TrocaAtb)
@@ -416,6 +391,17 @@ const Assessment = () => {
         
         setDisplayDialog(true)
     };
+
+    function tratarDados (e: string) {
+        if(eval("assessmentData." + e) == "S")
+            eval("set" + e + "String" + "(" + '"Sim"' + ")")
+        if(eval("assessmentData." + e) == "SI")
+            eval("set" + e + "String" + "(" + '"Sim intermitente"' + ")")
+        if(eval("assessmentData." + e) == "N")
+            eval("set" + e + "String" + "(" + '"Não"' + ")")
+        if(eval("assessmentData." + e) == "NA")
+            eval("set" + e + "String" + "(" + '"Não aplica"' + ")")
+    }
 
     return (
         <div className="row m-5 px-5">
@@ -452,20 +438,20 @@ const Assessment = () => {
                 <Column field="NroAvaliacao" header="Nro Avaliação" style={{width:'20%', textAlign:'center'}}/>
                 <Column field="DataAvaliacao" header="Data Avaliação" style={{width:'20%', textAlign:'center'}}/>
                 <Column field="AtbOral" header="Antibiótico Oral" style={{width:'20%', textAlign:'center'}}/>
-                <Column field="AtbContraindicacao" header="Antibiótico Contraindicacao" style={{width:'20%', textAlign:'center'}}/>
+                <Column field="AtbContraindicacao" header="Antibiótico Contraindicação" style={{width:'20%', textAlign:'center'}}/>
                 <Column field="TrocaAtb" header="Troca antibiótico" style={{width:'20%', textAlign:'center'}}/>
             </DataTable>
 
             <Dialog visible={displayDialog} style={{width: '50%'}} header="Ações" modal={true} onHide={() => setDisplayDialog(false)}>
-                <div className="form-row text-center">
+                <div className="form-row">
                     <div className="col">
-                        <Button className="mx-2 p-3" onClick={() => {setDisplayDialog(false); setDisplayDialog1(true)}}>Visualizar <br></br> avaliação</Button>
+                        <Button variant="info" className="mt-2 mb-2 p-3" style={{width: '100%'}} onClick={() => {setDisplayDialog(false); setDisplayDialog1(true)}}>Visualizar avaliação</Button>
                     </div>
-                    <div className="col">
-                        <Button className="mx-2 p-3" onClick={() => {setDisplayDialog(false); setDisplayDialog2(true)}}>Atualizar <br></br> avaliação</Button>
+                    <div className="col ml-2">
+                        <Button variant="primary" className="mt-2 mb-2 p-3" style={{width: '100%'}} onClick={() => {setDisplayDialog(false); setDisplayDialog2(true)}}>Atualizar avaliação</Button>
                     </div>
-                    <div className="col">
-                        <Button className="mx-2 p-3" onClick={() => {setDisplayDialog(false); setDisplayDialog3(true)}}>Excluir <br></br> avaliação</Button>
+                    <div className="col ml-2">
+                        <Button variant="danger" className="mt-2 mb-2 p-3" style={{width: '100%'}} onClick={() => {setDisplayDialog(false); setDisplayDialog3(true)}}>Excluir avaliação</Button>
                     </div>
                 </div>
             </Dialog>
@@ -517,29 +503,30 @@ const Assessment = () => {
                     <p className="text-dark h3 text-center">Atualização de Avaliação</p>
                     <form className="was-validated" onSubmit={handleSubmit}>
                         <div className="form-group">
-
                             <div className="form-row mt-4">
                                 <div className="col mr-4">
                                     <label htmlFor="NroAvaliacao">Número da Avaliação</label>
-                                    <input type="number" className="form-control" id="NroAvaliacao" name="NroAvaliacao"
+                                    <InputText keyfilter="pint" style={{width: '100%'}} id="NroAvaliacao" name="NroAvaliacao"
                                         defaultValue={getNroAvaliacao} onChange={(e) => setNroAvaliacao(Number((e.target as HTMLInputElement).value))}
-                                        placeholder="Digite o número da avaliação" min="1" max="999999999" required readOnly/>
+                                        placeholder="Digite o número da avaliação" min="1" max="999999999" required autoFocus/>
                                 </div>
 
                                 <div className="col">
                                     <label htmlFor="DataAvaliacao" className="mt">Data da Avaliação</label>
-                                    <input type="date" className="form-control" id="DataAvaliacao" name="DataAvaliacao"
-                                        defaultValue={getDataAvaliacao} onChange={(e) => setDataAvaliacao((e.target as HTMLInputElement).value)} autoFocus required/>
+                                    <Calendar id="DataInternacao" style={{width: '100%'}} value={getDataAvaliacao} 
+                                        onChange={(e) => setDataAvaliacao(e.value)} locale={pt_br} dateFormat="dd/mm/yy" 
+                                        placeholder="Selecione a data da internação" showButtonBar monthNavigator 
+                                        showIcon showOnFocus={false} required/>
                                 </div>
                             </div>
 
                             <label htmlFor="ResultadoCulturas" className="mt-4">Resultado das Culturas</label>
-                            <input type="text" className="form-control" id="ResultadoCulturas" name="ResultadoCulturas"
+                            <InputText style={{width: '100%'}} id="ResultadoCulturas" name="ResultadoCulturas"
                                 defaultValue={getResultadoCulturas} onChange={(e) => {checkInput(1, (e.target as HTMLInputElement).value)}}
                                 placeholder="Digite o resultado das culturas"/>
                             
                             <label htmlFor="ResCulturasAcao" className="mt-4">Ação do Resultado das Culturas</label>
-                            <input type="text" className="form-control" id="ResCulturasAcao" name="ResCulturasAcao"
+                            <InputText style={{width: '100%'}} id="ResCulturasAcao" name="ResCulturasAcao"
                                 defaultValue={getResCulturasAcao} onChange={(e) => {checkInput(2, (e.target as HTMLInputElement).value)}}
                                 placeholder="Digite a ação do resultado das culturas"/>
 
@@ -576,12 +563,12 @@ const Assessment = () => {
                             </div>
 
                             <label htmlFor="AlertaDotDescricao" className="mt-4">Descrição do Alerta Dot</label>
-                            <input type="text" className="form-control" id="AlertaDotDescricao" name="AlertaDotDescricao"
+                            <InputText style={{width: '100%'}} id="AlertaDotDescricao" name="AlertaDotDescricao"
                                 defaultValue={getAlertaDotDescricao} onChange={(e) => {checkInput(3, (e.target as HTMLInputElement).value)}}
                                 placeholder="Digite a descrição do alerta dot"/>
 
                             <label htmlFor="DisfuncaoRenal" className="mt-4">Disfuncao Renal</label>
-                            <input type="text" className="form-control" id="DisfuncaoRenal" name="DisfuncaoRenal"
+                            <InputText style={{width: '100%'}} id="DisfuncaoRenal" name="DisfuncaoRenal"
                                 defaultValue={getDisfuncaoRenal} onChange={(e) => setDisfuncaoRenal((e.target as HTMLInputElement).value)}
                                 placeholder="Digite a disfunção renal" required/>
 
@@ -662,13 +649,13 @@ const Assessment = () => {
                             </div>
 
                             <label htmlFor="NovoAtb" className="mt-4">Novo Atb</label>
-                            <input type="text" className="form-control" id="NovoAtb" name="NovoAtb"
+                            <InputText style={{width: '100%'}} id="NovoAtb" name="NovoAtb"
                                 defaultValue={getNovoAtb} onChange={(e) => {checkInput(4, (e.target as HTMLInputElement).value)}}
                                 placeholder="Digite o novo Atb"/>
 
                         </div>
                         
-                        <button type="submit" className="btn btn-info btn-primary mt-3">Atualizar</button>
+                        <button type="submit" className="btn btn-info btn-primary mt-3 mb-3">Atualizar</button>
                     </form>
                 </div>
             </Dialog>

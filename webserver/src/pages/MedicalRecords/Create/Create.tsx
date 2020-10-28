@@ -3,6 +3,8 @@ import {Dropdown} from 'primereact/dropdown';
 import {Dropdown as DropdownReact} from 'react-bootstrap';
 import { useHistory } from 'react-router-dom';
 import ToastComponent from '../../../components/Toast';
+import { InputText } from 'primereact/inputtext';
+import { Calendar } from 'primereact/calendar';
 
 import {CreateMedicalRecordsService} from './CreateMedicalRecordsService'
 
@@ -10,7 +12,7 @@ const MedicalRecordsForm = () => {
 
     const [getNroProntuario, setNroProntuario] = useState<any>(null)
     const [getSeqPaciente, setSeqPaciente] = useState<any>(null)
-    const [getDataInternacao, setDataInternacao] = useState<string>('')
+    const [getDataInternacao, setDataInternacao] = useState<any>(null)
     const [getCodDoencaPrincipal, setCodDoencaPrincipal] = useState<string>('')
     const [getCodDoencaSecundario, setCodDoencaSecundario] = useState<any>(null)
     const [getSistemaAcometido, setSistemaAcometido] = useState<string>('')
@@ -95,6 +97,18 @@ const MedicalRecordsForm = () => {
         {label: 'Não', value: 'N'}
     ];
 
+    const pt_br = {
+        firstDayOfWeek: 1,
+        dayNames: ["domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"],
+        dayNamesShort: ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"],
+        dayNamesMin: ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"],
+        // dayNamesMin: ["D", "S", "T", "Q", "Q", "S", "S"],
+        monthNames: ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"],
+        monthNamesShort: ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"],
+        today: "Hoje",
+        clear: "Limpar",
+    };
+
     function handleSubmit(event: FormEvent){
         event.preventDefault();
 
@@ -148,18 +162,17 @@ const MedicalRecordsForm = () => {
                 <p className="text-dark h3 text-center">Cadastro de Prontuário</p>
                 <form className="was-validated" onSubmit={handleSubmit}>
                     <div className="form-group">
-                        
                         <div className="form-row mt-4">
                             <div className="col mr-4">
                                 <label htmlFor="NroProntuario">Número do Prontuário</label>
-                                <input type="number" className="form-control" id="NroProntuario" name="NroProntuario"
+                                <InputText keyfilter="pint" style={{width: '100%'}} id="NroProntuario" name="NroProntuario"
                                     defaultValue={getNroProntuario} onChange={(e) => setNroProntuario(Number((e.target as HTMLInputElement).value))}
                                     placeholder="Digite o número do prontuário" min="1" max="999999999" required autoFocus/>
                             </div>
 
                             <div className="col">
                                 <label htmlFor="SeqPaciente">Sequência do Paciente</label>
-                                <input type="number" className="form-control" id="SeqPaciente" name="SeqPaciente"
+                                <InputText keyfilter="pint" style={{width: '100%'}} id="SeqPaciente" name="SeqPaciente"
                                 defaultValue={getSeqPaciente} onChange={(e) => setSeqPaciente(Number((e.target as HTMLInputElement).value))}
                                 placeholder="Digite o número do paciente" min="1" max="999999999" required/>
                             </div>
@@ -168,61 +181,62 @@ const MedicalRecordsForm = () => {
                         <div className="form-row mt-4">
                             <div className="col mr-4">
                                 <label htmlFor="Origem">Origem</label>
-                                <input type="text" className="form-control" id="Origem" name="Origem"
+                                <InputText style={{width: '100%'}} id="Origem" name="Origem"
                                     defaultValue={getOrigem} onChange={(e) => setOrigem((e.target as HTMLInputElement).value)}
                                     placeholder="Digite a origem" required/>
                             </div>
 
                             <div className="col">
                                 <label htmlFor="Alocacao">Alocação</label>
-                                <input type="text" className="form-control" id="Alocacao" name="Alocacao"
+                                <InputText style={{width: '100%'}} id="Alocacao" name="Alocacao"
                                     defaultValue={getAlocacao} onChange={(e) => setAlocacao((e.target as HTMLInputElement).value)}
                                     placeholder="Digite a alocação" required/>
                             </div>
                         </div>
 
                         <label htmlFor="DataInternacao" className="mt-4">Data da Internação</label>
-                        <input type="date" className="form-control" id="DataInternacao" name="DataInternacao"
-                            defaultValue={getDataInternacao} onChange={(e) => setDataInternacao((e.target as HTMLInputElement).value)}
-                            required/>
+                        <Calendar id="DataInternacao" style={{width: '100%'}} value={getDataInternacao} 
+                            onChange={(e) => setDataInternacao(e.value)} locale={pt_br} dateFormat="dd/mm/yy" 
+                            placeholder="Selecione a data da internação" showButtonBar monthNavigator 
+                            showIcon showOnFocus={false} required/>
                         
                         <label htmlFor="CodDoencaPrincipal" className="mt-4">Código de Doença Primário</label>
-                        <input type="text" className="form-control" id="CodDoencaPrincipal" name="CodDoencaPrincipal"
+                        <InputText style={{width: '100%'}} id="CodDoencaPrincipal" name="CodDoencaPrincipal"
                             defaultValue={getCodDoencaPrincipal} onChange={(e) => setCodDoencaPrincipal((e.target as HTMLInputElement).value)}
                             placeholder="Digite o código de doença primário" required/>
                         
                         <label htmlFor="CodDoencaSecundario" className="mt-4">Código de Doença Secundário</label>
-                        <input type="text" className="form-control" id="CodDoencaSecundario" name="CodDoencaSecundario"
+                        <InputText style={{width: '100%'}} id="CodDoencaSecundario" name="CodDoencaSecundario"
                             defaultValue={getCodDoencaSecundario} onChange={(e) => {checkInput(1, (e.target as HTMLInputElement).value)}}
                             placeholder="Digite o código de doença secundário" />
                         
                         <label htmlFor="SistemaAcometido" className="mt-4">Sistema Acometido</label>
-                        <input type="text" className="form-control" id="SistemaAcometido" name="SistemaAcometido"
+                        <InputText style={{width: '100%'}} id="SistemaAcometido" name="SistemaAcometido"
                             defaultValue={getSistemaAcometido} onChange={(e) => setSistemaAcometido((e.target as HTMLInputElement).value)}
                             placeholder="Digite o sistema acometido" required/>
                         
                         <label htmlFor="CodComorbidade" className="mt-4">Código de Comorbidade</label>
-                        <input type="text" className="form-control" id="CodComorbidade" name="CodComorbidade"
+                        <InputText style={{width: '100%'}} id="CodComorbidade" name="CodComorbidade"
                             defaultValue={getCodComorbidade} onChange={(e) => {checkInput(2, (e.target as HTMLInputElement).value)}}
                             placeholder="Digite o código de comorbidade" />
                         
                         <label htmlFor="CodAtbPrimario" className="mt-4">Código de Medicamento Primário</label>
-                        <input type="text" className="form-control" id="CodAtbPrimario" name="CodAtbPrimario"
+                        <InputText style={{width: '100%'}} id="CodAtbPrimario" name="CodAtbPrimario"
                             defaultValue={getCodAtbPrimario} onChange={(e) => setCodAtbPrimario((e.target as HTMLInputElement).value)}
                             placeholder="Digite o código de medicamento primário" required/>
 
                         <label htmlFor="CodAtbSecundario" className="mt-4">Código de Medicamento Secundário</label>
-                        <input type="text" className="form-control" id="CodAtbSecundario" name="CodAtbSecundario"
+                        <InputText style={{width: '100%'}} id="CodAtbSecundario" name="CodAtbSecundario"
                             defaultValue={getCodAtbSecundario} onChange={(e) => {checkInput(3, (e.target as HTMLInputElement).value)}}
                             placeholder="Digite o código de medicamento secundário" />
 
                         <label htmlFor="SitioInfeccaoPrimario" className="mt-4">Sítio de Infecção Primário</label>
-                        <input type="text" className="form-control" id="SitioInfeccaoPrimario" name="SitioInfeccaoPrimario"
+                        <InputText style={{width: '100%'}} id="SitioInfeccaoPrimario" name="SitioInfeccaoPrimario"
                             defaultValue={getSitioInfeccaoPrimario} onChange={(e) => {checkInput(4, (e.target as HTMLInputElement).value)}}
                             placeholder="Digite o sítio de infecção primário" />
 
                         <label htmlFor="OrigemInfeccao" className="mt-4">Origem da Infecção</label>
-                        <input type="text" className="form-control" id="OrigemInfeccao" name="OrigemInfeccao"
+                        <InputText style={{width: '100%'}} id="OrigemInfeccao" name="OrigemInfeccao"
                             defaultValue={getOrigemInfeccao} onChange={(e) => setOrigemInfeccao((e.target as HTMLInputElement).value)}
                             placeholder="Digite a origem da infecção" required/>
 
@@ -280,7 +294,7 @@ const MedicalRecordsForm = () => {
 
                     </div>
                     
-                    <button type="submit" className="btn btn-info btn-primary mt-3">Cadastrar</button>
+                    <button type="submit" className="btn btn-info btn-primary mt-3 mb-3">Cadastrar</button>
                 </form>
             </div>
             {getToast &&

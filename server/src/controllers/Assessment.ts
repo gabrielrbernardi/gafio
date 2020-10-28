@@ -50,8 +50,9 @@ class AvaliacaoController {
                     const assessmentDB = await knex("Avaliacao").where("NroAvaliacao", NroAvaliacao)
                     const assessment = assessmentDB[0]
     
-                    if(!assessment){      
-                        var res = DataAvaliacao.split("-")
+                    if(!assessment){
+                        var DataAvaliacaoTratada = DataAvaliacao.substring(0, 10);
+                        var res = DataAvaliacaoTratada.split("-")
                         var dataTratada = res[2] + "/" + res[1] + "/" + res[0]
     
                         await knex("Avaliacao").insert({
@@ -122,30 +123,21 @@ class AvaliacaoController {
                 const assessments = await knex("Avaliacao").where('IdProntuario', `${seqProntuario}`).offset((pageRequest-1)*rows).limit(rows);
         
                 var serializedAssessments = assessments.map(assessment => {
-                    var newAtbOral
-                    if(assessment.AtbOral == "S"){
-                        newAtbOral = "Sim"
+                    function trataDados(e: string) {
+                        if(eval("assessment." + e) == "S"){
+                            return "Sim"
+                        }
+                        if(eval("assessment." + e) == "NA"){
+                            return "Não aplica"
+                        }
+                        if(eval("assessment." + e) == "N"){
+                            return "Não"
+                        }
                     }
-                    if(assessment.AtbOral == "NA"){
-                        newAtbOral = "Não aplica"
-                    }
-                    if(assessment.AtbOral == "N"){
-                        newAtbOral = "Não"
-                    }
-                    var newTrocaAtb
-                    if(assessment.TrocaAtb == "S"){
-                        newTrocaAtb = "Sim"
-                    }
-                    if(assessment.TrocaAtb == "N"){
-                        newTrocaAtb = "Não"
-                    }
-                    var newAtbContraindicacao
-                    if(assessment.AtbContraindicacao == "S"){
-                        newAtbContraindicacao = "Sim"
-                    }
-                    if(assessment.AtbContraindicacao == "N"){
-                        newAtbContraindicacao = "Não"
-                    }
+                    var newAtbOral = trataDados("AtbOral")
+                    var newTrocaAtb = trataDados("TrocaAtb")
+                    var newAtbContraindicacao = trataDados("AtbContraindicacao")
+
                     return {
                         NroAvaliacao: assessment.NroAvaliacao,
                         DataAvaliacao: assessment.DataAvaliacao,
@@ -204,30 +196,21 @@ class AvaliacaoController {
                     .offset((pageRequest-1)*rows).limit(rows);
                     
                     var serializedAssessments = assessments.map(assessment => {
-                        var newAtbOral
-                        if(assessment.AtbOral == "S"){
-                            newAtbOral = "Sim"
+                        function trataDados(e: string) {
+                            if(eval("assessment." + e) == "S"){
+                                return "Sim"
+                            }
+                            if(eval("assessment." + e) == "NA"){
+                                return "Não aplica"
+                            }
+                            if(eval("assessment." + e) == "N"){
+                                return "Não"
+                            }
                         }
-                        if(assessment.AtbOral == "NA"){
-                            newAtbOral = "Não aplica"
-                        }
-                        if(assessment.AtbOral == "N"){
-                            newAtbOral = "Não"
-                        }
-                        var newTrocaAtb
-                        if(assessment.TrocaAtb == "S"){
-                            newTrocaAtb = "Sim"
-                        }
-                        if(assessment.TrocaAtb == "N"){
-                            newTrocaAtb = "Não"
-                        }
-                        var newAtbContraindicacao
-                        if(assessment.AtbContraindicacao == "S"){
-                            newAtbContraindicacao = "Sim"
-                        }
-                        if(assessment.AtbContraindicacao == "N"){
-                            newAtbContraindicacao = "Não"
-                        }
+                        var newAtbOral = trataDados("AtbOral")
+                        var newTrocaAtb = trataDados("TrocaAtb")
+                        var newAtbContraindicacao = trataDados("AtbContraindicacao")
+
                         return {
                             NroAvaliacao: assessment.NroAvaliacao,
                             DataAvaliacao: assessment.DataAvaliacao,
@@ -286,30 +269,21 @@ class AvaliacaoController {
                     .offset((pageRequest-1)*rows).limit(rows);
             
                     var serializedAssessments = assessments.map(assessment => {
-                        var newAtbOral
-                        if(assessment.AtbOral == "S"){
-                            newAtbOral = "Sim"
+                        function trataDados(e: string) {
+                            if(eval("assessment." + e) == "S"){
+                                return "Sim"
+                            }
+                            if(eval("assessment." + e) == "NA"){
+                                return "Não aplica"
+                            }
+                            if(eval("assessment." + e) == "N"){
+                                return "Não"
+                            }
                         }
-                        if(assessment.AtbOral == "NA"){
-                            newAtbOral = "Não aplica"
-                        }
-                        if(assessment.AtbOral == "N"){
-                            newAtbOral = "Não"
-                        }
-                        var newTrocaAtb
-                        if(assessment.TrocaAtb == "S"){
-                            newTrocaAtb = "Sim"
-                        }
-                        if(assessment.TrocaAtb == "N"){
-                            newTrocaAtb = "Não"
-                        }
-                        var newAtbContraindicacao
-                        if(assessment.AtbContraindicacao == "S"){
-                            newAtbContraindicacao = "Sim"
-                        }
-                        if(assessment.AtbContraindicacao == "N"){
-                            newAtbContraindicacao = "Não"
-                        }
+                        var newAtbOral = trataDados("AtbOral")
+                        var newTrocaAtb = trataDados("TrocaAtb")
+                        var newAtbContraindicacao = trataDados("AtbContraindicacao")
+
                         return {
                             NroAvaliacao: assessment.NroAvaliacao,
                             DataAvaliacao: assessment.DataAvaliacao,
@@ -385,7 +359,8 @@ class AvaliacaoController {
                 const medicalRecords = medicalRecordsDB[0]
     
                 if(medicalRecords){
-                        var res = DataAvaliacao.split("-")
+                        var DataAvaliacaoTratada = DataAvaliacao.substring(0, 10);
+                        var res = DataAvaliacaoTratada.split("-")
                         var dataTratada = res[2] + "/" + res[1] + "/" + res[0]
                         var AtbOralChar
                         if(AtbOral.length == 3){

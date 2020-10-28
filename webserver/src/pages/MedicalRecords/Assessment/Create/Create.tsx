@@ -3,6 +3,8 @@ import {Dropdown} from 'primereact/dropdown';
 import {Dropdown as DropdownReact} from 'react-bootstrap';
 import { useHistory, useLocation } from 'react-router-dom';
 import ToastComponent from '../../../../components/Toast';
+import { InputText } from 'primereact/inputtext';
+import { Calendar } from 'primereact/calendar';
 
 import {CreateAssessmentService} from './CreateAssessmentService'
 
@@ -11,7 +13,7 @@ const AssessmentForm = () => {
     const queryResponse = query.get("seqProntuario") || ""
 
     const [getNroAvaliacao, setNroAvaliacao] = useState<any>(null)
-    const [getDataAvaliacao, setDataAvaliacao] = useState<string>('')
+    const [getDataAvaliacao, setDataAvaliacao] = useState<any>(null)
     const [getResultadoCulturas, setResultadoCulturas] = useState<any>(null)
     const [getResCulturasAcao, setResCulturasAcao] = useState<any>(null)
     const [getDoseCorreta, setDoseCorreta] = useState<any>(null)
@@ -123,6 +125,18 @@ const AssessmentForm = () => {
         {label: 'Não', value: 'N'}
     ]
 
+    const pt_br = {
+        firstDayOfWeek: 1,
+        dayNames: ["domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"],
+        dayNamesShort: ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"],
+        dayNamesMin: ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"],
+        // dayNamesMin: ["D", "S", "T", "Q", "Q", "S", "S"],
+        monthNames: ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"],
+        monthNamesShort: ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"],
+        today: "Hoje",
+        clear: "Limpar",
+    };
+
     function handleSubmit(event: FormEvent){
         event.preventDefault();
 
@@ -172,29 +186,30 @@ const AssessmentForm = () => {
                 <p className="text-dark h3 text-center">Cadastro de Avaliação</p>
                 <form className="was-validated" onSubmit={handleSubmit}>
                     <div className="form-group">
-
                         <div className="form-row mt-4">
                             <div className="col mr-4">
                                 <label htmlFor="NroAvaliacao">Número da Avaliação</label>
-                                <input type="number" className="form-control" id="NroAvaliacao" name="NroAvaliacao"
+                                <InputText keyfilter="pint" style={{width: '100%'}} id="NroAvaliacao" name="NroAvaliacao"
                                     defaultValue={getNroAvaliacao} onChange={(e) => setNroAvaliacao(Number((e.target as HTMLInputElement).value))}
                                     placeholder="Digite o número da avaliação" min="1" max="999999999" required autoFocus/>
                             </div>
 
                             <div className="col">
                                 <label htmlFor="DataAvaliacao" className="mt">Data da Avaliação</label>
-                                <input type="date" className="form-control" id="DataAvaliacao" name="DataAvaliacao"
-                                    defaultValue={getDataAvaliacao} onChange={(e) => setDataAvaliacao((e.target as HTMLInputElement).value)} required/>
+                                <Calendar id="DataInternacao" style={{width: '100%'}} value={getDataAvaliacao} 
+                                    onChange={(e) => setDataAvaliacao(e.value)} locale={pt_br} dateFormat="dd/mm/yy" 
+                                    placeholder="Selecione a data da internação" showButtonBar monthNavigator 
+                                    showIcon showOnFocus={false} required/>
                             </div>
                         </div>
 
                         <label htmlFor="ResultadoCulturas" className="mt-4">Resultado das Culturas</label>
-                        <input type="text" className="form-control" id="ResultadoCulturas" name="ResultadoCulturas"
+                        <InputText style={{width: '100%'}} id="ResultadoCulturas" name="ResultadoCulturas"
                             defaultValue={getResultadoCulturas} onChange={(e) => {checkInput(1, (e.target as HTMLInputElement).value)}}
                             placeholder="Digite o resultado das culturas"/>
                         
                         <label htmlFor="ResCulturasAcao" className="mt-4">Ação do Resultado das Culturas</label>
-                        <input type="text" className="form-control" id="ResCulturasAcao" name="ResCulturasAcao"
+                        <InputText style={{width: '100%'}} id="ResCulturasAcao" name="ResCulturasAcao"
                             defaultValue={getResCulturasAcao} onChange={(e) => {checkInput(2, (e.target as HTMLInputElement).value)}}
                             placeholder="Digite a ação do resultado das culturas"/>
 
@@ -231,12 +246,12 @@ const AssessmentForm = () => {
                         </div>
 
                         <label htmlFor="AlertaDotDescricao" className="mt-4">Descrição do Alerta Dot</label>
-                        <input type="text" className="form-control" id="AlertaDotDescricao" name="AlertaDotDescricao"
+                        <InputText style={{width: '100%'}} id="AlertaDotDescricao" name="AlertaDotDescricao"
                             defaultValue={getAlertaDotDescricao} onChange={(e) => {checkInput(3, (e.target as HTMLInputElement).value)}}
                             placeholder="Digite a descrição do alerta dot"/>
 
                         <label htmlFor="DisfuncaoRenal" className="mt-4">Disfuncao Renal</label>
-                        <input type="text" className="form-control" id="DisfuncaoRenal" name="DisfuncaoRenal"
+                        <InputText style={{width: '100%'}} id="DisfuncaoRenal" name="DisfuncaoRenal"
                             defaultValue={getDisfuncaoRenal} onChange={(e) => setDisfuncaoRenal((e.target as HTMLInputElement).value)}
                             placeholder="Digite a disfunção renal" required/>
 
@@ -317,13 +332,13 @@ const AssessmentForm = () => {
                         </div>
 
                         <label htmlFor="NovoAtb" className="mt-4">Novo Atb</label>
-                        <input type="text" className="form-control" id="NovoAtb" name="NovoAtb"
+                        <InputText style={{width: '100%'}} id="NovoAtb" name="NovoAtb"
                             defaultValue={getNovoAtb} onChange={(e) => {checkInput(4, (e.target as HTMLInputElement).value)}}
                             placeholder="Digite o novo Atb"/>
 
                     </div>
                     
-                    <button type="submit" className="btn btn-info btn-primary mt-3">Cadastrar</button>
+                    <button type="submit" className="btn btn-info btn-primary mt-3 mb-3">Cadastrar</button>
                 </form>
             </div>
 

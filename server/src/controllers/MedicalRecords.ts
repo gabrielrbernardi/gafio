@@ -46,7 +46,8 @@ class ProntuarioController {
             const patient = patientDB[0]
             
             if(patient){
-               var res = DataInternacao.split("-")
+               var DataInternacaoTratada = DataInternacao.substring(0, 10);
+               var res = DataInternacaoTratada.split("-")
                var dataTratada = res[2] + "/" + res[1] + "/" + res[0]
 
                await knex("Prontuario").insert({
@@ -418,7 +419,8 @@ class ProntuarioController {
             const patient = patientDB[0]
          
             if(patient){
-               var res = DataInternacao.split("-")
+               var DataInternacaoTratada = DataInternacao.substring(0, 10);
+               var res = DataInternacaoTratada.split("-")
                var dataTratada = res[2] + "/" + res[1] + "/" + res[0]
 
                await knex('Prontuario').where('NroProntuario', NroProntuario).update({
@@ -481,7 +483,8 @@ class ProntuarioController {
          const MedicalRecord = MedicalRecordDB[0]
             
          if(MedicalRecord){
-            var res = DataDesfecho.split("-")
+            var DataDesfechoTratada = DataDesfecho.substring(0, 10);
+            var res = DataDesfechoTratada.split("-")
             var dataTratada = res[2] + "/" + res[1] + "/" + res[0]
             let desfechoChar = Desfecho[0][0];
                
