@@ -33,9 +33,10 @@ interface IMicrobiology {
 
 interface Props {
     id?: number;
+    handleTableUpdate?: any;
 }
 
-const MicrobiologyForm: React.FC<Props> = ({ id }) => {
+const MicrobiologyForm: React.FC<Props> = ({ id, handleTableUpdate }) => {
     const [title, setTitle] = useState<string>("Cadastro de microbiologia");
     const [buttonLabel, setButtonLabel] = useState<string>("Cadastrar");
     const [toast, setToast] = useState<boolean>(false);
@@ -165,7 +166,6 @@ const MicrobiologyForm: React.FC<Props> = ({ id }) => {
 
     async function handleSubmit(event: FormEvent) {
         event.preventDefault();
-
         const data = {
             IdPaciente,
             IdProntuario,

@@ -62,7 +62,6 @@ const Microbiology = () => {
                 const response = await api.get("/microbiology");
                 const { results } = response.data;
                 const { count } = response.data.count;
-                console.log(count);
                 setRecords(Number(count));
                 setMicrobiologies(results);
                 setLoading(false);
@@ -106,12 +105,27 @@ const Microbiology = () => {
         setDisplayDialog(true);
     }
 
+    async function handleTableUpdate() {
+        try {
+            setTableLoading(true);
+            const response = await api.get("/microbiology");
+            const { results } = response.data;
+            const { count } = response.data.count;
+            setRecords(Number(count));
+            setMicrobiologies(results);
+            setTableLoading(false);
+        } catch (error) {
+            setTableLoading(false);
+            HandleToast("error", "Erro!", "Falha ao atualizar os registros.");
+        }
+    }
+
     async function handleDelete() {
         try {
             await api.delete(`/microbiology/delete/${id}`);
             setDeleteDialog(false);
-            history.go(0);
-            // HandleToast("success", "Sucesso!", "A microbiologia foi excluída.");
+            HandleToast("success", "Sucesso!", "A microbiologia foi excluída.");
+            handleTableUpdate();
         } catch (error) {
             setDeleteDialog(false);
             HandleToast("error", "Erro!", "Falha ao excluir a microbiologia.");
@@ -120,7 +134,7 @@ const Microbiology = () => {
 
     function handleUpdate() {
         setUpdate(false);
-        history.go(0);
+        handleTableUpdate();
     }
 
     function HandleToast(
