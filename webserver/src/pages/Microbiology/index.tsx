@@ -10,7 +10,9 @@ import { Dialog } from "primereact/dialog";
 import View from "./MicrobiologyView";
 import Form from "./MicrobiologyForm";
 
-import { useHistory } from "react-router-dom";
+
+import "./index.css";
+
 import api from "../../services/api";
 
 interface IMicrobiology {
@@ -52,7 +54,6 @@ const Microbiology = () => {
     const [tableloading, setTableLoading] = useState<boolean>(true);
     const [loading, setLoading] = useState<boolean>(true);
 
-    const history = useHistory();
     const rows = 10;
 
     useEffect(() => {
@@ -163,106 +164,64 @@ const Microbiology = () => {
     return (
         <>
             <div className="row m-5 px-5">
-                <Link to="/microbiology/create">
+                    <Link to="/microbiology/create">
+                        <Button
+                            variant="outline-dark"
+                            className="mb-2"
+                            style={{ borderRadius: "0", height: "41.5px" }}
+                        >
+                            Cadastrar Microbiologia
+                        </Button>
+                    </Link>
                     <Button
-                        variant="outline-dark"
-                        className="mb-2"
-                        style={{ borderRadius: "0", height: "41.5px" }}
+                        variant="outline-secondary"
+                        className="mb-2 ml-2"
+                        aria-controls="example-collapse-text"
+                        style={{ borderRadius: "0" }}
                     >
-                        Cadastrar Microbiologia
+                        Buscar por microbiologia
                     </Button>
-                </Link>
-
-                <Button
-                    variant="outline-secondary"
-                    className="mb-2 ml-2"
-                    aria-controls="example-collapse-text"
-                    style={{ borderRadius: "0" }}
-                >
-                    Buscar por microbiologia
-                </Button>
-
-                <DataTable
-                    value={microbiologies}
-                    loading={tableloading}
-                    paginator={true}
-                    rows={rows}
-                    totalRecords={records}
-                    first={first}
-                    onPage={handlePage}
-                    header={header}
-                    emptyMessage="Nenhum resultado encontrado"
-                    lazy={true}
-                    selectionMode="single"
-                    className="p-datatable-responsive-demo"
-                    resizableColumns={true}
-                    selection={selectedMicrobiology}
-                    onSelectionChange={(e) => setselectedMicrobiology(e.value)}
-                    onRowSelect={(e) => {
-                        onMicrobiologySelect(e);
-                    }}
-                >
-                    <Column
-                        field="IdMicrobiologia"
-                        header="Id"
-                        style={{ width: "6%", textAlign: "center" }}
-                    />
-                    <Column
-                        field="IdPaciente"
-                        header="Paciente"
-                        style={{ width: "8%", textAlign: "center" }}
-                    />
-                    <Column
-                        field="IdProntuario"
-                        header="Prontuário"
-                        style={{ width: "8%", textAlign: "center" }}
-                    />
-                    <Column
-                        field="DataColeta"
-                        header="Coleta"
-                        style={{ width: "10%", textAlign: "center" }}
-                    />
-                    <Column
-                        field="DataResultado"
-                        header="Resultado"
-                        style={{ width: "10%", textAlign: "center" }}
-                    />
-                    <Column
-                        field="SwabNasal"
-                        header="Swab nasal"
-                        style={{ width: "7%", textAlign: "center" }}
-                    />
-                    <Column
-                        field="SwabRetal"
-                        header="Swab retal"
-                        style={{ width: "7%", textAlign: "center" }}
-                    />
-                    <Column
-                        field="Sangue"
-                        header="Sangue"
-                        style={{ width: "6%", textAlign: "center" }}
-                    />
-                    <Column
-                        field="Urina"
-                        header="Urina"
-                        style={{ width: "6%", textAlign: "center" }}
-                    />
-                    <Column
-                        field="SecrecaoTraqueal"
-                        header="Secreção Traqueal"
-                        style={{ width: "8%", textAlign: "center" }}
-                    />
-                    <Column
-                        field="Outros"
-                        header="Outros"
-                        style={{ width: "6%", textAlign: "center" }}
-                    />
-                    <Column
-                        field="PerfilSensibilidade"
-                        header="Perfil"
-                        style={{ width: "12%", textAlign: "center" }}
-                    />
-                </DataTable>
+                <div className="datatable-responsive-demo">
+                    <DataTable
+                        value={microbiologies}
+                        loading={tableloading}
+                        paginator={true}
+                        rows={rows}
+                        totalRecords={records}
+                        first={first}
+                        onPage={handlePage}
+                        header={header}
+                        emptyMessage="Nenhum resultado encontrado"
+                        lazy={true}
+                        selectionMode="single"
+                        className="p-datatable-responsive-demo"
+                        resizableColumns={true}
+                        autoLayout={true}
+                        selection={selectedMicrobiology}
+                        onSelectionChange={(e) =>
+                            setselectedMicrobiology(e.value)
+                        }
+                        onRowSelect={(e) => {
+                            onMicrobiologySelect(e);
+                        }}
+                    >
+                        <Column field="IdMicrobiologia" header="Id" />
+                        <Column field="IdPaciente" header="Paciente" />
+                        <Column field="IdProntuario" header="Prontuário" />
+                        <Column field="DataColeta" header="Coleta" />
+                        <Column field="DataResultado" header="Resultado" />
+                        <Column field="SwabNasal" header="Swab nasal" />
+                        <Column field="SwabRetal" header="Swab retal" />
+                        <Column field="Sangue" header="Sangue" />
+                        <Column field="Urina" header="Urina" />
+                        <Column
+                            field="SecrecaoTraqueal"
+                            header="Secreção Traqueal"
+                        />
+                        <Column field="Outros" header="Outros" />
+                        <Column field="PerfilSensibilidade" header="Perfil" />
+                    </DataTable>
+                </div>
 
                 <Dialog
                     visible={displayDialog}
