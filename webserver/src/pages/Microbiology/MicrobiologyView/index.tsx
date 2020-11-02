@@ -66,6 +66,13 @@ const MicrobiologyView: React.FC<Props> = ({ view, id, setView }) => {
     const [loading, setLoading] = useState<boolean>(true);
 
     useEffect(() => {
+        function formatDate(date: string) {
+            const datePrev = date.split("T");
+            const newDate = datePrev[0].split("-").reverse();
+            const formatedDate: string = `${newDate[0]}/${newDate[1]}/${newDate[2]}`;
+            return formatedDate;
+        }
+
         async function loadMicrobiology() {
             try {
                 const response = await api.get<IMicrobiology[]>(
@@ -77,8 +84,16 @@ const MicrobiologyView: React.FC<Props> = ({ view, id, setView }) => {
                 setNroProntuario(microbiologyData.NroProntuario);
                 setIdPaciente(microbiologyData.IdPaciente);
                 setIdProntuario(microbiologyData.IdProntuario);
-                setDataColeta(microbiologyData.DataColeta);
-                setDataResultado(microbiologyData.DataResultado);
+
+                //formatação de datas
+                const dataColeta: string = formatDate(
+                    microbiologyData.DataColeta
+                );
+                setDataColeta(dataColeta);
+                const dataResultado = formatDate(
+                    microbiologyData.DataResultado
+                );
+                setDataResultado(dataResultado);
 
                 setNomePaciente(microbiologyData.NomePaciente);
                 setSwabNasalObservacoes(microbiologyData.SwabNasalObservacoes);
@@ -201,7 +216,7 @@ const MicrobiologyView: React.FC<Props> = ({ view, id, setView }) => {
                 )}
 
                 <p className="text-dark h5 mt-5">
-                    Perfil de sensibilidade: 
+                    Perfil de sensibilidade:
                     <br />
                     {PerfilSensibilidade}
                 </p>

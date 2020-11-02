@@ -10,7 +10,6 @@ import { Dialog } from "primereact/dialog";
 import View from "./MicrobiologyView";
 import Form from "./MicrobiologyForm";
 
-
 import "./index.css";
 
 import api from "../../services/api";
@@ -164,23 +163,23 @@ const Microbiology = () => {
     return (
         <>
             <div className="row m-5 px-5">
-                    <Link to="/microbiology/create">
-                        <Button
-                            variant="outline-dark"
-                            className="mb-2"
-                            style={{ borderRadius: "0", height: "41.5px" }}
-                        >
-                            Cadastrar Microbiologia
-                        </Button>
-                    </Link>
+                <Link to="/microbiology/create">
                     <Button
-                        variant="outline-secondary"
-                        className="mb-2 ml-2"
-                        aria-controls="example-collapse-text"
-                        style={{ borderRadius: "0" }}
+                        variant="outline-dark"
+                        className="mb-2"
+                        style={{ borderRadius: "0", height: "41.5px" }}
                     >
-                        Buscar por microbiologia
+                        Cadastrar Microbiologia
                     </Button>
+                </Link>
+                <Button
+                    variant="outline-secondary"
+                    className="mb-2 ml-2"
+                    aria-controls="example-collapse-text"
+                    style={{ borderRadius: "0" }}
+                >
+                    Buscar por microbiologia
+                </Button>
                 <div className="datatable-responsive-demo">
                     <DataTable
                         value={microbiologies}

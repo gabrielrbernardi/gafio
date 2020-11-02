@@ -118,6 +118,17 @@ const MicrobiologyForm: React.FC<Props> = ({ id, handleTableUpdate }) => {
     };
 
     useEffect(() => {
+        function formatDate(date: any) {
+            const datePrev = date.split("T");
+            const newDate = datePrev[0].split("-");
+            const formatedDate = new Date(
+                newDate[0],
+                newDate[1] - 1,
+                newDate[2]
+            );
+
+            return formatedDate;
+        }
         async function loadMicrobiologyInfo() {
             try {
                 const response = await api.get<IMicrobiology[]>(
@@ -126,8 +137,13 @@ const MicrobiologyForm: React.FC<Props> = ({ id, handleTableUpdate }) => {
                 const [microbiology] = response.data;
                 setIdPaciente(Number(microbiology.IdPaciente));
                 setIdProntuario(microbiology.IdProntuario);
-                setDataColeta(microbiology.DataColeta);
-                setDataResultado(microbiology.DataResultado);
+
+                const dataColeta = formatDate(microbiology.DataColeta);
+                setDataColeta(dataColeta);
+
+                const dataResultado = formatDate(microbiology.DataResultado);
+                setDataResultado(dataResultado);
+
                 setSwabNasal(microbiology.SwabNasal);
                 if (microbiology.SwabNasalObservacoes)
                     setSwabNasalObservacoes(microbiology.SwabNasalObservacoes);

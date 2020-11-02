@@ -57,6 +57,19 @@ class MicrobiologyController {
             const microbiologyLength = await knex("Microbiologia").count({
                 count: "*",
             });
+
+            //formatação de datas
+            results.forEach((result: any) => {
+                let dataColeta = result.DataColeta.split("T");
+                let dataResultado = result.DataResultado.split("T");
+
+                dataColeta = dataColeta[0].split("-").reverse();
+                dataResultado = dataResultado[0].split("-").reverse();
+                
+                result.DataColeta = `${dataColeta[0]}/${dataColeta[1]}/${dataColeta[2]}`;
+                result.DataResultado = `${dataResultado[0]}/${dataResultado[1]}/${dataResultado[2]}`;
+            });
+
             const [count] = microbiologyLength;
             return res.json({ results, count });
         } catch (error) {
