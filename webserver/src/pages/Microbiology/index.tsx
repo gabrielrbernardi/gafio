@@ -34,6 +34,7 @@ interface IMicrobiology {
     OutrosObservacoes: string;
     PerfilSensibilidade: string;
 }
+
 const Microbiology = () => {
     const [microbiologies, setMicrobiologies] = useState<IMicrobiology[]>([]);
     const [records, setRecords] = useState<number>(0);
@@ -80,6 +81,7 @@ const Microbiology = () => {
         loadMicrobiologies();
     }, []);
 
+    //Busca os registros por página
     async function handlePage(event: any) {
         try {
             setTableLoading(true);
@@ -97,7 +99,7 @@ const Microbiology = () => {
             HandleToast("error", "Erro!", "Falha ao carregar os registros.");
         }
     }
-
+   
     function onMicrobiologySelect(e: any) {
         const microbiologyData = e.data;
         const { IdMicrobiologia } = microbiologyData;
@@ -105,6 +107,7 @@ const Microbiology = () => {
         setDisplayDialog(true);
     }
 
+    //Atualiza os dados da tabela
     async function handleTableUpdate() {
         try {
             setTableLoading(true);
@@ -120,6 +123,7 @@ const Microbiology = () => {
         }
     }
 
+    //Deleta microbiologia
     async function handleDelete() {
         try {
             await api.delete(`/microbiology/delete/${id}`);
@@ -152,13 +156,114 @@ const Microbiology = () => {
         }, 4500);
     }
 
-    const header = (
-        <>
-            <p style={{ textAlign: "left" }} className="p-clearfix d-inline">
-                Microbiologia
-            </p>
-        </>
-    );
+    // Para as colunas da tabela 
+    const IdBodyTemplate = (rowData: any) => {
+        return (
+            <React.Fragment>
+                <span className="p-column-title">Id</span>
+                <a>{rowData.IdMicrobiologia}</a>
+            </React.Fragment>
+        );
+    };
+
+    const PacienteBodyTemplate = (rowData: any) => {
+        return (
+            <React.Fragment>
+                <span className="p-column-title">Paciente</span>
+                <a>{rowData.IdPaciente}</a>
+            </React.Fragment>
+        );
+    };
+
+    const ProntuarioBodyTemplate = (rowData: any) => {
+        return (
+            <React.Fragment>
+                <span className="p-column-title">Prontuário</span>
+                <a>{rowData.IdProntuario}</a>
+            </React.Fragment>
+        );
+    };
+
+    const DataColetaBodyTemplate = (rowData: any) => {
+        return (
+            <React.Fragment>
+                <span className="p-column-title">Coleta</span>
+                <a>{rowData.DataColeta}</a>
+            </React.Fragment>
+        );
+    };
+
+    const DataResultadoBodyTemplate = (rowData: any) => {
+        return (
+            <React.Fragment>
+                <span className="p-column-title">Resultado</span>
+                <a>{rowData.DataResultado}</a>
+            </React.Fragment>
+        );
+    };
+
+    const SwabNasalBodyTemplate = (rowData: any) => {
+        return (
+            <React.Fragment>
+                <span className="p-column-title">Swab Nasal</span>
+                <a>{rowData.SwabNasal}</a>
+            </React.Fragment>
+        );
+    };
+
+    const SwabRetalBodyTemplate = (rowData: any) => {
+        return (
+            <React.Fragment>
+                <span className="p-column-title">Swab Retal</span>
+                <a>{rowData.SwabRetal}</a>
+            </React.Fragment>
+        );
+    };
+
+    const SangueBodyTemplate = (rowData: any) => {
+        return (
+            <React.Fragment>
+                <span className="p-column-title">Sangue</span>
+                <a>{rowData.Sangue}</a>
+            </React.Fragment>
+        );
+    };
+
+    const UrinaBodyTemplate = (rowData: any) => {
+        return (
+            <React.Fragment>
+                <span className="p-column-title">Urina</span>
+                <a>{rowData.Urina}</a>
+            </React.Fragment>
+        );
+    };
+
+    const SecrecaoTraquealBodyTemplate = (rowData: any) => {
+        return (
+            <React.Fragment>
+                <span className="p-column-title">Secrecao Traqueal</span>
+                <a>{rowData.SecrecaoTraqueal}</a>
+            </React.Fragment>
+        );
+    };
+
+    const OutrosBodyTemplate = (rowData: any) => {
+        return (
+            <React.Fragment>
+                <span className="p-column-title">Outros</span>
+                <a>{rowData.Outros}</a>
+            </React.Fragment>
+        );
+    };
+
+    const PerfilSensibilidadeTemplate = (rowData: any) => {
+        return (
+            <React.Fragment>
+                <span className="p-column-title">Perfil</span>
+                <a>{rowData.PerfilSensibilidade}</a>
+            </React.Fragment>
+        );
+    };
 
     return (
         <>
@@ -189,13 +294,12 @@ const Microbiology = () => {
                         totalRecords={records}
                         first={first}
                         onPage={handlePage}
-                        header={header}
+                        header="Microbiologias"
                         emptyMessage="Nenhum resultado encontrado"
                         lazy={true}
                         selectionMode="single"
                         className="p-datatable-responsive-demo"
                         resizableColumns={true}
-                        autoLayout={true}
                         selection={selectedMicrobiology}
                         onSelectionChange={(e) =>
                             setselectedMicrobiology(e.value)
@@ -204,21 +308,22 @@ const Microbiology = () => {
                             onMicrobiologySelect(e);
                         }}
                     >
-                        <Column field="IdMicrobiologia" header="Id" />
-                        <Column field="IdPaciente" header="Paciente" />
-                        <Column field="IdProntuario" header="Prontuário" />
-                        <Column field="DataColeta" header="Coleta" />
-                        <Column field="DataResultado" header="Resultado" />
-                        <Column field="SwabNasal" header="Swab nasal" />
-                        <Column field="SwabRetal" header="Swab retal" />
-                        <Column field="Sangue" header="Sangue" />
-                        <Column field="Urina" header="Urina" />
+                        <Column field="IdMicrobiologia" header="Id" body={IdBodyTemplate}/>
+                        <Column field="IdPaciente" header="Paciente" body={PacienteBodyTemplate} />
+                        <Column field="IdProntuario" header="Prontuário" body={ProntuarioBodyTemplate} />
+                        <Column field="DataColeta" header="Coleta" body={DataColetaBodyTemplate}/>
+                        <Column field="DataResultado" header="Resultado" body={DataResultadoBodyTemplate} />
+                        <Column field="SwabNasal" header="Swab Nasal" body={SwabNasalBodyTemplate} />
+                        <Column field="SwabRetal" header="Swab Retal" body={SwabRetalBodyTemplate}/>
+                        <Column field="Sangue" header="Sangue" body={SangueBodyTemplate}/>
+                        <Column field="Urina" header="Urina" body={UrinaBodyTemplate} />
                         <Column
                             field="SecrecaoTraqueal"
                             header="Secreção Traqueal"
+                            body={SecrecaoTraquealBodyTemplate}
                         />
-                        <Column field="Outros" header="Outros" />
-                        <Column field="PerfilSensibilidade" header="Perfil" />
+                        <Column field="Outros" header="Outros" body={OutrosBodyTemplate}/>
+                        <Column field="PerfilSensibilidade" header="Perfil" body={PerfilSensibilidadeTemplate}/>
                     </DataTable>
                 </div>
 

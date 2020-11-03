@@ -7,7 +7,7 @@
     text-align: center;
 }
 
-@media screen and (max-width: 70em) {
+@media screen and (max-width: 82em) {
 
     .datatable-responsive-demo .p-datatable.p-datatable-responsive-demo .p-datatable-thead>tr>th,
     .datatable-responsive-demo .p-datatable.p-datatable-responsive-demo .p-datatable-tfoot>tr>td {
