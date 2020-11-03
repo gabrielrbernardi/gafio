@@ -1,11 +1,11 @@
 import React from 'react';
-import {Chart} from 'primereact/chart';
+import { Chart } from 'primereact/chart';
 
 import './Dashboard.css';
 
 const Dashboard = () => {
     const data = {
-        labels: ['Ciprofloxacino','Sulfadiazina','Gentamicina', 'Teicoplanina'],
+        labels: ['Ciprofloxacino', 'Sulfadiazina', 'Gentamicina', 'Teicoplanina'],
         datasets: [
             {
                 data: [100, 50, 75, 25],

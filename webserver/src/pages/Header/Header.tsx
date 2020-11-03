@@ -23,17 +23,17 @@ const Header = () => {
     const [getMessageTitle, setMessageTitle] = useState<string>('');
     const [getMessageContent, setMessageContent] = useState<string>('');
     const [getLifeTime, setLifeTime] = useState<Number>(4000);
-    
-    function handleBackButton(){
+
+    function handleBackButton() {
         history.goBack();
     }
 
     useEffect(() => {
-        if(!cookies.userData){
+        if (!cookies.userData) {
             history.push('/login');
             alert('Faça login para acessar o conteúdo')
             return
-        }else{
+        } else {
             const cookie = cookies.userData;
             setUserName(cookie.Nome);
             setTipoUsuario(cookie.TipoUsuario)
@@ -44,43 +44,43 @@ const Header = () => {
         const getNotifications = async () => {
             const cookie = cookies.userData;
             const CodUsuario = cookie.CodUsuario;
-            try{
+            try {
                 await api.get(`notifications/length/${CodUsuario}`).then(response => {
-                    if(response.data.notificationFound){
+                    if (response.data.notificationFound) {
                         let dataSize = response.data.length[0]['count(`CodUsuario`)']
                         setNotificationsLength(dataSize)
-                        if(dataSize === 0){
+                        if (dataSize === 0) {
                             showToast('info', 'Notificação', `Você não possui notificações.`)
-                        }else{
+                        } else {
                             showToast('info', 'Notificação', `Você possui ${dataSize} notificações.`)
                         }
-                    }else{
-                        showToast('info', 'Notificação', `Você não possui notificações.`)                        
+                    } else {
+                        showToast('info', 'Notificação', `Você não possui notificações.`)
                     }
                 })
-            }catch(err){
-                if(err.message === "Network Error"){
+            } catch (err) {
+                if (err.message === "Network Error") {
                     showToast('error', 'Erro!', 'Não foi possível conectar ao servidor. O sistema se desconectará! Contacte o administrador do sistema para mais informações!', 8000)
                 }
                 // showToast('error', 'Erro!', 'teste');
             }
         };
-        
+
         getNotifications();
 
     }, [cookies.userData])
 
-    function showToast(messageType: string, messageTitle: string, messageContent: string, lifeTime?: number){
+    function showToast(messageType: string, messageTitle: string, messageContent: string, lifeTime?: number) {
         setToast(false)
         setMessageType(messageType);
         setMessageTitle(messageTitle);
         setMessageContent(messageContent);
-        if(lifeTime){
+        if (lifeTime) {
             setLifeTime(lifeTime);
             setTimeout(() => {
                 setToast(false);
             }, 8500)
-        }else{
+        } else {
             setTimeout(() => {
                 setToast(false);
             }, 4500)
@@ -88,55 +88,55 @@ const Header = () => {
         setToast(true);
     }
 
-    function logoutFunction(){
+    function logoutFunction() {
         removeCookie('userData');
         removeCookie('notificationLength');
         history.push('/login');
     }
 
-    function myProfile(){
+    function myProfile() {
         history.push('/myProfile');
     }
 
-    function toNotifications(){
+    function toNotifications() {
         history.push('/notifications');
     }
 
-    function toHome(){
+    function toHome() {
         history.push('/home');
     }
-    function toUsers(){
+    function toUsers() {
         history.push('/users');
     }
 
-    return(
+    return (
         <div className="no-select">
             <title>GAFio</title>
             <div className="container-fluid m-0 p-0">
                 <nav className="navbar navbar-expand-sm header-background navbar-dark">
                     {/* <Link to="/home"> */}
-                        <p onClick={toHome} className="navbar-brand m-0 cursor-pointer text-small">GAFio</p>
+                    <p onClick={toHome} className="navbar-brand m-0 cursor-pointer text-small">GAFio</p>
                     {/* </Link> */}
                     <div className="ml-auto text-dark">
                     </div>
                     <div className="ml-auto text-dark">
                         <Button onClick={toNotifications} variant="outline-dark">
                             <p className="d-inline">Notificações</p>
-                            <MdNotificationsNone className="ml-2" size={30}/>
+                            <MdNotificationsNone className="ml-2" size={30} />
                             {
                                 notificationsLength > 0
-                                ? 
+                                    ?
                                     <Badge variant="danger">{notificationsLength}</Badge>
-                                :
+                                    :
                                     // <Badge variant="secondary">{notificationsLength}</Badge>
                                     <></>
                             }
-                            
+
                         </Button>
                         <Dropdown className="ml-2 d-inline">
                             <Dropdown.Toggle variant="outline-dark" id="dropdown-basic">
                                 <strong className="text-capitalize">{userName}</strong>
-                                
+
                                 <MdPersonOutline className="ml-2" size={30} />
                             </Dropdown.Toggle>
                             <Dropdown.Menu>
@@ -190,16 +190,16 @@ const Header = () => {
                             HISTÓRICO
                         </Link>
                     </div>
-                    
+
                 </div>
             </div>
-            <div className="position-absolute arrow-left" style={{left: '0px', top: '50px'}}>
+            <div className="position-absolute arrow-left" style={{ left: '0px', top: '50px' }}>
                 <button className="btn" onClick={handleBackButton}>
                     <FiArrowLeft size={20} />
                 </button>
             </div>
             {getToast &&
-                <ToastComponent messageType={getMessageType} messageTitle={getMessageTitle} messageContent={getMessageContent} lifeTime={getLifeTime}/>
+                <ToastComponent messageType={getMessageType} messageTitle={getMessageTitle} messageContent={getMessageContent} lifeTime={getLifeTime} />
             }
         </div>
     )

@@ -1,4 +1,4 @@
-.no-select{
+.no-select {
     -webkit-touch-callout: none;
     -webkit-user-select: none;
     -khtml-user-select: none;
@@ -7,23 +7,23 @@
     user-select: none;
 }
 
-.text-decoration-none{
+.text-decoration-none {
     color: black;
     text-decoration: none;
 }
 
-.zoom-hover{
+.zoom-hover {
     transition: .2s ease;
 }
 
-.zoom-hover:hover{
+.zoom-hover:hover {
     transform: scale(1.06);
 }
 
-.navbar-brand{
+.navbar-brand {
     transition: .2s ease;
 }
 
-.navbar-brand:hover{
+.navbar-brand:hover {
     opacity: .7;
 }
