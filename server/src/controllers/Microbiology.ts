@@ -45,29 +45,76 @@ class MicrobiologyController {
         }
     }
 
-    //Método de listagem
+    //Método de listagem de dados para a tabela do dashboard
     async index(req: Request, res: Response) {
         try {
             const { page = 1 } = req.query;
+            const { filter } = req.query;
             const pageRequest = Number(page);
             const rows = 10;
-            const results = await knex("Microbiologia")
+            let microbiologyLength;
+
+            const query = knex("Microbiologia");
+
+            //Filtragem de dados
+            if (filter) {
+                const { filterValue } = req.query;
+                if (filter === "id") {
+                    microbiologyLength = await knex("Microbiologia")
+                        .where({ IdMicrobiologia: filterValue })
+                        .count({
+                            count: "*",
+                        });
+                    query.where({ IdMicrobiologia: filterValue });
+                } else if (filter === "paciente") {
+                    microbiologyLength = await knex("Microbiologia")
+                        .where({ IdPaciente: filterValue })
+                        .count({
+                            count: "*",
+                        });
+                    query.where({ IdPaciente: filterValue });
+                } else if (filter === "prontuario") {
+                    microbiologyLength = await knex("Microbiologia")
+                        .where({ IdProntuario: filterValue })
+                        .count({
+                            count: "*",
+                        });
+                    query.where({ IdProntuario: filterValue });
+                } else if (filter === "dataColeta") {
+                    microbiologyLength = await knex("Microbiologia")
+                        .where({ DataColeta: filterValue })
+                        .count({
+                            count: "*",
+                        });
+                    query.where({ DataColeta: filterValue });
+                } else {
+                    query.where({ DataResultado: filterValue });
+                    microbiologyLength = await knex("Microbiologia")
+                        .where({ DataResultado: filterValue })
+                        .count({
+                            count: "*",
+                        });
+                }
+            } else {
+                microbiologyLength = await knex("Microbiologia").count({
+                    count: "*",
+                });
+            }
+
+            const results = await query
                 .limit(rows)
                 .offset((pageRequest - 1) * rows);
-            const microbiologyLength = await knex("Microbiologia").count({
-                count: "*",
-            });
 
             //formatação de datas
             results.forEach((result: any) => {
                 let dataColeta = result.DataColeta.split("T");
                 let dataResultado = result.DataResultado.split("T");
 
-                dataColeta = dataColeta[0].split("-").reverse();
-                dataResultado = dataResultado[0].split("-").reverse();
-                
-                result.DataColeta = `${dataColeta[0]}/${dataColeta[1]}/${dataColeta[2]}`;
-                result.DataResultado = `${dataResultado[0]}/${dataResultado[1]}/${dataResultado[2]}`;
+                dataColeta = dataColeta[0].split("-");
+                dataResultado = dataResultado[0].split("-");
+
+                result.DataColeta = `${dataColeta[2]}/${dataColeta[1]}/${dataColeta[0]}`;
+                result.DataResultado = `${dataResultado[2]}/${dataResultado[1]}/${dataResultado[0]}`;
             });
 
             const [count] = microbiologyLength;
@@ -77,7 +124,7 @@ class MicrobiologyController {
         }
     }
 
-    //método de listagem por id
+    //Método de recuperação de dados para atualização de microbiologia no frontend
     async showById(req: Request, res: Response) {
         try {
             const { id } = req.params;
