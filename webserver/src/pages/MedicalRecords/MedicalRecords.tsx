@@ -1,19 +1,19 @@
 import React, { useState, useEffect, FormEvent } from 'react';
-import { DataTable } from 'primereact/datatable';
-import { Column } from 'primereact/column';
+import {DataTable} from 'primereact/datatable';
+import {Column} from 'primereact/column';
 import Button from 'react-bootstrap/Button';
 import Collapse from 'react-bootstrap/Collapse';
-import { FiSearch } from 'react-icons/fi';
-import { AiOutlineClose } from 'react-icons/ai';
+import {FiSearch} from 'react-icons/fi';
+import {AiOutlineClose} from 'react-icons/ai';
 import { Link, useHistory } from 'react-router-dom';
 import ToastComponent from '../../components/Toast';
 import { Dropdown } from 'primereact/dropdown';
-import { Dropdown as DropdownReact } from 'react-bootstrap';
+import {Dropdown as DropdownReact} from 'react-bootstrap';
 import { Dialog } from 'primereact/dialog';
-import { InputText } from 'primereact/inputtext';
+import {InputText} from 'primereact/inputtext';
 import { Calendar } from 'primereact/calendar';
 
-import { MedicalRecordsService } from './MedicalRecordsService';
+import {MedicalRecordsService} from './MedicalRecordsService';
 import Loading from '../../components/Loading';
 
 const MedicalRecords = () => {
@@ -40,7 +40,7 @@ const MedicalRecords = () => {
     const [getPosologia, setPosologia] = useState<any>(null)
     const [getDesfecho, setDesfecho] = useState<any>(null)
     const [getDataDesfecho, setDataDesfecho] = useState<any>(null)
-
+    
     const [getDataTratadaInternacao, setDataTratadaInternacao] = useState<string>('')
     const [getResultadoColetaString, setResultadoColetaString] = useState<string>('')
     const [getTratamentoCCIHString, setTratamentoCCIHString] = useState<string>('')
@@ -49,7 +49,7 @@ const MedicalRecords = () => {
     const [getDoseCorretaString, setDoseCorretaString] = useState<string>('')
     const [getPosologiaCorretaString, setPosologiaCorretaString] = useState<string>('')
     const [getDataTratadaDesfecho, setDataTratadaDesfecho] = useState<string>('')
-
+    
     const [MedicalRecords, setMedicalRecords] = useState([]);
     const [datasource, setDatasource] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -75,25 +75,25 @@ const MedicalRecords = () => {
     const history = useHistory()
 
     const medicalRecordsService = new MedicalRecordsService()
-    var medicalRecordData: any = {};
+    var medicalRecordData:any = {};
 
     const rows = 10;
 
     let options = [
-        { label: 'Sim', value: 'S' },
-        { label: 'Não', value: 'N' },
+        {label: 'Sim', value: 'S'},
+        {label: 'Não', value: 'N'},
     ];
 
     let options2 = [
-        { name: 'Nro Prontuário', cod: 'Pro' },
-        { name: 'Seq Paciente', cod: 'Pac' },
-        { name: 'Data Internação', cod: 'Int' }
+        {name: 'Nro Prontuário', cod: 'Pro'},
+        {name: 'Seq Paciente', cod: 'Pac'},
+        {name: 'Data Internação', cod: 'Int'}
     ];
 
     let options3 = [
-        { label: 'Óbito', value: 'Óbito' },
-        { label: 'Alta', value: 'Alta' },
-        { label: 'Tranferência', value: 'Transferência' }
+        {label: 'Óbito', value: 'Óbito'},
+        {label: 'Alta', value: 'Alta'},
+        {label: 'Tranferência', value: 'Transferência'}
     ]
 
     const pt_br = {
@@ -136,41 +136,41 @@ const MedicalRecords = () => {
         setDesfecho(e.value);
     };
 
-    function checkInput(type: number, e: any) {
-        if (type == 1) {
-            if (e === '') {
+    function checkInput(type: number, e: any){
+        if(type == 1){
+            if(e === ''){
                 setCodDoencaSecundario(null);
-            } else {
+            }else{
                 setCodDoencaSecundario(e)
             }
         }
-        if (type == 2) {
-            if (e === '') {
+        if(type == 2){
+            if(e === ''){
                 setCodComorbidade(null);
-            } else {
+            }else{
                 setCodComorbidade(e)
             }
         }
-        if (type == 3) {
-            if (e === '') {
+        if(type == 3){
+            if(e === ''){
                 setCodAtbSecundario(null);
-            } else {
+            }else{
                 setCodAtbSecundario(e)
-            }
+            } 
         }
-        if (type == 4) {
-            if (e === '') {
+        if(type == 4){
+            if(e === ''){
                 setSitioInfeccaoPrimario(null);
-            } else {
+            }else{
                 setSitioInfeccaoPrimario(e)
-            }
+            }  
         }
     }
 
     const onOptionChange = (e: { value: any }) => {
         setOptionState(e.value);
     };
-
+    
     useEffect(() => {
         setLoading1(true);
         setTimeout(() => {
@@ -180,24 +180,24 @@ const MedicalRecords = () => {
         }, 1000)
     }, []);
 
-    function getMedicalRecordsFunction(data?: any) {
+    function getMedicalRecordsFunction(data?: any){
         setLoading(true);
-        if (!data) {
+        if(!data){
             medicalRecordsService.getMedicalRecordsPaginate(10).then(data => {
                 setDatasource(data.medicalRecords);
                 setTotalRecords(data.length);
                 data = data.medicalRecords;
-
+                
                 setMedicalRecords(data.slice(0, rows));
                 setLoading(false);
                 setLoading1(false);
                 return
             })
-        } else {
+        }else{
             setDatasource(data.medicalRecords);
             setTotalRecords(data.length);
             data = data.medicalRecords;
-
+            
             setMedicalRecords(data.slice(0, rows));
             setLoading(false);
             setLoading1(false);
@@ -207,7 +207,7 @@ const MedicalRecords = () => {
 
     const onPage = (event: any) => {
         setLoading(true);
-
+        
         const startIndex = event.first;
         const endIndex = event.first + rows;
         medicalRecordsService.getMedicalRecordsPaginate(endIndex).then(data => {
@@ -218,18 +218,18 @@ const MedicalRecords = () => {
         setLoading(false);
     }
 
-    const header =
+    const header = 
         <>
-            <p style={{ textAlign: 'left' }} className="p-clearfix d-inline">Prontuários</p>
+            <p style={{textAlign:'left'}} className="p-clearfix d-inline">Prontuários</p>
         </>;
 
-    function handleSearch() {
-        if (!getOptionState) {
+    function handleSearch(){
+        if(!getOptionState){
             showToast('error', 'Erro!', 'Selecione um filtro para buscar.');
             return
         }
         setLoading(true);
-        if (!searchInput) {
+        if(!searchInput){
             medicalRecordsService.getMedicalRecordsPaginate(10).then(data => {
                 getMedicalRecordsFunction(data);
                 setLoading(false);
@@ -238,8 +238,8 @@ const MedicalRecords = () => {
             return
         }
         setMode('S');
-        medicalRecordsService.searchMedicalRecordsGlobal(searchInput, getOptionState.cod, getFirst + rows).then(data => {
-            if (!data.showMedicalRecords) {
+        medicalRecordsService.searchMedicalRecordsGlobal(searchInput, getOptionState.cod, getFirst+rows).then(data => {
+            if(!data.showMedicalRecords){
                 setLoading(false);
                 setMedicalRecords([]);
                 showToast('warn', 'Resultados não encontrados!', 'Não foram encontrados resultados para a busca desejada')
@@ -247,26 +247,26 @@ const MedicalRecords = () => {
             }
             getMedicalRecordsFunction(data)
             let searchType;
-            if (getOptionState.name === 'Nro Prontuário') {
+            if(getOptionState.name === 'Nro Prontuário'){
                 searchType = 'NroProntuario';
-            } else if (getOptionState.name === 'Seq Paciente') {
+            }else if(getOptionState.name === 'Seq Paciente'){
                 searchType = 'SeqPaciente';
-            } else if (getOptionState.name === 'Data Internação') {
+            }else if(getOptionState.name === 'Data Internação'){
                 searchType = 'DataInternacao'
-            } else {
+            }else{
                 searchType = getOptionState.name
             }
             console.log(data)
             let dataSize = data.length[0]['count(`' + searchType + '`)']
-            if (dataSize == 1) {
+            if(dataSize == 1){
                 showToast('info', 'Resultado Encontrado!', `Foi encontrado ${dataSize} resultado.`)
-            } else {
+            }else{
                 showToast('info', 'Resultados Encontrados!', `Foram encontrados ${dataSize} resultados.`)
             }
         })
     }
 
-    function handleSubmit(event: FormEvent) {
+    function handleSubmit(event: FormEvent){
         event.preventDefault();
 
         medicalRecordsService.Update(getNroProntuario, getSeqPaciente,
@@ -276,32 +276,32 @@ const MedicalRecords = () => {
             getSitioInfeccaoPrimario, getTratamento, getIndicacao,
             getDisfuncao, getOrigemInfeccao, getDose, getPosologia
         ).then((response) => {
-            if (response.updatedMedicalRecord) {
+            if(response.updatedMedicalRecord){
                 showToast('success', 'Sucesso!', `Prontuário atualizado com sucesso!`);
                 getMedicalRecordsFunction()
                 setDisplayDialog1(false)
-            } else {
-                if (response.error.sqlMessage) {
-                    if (response.error.sqlState == 23000) {
-                        if (String(response.error.sqlMessage).includes("(`CodDoencaPrincipal`)") || String(response.error.sqlMessage).includes("(`CodDoencaSecundario`)")) {
+            }else{
+                if(response.error.sqlMessage){
+                    if(response.error.sqlState == 23000){
+                        if(String(response.error.sqlMessage).includes("(`CodDoencaPrincipal`)") || String(response.error.sqlMessage).includes("(`CodDoencaSecundario`)")){
                             showToast('error', 'Erro!', `O campo código de doença está incorreto`);
                         }
-                        else if (String(response.error.sqlMessage).includes("(`CodAtbPrimario`)") || String(response.error.sqlMessage).includes("(`CodAtbSecundario`)")) {
+                        else if(String(response.error.sqlMessage).includes("(`CodAtbPrimario`)")  || String(response.error.sqlMessage).includes("(`CodAtbSecundario`)")){
                             showToast('error', 'Erro!', `O campo código de medicamento está incorreto`);
-                        } else {
+                        }else{
                             showToast('error', 'Erro!', String(response.error.sqlMessage));
                         }
-                    } else {
+                    }else{
                         showToast('error', 'Erro!', String(response.error.sqlMessage));
                     }
-                } else {
+                }else{
                     showToast('error', 'Erro!', String(response.error));
                 }
             }
         })
     }
 
-    function showToast(messageType: string, messageTitle: string, messageContent: string) {
+    function showToast(messageType: string, messageTitle: string, messageContent: string){
         setToast(false)
         setMessageType(messageType);
         setMessageTitle(messageTitle);
@@ -313,17 +313,17 @@ const MedicalRecords = () => {
     }
 
     let newMedicalRecord = true
-    function onMedicalRecordSelect(e: any) {
+    function onMedicalRecordSelect (e: any) {
         newMedicalRecord = false;
         setMedicalRecordChange(e.value)
         medicalRecordData = e.data;
-
+        
         setSeqProntuario(medicalRecordData.SeqProntuario)
         setNroProntuario(medicalRecordData.NroProntuario)
         setSeqPaciente(medicalRecordData.SeqPaciente)
         setNomePaciente(medicalRecordData.NomePaciente)
         var res = medicalRecordData.DataInternacao.split("/")
-        var newData = new Date(res[2], res[1] - 1, res[0]);
+        var newData = new Date(res[2], res[1]-1, res[0]);
         setDataTratadaInternacao(medicalRecordData.DataInternacao)
         setDataInternacao(newData)
         setCodDoencaPrincipal(medicalRecordData.CodDoencaPrincipal)
@@ -349,74 +349,86 @@ const MedicalRecords = () => {
         tratarDados("PosologiaCorreta")
         setPosologia(medicalRecordData.PosologiaCorreta)
         setDesfecho(medicalRecordData.Desfecho)
-        if (medicalRecordData.DataDesfecho == null) {
+        if(medicalRecordData.DataDesfecho == null){
             setDataDesfecho(medicalRecordData.DataDesfecho)
-        } else {
+        }else{
             setDataTratadaDesfecho(medicalRecordData.DataDesfecho)
             var res1 = medicalRecordData.DataDesfecho.split("/")
-            var newData1 = new Date(res1[2], res1[1] - 1, res1[0]);
+            var newData1 = new Date(res1[2], res1[1]-1, res1[0]);
             setDataDesfecho(newData1)
         }
 
         setDisplayDialog(true);
     };
 
-    function tratarDados(e: string) {
-        if (eval("medicalRecordData." + e) == "S")
+    function tratarDados (e: string) {
+        if(eval("medicalRecordData." + e) == "S")
             eval("set" + e + "String" + "(" + '"Sim"' + ")")
-        if (eval("medicalRecordData." + e) == "N")
+        if(eval("medicalRecordData." + e) == "N")
             eval("set" + e + "String" + "(" + '"Não"' + ")")
     }
 
-    function onClickDelete() {
+    function onClickDelete(){
         medicalRecordsService.Delete(getNroProntuario)
-            .then((response) => {
-                if (response.deletedMedicalRecord) {
-                    showToast('success', 'Sucesso!', `Prontuário deletado com sucesso!`);
-                    getMedicalRecordsFunction()
-                    setTimeout(() => {
-                        setDisplayDialog2(false)
-                    }, 2500)
-                } else {
-                    if (response.error.sqlMessage) {
-                        showToast('error', 'Erro!', String(response.error.sqlMessage));
-                    } else {
-                        showToast('error', 'Erro!', String(response.error));
-                    }
-                }
-            })
-    }
-
-    function handleSubmit1(event: FormEvent) {
-        event.preventDefault();
-
-        medicalRecordsService.Desfecho(getNroProntuario, getDesfecho, getDataDesfecho
-        ).then((response) => {
-            console.log(response)
-            if (response.updatedMedicalRecord) {
-                showToast('success', 'Sucesso!', `Desfecho atualizado com sucesso!`);
+        .then((response) => {
+            if(response.deletedMedicalRecord){
+                showToast('success', 'Sucesso!', `Prontuário deletado com sucesso!`);
                 getMedicalRecordsFunction()
-                setDisplayDialog3(false)
-            } else {
-                if (response.error.sqlMessage) {
+                setTimeout(() => {
+                    setDisplayDialog2(false)
+                }, 2500)
+            }else{
+                if(response.error.sqlMessage){
                     showToast('error', 'Erro!', String(response.error.sqlMessage));
-                } else {
+                }else{
                     showToast('error', 'Erro!', String(response.error));
                 }
             }
         })
     }
 
+    function handleSubmit1(event: FormEvent){
+        event.preventDefault();
+
+        medicalRecordsService.Desfecho(getNroProntuario, getDesfecho, getDataDesfecho
+        ).then((response) => {
+            console.log(response)
+            if(response.updatedMedicalRecord){
+                showToast('success', 'Sucesso!', `Desfecho atualizado com sucesso!`);
+                getMedicalRecordsFunction()
+                setDisplayDialog3(false)
+            }else{
+                if(response.error.sqlMessage){
+                    showToast('error', 'Erro!', String(response.error.sqlMessage));
+                }else{
+                    showToast('error', 'Erro!', String(response.error));
+                }
+            }
+        })
+    }
+
+    const VerifiedTemplate = (rowData: any) => {
+        let verifyStatus = rowData.Desfecho;
+        let fontColor: any
+        if(verifyStatus == 'Óbito')
+            fontColor = "#a80000"
+        if(verifyStatus == 'Alta')
+            fontColor = "#106b00"
+        if(verifyStatus == 'Transferência')
+            fontColor = "#0080FF"
+        return <span style={{color: fontColor}}>{rowData.Desfecho}</span>;
+    }
+
     return (
         <>
             <div className="row m-5 px-5">
-                <Link to={location => ({ ...location, pathname: '/medicalRecords/create' })}><Button variant="outline-dark" className="mb-2" style={{ borderRadius: '0', height: '41.5px' }}>Cadastrar Prontuário</Button></Link>
-                <Button variant="outline-secondary" className="mb-2 ml-2" onClick={() => setOpen(!open)} aria-controls="example-collapse-text" aria-expanded={open} style={{ borderRadius: '0' }}>Buscar prontuário específico</Button>
+                <Link to={location => ({...location, pathname: '/medicalRecords/create'})}><Button variant="outline-dark" className="mb-2" style={{borderRadius: '0', height:'41.5px'}}>Cadastrar Prontuário</Button></Link>
+                <Button variant="outline-secondary" className="mb-2 ml-2" onClick={() => setOpen(!open)} aria-controls="example-collapse-text" aria-expanded={open} style={{borderRadius: '0'}}>Buscar prontuário específico</Button>
                 <Collapse in={open} timeout={200}>
                     <div className="ml-2">
                         <div className="p-inputgroup">
                             <span className="p-float-label">
-                                <InputText id="float-input" type="search" value={searchInput} onChange={(e) => { setSearchInput((e.target as HTMLInputElement).value) }} onKeyPress={(ev) => { if (ev.key === 'Enter') { handleSearch(); ev.preventDefault(); } }} style={{ minWidth: '4em', borderRadius: '0' }} size={30} />
+                                <InputText id="float-input" type="search" value={searchInput} onChange={(e) => {setSearchInput((e.target as HTMLInputElement).value)}} onKeyPress={(ev) => {if (ev.key === 'Enter') {handleSearch(); ev.preventDefault();}}}  style={{minWidth:'4em', borderRadius: '0'}} size={30} />
                                 {getOptionState === null
                                     ? <label htmlFor="float-input">Buscar</label>
                                     : <label htmlFor="float-input">Buscar por {getOptionState.name}</label>
@@ -425,11 +437,11 @@ const MedicalRecords = () => {
                             {searchInput === ''
                                 ? <></>
                                 :
-                                <>
-                                    <Dropdown className="mx-1" value={getOptionState} options={options2} onChange={onOptionChange} placeholder="Selecione um filtro" optionLabel="name" style={{ width: '12em' }} />
-                                    <Button tabIndex={2} variant="outline-danger" className="p-0 mr-1" style={{ width: '17px', borderRadius: '0' }} onClick={() => { setSearchInput(''); getMedicalRecordsFunction(); setMode('N'); setOptionState(null) }}><AiOutlineClose size={15} /></Button>
-                                    <Button onClick={handleSearch} style={{ borderRadius: '0' }}><FiSearch size={15} /></Button>
-                                </>
+                                    <>
+                                        <Dropdown className="mx-1" value={getOptionState} options={options2} onChange={onOptionChange} placeholder="Selecione um filtro" optionLabel="name" style={{width: '12em'}}/>
+                                        <Button tabIndex={2} variant="outline-danger" className="p-0 mr-1" style={{width: '17px', borderRadius: '0'}} onClick={() => {setSearchInput(''); getMedicalRecordsFunction(); setMode('N'); setOptionState(null)}}><AiOutlineClose size={15}/></Button>
+                                        <Button onClick={handleSearch} style={{borderRadius: '0'}}><FiSearch size={15}/></Button>
+                                    </>
                             }
                         </div>
                     </div>
@@ -439,83 +451,83 @@ const MedicalRecords = () => {
                 <DataTable value={MedicalRecords} paginator={true} rows={rows} header={header} totalRecords={totalRecords}
                     emptyMessage="Nenhum resultado encontrado" className="p-datatable-responsive-demo" resizableColumns={true} loading={loading} first={getFirst}
                     onPage={onPage} lazy={true} selectionMode="single" selection={selectedMedicalRecord} onSelectionChange={e => setSelectedMedicalRecord(e.value)}
-                    onRowSelect={(e) => { onMedicalRecordSelect(e); }}>
-                    <Column field="SeqProntuario" header="Seq Prontuário" style={{ width: '8%', textAlign: 'center' }} />
-                    <Column field="NroProntuario" header="Nro Prontuário" style={{ width: '8%', textAlign: 'center' }} />
-                    <Column field="SeqPaciente" header="Seq Paciente" style={{ width: '8%', textAlign: 'center' }} />
-                    <Column field="DataNascimento" header="Nascimento" style={{ width: '11%', textAlign: 'center' }} />
-                    <Column field="NomePaciente" header="Nome" style={{ width: '11%', textAlign: 'center' }} />
-                    <Column field="Genero" header="Gênero" style={{ width: '8%', textAlign: 'center' }} />
-                    <Column field="DataInternacao" header="Data Internação" style={{ width: '11%', textAlign: 'center' }} />
-                    <Column field="DiagnosticoPrincipal" header="Diagnostico" style={{ width: '13%', textAlign: 'center' }} />
-                    <Column field="Alocacao" header="Alocação" style={{ width: '13%', textAlign: 'center' }} />
-                    <Column field="Desfecho" header="Desfecho" style={{ width: '9%', textAlign: 'center' }} />
+                    onRowSelect={(e) => {onMedicalRecordSelect(e);}}>
+                    <Column field="SeqProntuario" header="Seq Prontuário" style={{width:'8%', textAlign:'center'}}/>
+                    <Column field="NroProntuario" header="Nro Prontuário" style={{width:'8%', textAlign:'center'}}/>
+                    <Column field="SeqPaciente" header="Seq Paciente" style={{width:'8%', textAlign:'center'}}/>
+                    <Column field="DataNascimento" header="Nascimento" style={{width:'11%', textAlign:'center'}}/>
+                    <Column field="NomePaciente" header="Nome" style={{width:'11%', textAlign:'center'}}/>
+                    <Column field="Genero" header="Gênero" style={{width:'8%', textAlign:'center'}}/>
+                    <Column field="DataInternacao" header="Data Internação" style={{width:'11%', textAlign:'center'}}/>
+                    <Column field="DiagnosticoPrincipal" header="Diagnostico" style={{width:'13%', textAlign:'center'}}/>
+                    <Column field="Alocacao" header="Alocação" style={{width:'13%', textAlign:'center'}}/>
+                    <Column field="Desfecho" header="Desfecho" style={{width:'9%', textAlign:'center'}} body={VerifiedTemplate}/>
                 </DataTable>
 
-                <Dialog visible={displayDialog} style={{ width: '50%' }} header="Ações" modal={true} onHide={() => setDisplayDialog(false)}>
+                <Dialog visible={displayDialog} style={{width: '50%'}} header="Ações" modal={true} onHide={() => setDisplayDialog(false)}>
                     <div className="form-row">
                         <div className="col">
-                            <Button variant="info" className="mt-2 mb-2 p-3" style={{ width: '100%' }} onClick={() => { setDisplayDialog4(true); setDisplayDialog(false) }}>Visualizar prontuário</Button>
+                            <Button variant="info" className="mt-2 mb-2 p-3" style={{width: '100%'}} onClick={() => {setDisplayDialog4(true); setDisplayDialog(false)}}>Visualizar prontuário</Button>
                         </div>
                         <div className="col ml-2">
-                            <Button variant="primary" className="mt-2 mb-2 p-3" style={{ width: '100%' }} onClick={() => { setDisplayDialog1(true); setDisplayDialog(false) }}>Atualizar prontuário</Button>
+                            <Button variant="primary" className="mt-2 mb-2 p-3" style={{width: '100%'}} onClick={() => {setDisplayDialog1(true); setDisplayDialog(false)}}>Atualizar prontuário</Button>
                         </div>
                     </div>
 
                     <div className="form-row mt-3">
                         <div className="col">
-                            <Button variant="primary" className="mt-2 mb-2 p-3" style={{ width: '100%' }} onClick={() => { setDisplayDialog3(true); setDisplayDialog(false) }}>Atualizar desfecho</Button>
+                            <Button variant="primary" className="mt-2 mb-2 p-3" style={{width: '100%'}} onClick={() => {setDisplayDialog3(true); setDisplayDialog(false)}}>Atualizar desfecho</Button>
                         </div>
 
                         <div className="col ml-2">
-                            <Button variant="danger" className="mt-2 mb-2 p-3" style={{ width: '100%' }} onClick={() => { setDisplayDialog2(true); setDisplayDialog(false) }}>Excluir prontuário</Button>
+                            <Button variant="danger" className="mt-2 mb-2 p-3" style={{width: '100%'}} onClick={() => {setDisplayDialog2(true); setDisplayDialog(false)}}>Excluir prontuário</Button>
                         </div>
                     </div>
 
                     <div className="form-row mt-3">
                         <div className="col">
-                            <Button variant="primary" className="mt-2 mb-2 p-3" style={{ width: '100%' }} onClick={() => { setDisplayDialog(false); history.push(`/medicalRecords/assessment/create/?seqProntuario=${getSeqProntuario}`) }}>Cadastrar avaliação</Button>
+                            <Button variant="primary" className="mt-2 mb-2 p-3" style={{width: '100%'}} onClick={() => {setDisplayDialog(false); history.push(`/medicalRecords/assessment/create/?seqProntuario=${getSeqProntuario}`)}}>Cadastrar avaliação</Button>
                         </div>
                         <div className="col ml-2">
-                            <Button variant="info" className="mt-2 mb-2 p-3" style={{ width: '100%' }} onClick={() => { setDisplayDialog(false); history.push(`/medicalRecords/assessment/?seqProntuario=${getSeqProntuario}`) }}>Visualizar avaliação</Button>
+                            <Button variant="info" className="mt-2 mb-2 p-3" style={{width: '100%'}} onClick={() => {setDisplayDialog(false); history.push(`/medicalRecords/assessment/?seqProntuario=${getSeqProntuario}`)}}>Visualizar avaliação</Button>
                         </div>
                     </div>
                 </Dialog>
 
-                <Dialog visible={displayDialog2} style={{ width: '50%' }} modal={true} onHide={() => { setDisplayDialog2(false); showToast('warn', 'Aviso!', 'Operação cancelada pelo usuário.'); }}>
+                <Dialog visible={displayDialog2} style={{width: '50%'}} modal={true} onHide={() => {setDisplayDialog2(false); showToast('warn', 'Aviso!', 'Operação cancelada pelo usuário.');}}>
                     <p className="h5 mx-2">Deseja realmente excluir o prontuário {getNroProntuario} do paciente {getNomePaciente} do sistema?</p>
-                    <Button className="mx-2 mt-2 mb-2 mr-3 pr-3 pl-3" variant="outline-danger" onClick={() => { onClickDelete(); setDisplayDialog2(false) }}>Sim</Button>
-                    <Button className="mx-2 mt-2 mb-2 pr-3 pl-3" variant="outline-success" onClick={() => { setDisplayDialog2(false); showToast('warn', 'Aviso!', 'Operação cancelada pelo usuário.'); }}>Não</Button>
+                    <Button className="mx-2 mt-2 mb-2 mr-3 pr-3 pl-3" variant="outline-danger" onClick={() => {onClickDelete(); setDisplayDialog2(false)}}>Sim</Button>
+                    <Button className="mx-2 mt-2 mb-2 pr-3 pl-3" variant="outline-success"onClick={() => {setDisplayDialog2(false); showToast('warn', 'Aviso!', 'Operação cancelada pelo usuário.');}}>Não</Button>
                 </Dialog>
 
-                <Dialog visible={displayDialog3} style={{ width: '50%' }} modal={true} onHide={() => { setDisplayDialog3(false); showToast('warn', 'Aviso!', 'Operação cancelada pelo usuário.') }}>
+                <Dialog visible={displayDialog3} style={{width: '50%'}} modal={true} onHide={() => {setDisplayDialog3(false); showToast('warn', 'Aviso!', 'Operação cancelada pelo usuário.')}}>
                     <div className="">
                         <p className="text-dark h3 text-center">Atualização de Desfecho</p>
                         <form className="was-validated" onSubmit={handleSubmit1}>
-                            <DropdownReact />
-                            <label htmlFor="Desfecho" className="mt-4">Desfecho</label>
-                            <br></br>
-                            <Dropdown className="" value={getDesfecho} options={options3} onChange={onDesfechoChange} placeholder="Selecione uma opção" style={{ width: '100%' }} required />
-                            <DropdownReact />
-
+                            <DropdownReact/>
+                                <label htmlFor="Desfecho" className="mt-4">Desfecho</label>
+                                <br></br>
+                                <Dropdown className="" value={getDesfecho} options={options3} onChange={onDesfechoChange} placeholder="Selecione uma opção" style={{width: '100%'}} required/>
+                            <DropdownReact/>
+                            
                             <label htmlFor="DataDesfecho" className="mt-4">Data do Desfecho</label>
-                            <Calendar id="DataInternacao" style={{ width: '100%' }} value={getDataDesfecho}
-                                onChange={(e) => setDataDesfecho(e.value)} locale={pt_br} dateFormat="dd/mm/yy"
-                                placeholder="Selecione a data do desfecho" showButtonBar monthNavigator
-                                showIcon showOnFocus={false} required />
+                            <Calendar id="DataInternacao" style={{width: '100%'}} value={getDataDesfecho} 
+                                    onChange={(e) => setDataDesfecho(e.value)} locale={pt_br} dateFormat="dd/mm/yy" 
+                                    placeholder="Selecione a data do desfecho" showButtonBar monthNavigator 
+                                    showIcon showOnFocus={false} required/>
 
                             <button type="submit" className="btn btn-info btn-primary mt-4 mb-4">Atualizar</button>
                         </form>
                     </div>
                 </Dialog>
 
-                <Dialog visible={displayDialog4} style={{ width: '50%' }} modal={true} onHide={() => setDisplayDialog4(false)} maximizable>
+                <Dialog visible={displayDialog4} style={{width: '50%'}} modal={true} onHide={() => setDisplayDialog4(false)} maximizable>
                     <p className="text-dark h3 text-center mr-5 mb-2">Prontuário {getNroProntuario} do paciente {getNomePaciente}</p>
                     <p className="text-dark h5 mt-5">Origem: {getOrigem}</p>
                     <p className="text-dark h5 mt-3">Alocação: {getAlocacao}</p>
                     <p className="text-dark h5 mt-3">Data da Internação: {getDataTratadaInternacao}</p>
                     <p className="text-dark h5 mt-3">Código de Doença Primário: {getCodDoencaPrincipal}</p>
-                    {getCodDoencaSecundario &&
+                    {getCodDoencaSecundario  &&
                         <p className="text-dark h5 text-left mt-3">Código de Doença Secundário: {getCodDoencaSecundario}</p>
                     }
                     <p className="text-dark h5 text-left mt-3">Sistema Acometido: {getSistemaAcometido}</p>
@@ -550,143 +562,143 @@ const MedicalRecords = () => {
                     }
                 </Dialog>
 
-                <Dialog visible={displayDialog1} style={{ width: '50%' }} modal={true} onHide={() => { setDisplayDialog1(false); showToast('warn', 'Aviso!', 'Operação cancelada pelo usuário.'); }} maximizable>
+                <Dialog visible={displayDialog1} style={{width: '50%'}} modal={true} onHide={() => {setDisplayDialog1(false); showToast('warn', 'Aviso!', 'Operação cancelada pelo usuário.');}} maximizable>
                     <div className="">
-                        <p className="text-dark h3 text-center">Atualização de Prontuário</p>
+                    <p className="text-dark h3 text-center">Atualização de Prontuário</p>
                         <form className="was-validated" onSubmit={handleSubmit}>
                             <div className="form-group">
                                 <div className="form-row mt-4">
                                     <div className="col mr-4">
                                         <label htmlFor="NroProntuario">Número do Prontuário</label>
-                                        <InputText keyfilter="pint" style={{ width: '100%' }} id="NroProntuario" name="NroProntuario"
+                                        <InputText keyfilter="pint" style={{width: '100%'}} id="NroProntuario" name="NroProntuario"
                                             defaultValue={getNroProntuario} onChange={(e) => setNroProntuario(Number((e.target as HTMLInputElement).value))}
-                                            placeholder="Digite o número do prontuário" min="1" max="999999999" readOnly required autoFocus />
+                                            placeholder="Digite o número do prontuário" min="1" max="999999999" readOnly required autoFocus/>
                                     </div>
 
                                     <div className="col">
                                         <label htmlFor="SeqPaciente">Sequência do Paciente</label>
-                                        <InputText keyfilter="pint" style={{ width: '100%' }} id="SeqPaciente" name="SeqPaciente"
-                                            defaultValue={getSeqPaciente} onChange={(e) => setSeqPaciente(Number((e.target as HTMLInputElement).value))}
-                                            placeholder="Digite o número do paciente" min="1" max="999999999" required />
+                                        <InputText keyfilter="pint" style={{width: '100%'}} id="SeqPaciente" name="SeqPaciente"
+                                        defaultValue={getSeqPaciente} onChange={(e) => setSeqPaciente(Number((e.target as HTMLInputElement).value))}
+                                        placeholder="Digite o número do paciente" min="1" max="999999999" required/>
                                     </div>
                                 </div>
 
                                 <div className="form-row mt-4">
                                     <div className="col mr-4">
                                         <label htmlFor="Origem">Origem</label>
-                                        <InputText style={{ width: '100%' }} id="Origem" name="Origem"
+                                        <InputText style={{width: '100%'}} id="Origem" name="Origem"
                                             defaultValue={getOrigem} onChange={(e) => setOrigem((e.target as HTMLInputElement).value)}
-                                            placeholder="Digite a origem" required />
+                                            placeholder="Digite a origem" required/>
                                     </div>
 
                                     <div className="col">
                                         <label htmlFor="Alocacao">Alocação</label>
-                                        <InputText style={{ width: '100%' }} id="Alocacao" name="Alocacao"
+                                        <InputText style={{width: '100%'}} id="Alocacao" name="Alocacao"
                                             defaultValue={getAlocacao} onChange={(e) => setAlocacao((e.target as HTMLInputElement).value)}
-                                            placeholder="Digite a alocação" required />
+                                            placeholder="Digite a alocação" required/>
                                     </div>
                                 </div>
 
                                 <label htmlFor="DataInternacao" className="mt-4">Data da Internação</label>
-                                <Calendar id="DataInternacao" style={{ width: '100%' }} value={getDataInternacao}
-                                    onChange={(e) => setDataInternacao(e.value)} locale={pt_br} dateFormat="dd/mm/yy"
-                                    placeholder="Selecione a data da internação" showButtonBar monthNavigator
-                                    showIcon showOnFocus={false} required />
-
+                                <Calendar id="DataInternacao" style={{width: '100%'}} value={getDataInternacao} 
+                                    onChange={(e) => setDataInternacao(e.value)} locale={pt_br} dateFormat="dd/mm/yy" 
+                                    placeholder="Selecione a data da internação" showButtonBar monthNavigator 
+                                    showIcon showOnFocus={false} required/>
+                                
                                 <label htmlFor="CodDoencaPrincipal" className="mt-4">Código de Doença Primário</label>
-                                <InputText style={{ width: '100%' }} id="CodDoencaPrincipal" name="CodDoencaPrincipal"
+                                <InputText style={{width: '100%'}} id="CodDoencaPrincipal" name="CodDoencaPrincipal"
                                     defaultValue={getCodDoencaPrincipal} onChange={(e) => setCodDoencaPrincipal((e.target as HTMLInputElement).value)}
-                                    placeholder="Digite o código de doença primário" required />
-
+                                    placeholder="Digite o código de doença primário" required/>
+                                
                                 <label htmlFor="CodDoencaSecundario" className="mt-4">Código de Doença Secundário</label>
-                                <InputText style={{ width: '100%' }} id="CodDoencaSecundario" name="CodDoencaSecundario"
-                                    defaultValue={getCodDoencaSecundario} onChange={(e) => { checkInput(1, (e.target as HTMLInputElement).value) }}
+                                <InputText style={{width: '100%'}} id="CodDoencaSecundario" name="CodDoencaSecundario"
+                                    defaultValue={getCodDoencaSecundario} onChange={(e) => {checkInput(1, (e.target as HTMLInputElement).value)}}
                                     placeholder="Digite o código de doença secundário" />
-
+                                
                                 <label htmlFor="SistemaAcometido" className="mt-4">Sistema Acometido</label>
-                                <InputText style={{ width: '100%' }} id="SistemaAcometido" name="SistemaAcometido"
+                                <InputText style={{width: '100%'}} id="SistemaAcometido" name="SistemaAcometido"
                                     defaultValue={getSistemaAcometido} onChange={(e) => setSistemaAcometido((e.target as HTMLInputElement).value)}
-                                    placeholder="Digite o sistema acometido" required />
-
+                                    placeholder="Digite o sistema acometido" required/>
+                                
                                 <label htmlFor="CodComorbidade" className="mt-4">Código de Comorbidade</label>
-                                <InputText style={{ width: '100%' }} id="CodComorbidade" name="CodComorbidade"
-                                    defaultValue={getCodComorbidade} onChange={(e) => { checkInput(2, (e.target as HTMLInputElement).value) }}
+                                <InputText style={{width: '100%'}} id="CodComorbidade" name="CodComorbidade"
+                                    defaultValue={getCodComorbidade} onChange={(e) => {checkInput(2, (e.target as HTMLInputElement).value)}}
                                     placeholder="Digite o código de comorbidade" />
-
+                                
                                 <label htmlFor="CodAtbPrimario" className="mt-4">Código de Medicamento Primário</label>
-                                <InputText style={{ width: '100%' }} id="CodAtbPrimario" name="CodAtbPrimario"
+                                <InputText style={{width: '100%'}} id="CodAtbPrimario" name="CodAtbPrimario"
                                     defaultValue={getCodAtbPrimario} onChange={(e) => setCodAtbPrimario((e.target as HTMLInputElement).value)}
-                                    placeholder="Digite o código de medicamento primário" required />
+                                    placeholder="Digite o código de medicamento primário" required/>
 
                                 <label htmlFor="CodAtbSecundario" className="mt-4">Código de Medicamento Secundário</label>
-                                <InputText style={{ width: '100%' }} id="CodAtbSecundario" name="CodAtbSecundario"
-                                    defaultValue={getCodAtbSecundario} onChange={(e) => { checkInput(3, (e.target as HTMLInputElement).value) }}
+                                <InputText style={{width: '100%'}} id="CodAtbSecundario" name="CodAtbSecundario"
+                                    defaultValue={getCodAtbSecundario} onChange={(e) => {checkInput(3, (e.target as HTMLInputElement).value)}}
                                     placeholder="Digite o código de medicamento secundário" />
 
                                 <label htmlFor="SitioInfeccaoPrimario" className="mt-4">Sítio de Infecção Primário</label>
-                                <InputText style={{ width: '100%' }} id="SitioInfeccaoPrimario" name="SitioInfeccaoPrimario"
-                                    defaultValue={getSitioInfeccaoPrimario} onChange={(e) => { checkInput(4, (e.target as HTMLInputElement).value) }}
+                                <InputText style={{width: '100%'}} id="SitioInfeccaoPrimario" name="SitioInfeccaoPrimario"
+                                    defaultValue={getSitioInfeccaoPrimario} onChange={(e) => {checkInput(4, (e.target as HTMLInputElement).value)}}
                                     placeholder="Digite o sítio de infecção primário" />
 
                                 <label htmlFor="OrigemInfeccao" className="mt-4">Origem da Infecção</label>
-                                <InputText style={{ width: '100%' }} id="OrigemInfeccao" name="OrigemInfeccao"
+                                <InputText style={{width: '100%'}} id="OrigemInfeccao" name="OrigemInfeccao"
                                     defaultValue={getOrigemInfeccao} onChange={(e) => setOrigemInfeccao((e.target as HTMLInputElement).value)}
-                                    placeholder="Digite a origem da infecção" required />
+                                    placeholder="Digite a origem da infecção" required/>
 
                                 <div className="form-row mt-4">
                                     <div className="col mr-4">
-                                        <DropdownReact />
-                                        <label htmlFor="ResultadoColeta">Resultado Coleta</label>
-                                        <br></br>
-                                        <Dropdown className="" value={getResultadoColeta} options={options} onChange={onResultadoChange} placeholder="Selecione uma opção" style={{ width: '100%' }} />
-                                        <DropdownReact />
+                                        <DropdownReact/>
+                                            <label htmlFor="ResultadoColeta">Resultado Coleta</label>
+                                            <br></br>
+                                            <Dropdown className="" value={getResultadoColeta} options={options} onChange={onResultadoChange} placeholder="Selecione uma opção" style={{width: '100%'}}/>
+                                        <DropdownReact/>
                                     </div>
-
+                                    
                                     <div className="col mr-4">
-                                        <DropdownReact />
-                                        <label htmlFor="TratamentoCCIH">Tratamento CCIH</label>
-                                        <br></br>
-                                        <Dropdown className="" value={getTratamento} options={options} onChange={onTratamentoChange} placeholder="Selecione uma opção" style={{ width: '100%' }} required />
-                                        <DropdownReact />
+                                        <DropdownReact/>
+                                            <label htmlFor="TratamentoCCIH">Tratamento CCIH</label>
+                                            <br></br>
+                                            <Dropdown className="" value={getTratamento} options={options} onChange={onTratamentoChange} placeholder="Selecione uma opção" style={{width: '100%'}} required/>
+                                        <DropdownReact/>
                                     </div>
 
                                     <div className="col">
-                                        <DropdownReact />
-                                        <label htmlFor="IndicacaoSepse">Indicação Sepse</label>
-                                        <br></br>
-                                        <Dropdown className="" value={getIndicacao} options={options} onChange={onIndicacaoChange} placeholder="Selecione uma opção" style={{ width: '100%' }} required />
-                                        <DropdownReact />
+                                        <DropdownReact/>
+                                            <label htmlFor="IndicacaoSepse">Indicação Sepse</label>
+                                            <br></br>
+                                            <Dropdown className="" value={getIndicacao} options={options} onChange={onIndicacaoChange} placeholder="Selecione uma opção" style={{width: '100%'}} required/>
+                                        <DropdownReact/>
                                     </div>
                                 </div>
 
                                 <div className="form-row mt-4">
                                     <div className="col mr-4">
-                                        <DropdownReact />
-                                        <label htmlFor="DisfuncaoRenal">Disfunção Renal</label>
-                                        <br></br>
-                                        <Dropdown className="" value={getDisfuncao} options={options} onChange={onDisfuncaoChange} placeholder="Selecione uma opção" style={{ width: '100%' }} required />
-                                        <DropdownReact />
+                                        <DropdownReact/>
+                                            <label htmlFor="DisfuncaoRenal">Disfunção Renal</label>
+                                            <br></br>
+                                            <Dropdown className="" value={getDisfuncao} options={options} onChange={onDisfuncaoChange} placeholder="Selecione uma opção" style={{width: '100%'}} required/>
+                                        <DropdownReact/>
                                     </div>
-
+                                    
                                     <div className="col mr-4">
-                                        <DropdownReact />
-                                        <label htmlFor="DoseCorreta">Dose Correta</label>
-                                        <br></br>
-                                        <Dropdown className="" value={getDose} options={options} onChange={onDoseChange} placeholder="Selecione uma opção" style={{ width: '100%' }} />
-                                        <DropdownReact />
+                                        <DropdownReact/>
+                                            <label htmlFor="DoseCorreta">Dose Correta</label>
+                                            <br></br>
+                                            <Dropdown className="" value={getDose} options={options} onChange={onDoseChange} placeholder="Selecione uma opção" style={{width: '100%'}}/>
+                                        <DropdownReact/>
                                     </div>
 
                                     <div className="col">
-                                        <DropdownReact />
-                                        <label htmlFor="PosologiaCorreta">Posologia Correta</label>
-                                        <br></br>
-                                        <Dropdown className="" value={getPosologia} options={options} onChange={onPosologiaChange} placeholder="Selecione uma opção" style={{ width: '100%' }} />
-                                        <DropdownReact />
+                                        <DropdownReact/>
+                                            <label htmlFor="PosologiaCorreta">Posologia Correta</label>
+                                            <br></br>
+                                            <Dropdown className="" value={getPosologia} options={options} onChange={onPosologiaChange} placeholder="Selecione uma opção" style={{width: '100%'}}/>
+                                        <DropdownReact/>
                                     </div>
                                 </div>
 
                             </div>
-
+                            
                             <button type="submit" className="btn btn-info btn-primary mt-3 mb-3">Atualizar</button>
                         </form>
                     </div>
@@ -694,10 +706,10 @@ const MedicalRecords = () => {
             </div>
 
             {getToast &&
-                <ToastComponent messageType={getMessageType} messageTitle={getMessageTitle} messageContent={getMessageContent} />
+                <ToastComponent messageType={getMessageType} messageTitle={getMessageTitle} messageContent={getMessageContent}/>
             }
             {loading1 &&
-                <Loading />
+                <Loading/>
             }
         </>
     )
