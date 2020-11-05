@@ -10,6 +10,9 @@ import ToastComponent from '../../../components/Toast';
 import { PatientService } from './PatientService';
 import { InputText } from 'primereact/inputtext';
 import { Calendar } from 'primereact/calendar';
+import Collapse from 'react-bootstrap/Collapse';
+import {FiSearch} from 'react-icons/fi';
+import {AiOutlineClose} from 'react-icons/ai';
 
 import './Patient.css';
 
@@ -55,6 +58,11 @@ const Patient = (props: any) => {
     const [getPacienteNomeUpdate, setPacienteNomeUpdate] = useState<any>('');
     const [getPacienteDataNascimentoUpdate, setPacienteDataNascimentoUpdate] = useState<any>('');
     const [getPacienteGeneroUpdate, setPacienteGeneroUpdate] = useState<any>('');
+
+    const [getMode, setMode] = useState<string>('N');
+    const [getOptionState, setOptionState] = useState<any>(null)
+    const [searchInput, setSearchInput] = useState('');
+    const [open, setOpen] = useState(false);
 
     let optionsDropdownGenero = [
         { label: 'Masculino', value: 'M' },
@@ -265,11 +273,88 @@ const Patient = (props: any) => {
         );
     }
 
+    let options2 = [
+        {name: 'Nome', cod: 'Name'},
+        {name: 'Nro Paciente', cod: 'Nro'},
+        {name: 'Data Nascimento', cod: 'Nas'}
+    ];
+
+    const onOptionChange = (e: { value: any }) => {
+        setOptionState(e.value);
+    };
+
+    function handleSearch(){
+        if(!getOptionState){
+            showToast('error', 'Erro!', 'Selecione um filtro para buscar.');
+            return
+        }
+        setLoading(true);
+        if(!searchInput){
+            patientService.getPatientPaginate(10).then(data => {
+                getPatientFunction(data);
+                setLoading(false);
+                showToast('error', 'Erro!', 'Digite algum valor para pesquisar.');
+            })
+            return
+        }
+        setMode('S');
+        patientService.searchPatientGlobal(searchInput, getOptionState.cod, getFirst+rows).then(data => {
+            if(!data.patientFound){
+                setLoading(false);
+                setPaciente([]);
+                showToast('warn', 'Resultados não encontrados!', 'Não foram encontrados resultados para a busca desejada')
+                return
+            }
+            getPatientFunction(data)
+            let searchType;
+            if(getOptionState.name === 'Nome'){
+                searchType = 'NomePaciente';
+            }else if(getOptionState.name === 'Nro Paciente'){
+                searchType = 'NroPaciente';
+            }else if(getOptionState.name === 'Data Nascimento'){
+                searchType = 'DataNascimento'
+            }else{
+                searchType = getOptionState.name
+            }
+            console.log(data)
+            let dataSize = data.length[0]['count(`' + searchType + '`)']
+            if(dataSize == 1){
+                showToast('info', 'Resultado Encontrado!', `Foi encontrado ${dataSize} resultado.`)
+            }else{
+                showToast('info', 'Resultados Encontrados!', `Foram encontrados ${dataSize} resultados.`)
+            }
+        })
+    }
 
     return (
         <>
             <div className="row m-5 px-5">
-                <Link to={location => ({ ...location, pathname: '/registrations/patient/create' })}><Button variant="outline-dark" className="mb-2" style={{ borderRadius: '0', height: '41.5px' }}>Cadastrar Paciente</Button></Link>
+            <Link to={location => ({ ...location, pathname: '/registrations/patient/create' })}><Button variant="outline-dark" className="mb-2" style={{ borderRadius: '0', height: '41.5px' }}>Cadastrar Paciente</Button></Link>
+                <Button variant="outline-secondary" className="mb-2 ml-2" onClick={() => setOpen(!open)} aria-controls="example-collapse-text" aria-expanded={open} style={{borderRadius: '0'}}>Buscar paciente específico</Button>
+                    <Collapse in={open} timeout={200}>
+                        <div className="ml-2">
+                            <div className="p-inputgroup">
+                                <span className="p-float-label">
+                                    <InputText id="float-input" type="search" value={searchInput} onChange={(e) => {setSearchInput((e.target as HTMLInputElement).value)}} onKeyPress={(ev) => {if (ev.key === 'Enter') {handleSearch(); ev.preventDefault();}}}  style={{minWidth:'4em', borderRadius: '0'}} size={30} />
+                                    {getOptionState === null
+                                        ? <label htmlFor="float-input">Buscar</label>
+                                        : <label htmlFor="float-input">Buscar por {getOptionState.name}</label>
+                                    }
+                                </span>
+                                {searchInput === ''
+                                    ? <></>
+                                    :
+                                        <>
+                                            <Dropdown className="mx-1" value={getOptionState} options={options2} onChange={onOptionChange} placeholder="Selecione um filtro" optionLabel="name" style={{width: '12em'}}/>
+                                            <Button tabIndex={2} variant="outline-danger" className="p-0 mr-1" style={{width: '17px', borderRadius: '0'}} onClick={() => {setSearchInput(''); getPatientFunction(); setMode('N'); setOptionState(null)}}><AiOutlineClose size={15}/></Button>
+                                            <Button onClick={handleSearch} style={{borderRadius: '0'}}><FiSearch size={15}/></Button>
+                                        </>
+                                }
+                            </div>
+                        </div>
+                    </Collapse>
+                <div className="ml-auto"></div>
+
                 <div className="datatable-responsive-demo">
                     <DataTable value={paciente} paginator={true} rows={rows} header="Pacientes" totalRecords={totalRecords}
                         emptyMessage="Nenhum resultado encontrado" className="p-datatable-responsive-demo" resizableColumns={true} loading={loading}

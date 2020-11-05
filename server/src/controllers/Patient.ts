@@ -80,7 +80,7 @@ class PatientController {
 
     // Método para listar pacientes pelo id:
     async indexById(request: Request, response: Response) {
-        const { NroPaciente } = request.query;
+        const { nroPaciente } = request.query;
         var page = String(request.query.page);
         if (!page) {
             page = "10";
@@ -88,10 +88,10 @@ class PatientController {
         var pageRequest = parseInt(page) / 10;
         const rows = 10;
 
-        const patientDB = await knex("Paciente").where('NroPaciente', 'like', `%${NroPaciente}%`).offset((pageRequest - 1) * rows).limit(rows).orderBy("NroPaciente");
+        const patientDB = await knex("Paciente").where('NroPaciente', 'like', `%${nroPaciente}%`).offset((pageRequest - 1) * rows).limit(rows).orderBy("NroPaciente");
         const patient = patientDB[0];
         if (patient) {
-            const patientLength = (await knex("Paciente").count('NroPaciente').where('NroPaciente', 'like', `%${NroPaciente}%`));
+            const patientLength = (await knex("Paciente").count('NroPaciente').where('NroPaciente', 'like', `%${nroPaciente}%`));
             return response.json({
                 patientFound: true,
                 patients: patientDB,
@@ -105,7 +105,7 @@ class PatientController {
 
     // Método para listar pacientes pela data de nascimento:
     async indexByBirthday(request: Request, response: Response) {
-        const { DataNascimento } = request.query;
+        const { dataNascimento } = request.query;
         var page = String(request.query.page);
         if (!page) {
             page = "10";
@@ -113,10 +113,10 @@ class PatientController {
         var pageRequest = parseInt(page) / 10;
         const rows = 10;
 
-        const patientDB = await knex("Paciente").where('DataNascimento', 'like', `%${DataNascimento}%`).offset((pageRequest - 1) * rows).limit(rows);
+        const patientDB = await knex("Paciente").where('DataNascimento', 'like', `%${dataNascimento}%`).offset((pageRequest - 1) * rows).limit(rows);
         const patient = patientDB[0];
         if (patient) {
-            const patientLength = (await knex("Paciente").count('NroPaciente').where('DataNascimento', 'like', `%${DataNascimento}%`));
+            const patientLength = (await knex("Paciente").count('NroPaciente').where('DataNascimento', 'like', `%${dataNascimento}%`));
             return response.json({
                 patientFound: true,
                 patients: patientDB,
