@@ -15,6 +15,7 @@ import { Calendar } from 'primereact/calendar';
 
 import {AssessmentService} from './AssessmentService';
 import Loading from '../../../components/Loading';
+import './Assessment.css'
 
 const Assessment = () => {
     const query = new URLSearchParams(useLocation().search)
@@ -403,7 +404,25 @@ const Assessment = () => {
             eval("set" + e + "String" + "(" + '"Não aplica"' + ")")
     }
 
-    const VerifiedTemplateAtbOral = (rowData: any) => {
+    const NroAvaliacaoBodyTemplate = (rowData: any) => {
+        return (
+            <React.Fragment>
+                <span className="p-column-title">Nro Avaliação</span>
+                <a>{rowData.NroAvaliacao}</a>
+            </React.Fragment>
+        );
+    }
+
+    const DataAvaliacaoBodyTemplate = (rowData: any) => {
+        return (
+            <React.Fragment>
+                <span className="p-column-title">Data Avaliação</span>
+                <a>{rowData.DataAvaliacao}</a>
+            </React.Fragment>
+        );
+    }
+
+    const AtbOralBodyTemplate = (rowData: any) => {
         let verifyStatus = rowData.AtbOral;
         let fontColor: any
         if(verifyStatus == 'Não')
@@ -412,27 +431,42 @@ const Assessment = () => {
             fontColor = "#a80000"
         if(verifyStatus == 'Sim')
             fontColor = "#106b00"
-        return <span style={{color: fontColor}}>{rowData.AtbOral}</span>;
+        return (
+            <React.Fragment>
+                <span className="p-column-title">Antibiótico Oral</span>
+                <a style={{color: fontColor}}>{rowData.AtbOral}</a>
+            </React.Fragment>
+        );
     }
 
-    const VerifiedTemplateAtbContraindicacao = (rowData: any) => {
+    const AtbContraindicacaoBodyTemplate = (rowData: any) => {
         let verifyStatus = rowData.AtbContraindicacao;
         let fontColor: any
         if(verifyStatus == 'Não')
             fontColor = "#a80000"
         if(verifyStatus == 'Sim')
             fontColor = "#106b00"
-        return <span style={{color: fontColor}}>{rowData.AtbContraindicacao}</span>;
+        return (
+            <React.Fragment>
+                <span className="p-column-title">Antibiótico Contraindicação</span>
+                <a style={{color: fontColor}}>{rowData.AtbContraindicacao}</a>
+            </React.Fragment>
+        );
     }
 
-    const VerifiedTemplateTrocaAtb = (rowData: any) => {
+    const TrocaAtbBodyTemplate = (rowData: any) => {
         let verifyStatus = rowData.TrocaAtb;
         let fontColor: any
         if(verifyStatus == 'Não')
             fontColor = "#a80000"
         if(verifyStatus == 'Sim')
             fontColor = "#106b00"
-        return <span style={{color: fontColor}}>{rowData.TrocaAtb}</span>;
+        return (
+            <React.Fragment>
+                <span className="p-column-title">Troca antibiótico</span>
+                <a style={{color: fontColor}}>{rowData.TrocaAtb}</a>
+            </React.Fragment>
+        );
     }
 
     return (
@@ -462,17 +496,19 @@ const Assessment = () => {
                 </div>
             </Collapse>
             <div className="ml-auto"></div>
-
-            <DataTable value={assessment} paginator={true} rows={rows} header={header} totalRecords={totalAssessment}
-                emptyMessage="Nenhum resultado encontrado" className="p-datatable-responsive-demo" resizableColumns={true} loading={loading} first={getFirst}
-                onPage={onPage} lazy={true} selectionMode="single" selection={selectedAssessment} onSelectionChange={e => setSelectedAssessment(e.value)}
-                onRowSelect={(e) => {onAssessmentSelect(e);}}>
-                <Column field="NroAvaliacao" header="Nro Avaliação" style={{width:'20%', textAlign:'center'}}/>
-                <Column field="DataAvaliacao" header="Data Avaliação" style={{width:'20%', textAlign:'center'}}/>
-                <Column field="AtbOral" header="Antibiótico Oral" style={{width:'20%', textAlign:'center'}} body={VerifiedTemplateAtbOral}/>
-                <Column field="AtbContraindicacao" header="Antibiótico Contraindicação" style={{width:'20%', textAlign:'center'}} body={VerifiedTemplateAtbContraindicacao}/>
-                <Column field="TrocaAtb" header="Troca antibiótico" style={{width:'20%', textAlign:'center'}} body={VerifiedTemplateTrocaAtb}/>
-            </DataTable>
+            
+            <div className="datatable-responsive-demo">
+                <DataTable value={assessment} paginator={true} rows={rows} header={header} totalRecords={totalAssessment}
+                    emptyMessage="Nenhum resultado encontrado" className="p-datatable-responsive-demo" resizableColumns={true} loading={loading} first={getFirst}
+                    onPage={onPage} lazy={true} selectionMode="single" selection={selectedAssessment} onSelectionChange={e => setSelectedAssessment(e.value)}
+                    onRowSelect={(e) => {onAssessmentSelect(e);}}>
+                    <Column field="NroAvaliacao" header="Nro Avaliação" body={NroAvaliacaoBodyTemplate}/>
+                    <Column field="DataAvaliacao" header="Data Avaliação" body={DataAvaliacaoBodyTemplate}/>
+                    <Column field="AtbOral" header="Antibiótico Oral" body={AtbOralBodyTemplate}/>
+                    <Column field="AtbContraindicacao" header="Antibiótico Contraindicação" body={AtbContraindicacaoBodyTemplate}/>
+                    <Column field="TrocaAtb" header="Troca antibiótico" body={TrocaAtbBodyTemplate}/>
+                </DataTable>
+            </div>
 
             <Dialog visible={displayDialog} style={{width: '50%'}} header="Ações" modal={true} onHide={() => setDisplayDialog(false)}>
                 <div className="form-row">

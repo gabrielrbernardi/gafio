@@ -243,7 +243,7 @@ const Patient = (props: any) => {
     const nroPacienteBodyTemplate = (rowData: any) => {
         return (
             <React.Fragment>
-                <span className="p-column-title">SeqPaciente</span>
+                <span className="p-column-title">NroPaciente</span>
                 <a>{rowData.NroPaciente}</a>
             </React.Fragment>
         );
@@ -251,7 +251,7 @@ const Patient = (props: any) => {
     const generoPacienteBodyTemplate = (rowData: any) => {
         return (
             <React.Fragment>
-                <span className="p-column-title">SeqPaciente</span>
+                <span className="p-column-title">Genero</span>
                 <a>{rowData.Genero}</a>
             </React.Fragment>
         );
@@ -259,7 +259,7 @@ const Patient = (props: any) => {
     const nomePacienteBodyTemplate = (rowData: any) => {
         return (
             <React.Fragment>
-                <span className="p-column-title">SeqPaciente</span>
+                <span className="p-column-title">NomePaciente</span>
                 <a>{rowData.NomePaciente}</a>
             </React.Fragment>
         );
@@ -267,7 +267,7 @@ const Patient = (props: any) => {
     const dataNascimentoPacienteBodyTemplate = (rowData: any) => {
         return (
             <React.Fragment>
-                <span className="p-column-title">SeqPaciente</span>
+                <span className="p-column-title">DataNascimento</span>
                 <a>{rowData.DataNascimento}</a>
             </React.Fragment>
         );
