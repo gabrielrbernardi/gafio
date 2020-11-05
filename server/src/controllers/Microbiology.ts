@@ -105,22 +105,59 @@ class MicrobiologyController {
                 .limit(rows)
                 .offset((pageRequest - 1) * rows);
 
-            //formatação de datas
-            results.forEach((result: any) => {
-                let dataColeta = result.DataColeta.split("T");
-                let dataResultado = result.DataResultado.split("T");
+            if (results.length) {
+                //formatação de datas
+                results.forEach((result: any) => {
+                    let dataColeta = result.DataColeta.split("T");
+                    let dataResultado = result.DataResultado.split("T");
 
-                dataColeta = dataColeta[0].split("-");
-                dataResultado = dataResultado[0].split("-");
+                    dataColeta = dataColeta[0].split("-");
+                    dataResultado = dataResultado[0].split("-");
 
-                result.DataColeta = `${dataColeta[2]}/${dataColeta[1]}/${dataColeta[0]}`;
-                result.DataResultado = `${dataResultado[2]}/${dataResultado[1]}/${dataResultado[0]}`;
-            });
+                    result.DataColeta = `${dataColeta[2]}/${dataColeta[1]}/${dataColeta[0]}`;
+                    result.DataResultado = `${dataResultado[2]}/${dataResultado[1]}/${dataResultado[0]}`;
+                });
 
-            const [count] = microbiologyLength;
-            return res.json({ results, count });
+                const [count] = microbiologyLength;
+                return res.json({ results, count });
+            } else {
+                return res.status(400).json({ error: "Nenhum registro encontrado" });
+            }
         } catch (error) {
             return res.json({ error: "Erro ao carregar os registros" });
+        }
+    }
+
+     //método para visualização
+    async view(req: Request, res: Response) {
+        try {
+            const { id } = req.params;
+            const microbiology = await knex("Microbiologia")
+                .where({ IdMicrobiologia: id })
+                .join(
+                    "Prontuario",
+                    "Prontuario.SeqProntuario",
+                    "=",
+                    "Microbiologia.IdProntuario"
+                )
+                .join(
+                    "Paciente",
+                    "Paciente.SeqPaciente",
+                    "=",
+                    "Microbiologia.IdPaciente"
+                )
+                .select(
+                    "Microbiologia.*",
+                    "Prontuario.NroProntuario",
+                    "Paciente.NomePaciente",
+                    "Paciente.NroPaciente"
+                );
+
+            return res.json(microbiology);
+        } catch (error) {
+            return res.json({
+                error: "Erro ao carregar os dados",
+            });
         }
     }
 
@@ -205,39 +242,6 @@ class MicrobiologyController {
             }
         } catch (error) {
             return res.json({ error });
-        }
-    }
-
-    //método para visualização
-    async view(req: Request, res: Response) {
-        try {
-            const { id } = req.params;
-            const microbiology = await knex("Microbiologia")
-                .where({ IdMicrobiologia: id })
-                .join(
-                    "Prontuario",
-                    "Prontuario.SeqProntuario",
-                    "=",
-                    "Microbiologia.IdProntuario"
-                )
-                .join(
-                    "Paciente",
-                    "Paciente.SeqPaciente",
-                    "=",
-                    "Microbiologia.IdPaciente"
-                )
-                .select(
-                    "Microbiologia.*",
-                    "Prontuario.NroProntuario",
-                    "Paciente.NomePaciente",
-                    "Paciente.NroPaciente"
-                );
-
-            return res.json(microbiology);
-        } catch (error) {
-            return res.json({
-                error: "Erro ao carregar os dados",
-            });
         }
     }
 }
