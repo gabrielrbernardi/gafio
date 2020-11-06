@@ -5,6 +5,7 @@ import jwt from 'jsonwebtoken';
 
 import './login.css';
 
+import { InputText } from 'primereact/inputtext';
 import loginBanner from '../../assets/fiocruzBanner.jpg';
 import api from '../../services/api';
 import ToastComponent from '../../components/Toast';
@@ -103,25 +104,28 @@ const Login = () => {
                     <form className="was-validated pb-2" onSubmit={handleSubmit}>
                     <div className="form-group">
                         <label htmlFor="email">Email:</label>
-                        <input type="email" className="form-control" id="email" name="email" onChange={handleInputChange} placeholder="Digite seu email" required autoFocus autoComplete="off"/>
+                        <InputText type="email" style={{width: '100%'}} id="email" name="email" onChange={handleInputChange} placeholder="Digite seu email" required autoFocus autoComplete="off"/>
+                        
                         <div className="valid-feedback text-left">Válido.</div>
                         <div className="invalid-feedback text-left">Preencha este campo.</div>
                     </div>
                     <div className="form-group">
                         <label htmlFor="password">Senha:</label>
-                        <input type="password" className="form-control" id="password" name="senha" onChange={handleInputChange} minLength={8} placeholder="Digite sua senha" required/>
+                        <InputText type="password" style={{width: '100%'}} id="password" name="senha" onChange={handleInputChange} minLength={8} placeholder="Digite sua senha" required/>
+                        
                         <div className="valid-feedback text-left">Válido.</div>
                         <div className="invalid-feedback text-left">Preencha este campo.</div>
                     </div>
                     {
                         enableSubmitButton === 0
-                        ? <button type="submit" className="btn btn-info btn-primary disabled" disabled>Entrar</button>
-                        : <button type="submit" className="btn btn-info btn-primary">Entrar</button>
+                        ? <button type="submit" className="btn btn-info btn-primary disabled mt-2 mb-3" disabled>Entrar</button>
+                        : <button type="submit" className="btn btn-info btn-primary mt-2 mb-3">Entrar</button>
                     }
                     </form>
                     <div col-1>
+                        <span>Ainda não possui cadastro?</span><br/>
                         <Link to="/signUp">
-                            <p className="text-info">Ainda não possui cadastro?<br/><u>Crie já o seu</u></p> 
+                            <span className="text-info">Crie já o seu</span>
                         </Link>
                     </div>
                 </div>

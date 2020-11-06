@@ -1,27 +1,27 @@
-*{
+* {
   transition: .3s ease;
   display: flexbox;
 }
 
-.cursor-pointer{
+.cursor-pointer {
   cursor: pointer;
 }
 
-.header-background{
+.header-background {
   background-image: linear-gradient(to right, #426980, #bad6ff);
 }
 
-.logo{
+.logo {
   width: 8vw;
   max-width: 80px;
   min-width: 50px;
 }
 
-.text-big{
+.text-big {
   font-size: 3vw !important;
 }
 
-.text-small{
+.text-small {
   font-size: 23px !important;
 }
 @media screen and (max-width: 600px) {
@@ -30,6 +30,6 @@
   }
 }
 
-.bg-light-custom{
+.bg-light-custom {
   background-color: #efefef;
 }

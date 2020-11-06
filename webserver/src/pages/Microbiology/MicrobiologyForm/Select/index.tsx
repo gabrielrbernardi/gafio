@@ -15,7 +15,7 @@ interface Props {
     value: string;
     inputValue: any;
     onChange: any;
-    inputOnChange:any;
+    inputOnChange: any;
 }
 
 const Select: React.FC<Props> = ({

@@ -11,7 +11,6 @@ routes.get("/microbiology", MicrobiologyController.index);
 routes.get("/microbiology/:id", MicrobiologyController.showById);
 routes.get("/microbiology/view/:id", MicrobiologyController.view);
 
-
 routes.delete("/microbiology/delete/:id", MicrobiologyController.delete);
 
 export default routes;

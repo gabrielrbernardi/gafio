@@ -113,7 +113,6 @@ class MicrobiologyController {
 
                     dataColeta = dataColeta[0].split("-");
                     dataResultado = dataResultado[0].split("-");
-
                     result.DataColeta = `${dataColeta[2]}/${dataColeta[1]}/${dataColeta[0]}`;
                     result.DataResultado = `${dataResultado[2]}/${dataResultado[1]}/${dataResultado[0]}`;
                 });

@@ -15,6 +15,7 @@ import { Calendar } from 'primereact/calendar';
 
 import {MedicalRecordsService} from './MedicalRecordsService';
 import Loading from '../../components/Loading';
+import './MedicalRecords.css'
 
 const MedicalRecords = () => {
     const [getSeqProntuario, setSeqProntuario] = useState<any>(null)
@@ -407,6 +408,104 @@ const MedicalRecords = () => {
         })
     }
 
+    const SeqProntuarioBodyTemplate = (rowData: any) => {
+        return (
+            <React.Fragment>
+                <span className="p-column-title">Seq Prontuário</span>
+                <a>{rowData.SeqProntuario}</a>
+            </React.Fragment>
+        );
+    }
+
+    const NroProntuarioBodyTemplate = (rowData: any) => {
+        return (
+            <React.Fragment>
+                <span className="p-column-title">Nro Prontuário</span>
+                <a>{rowData.NroProntuario}</a>
+            </React.Fragment>
+        );
+    }
+
+    const SeqPacienteBodyTemplate = (rowData: any) => {
+        return (
+            <React.Fragment>
+                <span className="p-column-title">Seq Paciente</span>
+                <a>{rowData.SeqPaciente}</a>
+            </React.Fragment>
+        );
+    }
+
+    const DataNascimentoBodyTemplate = (rowData: any) => {
+        return (
+            <React.Fragment>
+                <span className="p-column-title">Nascimento</span>
+                <a>{rowData.DataNascimento}</a>
+            </React.Fragment>
+        );
+    }
+
+    const NomePacienteBodyTemplate = (rowData: any) => {
+        return (
+            <React.Fragment>
+                <span className="p-column-title">Nome</span>
+                <a>{rowData.NomePaciente}</a>
+            </React.Fragment>
+        );
+    }
+
+    const GeneroBodyTemplate = (rowData: any) => {
+        return (
+            <React.Fragment>
+                <span className="p-column-title">Gênero</span>
+                <a>{rowData.Genero}</a>
+            </React.Fragment>
+        );
+    }
+
+    const DataInternacaoBodyTemplate = (rowData: any) => {
+        return (
+            <React.Fragment>
+                <span className="p-column-title">Data Internação</span>
+                <a>{rowData.DataInternacao}</a>
+            </React.Fragment>
+        );
+    }
+
+    const DiagnosticoPrincipalBodyTemplate = (rowData: any) => {
+        return (
+            <React.Fragment>
+                <span className="p-column-title">Diagnostico</span>
+                <a>{rowData.DiagnosticoPrincipal}</a>
+            </React.Fragment>
+        );
+    }
+
+    const AlocacaoBodyTemplate = (rowData: any) => {
+        return (
+            <React.Fragment>
+                <span className="p-column-title">Alocação</span>
+                <a>{rowData.Alocacao}</a>
+            </React.Fragment>
+        );
+    }
+
+    const DesfechoBodyTemplate = (rowData: any) => {
+        let verifyStatus = rowData.Desfecho;
+        let fontColor: any
+        if(verifyStatus == 'Óbito')
+            fontColor = "#a80000"
+        if(verifyStatus == 'Alta')
+            fontColor = "#106b00"
+        if(verifyStatus == 'Transferência')
+            fontColor = "#0080FF"
+        return (
+            <React.Fragment>
+                <span className="p-column-title">Desfecho</span>
+                <a style={{color: fontColor}}>{rowData.Desfecho}</a>
+            </React.Fragment>
+        );
+    }
+
     return (
         <>
             <div className="row m-5 px-5">
@@ -435,22 +534,24 @@ const MedicalRecords = () => {
                     </div>
                 </Collapse>
                 <div className="ml-auto"></div>
-
-                <DataTable value={MedicalRecords} paginator={true} rows={rows} header={header} totalRecords={totalRecords}
-                    emptyMessage="Nenhum resultado encontrado" className="p-datatable-responsive-demo" resizableColumns={true} loading={loading} first={getFirst}
-                    onPage={onPage} lazy={true} selectionMode="single" selection={selectedMedicalRecord} onSelectionChange={e => setSelectedMedicalRecord(e.value)}
-                    onRowSelect={(e) => {onMedicalRecordSelect(e);}}>
-                    <Column field="SeqProntuario" header="Seq Prontuário" style={{width:'8%', textAlign:'center'}}/>
-                    <Column field="NroProntuario" header="Nro Prontuário" style={{width:'8%', textAlign:'center'}}/>
-                    <Column field="SeqPaciente" header="Seq Paciente" style={{width:'8%', textAlign:'center'}}/>
-                    <Column field="DataNascimento" header="Nascimento" style={{width:'11%', textAlign:'center'}}/>
-                    <Column field="NomePaciente" header="Nome" style={{width:'11%', textAlign:'center'}}/>
-                    <Column field="Genero" header="Gênero" style={{width:'8%', textAlign:'center'}}/>
-                    <Column field="DataInternacao" header="Data Internação" style={{width:'11%', textAlign:'center'}}/>
-                    <Column field="DiagnosticoPrincipal" header="Diagnostico" style={{width:'13%', textAlign:'center'}}/>
-                    <Column field="Alocacao" header="Alocação" style={{width:'13%', textAlign:'center'}}/>
-                    <Column field="Desfecho" header="Desfecho" style={{width:'9%', textAlign:'center'}}/>
-                </DataTable>
+                
+                <div className="datatable-responsive-demo">
+                    <DataTable value={MedicalRecords} paginator={true} rows={rows} header={header} totalRecords={totalRecords}
+                        emptyMessage="Nenhum resultado encontrado" className="p-datatable-responsive-demo" resizableColumns={true} loading={loading} first={getFirst}
+                        onPage={onPage} lazy={true} selectionMode="single" selection={selectedMedicalRecord} onSelectionChange={e => setSelectedMedicalRecord(e.value)}
+                        onRowSelect={(e) => {onMedicalRecordSelect(e);}}>
+                        <Column field="SeqProntuario" header="Seq Prontuário" body={SeqProntuarioBodyTemplate}/>
+                        <Column field="NroProntuario" header="Nro Prontuário" body={NroProntuarioBodyTemplate}/>
+                        <Column field="SeqPaciente" header="Seq Paciente" body={SeqPacienteBodyTemplate}/>
+                        <Column field="DataNascimento" header="Nascimento" body={DataNascimentoBodyTemplate}/>
+                        <Column field="NomePaciente" header="Nome" body={NomePacienteBodyTemplate}/>
+                        <Column field="Genero" header="Gênero" body={GeneroBodyTemplate}/>
+                        <Column field="DataInternacao" header="Data Internação" body={DataInternacaoBodyTemplate}/>
+                        <Column field="DiagnosticoPrincipal" header="Diagnostico" body={DiagnosticoPrincipalBodyTemplate}/>
+                        <Column field="Alocacao" header="Alocação" body={AlocacaoBodyTemplate}/>
+                        <Column field="Desfecho" header="Desfecho" body={DesfechoBodyTemplate}/>
+                    </DataTable>
+                </div>
 
                 <Dialog visible={displayDialog} style={{width: '50%'}} header="Ações" modal={true} onHide={() => setDisplayDialog(false)}>
                     <div className="form-row">

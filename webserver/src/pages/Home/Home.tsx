@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
-import {Link} from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { RiComputerLine, RiBarChart2Line, RiPagesLine } from "react-icons/ri";
-import {FaMicroscope, FaHospital, FaHistory} from 'react-icons/fa';
+import { FaMicroscope, FaHospital, FaHistory } from 'react-icons/fa';
 
 import './Home.css';
 
