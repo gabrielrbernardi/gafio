@@ -1,0 +1,28 @@
+*{
+    padding: 0;
+    margin: 0;
+}
+
+ ul{
+    list-style: none;
+}
+
+ ul, p{
+         margin-left: 10px;
+         color: #525252;
+         font-size: 18px;
+         font-weight: bold;
+ }
+
+ section ~ section{
+     padding-top: 8px;
+     border-top: 0.3px solid #bbb8b8;
+ }
+
+h4{
+    color: #292828;
+}
+
+li{
+    padding: 2px;
+}

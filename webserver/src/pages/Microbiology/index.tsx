@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
+import { Dropdown } from "primereact/dropdown";
+import { InputText } from "primereact/inputtext";
+import Collapse from "react-bootstrap/Collapse";
+import { FiSearch } from "react-icons/fi";
+import { AiOutlineClose } from "react-icons/ai";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import Button from "react-bootstrap/Button";
@@ -9,11 +14,6 @@ import Loading from "../../components/Loading";
 import { Dialog } from "primereact/dialog";
 import View from "./MicrobiologyView";
 import Form from "./MicrobiologyForm";
-import { Dropdown } from "primereact/dropdown";
-import { InputText } from "primereact/inputtext";
-import Collapse from "react-bootstrap/Collapse";
-import { FiSearch } from "react-icons/fi";
-import { AiOutlineClose } from "react-icons/ai";
 
 import "./index.css";
 
@@ -50,15 +50,12 @@ const Microbiology = () => {
     const [deleteDialog, setDeleteDialog] = useState<boolean>(false);
     const [displayDialog, setDisplayDialog] = useState<boolean>(false);
     const [selectedMicrobiology, setselectedMicrobiology] = useState<any>(null);
-
     const [toast, setToast] = useState<boolean>(false);
     const [getMessageType, setMessageType] = useState<string>("");
     const [getMessageTitle, setMessageTitle] = useState<string>("");
     const [getMessageContent, setMessageContent] = useState<string>("");
-
     const [tableloading, setTableLoading] = useState<boolean>(true);
     const [loading, setLoading] = useState<boolean>(true);
-
     const [open, setOpen] = useState<boolean>(false);
     const [optionState, setOptionState] = useState<any>(null);
     const [filter, setFilter] = useState<string>("");
@@ -74,6 +71,7 @@ const Microbiology = () => {
         { name: "Data da coleta", filter: "dataColeta" },
         { name: "Data do Resultado", filter: "dataResultado" },
     ];
+
     useEffect(() => {
         //carrega os dados da tabela e a quantidade total de registros
         async function loadMicrobiologies() {
@@ -88,11 +86,7 @@ const Microbiology = () => {
             } catch (error) {
                 setLoading(false);
                 setTableLoading(false);
-                HandleToast(
-                    "error",
-                    "Erro!",
-                    "Falha ao carregar os registros."
-                );
+                HandleToast("error",  "Erro!","Falha ao carregar os registros.");
             }
         }
 
@@ -207,11 +201,7 @@ const Microbiology = () => {
             setTableLoading(false);
             let res = "resultado";
             if (count > 1) res += "s";
-            HandleToast(
-                "info",
-                "Resultado Encontrado!",
-                `Foi encontrado ${count} ${res}.`
-            );
+            HandleToast("info","Resultado Encontrado!",`Foi encontrado ${count} ${res}.`);
             setSuccessfulSearch(true);
         } catch (err) {
             setLoading(false);

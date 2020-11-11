@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Dialog } from "primereact/dialog";
-import api from "../../../services/api";
-
 import Loading from "../../../components/Loading";
 import ToastComponent from "../../../components/Toast";
+
+import api from "../../../services/api";
+import "./index.css";
 
 interface IMicrobiology {
     IdMicrobiologia: number;
@@ -58,7 +59,6 @@ const MicrobiologyView: React.FC<Props> = ({ view, id, setView }) => {
     ] = useState<string>();
     const [OutrosObservacoes, setOutrosObservacoes] = useState<string>("");
     const [PerfilSensibilidade, setPerfilSensibilidade] = useState<string>("");
-
     const [toast, setToast] = useState<boolean>(false);
     const [getMessageType, setMessageType] = useState<string>("");
     const [getMessageTitle, setMessageTitle] = useState<string>("");
@@ -72,12 +72,13 @@ const MicrobiologyView: React.FC<Props> = ({ view, id, setView }) => {
                     `/microbiology/view/${id}`
                 );
                 const [microbiologyData] = response.data;
+
                 setIdMicrobiologia(microbiologyData.IdMicrobiologia);
                 setNroPaciente(microbiologyData.NroPaciente);
                 setNroProntuario(microbiologyData.NroProntuario);
                 setIdPaciente(microbiologyData.IdPaciente);
                 setIdProntuario(microbiologyData.IdProntuario);
-                setDataColeta( microbiologyData.DataColeta);
+                setDataColeta(microbiologyData.DataColeta);
                 setDataResultado(microbiologyData.DataResultado);
                 setNomePaciente(microbiologyData.NomePaciente);
                 setSwabNasalObservacoes(microbiologyData.SwabNasalObservacoes);
@@ -109,9 +110,7 @@ const MicrobiologyView: React.FC<Props> = ({ view, id, setView }) => {
         setMessageTitle(messageTitle);
         setMessageContent(messageContent);
         setToast(true);
-        setTimeout(() => {
-            setToast(false);
-        }, 4500);
+        setTimeout(() => setToast(false), 4500);
     }
 
     return (
@@ -123,95 +122,84 @@ const MicrobiologyView: React.FC<Props> = ({ view, id, setView }) => {
                 onHide={setView}
                 maximizable
             >
-                <p className="text-dark h3 text-center mr-5 mb-2">
-                    Microbiologia de número {IdMicrobiologia}.
-                </p>
+                <main>
+                    <h2 className="text-dark text-center mb-4">
+                        Microbiologia de número {IdMicrobiologia}
+                    </h2>
+                    <section className="text-dark">
+                        <h4>Dados do paciente</h4>
+                        <ul>
+                            <li> Nome: {NomePaciente}.</li>
+                            <li> Sequência: {IdPaciente}.</li>
+                            <li> Número: {NroPaciente}.</li>
+                        </ul>
+                    </section>
 
-                <p className="text-dark h5 mt-5">
-                    Dados do paciente:
-                    <br />
-                    Nome: {NomePaciente}.
-                    <br />
-                    Sequência: {IdPaciente}.
-                    <br />
-                    Número: {NroPaciente}.
-                </p>
+                    <section>
+                        <h4>Dados do prontuário</h4>
+                        <ul>
+                            <li>Sequência: {IdProntuario}.</li>
+                            <li>Número: {NroProntuario}.</li>
+                        </ul>
+                    </section>
 
-                <p className="text-dark h5 mt-5">
-                    Dados do prontuário:
-                    <br />
-                    Sequência: {IdProntuario}.
-                    <br />
-                    Número: {NroProntuario}.
-                </p>
+                    <section>
+                            <h4>Datas</h4>
+                            <ul>
+                                <li>Data da coleta: {DataColeta}.</li>
+                                <li>Data do resultado: {DataResultado}.</li>
+                            </ul>
+                    </section>
 
-                <p className="text-dark h5 mt-5">
-                    Data da coleta: {DataColeta}.
-                </p>
-                <p className="text-dark h5 mt-3 mb-2">
-                    Data do resultado: {DataResultado}.
-                </p>
+                    {SwabNasalObservacoes && (
+                        <section>
+                                <h4>Observações sobre a swab nasal</h4>
+                                <p>{SwabNasalObservacoes}</p>
+                        </section>
+                    )}
 
-                {SwabNasalObservacoes && (
-                    <p className="text-dark h5 text-left mt-5">
-                        Observações sobre a swab nasal:
-                        <br />
-                        {SwabNasalObservacoes}
-                    </p>
-                )}
+                    {SwabRetalObservacoes && (
+                        <section>
+                               <h4>Observações sobre a swab retal</h4> 
+                                <p>{SwabRetalObservacoes}</p>
+                        </section>
+                    )}
 
-                {SwabRetalObservacoes && (
-                    <p className="text-dark h5 text-left mt-5">
-                        Observações sobre a swab retal:
-                        <br />
-                        {SwabRetalObservacoes}
-                    </p>
-                )}
+                    {SangueObservacoes && (
+                        <section>
+                               <h4>Observações sobre o sangue</h4> 
+                                <p>{SangueObservacoes}</p>
+                        </section>
+                    )}
 
-                {SangueObservacoes && (
-                    <p className="text-dark h5 text-left mt-5">
-                        Observações sobre o sangue:
-                        <br />
-                        {SangueObservacoes}
-                    </p>
-                )}
+                    {UrinaObservacoes && (
+                        <section>
+                                <h4>Observações sobre a urina</h4>
+                                <p>{UrinaObservacoes} </p>
 
-                {UrinaObservacoes && (
-                    <p className="text-dark h5 text-left mt-5">
-                        Observações sobre a urina: <br />
-                        {UrinaObservacoes}
-                    </p>
-                )}
+                        </section>
+                    )}
 
-                {SecrecaoTraquealObservacoes && (
-                    <p className="text-dark h5 text-left mt-5">
-                        Observações sobre a secreção traqueal:
-                        <br />
-                        {SecrecaoTraquealObservacoes}
-                    </p>
-                )}
+                    {SecrecaoTraquealObservacoes && (
+                        <section>
+                               <h4>Observações sobre a secreção traqueal</h4> 
+                                <p>{SecrecaoTraquealObservacoes} </p>
+                        </section>
+                    )}
 
-                {OutrosObservacoes && (
-                    <p className="text-dark h5 text-left mt-5">
-                        Outras observações:
-                        <br />
-                        {OutrosObservacoes}
-                    </p>
-                )}
+                    {OutrosObservacoes && (
+                        <section>
+                                <h4>Outras observações</h4>
+                                <p>{OutrosObservacoes}</p>
+                        </section> 
+                    )}
 
-                <p className="text-dark h5 mt-5">
-                    Perfil de sensibilidade:
-                    <br />
-                    {PerfilSensibilidade}
-                </p>
+                    <section>
+                           <h4>Perfil de sensibilidade</h4> 
+                            <p>{PerfilSensibilidade} </p>
+                    </section>
+                </main>
             </Dialog>
-            {toast && (
-                <ToastComponent
-                    messageType={getMessageType}
-                    messageTitle={getMessageTitle}
-                    messageContent={getMessageContent}
-                />
-            )}
             {loading && <Loading />}
         </>
     );

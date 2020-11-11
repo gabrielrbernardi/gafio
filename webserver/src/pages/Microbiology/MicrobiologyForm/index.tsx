@@ -1,17 +1,17 @@
 import React, { useState, useEffect, FormEvent } from "react";
 import * as Yup from "yup";
 
-import Loading from "../../../components/Loading";
-import ToastComponent from "../../../components/Toast";
-import Select from "./Select";
 import { InputText } from "primereact/inputtext";
 import { InputNumber } from "primereact/inputnumber";
 import { Calendar } from "primereact/calendar";
+import Loading from "../../../components/Loading";
+import ToastComponent from "../../../components/Toast";
+import Select from "./Select";
 
 import api from "../../../services/api";
 
 interface IMicrobiology {
-    IdMicrobiologia: number;
+    IdMicrobiologia?: number;
     IdPaciente: number;
     IdProntuario: number;
     DataColeta: string;
@@ -33,42 +33,32 @@ interface IMicrobiology {
 
 interface Props {
     id?: number;
-    handleTableUpdate?: any;
 }
 
-const MicrobiologyForm: React.FC<Props> = ({ id, handleTableUpdate }) => {
+const MicrobiologyForm: React.FC<Props> = ({ id }) => {
     const [title, setTitle] = useState<string>("Cadastro de microbiologia");
     const [buttonLabel, setButtonLabel] = useState<string>("Cadastrar");
     const [toast, setToast] = useState<boolean>(false);
     const [getMessageType, setMessageType] = useState<string>("");
     const [getMessageTitle, setMessageTitle] = useState<string>("");
     const [getMessageContent, setMessageContent] = useState<string>("");
-
     const [IdPaciente, setIdPaciente] = useState<number>(0);
     const [IdProntuario, setIdProntuario] = useState<number>(0);
     const [DataColeta, setDataColeta] = useState<any>();
     const [DataResultado, setDataResultado] = useState<any>();
     const [SwabNasal, setSwabNasal] = useState<string>("");
-    const [SwabNasalObservacoes, setSwabNasalObservacoes] = useState<string>(
-        ""
-    );
+    const [SwabNasalObservacoes, setSwabNasalObservacoes] = useState<string>("");
     const [SwabRetal, setSwabRetal] = useState<string>("");
-    const [SwabRetalObservacoes, setSwabRetalObservacoes] = useState<string>(
-        ""
-    );
+    const [SwabRetalObservacoes, setSwabRetalObservacoes] = useState<string>( "");
     const [Sangue, setSangue] = useState<string>("");
     const [SangueObservacoes, setSangueObservacoes] = useState<string>("");
     const [Urina, setUrina] = useState<string>("");
     const [UrinaObservacoes, setUrinaObservacoes] = useState<string>("");
     const [SecrecaoTraqueal, setSecrecaoTraqueal] = useState<string>("");
-    const [
-        SecrecaoTraquealObservacoes,
-        setSecrecaoTraquealObservacoes,
-    ] = useState<string>();
+    const [SecrecaoTraquealObservacoes, setSecrecaoTraquealObservacoes,] = useState<string>();
     const [Outros, setOutros] = useState<string>("");
     const [OutrosObservacoes, setOutrosObservacoes] = useState<string>("");
     const [PerfilSensibilidade, setPerfilSensibilidade] = useState<string>("");
-
     const [loading, setLoading] = useState<boolean>(false);
 
     const pt_br = {
@@ -135,6 +125,7 @@ const MicrobiologyForm: React.FC<Props> = ({ id, handleTableUpdate }) => {
                     `/microbiology/${id}`
                 );
                 const [microbiology] = response.data;
+
                 setIdPaciente(Number(microbiology.IdPaciente));
                 setIdProntuario(microbiology.IdProntuario);
 
@@ -158,9 +149,7 @@ const MicrobiologyForm: React.FC<Props> = ({ id, handleTableUpdate }) => {
                     setUrinaObservacoes(microbiology.UrinaObservacoes);
                 setSecrecaoTraqueal(microbiology.SecrecaoTraqueal);
                 if (microbiology.SecrecaoTraquealObservacoes)
-                    setSecrecaoTraquealObservacoes(
-                        microbiology.SecrecaoTraquealObservacoes
-                    );
+                    setSecrecaoTraquealObservacoes(microbiology.SecrecaoTraquealObservacoes);
                 setOutros(microbiology.Outros);
                 if (microbiology.OutrosObservacoes)
                     setOutrosObservacoes(microbiology.OutrosObservacoes);
@@ -224,34 +213,20 @@ const MicrobiologyForm: React.FC<Props> = ({ id, handleTableUpdate }) => {
                 PerfilSensibilidade: Yup.string().required(),
             });
 
-            await schema.validate(data, {
-                abortEarly: false,
-            });
+            await schema.validate(data, {abortEarly: false, });
 
             if (id) {
                 await api.put(`/microbiology/update/${id}`, data);
-                HandleToast(
-                    "success",
-                    "Sucesso!",
-                    "Microbiologia atualizada com sucesso."
-                );
+                HandleToast("success", "Sucesso!", "Microbiologia atualizada com sucesso.");
             } else {
                 await api.post("/microbiology", data);
-                HandleToast(
-                    "success",
-                    "Sucesso!",
-                    "Microbiologia criada com sucesso."
-                );
+                HandleToast( "success", "Sucesso!","Microbiologia criada com sucesso.");
             }
             setLoading(false);
         } catch (err) {
             setLoading(false);
             if (err instanceof Yup.ValidationError) {
-                HandleToast(
-                    "error",
-                    "Erro!",
-                    "Verifique se todos os campos foram preenchidos corretamente!"
-                );
+                HandleToast("error", "Erro!","Verifique se todos os campos foram preenchidos corretamente!" );
             } else {
                 const message = err.response.data.error;
                 HandleToast("error", "Erro!", `${message}`);
@@ -269,10 +244,7 @@ const MicrobiologyForm: React.FC<Props> = ({ id, handleTableUpdate }) => {
         setMessageTitle(messageTitle);
         setMessageContent(messageContent);
         setToast(true);
-        setTimeout(() => {
-            setToast(false);
-        }, 4500);
-    }
+        setTimeout(() => setToast(false), 4500) }
 
     return (
         <>
@@ -293,9 +265,7 @@ const MicrobiologyForm: React.FC<Props> = ({ id, handleTableUpdate }) => {
                                             value={IdPaciente}
                                             min={1}
                                             max={9999999999}
-                                            onChange={(e) =>
-                                                setIdPaciente(Number(e.value))
-                                            }
+                                            onChange={(e) =>setIdPaciente(Number(e.value)) }
                                             showButtons
                                             style={{ width: "100%" }}
                                             placeholder="Digite o número do paciente"
@@ -313,9 +283,7 @@ const MicrobiologyForm: React.FC<Props> = ({ id, handleTableUpdate }) => {
                                             value={IdProntuario}
                                             min={1}
                                             max={9999999999}
-                                            onChange={(e) =>
-                                                setIdProntuario(Number(e.value))
-                                            }
+                                            onChange={(e) =>setIdProntuario(Number(e.value))}
                                             showButtons
                                             style={{ width: "100%" }}
                                             placeholder="Digite o número do prontuário"
@@ -332,14 +300,11 @@ const MicrobiologyForm: React.FC<Props> = ({ id, handleTableUpdate }) => {
                                         >
                                             Data da Coleta
                                         </label>
-                                        <br></br>
                                         <Calendar
                                             id="DataColeta"
                                             name="DataColeta"
                                             value={DataColeta}
-                                            onChange={(e) =>
-                                                setDataColeta(e.value)
-                                            }
+                                            onChange={(e) =>setDataColeta(e.value)}
                                             style={{ width: "100%" }}
                                             locale={pt_br}
                                             dateFormat="dd/mm/yy"
@@ -353,20 +318,13 @@ const MicrobiologyForm: React.FC<Props> = ({ id, handleTableUpdate }) => {
                                     </div>
 
                                     <div className="col">
-                                        <label
-                                            htmlFor="DataResultado"
-                                            className="mt-2"
-                                        >
+                                        <label  htmlFor="DataResultado"  className="mt-2">
                                             Data do resultado
                                         </label>
-                                        <br></br>
                                         <Calendar
                                             id="DataResultado"
                                             name="DataResultado"
-                                            value={DataResultado}
-                                            onChange={(e) =>
-                                                setDataResultado(e.value)
-                                            }
+                                            value={DataResultado}onChange={(e) =>setDataResultado(e.value)}
                                             style={{ width: "100%" }}
                                             locale={pt_br}
                                             dateFormat="dd/mm/yy"
@@ -386,14 +344,8 @@ const MicrobiologyForm: React.FC<Props> = ({ id, handleTableUpdate }) => {
                                     name="SwabNasalObservacoes"
                                     value={SwabNasal}
                                     inputValue={SwabNasalObservacoes}
-                                    inputOnChange={(e: any) =>
-                                        setSwabNasalObservacoes(
-                                            (e.target as HTMLInputElement).value
-                                        )
-                                    }
-                                    onChange={(e: { value: string }) =>
-                                        setSwabNasal(e.value)
-                                    }
+                                    inputOnChange={(e: any) =>setSwabNasalObservacoes( (e.target as HTMLInputElement).value )}
+                                    onChange={(e: { value: string }) => setSwabNasal(e.value)}
                                 />
                                 <Select
                                     label="Swab Retal"
@@ -401,14 +353,8 @@ const MicrobiologyForm: React.FC<Props> = ({ id, handleTableUpdate }) => {
                                     name="SwabRetalObservacoes"
                                     value={SwabRetal}
                                     inputValue={SwabRetalObservacoes}
-                                    inputOnChange={(e: any) =>
-                                        setSwabRetalObservacoes(
-                                            (e.target as HTMLInputElement).value
-                                        )
-                                    }
-                                    onChange={(e: { value: string }) =>
-                                        setSwabRetal(e.value)
-                                    }
+                                    inputOnChange={(e: any) =>setSwabRetalObservacoes( (e.target as HTMLInputElement).value) }
+                                    onChange={(e: { value: string }) => setSwabRetal(e.value) }
                                 />
                                 <Select
                                     label="Sangue"
@@ -416,14 +362,8 @@ const MicrobiologyForm: React.FC<Props> = ({ id, handleTableUpdate }) => {
                                     name="SangueObservacoes"
                                     value={Sangue}
                                     inputValue={SangueObservacoes}
-                                    inputOnChange={(e: any) =>
-                                        setSangueObservacoes(
-                                            (e.target as HTMLInputElement).value
-                                        )
-                                    }
-                                    onChange={(e: { value: string }) =>
-                                        setSangue(e.value)
-                                    }
+                                    inputOnChange={(e: any) =>setSangueObservacoes((e.target as HTMLInputElement).value )}
+                                    onChange={(e: { value: string }) =>setSangue(e.value) }
                                 />
                                 <Select
                                     label="Urina"
@@ -431,14 +371,8 @@ const MicrobiologyForm: React.FC<Props> = ({ id, handleTableUpdate }) => {
                                     name="UrinaObservacoes"
                                     value={Urina}
                                     inputValue={UrinaObservacoes}
-                                    inputOnChange={(e: any) =>
-                                        setUrinaObservacoes(
-                                            (e.target as HTMLInputElement).value
-                                        )
-                                    }
-                                    onChange={(e: { value: string }) =>
-                                        setUrina(e.value)
-                                    }
+                                    inputOnChange={(e: any) => setUrinaObservacoes( (e.target as HTMLInputElement).value ) }
+                                    onChange={(e: { value: string }) =>setUrina(e.value)}
                                 />
                                 <Select
                                     label="Secreção Traqueal"
@@ -446,14 +380,8 @@ const MicrobiologyForm: React.FC<Props> = ({ id, handleTableUpdate }) => {
                                     name="SecrecaoTraquealObservacoes"
                                     value={SecrecaoTraqueal}
                                     inputValue={SecrecaoTraquealObservacoes}
-                                    inputOnChange={(e: any) =>
-                                        setSecrecaoTraquealObservacoes(
-                                            (e.target as HTMLInputElement).value
-                                        )
-                                    }
-                                    onChange={(e: { value: string }) =>
-                                        setSecrecaoTraqueal(e.value)
-                                    }
+                                    inputOnChange={(e: any) => setSecrecaoTraquealObservacoes((e.target as HTMLInputElement).value )}
+                                    onChange={(e: { value: string }) =>setSecrecaoTraqueal(e.value)}
                                 />
                                 <Select
                                     label="Outros"
@@ -461,14 +389,8 @@ const MicrobiologyForm: React.FC<Props> = ({ id, handleTableUpdate }) => {
                                     name="OutrosObservacoes"
                                     value={Outros}
                                     inputValue={OutrosObservacoes}
-                                    inputOnChange={(e: any) =>
-                                        setOutrosObservacoes(
-                                            (e.target as HTMLInputElement).value
-                                        )
-                                    }
-                                    onChange={(e: { value: string }) =>
-                                        setOutros(e.value)
-                                    }
+                                    inputOnChange={(e: any) => setOutrosObservacoes((e.target as HTMLInputElement).value )}
+                                    onChange={(e: { value: string }) =>setOutros(e.value)}
                                 />
 
                                 <label
@@ -481,11 +403,7 @@ const MicrobiologyForm: React.FC<Props> = ({ id, handleTableUpdate }) => {
                                     id="PerfilSensibilidade"
                                     name="PerfilSensibilidade"
                                     defaultValue={PerfilSensibilidade}
-                                    onChange={(e) =>
-                                        setPerfilSensibilidade(
-                                            (e.target as HTMLInputElement).value
-                                        )
-                                    }
+                                    onChange={(e) => setPerfilSensibilidade((e.target as HTMLInputElement).value ) }
                                     keyfilter="alpha"
                                     style={{ width: "100%" }}
                                     placeholder="Digite o perfil de sensibilidade"
@@ -493,10 +411,7 @@ const MicrobiologyForm: React.FC<Props> = ({ id, handleTableUpdate }) => {
                                     required
                                 />
                             </div>
-                            <button
-                                type="submit"
-                                className="btn btn-info btn-primary mt-3"
-                            >
+                            <button type="submit" className="btn btn-info btn-primary mt-3" >
                                 {buttonLabel}
                             </button>
                         </form>
