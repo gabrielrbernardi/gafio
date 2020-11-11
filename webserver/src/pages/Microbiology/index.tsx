@@ -117,6 +117,7 @@ const Microbiology = () => {
 
     //Busca os registros por página
     async function handlePage(event: any) {
+         setTableLoading(true);
         try {
             const index = event.first;
             const page = Number(index) / 10 + 1;
@@ -130,7 +131,6 @@ const Microbiology = () => {
                     params: { page },
                 });
             }
-            setTableLoading(true);
             const { results } = response.data;
             setMicrobiologies(results);
             setFirst(index);
@@ -219,6 +219,13 @@ const Microbiology = () => {
             const message = err.response.data.error;
             HandleToast("error", "Sem resultado!", `${message}`);
         }
+    }
+
+    function handleReset() {
+        setFilterValue("");
+        setOptionState(null);
+        setSuccessfulSearch(false);
+        handleTableUpdate();
     }
 
     function onOptionChange(e: { value: any }) {
@@ -357,16 +364,8 @@ const Microbiology = () => {
                                     id="float-input"
                                     type="search"
                                     value={filterValue}
-                                    onChange={(e) => {
-                                        setFilterValue(
-                                            (e.target as HTMLInputElement).value
-                                        );
-                                        if((e.target as HTMLInputElement).value === "" && successfulSearch){
-                                            setFilterValue("");
-                                            setOptionState(null);
-                                            setSuccessfulSearch(false);
-                                            handleTableUpdate();
-                                        }
+                                    onChange={(e) => {  setFilterValue( (e.target as HTMLInputElement).value);
+                                        if ((e.target as HTMLInputElement).value === "" &&  successfulSearch ) handleReset();
                                     }}
                                     onKeyPress={(ev) => {
                                         if (ev.key === "Enter") {
@@ -374,10 +373,7 @@ const Microbiology = () => {
                                             ev.preventDefault();
                                         }
                                     }}
-                                    style={{
-                                        minWidth: "4em",
-                                        borderRadius: "0",
-                                    }}
+                                    style={{minWidth: "4em",borderRadius: "0", }}
                                     size={30}
                                 />
                                 {optionState === null ? (
@@ -403,24 +399,14 @@ const Microbiology = () => {
                                         tabIndex={2}
                                         variant="outline-danger"
                                         className="p-0 mr-1"
-                                        style={{
-                                            width: "17px",
-                                            borderRadius: "0",
-                                        }}
-                                        onClick={() => {
-                                            setFilterValue("");
-                                            setOptionState(null);
-                                            setSuccessfulSearch(false);
-                                            handleTableUpdate();
-                                        }}
+                                        style={{ width: "17px", borderRadius: "0", }}
+                                        onClick={() =>  handleReset()}
                                     >
                                         <AiOutlineClose size={15} />
                                     </Button>
                                     <Button
                                         onClick={handleSearch}
-                                        style={{
-                                            borderRadius: "0",
-                                        }}
+                                        style={{ borderRadius: "0", }}
                                     >
                                         <FiSearch size={15} />
                                     </Button>
@@ -429,8 +415,6 @@ const Microbiology = () => {
                         </div>
                     </div>
                 </Collapse>
-                <div className="ml-auto"></div>
-
                 <div className="datatable-responsive-demo">
                     <DataTable
                         value={microbiologies}
@@ -447,12 +431,8 @@ const Microbiology = () => {
                         className="p-datatable-responsive-demo"
                         resizableColumns={true}
                         selection={selectedMicrobiology}
-                        onSelectionChange={(e) =>
-                            setselectedMicrobiology(e.value)
-                        }
-                        onRowSelect={(e) => {
-                            onMicrobiologySelect(e);
-                        }}
+                        onSelectionChange={(e) => setselectedMicrobiology(e.value) }
+                        onRowSelect={(e) => onMicrobiologySelect(e)}
                     >
                         <Column
                             field="IdMicrobiologia"

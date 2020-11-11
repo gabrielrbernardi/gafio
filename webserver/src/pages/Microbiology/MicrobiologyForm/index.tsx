@@ -119,16 +119,16 @@ const MicrobiologyForm: React.FC<Props> = ({ id, handleTableUpdate }) => {
 
     useEffect(() => {
         function formatDate(date: any) {
-            const datePrev = date.split("T");
-            const newDate = datePrev[0].split("-");
+            const newDate = date.split("/");
             const formatedDate = new Date(
-                newDate[0],
+                newDate[2],
                 newDate[1] - 1,
-                newDate[2]
+                newDate[0]
             );
 
             return formatedDate;
         }
+
         async function loadMicrobiologyInfo() {
             try {
                 const response = await api.get<IMicrobiology[]>(

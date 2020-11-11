@@ -10,6 +10,15 @@ import knex from "../database/connection";
 class MicrobiologyController {
     // Método de cadastro
     async create(req: Request, res: Response) {
+        //formatação de datas
+        const handleDate = (date: string) => {
+            let dateFormated = date.split("T");
+            if (dateFormated.length) {
+                dateFormated = dateFormated[0].split("-");
+                date = `${dateFormated[2]}/${dateFormated[1]}/${dateFormated[0]}`;
+            }
+            return date;
+        };
         const { IdPaciente, IdProntuario } = req.body;
 
         //verificação da existência do paciente e do prontuário
@@ -32,10 +41,13 @@ class MicrobiologyController {
             });
         } else {
             try {
-                await knex("Microbiologia").insert(req.body);
+                let data = req.body;
+                data.DataColeta = handleDate(data.DataColeta);
+                data.DataResultado = handleDate(data.DataResultado);
+                await knex("Microbiologia").insert(data);
                 return res
                     .status(201)
-                    .json({ createdMicrobiology: true, ...req.body });
+                    .json({ createdMicrobiology: true, ...data });
             } catch (error) {
                 return res.status(400).json({
                     createdMicrobiology: false,
@@ -45,7 +57,6 @@ class MicrobiologyController {
         }
     }
 
-    //Método de listagem de dados para a tabela do dashboard
     async index(req: Request, res: Response) {
         try {
             const { page = 1 } = req.query;
@@ -106,28 +117,19 @@ class MicrobiologyController {
                 .offset((pageRequest - 1) * rows);
 
             if (results.length) {
-                //formatação de datas
-                results.forEach((result: any) => {
-                    let dataColeta = result.DataColeta.split("T");
-                    let dataResultado = result.DataResultado.split("T");
-
-                    dataColeta = dataColeta[0].split("-");
-                    dataResultado = dataResultado[0].split("-");
-                    result.DataColeta = `${dataColeta[2]}/${dataColeta[1]}/${dataColeta[0]}`;
-                    result.DataResultado = `${dataResultado[2]}/${dataResultado[1]}/${dataResultado[0]}`;
-                });
-
                 const [count] = microbiologyLength;
                 return res.json({ results, count });
             } else {
-                return res.status(400).json({ error: "Nenhum registro encontrado" });
+                return res
+                    .status(400)
+                    .json({ error: "Nenhum registro encontrado" });
             }
         } catch (error) {
             return res.json({ error: "Erro ao carregar os registros" });
         }
     }
 
-     //método para visualização
+    //método para visualização
     async view(req: Request, res: Response) {
         try {
             const { id } = req.params;
@@ -180,7 +182,18 @@ class MicrobiologyController {
 
     //método para atualização de dados
     async update(req: Request, res: Response) {
+        const handleDate = (date: string) => {
+            let dateFormated = date.split("T");
+            if (dateFormated.length) {
+                dateFormated = dateFormated[0].split("-");
+                date = `${dateFormated[2]}/${dateFormated[1]}/${dateFormated[0]}`;
+            }
+            return date;
+        };
         try {
+            if (req.body) {
+                
+            }
             const { id } = req.params;
             const { IdPaciente, IdProntuario } = req.body;
             if (IdPaciente) {
@@ -210,9 +223,13 @@ class MicrobiologyController {
                     });
                 }
             }
-
+            let data = req.body;
+            if (req.body) {
+                data.DataColeta = handleDate(data.DataColeta);
+                data.DataResultado = handleDate(data.DataResultado);
+            }
             await knex("Microbiologia")
-                .update(req.body)
+                .update(data)
                 .where({ IdMicrobiologia: id });
 
             return res.json({ updatedMicrobioloogy: true });
