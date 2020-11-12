@@ -88,6 +88,7 @@ const MicrobiologyForm: React.FC<Props> = ({ id }) => {
     };
 
     useEffect(() => {
+        // Formatação de dados
         function formatDate(date: any) {
             const newDate = date.split("/");
             const formatedDate = new Date(
@@ -98,6 +99,7 @@ const MicrobiologyForm: React.FC<Props> = ({ id }) => {
             return formatedDate;
         }
 
+       //Carrega os dados 
        function loadMicrobiologyInfo(id:number) {
             MicrobiologyService.getById(id)
                 .then(data => {
@@ -147,6 +149,8 @@ const MicrobiologyForm: React.FC<Props> = ({ id }) => {
         }
     }, [id]);
 
+
+    //Envio de formulário
     async function handleSubmit(event: FormEvent) {
         event.preventDefault();
         const data: IMicrobiology = {
@@ -176,17 +180,17 @@ const MicrobiologyForm: React.FC<Props> = ({ id }) => {
                 IdProntuario: Yup.number().required(),
                 DataColeta: Yup.date().required(),
                 DataResultado: Yup.date().required(),
-                SwabNasal: Yup.string().required(),
+                SwabNasal: Yup.string().nullable().oneOf([null, "S", "N"]),
                 SwabNasalObservacoes: Yup.string(),
-                SwabRetal: Yup.string().required(),
+                SwabRetal: Yup.string().nullable().oneOf([null, "S", "N"]),
                 SwabRetalObservacoes: Yup.string(),
-                Sangue: Yup.string().required(),
+                Sangue: Yup.string().nullable().oneOf([null, "S", "N"]),
                 SangueObservacoes: Yup.string(),
-                Urina: Yup.string().required(),
+                Urina: Yup.string().nullable().oneOf([null, "S", "N"]),
                 UrinaObservacoes: Yup.string(),
-                SecrecaoTraqueal: Yup.string().required(),
+                SecrecaoTraqueal: Yup.string().nullable().oneOf([null, "S", "N"]),
                 SecrecaoTraquealObservacoes: Yup.string(),
-                Outros: Yup.string().required(),
+                Outros: Yup.string().nullable().oneOf([null, "S", "N"]).required(),
                 OutrosObservacoes: Yup.string(),
                 PerfilSensibilidade: Yup.string().required(),
             });
@@ -290,7 +294,7 @@ const MicrobiologyForm: React.FC<Props> = ({ id }) => {
                                         <Calendar
                                             id="DataColeta"
                                             name="DataColeta"
-                                            value={DataColeta}
+                                            value={DataColeta} 
                                             onChange={(e) =>setDataColeta(e.value)}
                                             style={{ width: "100%" }}
                                             locale={pt_br}
