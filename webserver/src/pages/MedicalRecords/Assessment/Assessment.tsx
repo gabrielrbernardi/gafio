@@ -81,6 +81,19 @@ const Assessment = () => {
     const onOptionChange = (e: { value: any }) => {
         setOptionState(e.value);
     };
+
+    useEffect(() => {
+        assessmentService.Verify(queryResponse).then(response => {
+            if(response.verifyMR){
+                return
+            }else{
+                showToast('error', 'Erro!', String(response.error))
+                setTimeout(() => {
+                    history.push('/medicalRecords')
+                }, 2500)
+            }
+        })
+    }, [])
     
     useEffect(() => {
         setLoading1(true);
@@ -122,11 +135,6 @@ const Assessment = () => {
                 return
             }else{
                 showToast('error', 'Erro!', String(data.error));
-                setTimeout(() => {
-                    if(String(data.error) == "Prontuário não encontrado."){
-                        history.push('/medicalRecords')
-                    }
-                }, 2500)
                 setLoading(false);
                 setLoading1(false);
             }
