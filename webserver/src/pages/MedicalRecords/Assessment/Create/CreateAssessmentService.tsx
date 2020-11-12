@@ -23,6 +23,11 @@ class CreateAssessmentService {
             TrocaAtb: TrocaAtbf, NovoAtb
         }).then(response => response.data)
     }
+
+    async Verify(seqProntuariof: any){
+        let seqProntuario = seqProntuariof
+        return await api.post('/medicalRecords/assessment/verify/', { seqProntuario }).then(response => response.data)
+    }
 }
 
 export { CreateAssessmentService }

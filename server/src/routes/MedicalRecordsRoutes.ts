@@ -17,4 +17,6 @@ routes.put("/medicalRecords/desfecho", records.updateDesfecho)
 routes.put("/medicalRecords/update", records.update)
 routes.post("/medicalRecords/delete", records.delete)
 
+routes.get("/medicalRecords/diseases", records.indexDiseases)
+
 export default routes;

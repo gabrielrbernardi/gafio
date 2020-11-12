@@ -497,7 +497,7 @@ class ProntuarioController {
                     return response.json({ updatedMedicalRecord: false, error, teste: 1 })
                 })
             } else {
-                return response.json({ updatedMedicalRecord: false, error: "O número do prontuário está incorreto." });
+                return response.json({ updatedMedicalRecord: false, error: "O número de prontuário não existe." });
             }
         }
     }
@@ -535,6 +535,20 @@ class ProntuarioController {
         } else {
             return response.json({ deletedMedicalRecord: false, error: "Prontuário não encontrado." });
         }
+    }
+
+    //BUSCAR DOENCAS
+    async indexDiseases(request: Request, response: Response) {
+        const diseases = await knex("Doenca").select("*")
+        
+        const serializedDiseases = diseases.map(disease => {
+            return { 
+                CodDoenca: disease.CodDoenca,
+                Nome: disease.Nome
+            }
+        })
+    
+        return response.json(serializedDiseases)
     }
 }
 

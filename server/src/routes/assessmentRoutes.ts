@@ -12,6 +12,8 @@ routes.get("/medicalRecords/assessment/paginate/", assessments.indexPagination)
 routes.get("/medicalRecords/assessment/nroAvaliacao/", assessments.indexByNroAvaliacao)
 routes.get("/medicalRecords/assessment/dataAvaliacao/", assessments.indexByDataAvaliacao)
 
+routes.post("/medicalRecords/assessment/verify/", assessments.verifyMedicalRecords)
+
 routes.put("/medicalRecords/assessment/update", assessments.update)
 routes.post("/medicalRecords/assessment/delete", assessments.delete)
 

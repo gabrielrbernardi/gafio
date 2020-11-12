@@ -120,7 +120,7 @@ class AvaliacaoController {
 
         if (medicalRecords) {
             try {
-                const assessments = await knex("Avaliacao").where('IdProntuario', `${seqProntuario}`).offset((pageRequest - 1) * rows).limit(rows);
+                const assessments = await knex("Avaliacao").where('IdProntuario', `${seqProntuario}`).orderBy('NroAvaliacao', 'desc').offset((pageRequest - 1) * rows).limit(rows);
 
                 var serializedAssessments = assessments.map(assessment => {
                     function trataDados(e: string) {
@@ -423,6 +423,27 @@ class AvaliacaoController {
                 deletedAssessment: false,
                 error: "Avaliação não encontrada."
             })
+        }
+    }
+
+    //VERIFICA EXISTENCIA DE PRONTUARIO
+    async verifyMedicalRecords(request: Request, response: Response) {
+        const { seqProntuario } = request.body
+
+        if (!seqProntuario) {
+            return response.json({
+                verifyMR: false,
+                error: "Prontuário não encontrado."
+            })
+        } else {
+            const medicalRecordsDB = await knex("Prontuario").where("SeqProntuario", seqProntuario)
+            const medicalRecords = medicalRecordsDB[0]
+
+            if (medicalRecords){
+                return response.json({ verifyMR: true })
+            }else{
+                return response.json({ verifyMR: false,  error: "Prontuário não encontrado."})
+            }
         }
     }
 }

@@ -5,7 +5,7 @@ import Button from 'react-bootstrap/Button';
 import Collapse from 'react-bootstrap/Collapse';
 import {FiSearch} from 'react-icons/fi';
 import {AiOutlineClose} from 'react-icons/ai';
-import { Link, useLocation} from 'react-router-dom';
+import { Link, useLocation, useHistory} from 'react-router-dom';
 import ToastComponent from '../../../components/Toast';
 import { Dropdown } from 'primereact/dropdown';
 import {Dropdown as DropdownReact} from 'react-bootstrap';
@@ -73,6 +73,8 @@ const Assessment = () => {
 
     const assessmentService = new AssessmentService()
     var assessmentData:any = {};
+
+    const history = useHistory()
     
     const rows = 10;
 
@@ -120,6 +122,11 @@ const Assessment = () => {
                 return
             }else{
                 showToast('error', 'Erro!', String(data.error));
+                setTimeout(() => {
+                    if(String(data.error) == "Prontuário não encontrado."){
+                        history.push('/medicalRecords')
+                    }
+                }, 2500)
                 setLoading(false);
                 setLoading1(false);
             }
@@ -309,83 +316,67 @@ const Assessment = () => {
     async function handleSubmit(event: FormEvent){
         event.preventDefault();
 
-        const dataQuery ={
-            queryResponse
+        const data = {
+            getNroAvaliacao, getDataAvaliacao, getResultadoCulturas, getResCulturasAcao,
+            getDoseCorreta, getPosologiaCorreta, getAlertaDot, getAlertaDotDescricao, getDisfuncaoRenal,
+            getHemodialise, getAtbOral, getAtbContraindicacao, getAlteracaoPrescricao, getAtbDiluicaoInfusao,
+            getInteracaoAtbMedicamento, getTrocaAtb, getNovoAtb
         }
+
         try{
             const schema = Yup.object().shape({
-                queryResponse: Yup.number().required()
+                getNroAvaliacao: Yup.number().required(),
+                getDataAvaliacao: Yup.date().required(),
+                getResultadoCulturas: Yup.string().nullable(),
+                getResCulturasAcao: Yup.string().nullable(),
+                getDoseCorreta: Yup.string().nullable().oneOf([null, "S", "N"]),
+                getPosologiaCorreta: Yup.string().nullable().oneOf([null, "S", "N"]),
+                getAlertaDot: Yup.string().nullable().oneOf([null, "S", "N"]),
+                getAlertaDotDescricao: Yup.string().nullable(),
+                getDisfuncaoRenal: Yup.string().required(),
+                getHemodialise: Yup.string().oneOf(["S", "SI", "N"]).required(),
+                getAtbOral: Yup.string().oneOf(["Sim", "Não aplica", "Não"]).required(),
+                getAtbContraindicacao: Yup.string().oneOf(["Sim", "Não"]).required(),
+                getAlteracaoPrescricao: Yup.string().nullable().oneOf([null, "S", "N"]),
+                getAtbDiluicaoInfusao: Yup.string().oneOf(["S", "N"]).required(),
+                getInteracaoAtbMedicamento: Yup.string().oneOf(["S", "N"]).required(),
+                getTrocaAtb: Yup.string().oneOf(["Sim", "Não"]).required(),
+                getNovoAtb: Yup.string().nullable()
             });
 
-            await schema.validate(dataQuery, {
+            await schema.validate(data, {
                 abortEarly: false,
             });
 
-            const data = {
-                getNroAvaliacao, getDataAvaliacao, getResultadoCulturas, getResCulturasAcao,
+            assessmentService.Update(queryResponse, getNroAvaliacao, getDataAvaliacao, getResultadoCulturas, getResCulturasAcao,
                 getDoseCorreta, getPosologiaCorreta, getAlertaDot, getAlertaDotDescricao, getDisfuncaoRenal,
-                getHemodialise, getAtbOral, getAtbContraindicacao, getAlteracaoPrescricao, getAtbDiluicaoInfusao,
-                getInteracaoAtbMedicamento, getTrocaAtb, getNovoAtb
-            }
-    
-            try{
-                const schema = Yup.object().shape({
-                    getNroAvaliacao: Yup.number().required(),
-                    getDataAvaliacao: Yup.date().required(),
-                    getResultadoCulturas: Yup.string().nullable(),
-                    getResCulturasAcao: Yup.string().nullable(),
-                    getDoseCorreta: Yup.string().nullable().oneOf([null, "S", "N"]),
-                    getPosologiaCorreta: Yup.string().nullable().oneOf([null, "S", "N"]),
-                    getAlertaDot: Yup.string().nullable().oneOf([null, "S", "N"]),
-                    getAlertaDotDescricao: Yup.string().nullable(),
-                    getDisfuncaoRenal: Yup.string().required(),
-                    getHemodialise: Yup.string().oneOf(["S", "SI", "N"]).required(),
-                    getAtbOral: Yup.string().oneOf(["S", "NA", "N"]).required(),
-                    getAtbContraindicacao: Yup.string().oneOf(["S", "N"]).required(),
-                    getAlteracaoPrescricao: Yup.string().nullable().oneOf([null, "S", "N"]),
-                    getAtbDiluicaoInfusao: Yup.string().oneOf(["S", "N"]).required(),
-                    getInteracaoAtbMedicamento: Yup.string().oneOf(["S", "N"]).required(),
-                    getTrocaAtb: Yup.string().oneOf(["S", "N"]).required(),
-                    getNovoAtb: Yup.string().nullable()
-                });
-    
-                await schema.validate(data, {
-                    abortEarly: false,
-                });
-
-                assessmentService.Update(queryResponse, getNroAvaliacao, getDataAvaliacao, getResultadoCulturas, getResCulturasAcao,
-                    getDoseCorreta, getPosologiaCorreta, getAlertaDot, getAlertaDotDescricao, getDisfuncaoRenal,
-                    getHemodialise, getAtbOral, getAtbContraindicacao, getAlteracaoPrescricao, getAtbDiluicaoInfusao, 
-                    getInteracaoAtbMedicamento, getTrocaAtb, getNovoAtb)
-                .then((response) => {
-                    if(response.updatedAssessment){
-                        showToast('success', 'Sucesso!', `Avaliação atualizada com sucesso!`);
-                        getAssessmentFunction()
-                        setDisplayDialog2(false)
-                    }else{
-                        if(response.error.sqlMessage){
-                            if(response.error.sqlState == 23000){
-                                console.log(response.error.sqlState)
-                                if(String(response.error.sqlMessage).includes("(`NovoAtb`)")){
-                                    showToast('error', 'Erro!', `O campo Novo Atb está incorreto`);
-                                }else{
-                                    showToast('error', 'Erro!', String(response.error.sqlMessage));
-                                }
+                getHemodialise, getAtbOral, getAtbContraindicacao, getAlteracaoPrescricao, getAtbDiluicaoInfusao, 
+                getInteracaoAtbMedicamento, getTrocaAtb, getNovoAtb)
+            .then((response) => {
+                if(response.updatedAssessment){
+                    showToast('success', 'Sucesso!', `Avaliação atualizada com sucesso!`);
+                    getAssessmentFunction()
+                    setDisplayDialog2(false)
+                }else{
+                    if(response.error.sqlMessage){
+                        if(response.error.sqlState == 23000){
+                            console.log(response.error.sqlState)
+                            if(String(response.error.sqlMessage).includes("(`NovoAtb`)")){
+                                showToast('error', 'Erro!', `O campo Novo Atb está incorreto`);
                             }else{
                                 showToast('error', 'Erro!', String(response.error.sqlMessage));
                             }
                         }else{
-                            showToast('error', 'Erro!', String(response.error));
+                            showToast('error', 'Erro!', String(response.error.sqlMessage));
                         }
+                    }else{
+                        showToast('error', 'Erro!', String(response.error));
                     }
-                })
-            }catch(error){
-                if (error instanceof Yup.ValidationError)
-                    showToast('error', 'Erro!', `Verifique se todos os campos foram preenchidos corretamente!`);
-            }
+                }
+            })
         }catch(error){
             if (error instanceof Yup.ValidationError)
-                showToast('error', 'Erro!', `Verifique se o campo da URL seqProntuario é um número!`);
+                showToast('error', 'Erro!', `Verifique se todos os campos foram preenchidos corretamente!`);
         }
     }
 
@@ -629,7 +620,7 @@ const Assessment = () => {
                                     <label htmlFor="NroAvaliacao">Número da Avaliação</label>
                                     <InputText keyfilter="pint" style={{width: '100%'}} id="NroAvaliacao" name="NroAvaliacao"
                                         defaultValue={getNroAvaliacao} onChange={(e) => setNroAvaliacao(Number((e.target as HTMLInputElement).value))}
-                                        placeholder="Digite o número da avaliação" min="1" max="999999999" required autoFocus/>
+                                        placeholder="Digite o número da avaliação" min="1" max="999999999" required autoFocus readOnly/>
                                 </div>
 
                                 <div className="col">

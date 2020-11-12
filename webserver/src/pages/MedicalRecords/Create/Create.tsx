@@ -1,6 +1,6 @@
-import React, { useState, FormEvent } from 'react';
+import React, { useState, FormEvent, useEffect } from 'react';
 import { Dropdown } from 'primereact/dropdown';
-import { Dropdown as DropdownReact } from 'react-bootstrap';
+import { Dropdown as DropdownReact, ResponsiveEmbed } from 'react-bootstrap';
 import { useHistory } from 'react-router-dom';
 import ToastComponent from '../../../components/Toast';
 import { InputText } from 'primereact/inputtext';
@@ -34,9 +34,14 @@ const MedicalRecordsForm = () => {
     const [getMessageType, setMessageType] = useState<string>('');
     const [getMessageTitle, setMessageTitle] = useState<string>('');
     const [getMessageContent, setMessageContent] = useState<string>('');
+    const [getDiseases, setDieases] = useState<string[]>([]);
     const history = useHistory()
 
     const createMedicalRecordsService = new CreateMedicalRecordsService()
+
+    useEffect(() => {
+        
+    }, []);
 
     const onResultadoChange = (e: { value: string }) => {
         setResultadoColeta(e.value);
