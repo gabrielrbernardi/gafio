@@ -112,71 +112,61 @@ const Diseases = () => {
 
     const header = (
         <>
-            <p style={{ textAlign: 'left' }} className="p-clearfix d-inline">Tabela de doenças</p>
-            <div className="row">
-                <div className="col-sm-4">
-                    <span className="p-float-label p-inputgroup">
-                        <div className="p-col-12">
-                            <div className="p-inputgroup mt-4 mb-1">
-                                <span className="p-float-label">
-                                    <InputText
-                                        id="float-input"
-                                        type="search"
-                                        value={searchInput}
-                                        size={50}
-                                        onChange={
-                                            (e) => setSearchInput((e.target as HTMLInputElement).value)
-                                        }
-                                        onKeyPress={
-                                            (e) => {
-                                                if (e.key === 'Enter') {
-                                                    handleSearch();
-                                                    e.preventDefault();
-                                                }
-                                            }
-                                        }
-                                    />
-                                    {
-                                        optionState === null
-                                            ? <label htmlFor="float-input">Buscar</label>
-                                            : <label htmlFor="float-input">Buscar por {optionState.name}</label>
-                                    }
-                                </span>
-                                <Dropdown
-                                    className="mx-1"
-                                    value={optionState}
-                                    options={[
-                                        { name: 'Código', cod: 'C' },
-                                        { name: 'Nome', cod: 'N' },
-                                    ]}
-                                    onChange={(e: { value: any }) => { setOptionState(e.value) }}
-                                    placeholder="Selecione um filtro"
-                                    optionLabel="name"
-                                    style={{ width: '12em' }}
-                                />
-                                <Button
-                                    tabIndex={2}
-                                    variant="outline-danger"
-                                    className="p-0 mr-1"
-                                    style={{ width: '17px' }}
-                                    onClick={() => {
-                                        setSearchInput('');
-                                        getDiseasesFunction();
-                                        setMode('N');
-                                        setOptionState(null)
-                                    }
-                                    }
-                                >
-                                    <AiOutlineClose size={15} />
-                                </Button>
-                                <Button onClick={handleSearch}>
-                                    <FiSearch size={20} />
-                                </Button>
-                            </div>
-                            <Button variant="success" onClick={diseasesService.updateDiseasesDB}>Atualizar banco de dados</Button>
-                        </div>
-                    </span>
-                </div>
+            <h5 className="py-1">Tabela de doenças</h5>
+
+            <div className="p-inputgroup py-1">
+                <InputText
+                    value={searchInput}
+                    placeholder="Pesquisar por doença"
+                    className="mr-2"
+                    style={{ maxWidth: '20vw' }}
+                    onChange={(e) => setSearchInput((e.target as HTMLInputElement).value)}
+                    onKeyPress={
+                        (e) => {
+                            if (e.key === 'Enter') {
+                                handleSearch();
+                                e.preventDefault();
+                            }
+                        }
+                    }
+                />
+                <Dropdown
+                    value={optionState}
+                    optionLabel="name"
+                    placeholder="Selecione um filtro"
+                    className="mr-2"
+                    style={{ maxWidth: '14vw' }}
+                    options={[
+                        { name: 'Código', cod: 'C' },
+                        { name: 'Nome', cod: 'N' },
+                    ]}
+                    onChange={(e: { value: any }) => { setOptionState(e.value) }}
+                />
+                <Button
+                    variant="outline-danger"
+                    className="d-inline-flex justify-content-center align-items-center mr-2"
+                    onClick={() => {
+                        setSearchInput('');
+                        getDiseasesFunction();
+                        setMode('N');
+                        setOptionState(null)
+                    }}
+                >
+                    <AiOutlineClose size={18} />
+                </Button>
+                <Button 
+                    className="d-inline-flex justify-content-center align-items-center mr-2" 
+                    onClick={handleSearch}
+                >
+                    <FiSearch size={18} />
+                </Button>
+                <Button 
+                    className="d-inline-flex justify-content-center align-items-center" 
+                    variant="success" 
+                    onClick={diseasesService.updateDiseasesDB}
+                >
+                    Atualizar banco de dados
+                </Button>
             </div>
         </>
     );
