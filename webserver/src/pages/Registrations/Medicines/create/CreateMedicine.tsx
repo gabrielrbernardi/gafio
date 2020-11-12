@@ -1,5 +1,8 @@
 import React, { useState, FormEvent } from 'react';
 import { useHistory } from 'react-router-dom';
+import * as Yup from "yup";
+
+import ToastComponent from "../../../../components/Toast";
 
 import { CreateMedicineService } from './CreateMedicineService';
 
@@ -14,14 +17,43 @@ const MedicinesCreate = () => {
     const [classeTerapeutica, setClasseTerapeutica] = useState<string>('');
     const [CNPJ, setCNPJ] = useState<string>('');
 
+    const [toast, setToast] = useState<boolean>(false);
+    const [getMessageType, setMessageType] = useState<string>("");
+    const [getMessageTitle, setMessageTitle] = useState<string>("");
+    const [getMessageContent, setMessageContent] = useState<string>("");
+
     const history = useHistory();
 
     const createMedicineService = new CreateMedicineService();
 
-    function handleSubmit(event: FormEvent) {
-        event.preventDefault();
+   async function handleSubmit(event: FormEvent) {
+       try {
+            event.preventDefault();
+            const data = {
+                EAN,
+                principioAtivo,
+                registro,
+                laboratorio,
+                produto,
+                apresentacao,
+                classeTerapeutica,
+                CNPJ
+            };
+            //Validação de dados
+            const schema = Yup.object().shape({
+                EAN: Yup.string().required(),
+                principioAtivo: Yup.string().required(),
+                registro: Yup.string().required(),
+                laboratorio: Yup.string().required(),
+                produto: Yup.string().required(),
+                apresentacao: Yup.string().required(),
+                classeTerapeutica: Yup.string().required(),
+                CNPJ: Yup.string().required(),
+            })
 
-        createMedicineService.Create(
+            await schema.validate(data, { abortEarly: false });
+
+            createMedicineService.Create(
             EAN,
             principioAtivo,
             registro,
@@ -30,10 +62,33 @@ const MedicinesCreate = () => {
             apresentacao,
             classeTerapeutica,
             CNPJ
-        ).then(() => history.push('/registrations/medicines'));
+            ).then(() => history.push('/registrations/medicines'));
+
+            HandleToast("success", "Sucesso!", "Medicamento criado com sucesso!");
+
+        } catch (err) {
+            if (err instanceof Yup.ValidationError) {
+                HandleToast("error", "Erro!", "Verifique se todos os campos foram preenchidos corretamente!");
+            }
+            else return;
+        }
+    }
+
+    function HandleToast(
+        messageType: string,
+        messageTitle: string,
+        messageContent: string
+    ) {
+        setToast(false);
+        setMessageType(messageType);
+        setMessageTitle(messageTitle);
+        setMessageContent(messageContent);
+        setToast(true);
+        setTimeout(() => setToast(false), 4500)
     }
 
     return (
+        <>
         <div className="row m-5">
             <div className="card shadow-lg p-3 col-sm-6 offset-md-3 border">
 
@@ -147,6 +202,14 @@ const MedicinesCreate = () => {
                 </form>
             </div>
         </div>
+        { toast && (
+            <ToastComponent
+                messageType={getMessageType}
+                messageTitle={getMessageTitle}
+                messageContent={getMessageContent}
+            />
+        ) }
+        </>
     );
 }
 

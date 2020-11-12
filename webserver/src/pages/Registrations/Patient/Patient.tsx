@@ -12,7 +12,8 @@ import { InputText } from 'primereact/inputtext';
 import { Calendar } from 'primereact/calendar';
 import Collapse from 'react-bootstrap/Collapse';
 import {FiSearch} from 'react-icons/fi';
-import {AiOutlineClose} from 'react-icons/ai';
+import { AiOutlineClose } from 'react-icons/ai';
+import * as Yup from "yup";
 
 import './Patient.css';
 
@@ -91,6 +92,7 @@ const Patient = (props: any) => {
             console.log(err)
         }
         getPatientFunction();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     const onPage = (event: any) => {
@@ -176,16 +178,36 @@ const Patient = (props: any) => {
     }
 
     async function handleSubmit(event: FormEvent) {
-        event.preventDefault();
-        patientService.updatePatientInformation(getPacienteSeq, getPacienteNomeUpdate, getPacienteGeneroUpdate, getPacienteDataNascimentoUpdate).then(response => {
-            if (response.updatedPatient) {
-                showToast('success', "Atualização!", "Paciente atualizado com sucesso.");
-                setDisplayDialog2(false);
-                getPatientFunction();
-            } else {
-                showToast('error', "Erro!", String(response.error));
+        try {
+            event.preventDefault();
+            const data = {
+                getPacienteNomeUpdate,
+                getPacienteDataNascimentoUpdate,
+                getPacienteGeneroUpdate
+            };
+            //Validação de dados
+            const schema = Yup.object().shape({
+                getPacienteNomeUpdate: Yup.string().required(),
+                getPacienteDataNascimentoUpdate: Yup.date().required(),
+                getPacienteGeneroUpdate: Yup.string().nullable().oneOf([null, "M", "F"]).required(),
+            })
+
+            await schema.validate(data, { abortEarly: false });
+            patientService.updatePatientInformation(getPacienteSeq, getPacienteNomeUpdate, getPacienteGeneroUpdate, getPacienteDataNascimentoUpdate).then(response => {
+                if (response.updatedPatient) {
+                    showToast('success', "Atualização!", "Paciente atualizado com sucesso.");
+                    setDisplayDialog2(false);
+                    getPatientFunction();
+                } else {
+                    showToast('error', "Erro!", String(response.error));
+                }
+            });
+        } catch (err) {
+            if (err instanceof Yup.ValidationError) {
+                showToast("error", "Erro!", "Verifique se todos os campos foram preenchidos corretamente!");
             }
-        })
+            else return;
+        }
     }
 
     async function deletePatient() {

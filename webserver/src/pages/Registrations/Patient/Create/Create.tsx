@@ -8,6 +8,9 @@ import ToastComponent from '../../../../components/Toast';
 import { useHistory } from 'react-router-dom';
 import { InputText } from 'primereact/inputtext';
 
+import * as Yup from "yup";
+
+
 const PatientCreate = () => {
     const history = useHistory();
 
@@ -47,8 +50,8 @@ const PatientCreate = () => {
     const createPatientService = new CreatePatientService();
     
     let optionsDropdown = [
-        {label: 'Masculino', value: 'M'},
-        {label: 'Feminino', value: 'F'}
+        { label: 'Masculino', value: 'M' },
+        { label: 'Feminino', value: 'F' }
     ];
 
     const onGeneroChange = (e: { value: string }) => {
@@ -56,19 +59,43 @@ const PatientCreate = () => {
     };
 
     async function handleSubmit(event: FormEvent) {
-        event.preventDefault();
-        createPatientService.create(getNroPaciente, getNomePaciente, getDataNascimentoPaciente, getGeneroPaciente).then((response) =>{
-            if(response.createdPatient){
-                history.push('/registrations/patient');
-            }else{
-                if(response.err){
-                    showToast('error', 'Erro!', response.error + ' ' + String(response.err.code));
-                }else{
-                    showToast('error', 'Erro!', response.error);
+        try {
+            event.preventDefault();
+            const data = {
+                getNroPaciente,
+                getNomePaciente,
+                getDataNascimentoPaciente,
+                getGeneroPaciente
+            };
+            //Validação de dados
+            const schema = Yup.object().shape({
+                getNroPaciente: Yup.number().required(),
+                getNomePaciente: Yup.string().required(),
+                getDataNascimentoPaciente: Yup.date().required(),
+                getGeneroPaciente: Yup.string().nullable().oneOf([null, "M", "F"]).required(),
+            })
+
+            await schema.validate(data, { abortEarly: false });
+
+            createPatientService.create(getNroPaciente, getNomePaciente, getDataNascimentoPaciente, getGeneroPaciente).then((response) => {
+                if (response.createdPatient) {
+                    history.push('/registrations/patient');
+                } else {
+                    if (response.err) {
+                        showToast('error', 'Erro!', response.error + ' ' + String(response.err.code));
+                    } else {
+                        showToast('error', 'Erro!', response.error);
+                    }
                 }
+            })
+        } catch (err) {
+            if (err instanceof Yup.ValidationError) {
+                showToast("error", "Erro!", "Verifique se todos os campos foram preenchidos corretamente!");
             }
-        })
-    }
+            else return;
+        }
+}
+      
 
     function showToast(messageType: string, messageTitle: string, messageContent: string){
         setToast(false)

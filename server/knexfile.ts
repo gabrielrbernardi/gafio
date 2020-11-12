@@ -10,6 +10,7 @@ try {
                 host: "localhost",
                 user: "root",
                 password: "kutsu12",
+                //password: "dsw04051977",
             },
             migrations: {
                 directory: path.resolve(__dirname, "src", "database", "migrations"),
