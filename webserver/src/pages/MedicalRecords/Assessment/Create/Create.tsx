@@ -5,6 +5,7 @@ import { useHistory, useLocation } from 'react-router-dom';
 import ToastComponent from '../../../../components/Toast';
 import { InputText } from 'primereact/inputtext';
 import { Calendar } from 'primereact/calendar';
+import * as Yup from "yup";
 
 import { CreateAssessmentService } from './CreateAssessmentService'
 
@@ -137,36 +138,88 @@ const AssessmentForm = () => {
         clear: "Limpar",
     };
 
-    function handleSubmit(event: FormEvent) {
+    async function handleSubmit(event: FormEvent) {
         event.preventDefault();
 
-        createAssessmentService.Create(queryResponse, getNroAvaliacao, getDataAvaliacao, getResultadoCulturas, getResCulturasAcao,
-            getDoseCorreta, getPosologiaCorreta, getAlertaDot, getAlertaDotDescricao, getDisfuncaoRenal,
-            getHemodialise, getAtbOral, getAtbContraindicacao, getAlteracaoPrescricao, getAtbDiluicaoInfusao,
-            getInteracaoAtbMedicamento, getTrocaAtb, getNovoAtb)
-            .then((response) => {
-                if (response.CreatedAssessment) {
-                    showToast('success', 'Sucesso!', `Avaliação criada com sucesso!`);
-                    setTimeout(() => {
-                        history.push(`/medicalRecords/assessment/?seqProntuario=${queryResponse}`)
-                    }, 3500)
-                } else {
-                    if (response.error.sqlMessage) {
-                        if (response.error.sqlState == 23000) {
-                            console.log(response.error.sqlState)
-                            if (String(response.error.sqlMessage).includes("(`NovoAtb`)")) {
-                                showToast('error', 'Erro!', `O campo Novo Atb está incorreto`);
+        const dataQuery ={
+            queryResponse
+        }
+        try{
+            const schema = Yup.object().shape({
+                queryResponse: Yup.number().required()
+            });
+
+            await schema.validate(dataQuery, {
+                abortEarly: false,
+            });
+
+            const data = {
+                getNroAvaliacao, getDataAvaliacao, getResultadoCulturas, getResCulturasAcao,
+                getDoseCorreta, getPosologiaCorreta, getAlertaDot, getAlertaDotDescricao, getDisfuncaoRenal,
+                getHemodialise, getAtbOral, getAtbContraindicacao, getAlteracaoPrescricao, getAtbDiluicaoInfusao,
+                getInteracaoAtbMedicamento, getTrocaAtb, getNovoAtb
+            }
+    
+            try{
+                const schema = Yup.object().shape({
+                    getNroAvaliacao: Yup.number().required(),
+                    getDataAvaliacao: Yup.date().required(),
+                    getResultadoCulturas: Yup.string().nullable(),
+                    getResCulturasAcao: Yup.string().nullable(),
+                    getDoseCorreta: Yup.string().nullable().oneOf([null, "S", "N"]),
+                    getPosologiaCorreta: Yup.string().nullable().oneOf([null, "S", "N"]),
+                    getAlertaDot: Yup.string().nullable().oneOf([null, "S", "N"]),
+                    getAlertaDotDescricao: Yup.string().nullable(),
+                    getDisfuncaoRenal: Yup.string().required(),
+                    getHemodialise: Yup.string().oneOf(["S", "SI", "N"]).required(),
+                    getAtbOral: Yup.string().oneOf(["S", "NA", "N"]).required(),
+                    getAtbContraindicacao: Yup.string().oneOf(["S", "N"]).required(),
+                    getAlteracaoPrescricao: Yup.string().nullable().oneOf([null, "S", "N"]),
+                    getAtbDiluicaoInfusao: Yup.string().oneOf(["S", "N"]).required(),
+                    getInteracaoAtbMedicamento: Yup.string().oneOf(["S", "N"]).required(),
+                    getTrocaAtb: Yup.string().oneOf(["S", "N"]).required(),
+                    getNovoAtb: Yup.string().nullable()
+                });
+    
+                await schema.validate(data, {
+                    abortEarly: false,
+                });
+    
+                createAssessmentService.Create(queryResponse, getNroAvaliacao, getDataAvaliacao, getResultadoCulturas, getResCulturasAcao,
+                    getDoseCorreta, getPosologiaCorreta, getAlertaDot, getAlertaDotDescricao, getDisfuncaoRenal,
+                    getHemodialise, getAtbOral, getAtbContraindicacao, getAlteracaoPrescricao, getAtbDiluicaoInfusao,
+                    getInteracaoAtbMedicamento, getTrocaAtb, getNovoAtb)
+                .then((response) => {
+                    if (response.CreatedAssessment) {
+                        showToast('success', 'Sucesso!', `Avaliação criada com sucesso!`);
+                        setTimeout(() => {
+                            history.push(`/medicalRecords/assessment/?seqProntuario=${queryResponse}`)
+                        }, 3500)
+                    } else {
+                        if (response.error.sqlMessage) {
+                            if (response.error.sqlState == 23000) {
+                                console.log(response.error.sqlState)
+                                if (String(response.error.sqlMessage).includes("(`NovoAtb`)")) {
+                                    showToast('error', 'Erro!', `O campo Novo Atb está incorreto`);
+                                } else {
+                                    showToast('error', 'Erro!', String(response.error.sqlMessage));
+                                }
                             } else {
                                 showToast('error', 'Erro!', String(response.error.sqlMessage));
                             }
                         } else {
-                            showToast('error', 'Erro!', String(response.error.sqlMessage));
+                            showToast('error', 'Erro!', String(response.error));
                         }
-                    } else {
-                        showToast('error', 'Erro!', String(response.error));
                     }
-                }
-            })
+                })
+            }catch(error){
+                if (error instanceof Yup.ValidationError)
+                    showToast('error', 'Erro!', `Verifique se todos os campos foram preenchidos corretamente!`);
+            }
+        }catch(error){
+            if (error instanceof Yup.ValidationError)
+                showToast('error', 'Erro!', `Verifique se o campo da URL seqProntuario é um número!`);
+        }
     }
 
     function showToast(messageType: string, messageTitle: string, messageContent: string) {

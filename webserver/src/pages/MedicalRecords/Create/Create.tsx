@@ -5,6 +5,7 @@ import { useHistory } from 'react-router-dom';
 import ToastComponent from '../../../components/Toast';
 import { InputText } from 'primereact/inputtext';
 import { Calendar } from 'primereact/calendar';
+import * as Yup from "yup";
 
 import { CreateMedicalRecordsService } from './CreateMedicalRecordsService'
 
@@ -109,40 +110,80 @@ const MedicalRecordsForm = () => {
         clear: "Limpar",
     };
 
-    function handleSubmit(event: FormEvent) {
+    async function handleSubmit(event: FormEvent) {
         event.preventDefault();
-
-        createMedicalRecordsService.Create(getNroProntuario, getSeqPaciente,
+        
+        const data = {
+            getNroProntuario, getSeqPaciente,
             getDataInternacao, getCodDoencaPrincipal, getCodDoencaSecundario,
             getSistemaAcometido, getCodComorbidade, getOrigem, getAlocacao,
             getResultadoColeta, getCodAtbPrimario, getCodAtbSecundario,
             getSitioInfeccaoPrimario, getTratamento, getIndicacao,
             getDisfuncao, getOrigemInfeccao, getDose, getPosologia
-        ).then((response) => {
-            if (response.CreatedMedicalRecord) {
-                showToast('success', 'Sucesso!', `Prontuário criado com sucesso!`);
-                setTimeout(() => {
-                    history.push('/medicalRecords')
-                }, 3500)
-            } else {
-                if (response.error.sqlMessage) {
-                    if (response.error.sqlState == 23000) {
-                        if (String(response.error.sqlMessage).includes("(`CodDoencaPrincipal`)") || String(response.error.sqlMessage).includes("(`CodDoencaSecundario`)")) {
-                            showToast('error', 'Erro!', `O campo código de doença está incorreto`);
-                        }
-                        else if (String(response.error.sqlMessage).includes("(`CodAtbPrimario`)") || String(response.error.sqlMessage).includes("(`CodAtbSecundario`)")) {
-                            showToast('error', 'Erro!', `O campo código de medicamento está incorreto`);
+        }
+
+        try{
+            const schema = Yup.object().shape({
+                getNroProntuario: Yup.number().required(),
+                getSeqPaciente: Yup.number().required(),
+                getDataInternacao: Yup.date().required(),
+                getCodDoencaPrincipal: Yup.string().required(),
+                getCodDoencaSecundario: Yup.string().nullable(),
+                getSistemaAcometido: Yup.string().required(),
+                getCodComorbidade: Yup.string().nullable(),
+                getOrigem: Yup.string().required(),
+                getAlocacao: Yup.string().required(),
+                getResultadoColeta: Yup.string().nullable().oneOf([null, "S", "N"]),
+                getCodAtbPrimario: Yup.string().required(),
+                getCodAtbSecundario: Yup.string().nullable(),
+                getSitioInfeccaoPrimario: Yup.string().nullable(),
+                getTratamento: Yup.string().oneOf(["S", "N"]).required(),
+                getIndicacao: Yup.string().oneOf(["S", "N"]).required(),
+                getDisfuncao: Yup.string().oneOf(["S", "N"]).required(),
+                getOrigemInfeccao: Yup.string().required(),
+                getDose: Yup.string().nullable().oneOf([null, "S", "N"]),
+                getPosologia: Yup.string().nullable().oneOf([null, "S", "N"])
+            });
+
+            await schema.validate(data, {
+                abortEarly: false,
+            });
+
+            createMedicalRecordsService.Create(getNroProntuario, getSeqPaciente,
+                getDataInternacao, getCodDoencaPrincipal, getCodDoencaSecundario,
+                getSistemaAcometido, getCodComorbidade, getOrigem, getAlocacao,
+                getResultadoColeta, getCodAtbPrimario, getCodAtbSecundario,
+                getSitioInfeccaoPrimario, getTratamento, getIndicacao,
+                getDisfuncao, getOrigemInfeccao, getDose, getPosologia
+            ).then((response) => {
+                if (response.CreatedMedicalRecord) {
+                    showToast('success', 'Sucesso!', `Prontuário criado com sucesso!`);
+                    setTimeout(() => {
+                        history.push('/medicalRecords')
+                    }, 3500)
+                } else {
+                    if (response.error.sqlMessage) {
+                        if (response.error.sqlState == 23000) {
+                            if (String(response.error.sqlMessage).includes("(`CodDoencaPrincipal`)") || String(response.error.sqlMessage).includes("(`CodDoencaSecundario`)")) {
+                                showToast('error', 'Erro!', `O campo código de doença está incorreto`);
+                            }
+                            else if (String(response.error.sqlMessage).includes("(`CodAtbPrimario`)") || String(response.error.sqlMessage).includes("(`CodAtbSecundario`)")) {
+                                showToast('error', 'Erro!', `O campo código de medicamento está incorreto`);
+                            } else {
+                                showToast('error', 'Erro!', String(response.error.sqlMessage));
+                            }
                         } else {
                             showToast('error', 'Erro!', String(response.error.sqlMessage));
                         }
                     } else {
-                        showToast('error', 'Erro!', String(response.error.sqlMessage));
+                        showToast('error', 'Erro!', String(response.error));
                     }
-                } else {
-                    showToast('error', 'Erro!', String(response.error));
                 }
-            }
-        })
+            })
+        }catch(error){
+            if (error instanceof Yup.ValidationError)
+                showToast('error', 'Erro!', `Verifique se todos os campos foram preenchidos corretamente!`);
+        }
     }
 
     function showToast(messageType: string, messageTitle: string, messageContent: string) {

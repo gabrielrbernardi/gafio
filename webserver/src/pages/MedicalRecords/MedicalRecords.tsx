@@ -12,6 +12,7 @@ import {Dropdown as DropdownReact} from 'react-bootstrap';
 import { Dialog } from 'primereact/dialog';
 import {InputText} from 'primereact/inputtext';
 import { Calendar } from 'primereact/calendar';
+import * as Yup from "yup";
 
 import {MedicalRecordsService} from './MedicalRecordsService';
 import Loading from '../../components/Loading';
@@ -267,39 +268,79 @@ const MedicalRecords = () => {
         })
     }
 
-    function handleSubmit(event: FormEvent){
+    async function handleSubmit(event: FormEvent){
         event.preventDefault();
 
-        medicalRecordsService.Update(getNroProntuario, getSeqPaciente,
+        const data = {
+            getNroProntuario, getSeqPaciente,
             getDataInternacao, getCodDoencaPrincipal, getCodDoencaSecundario,
             getSistemaAcometido, getCodComorbidade, getOrigem, getAlocacao,
             getResultadoColeta, getCodAtbPrimario, getCodAtbSecundario,
             getSitioInfeccaoPrimario, getTratamento, getIndicacao,
             getDisfuncao, getOrigemInfeccao, getDose, getPosologia
-        ).then((response) => {
-            if(response.updatedMedicalRecord){
-                showToast('success', 'Sucesso!', `Prontuário atualizado com sucesso!`);
-                getMedicalRecordsFunction()
-                setDisplayDialog1(false)
-            }else{
-                if(response.error.sqlMessage){
-                    if(response.error.sqlState == 23000){
-                        if(String(response.error.sqlMessage).includes("(`CodDoencaPrincipal`)") || String(response.error.sqlMessage).includes("(`CodDoencaSecundario`)")){
-                            showToast('error', 'Erro!', `O campo código de doença está incorreto`);
-                        }
-                        else if(String(response.error.sqlMessage).includes("(`CodAtbPrimario`)")  || String(response.error.sqlMessage).includes("(`CodAtbSecundario`)")){
-                            showToast('error', 'Erro!', `O campo código de medicamento está incorreto`);
+        }
+
+        try{
+            const schema = Yup.object().shape({
+                getNroProntuario: Yup.number().required(),
+                getSeqPaciente: Yup.number().required(),
+                getDataInternacao: Yup.date().required(),
+                getCodDoencaPrincipal: Yup.string().required(),
+                getCodDoencaSecundario: Yup.string().nullable(),
+                getSistemaAcometido: Yup.string().required(),
+                getCodComorbidade: Yup.string().nullable(),
+                getOrigem: Yup.string().required(),
+                getAlocacao: Yup.string().required(),
+                getResultadoColeta: Yup.string().nullable().oneOf([null, "S", "N"]),
+                getCodAtbPrimario: Yup.string().required(),
+                getCodAtbSecundario: Yup.string().nullable(),
+                getSitioInfeccaoPrimario: Yup.string().nullable(),
+                getTratamento: Yup.string().oneOf(["S", "N"]).required(),
+                getIndicacao: Yup.string().oneOf(["S", "N"]).required(),
+                getDisfuncao: Yup.string().oneOf(["S", "N"]).required(),
+                getOrigemInfeccao: Yup.string().required(),
+                getDose: Yup.string().nullable().oneOf([null, "S", "N"]),
+                getPosologia: Yup.string().nullable().oneOf([null, "S", "N"])
+            });
+
+            await schema.validate(data, {
+                abortEarly: false,
+            });
+
+            medicalRecordsService.Update(getNroProntuario, getSeqPaciente,
+                getDataInternacao, getCodDoencaPrincipal, getCodDoencaSecundario,
+                getSistemaAcometido, getCodComorbidade, getOrigem, getAlocacao,
+                getResultadoColeta, getCodAtbPrimario, getCodAtbSecundario,
+                getSitioInfeccaoPrimario, getTratamento, getIndicacao,
+                getDisfuncao, getOrigemInfeccao, getDose, getPosologia
+            ).then((response) => {
+                if(response.updatedMedicalRecord){
+                    showToast('success', 'Sucesso!', `Prontuário atualizado com sucesso!`);
+                    getMedicalRecordsFunction()
+                    setDisplayDialog1(false)
+                }else{
+                    if(response.error.sqlMessage){
+                        if(response.error.sqlState == 23000){
+                            if(String(response.error.sqlMessage).includes("(`CodDoencaPrincipal`)") || String(response.error.sqlMessage).includes("(`CodDoencaSecundario`)")){
+                                showToast('error', 'Erro!', `O campo código de doença está incorreto`);
+                            }
+                            else if(String(response.error.sqlMessage).includes("(`CodAtbPrimario`)")  || String(response.error.sqlMessage).includes("(`CodAtbSecundario`)")){
+                                showToast('error', 'Erro!', `O campo código de medicamento está incorreto`);
+                            }else{
+                                showToast('error', 'Erro!', String(response.error.sqlMessage));
+                            }
                         }else{
                             showToast('error', 'Erro!', String(response.error.sqlMessage));
                         }
                     }else{
-                        showToast('error', 'Erro!', String(response.error.sqlMessage));
+                        showToast('error', 'Erro!', String(response.error));
                     }
-                }else{
-                    showToast('error', 'Erro!', String(response.error));
                 }
-            }
-        })
+            })
+        }catch(error){
+            if (error instanceof Yup.ValidationError)
+                showToast('error', 'Erro!', `Verifique se todos os campos foram preenchidos corretamente!`);
+        }
     }
 
     function showToast(messageType: string, messageTitle: string, messageContent: string){
@@ -388,24 +429,42 @@ const MedicalRecords = () => {
         })
     }
 
-    function handleSubmit1(event: FormEvent){
+    async function handleSubmit1(event: FormEvent){
         event.preventDefault();
 
-        medicalRecordsService.Desfecho(getNroProntuario, getDesfecho, getDataDesfecho
-        ).then((response) => {
-            console.log(response)
-            if(response.updatedMedicalRecord){
-                showToast('success', 'Sucesso!', `Desfecho atualizado com sucesso!`);
-                getMedicalRecordsFunction()
-                setDisplayDialog3(false)
-            }else{
-                if(response.error.sqlMessage){
-                    showToast('error', 'Erro!', String(response.error.sqlMessage));
+        const data = {
+            getDesfecho, getDataDesfecho
+        }
+
+        try{
+            const schema = Yup.object().shape({
+                getDesfecho: Yup.string().oneOf(["Alta", "Transferência", "Óbito"]).required(),
+                getDataDesfecho: Yup.date().required()
+            });
+
+            await schema.validate(data, {
+                abortEarly: false,
+            });
+
+            medicalRecordsService.Desfecho(getNroProntuario, getDesfecho, getDataDesfecho
+            ).then((response) => {
+                console.log(response)
+                if(response.updatedMedicalRecord){
+                    showToast('success', 'Sucesso!', `Desfecho atualizado com sucesso!`);
+                    getMedicalRecordsFunction()
+                    setDisplayDialog3(false)
                 }else{
-                    showToast('error', 'Erro!', String(response.error));
+                    if(response.error.sqlMessage){
+                        showToast('error', 'Erro!', String(response.error.sqlMessage));
+                    }else{
+                        showToast('error', 'Erro!', String(response.error));
+                    }
                 }
-            }
-        })
+            })
+        }catch(error){
+            if (error instanceof Yup.ValidationError)
+                showToast('error', 'Erro!', `Verifique se todos os campos foram preenchidos corretamente!`);
+        }
     }
 
     const SeqProntuarioBodyTemplate = (rowData: any) => {
