@@ -14,31 +14,11 @@ import Loading from "../../components/Loading";
 import { Dialog } from "primereact/dialog";
 import View from "./MicrobiologyView";
 import Form from "./MicrobiologyForm";
+import {IMicrobiology } from "./MicrobiologyModel";
 
 import "./index.css";
 
-import api from "../../services/api";
-
-interface IMicrobiology {
-    IdMicrobiologia: number;
-    IdPaciente: number;
-    IdProntuario: number;
-    DataColeta: string;
-    DataResultado: string;
-    SwabNasal: string;
-    SwabNasalObservacoes: string;
-    SwabRetal: string;
-    SwabRetalObservacoes: string;
-    Sangue: string;
-    SangueObservacoes: string;
-    Urina: string;
-    UrinaObservacoes: string;
-    SecrecaoTraqueal: string;
-    SecrecaoTraquealObservacoes: string;
-    Outros: string;
-    OutrosObservacoes: string;
-    PerfilSensibilidade: string;
-}
+import MicrobiologyService from "./MicrobiologyService"
 
 const Microbiology = () => {
     const [microbiologies, setMicrobiologies] = useState<IMicrobiology[]>([]);
@@ -74,20 +54,21 @@ const Microbiology = () => {
 
     useEffect(() => {
         //carrega os dados da tabela e a quantidade total de registros
-        async function loadMicrobiologies() {
-            try {
-                const response = await api.get("/microbiology");
-                const { results } = response.data;
-                const { count } = response.data.count;
-                setRecords(Number(count));
-                setMicrobiologies(results);
-                setLoading(false);
-                setTableLoading(false);
-            } catch (error) {
-                setLoading(false);
-                setTableLoading(false);
-                HandleToast("error",  "Erro!","Falha ao carregar os registros.");
-            }
+       function loadMicrobiologies() {
+           MicrobiologyService.getMicrobiologies({ page: 1 })
+               .then(data => {
+                   const { results } = data;
+                   const { count } = data.count;
+                   setRecords(Number(count));
+                   setMicrobiologies(results);
+                   setLoading(false);
+                   setTableLoading(false);
+               })
+               .catch(error => {
+                   setLoading(false);
+                   setTableLoading(false);
+                   HandleToast("error", "Erro!", "Falha ao carregar os registros.");
+               });
         }
 
         loadMicrobiologies();
@@ -104,35 +85,32 @@ const Microbiology = () => {
         setMessageTitle(messageTitle);
         setMessageContent(messageContent);
         setToast(true);
-        setTimeout(() => {
-            setToast(false);
-        }, 4500);
+        setTimeout(() =>  setToast(false), 4500);
     }
 
     //Busca os registros por página
-    async function handlePage(event: any) {
+    function handlePage(event: any) {
          setTableLoading(true);
-        try {
             const index = event.first;
             const page = Number(index) / 10 + 1;
             let response;
             if (filter && successfulSearch) {
-                response = await api.get("microbiology", {
-                    params: { page, filter, filterValue },
-                });
+                MicrobiologyService.getMicrobiologies({ page, filter, filterValue }).then(data => {
+                    response = data;
+                    const { results } = response;
+                    setMicrobiologies(results);
+                    setFirst(index);
+                    setTableLoading(false);
+                }).catch(err => setTableLoading(false));
             } else {
-                response = await api.get("microbiology", {
-                    params: { page },
-                });
-            }
-            const { results } = response.data;
-            setMicrobiologies(results);
-            setFirst(index);
-            setTableLoading(false);
-        } catch (error) {
-            setTableLoading(false);
-            HandleToast("error", "Erro!", "Falha ao carregar os registros.");
-        }
+                MicrobiologyService.getMicrobiologies({page}).then(data => {
+                    response = data;
+                    const { results } = response;
+                    setMicrobiologies(results);
+                    setFirst(index);
+                    setTableLoading(false);
+                }).catch(err => setTableLoading(false));
+            } 
     }
 
     function onMicrobiologySelect(e: any) {
@@ -143,33 +121,34 @@ const Microbiology = () => {
     }
 
     //Atualiza os dados da tabela
-    async function handleTableUpdate() {
-        try {
-            setTableLoading(true);
-            let response;
-            response = await api.get("microbiology");
-            const { results } = response.data;
-            const { count } = response.data.count;
-            setRecords(Number(count));
-            setMicrobiologies(results);
-            setTableLoading(false);
-        } catch (error) {
-            setTableLoading(false);
-            HandleToast("error", "Erro!", "Falha ao atualizar os registros.");
-        }
+    function handleTableUpdate() {
+        setTableLoading(true);
+        MicrobiologyService.getMicrobiologies({ page: 1 })
+            .then(data => {
+                const { results } = data;
+                const { count } = data.count;
+                setRecords(Number(count));
+                setMicrobiologies(results);
+                setTableLoading(false);
+            })
+            .catch(error => {
+                setTableLoading(false);
+                HandleToast("error", "Erro!", "Falha ao atualizar os registros.");
+            });
     }
 
     //Deleta microbiologia
-    async function handleDelete() {
-        try {
-            await api.delete(`/microbiology/delete/${id}`);
-            setDeleteDialog(false);
-            HandleToast("success", "Sucesso!", "A microbiologia foi excluída.");
-            handleTableUpdate();
-        } catch (error) {
-            setDeleteDialog(false);
-            HandleToast("error", "Erro!", "Falha ao excluir a microbiologia.");
-        }
+    function handleDelete() {
+        MicrobiologyService.delete(id)
+            .then(() => {
+                setDeleteDialog(false);
+                HandleToast("success", "Sucesso!", "A microbiologia foi excluída.");
+                handleTableUpdate();
+            })
+            .catch(error => {
+                setDeleteDialog(false);
+                HandleToast("error", "Erro!", "Falha ao excluir a microbiologia.");
+            });
     }
 
     function handleUpdate() {
@@ -178,7 +157,7 @@ const Microbiology = () => {
     }
 
     //Para filtragem
-    async function handleSearch() {
+    function handleSearch() {
         if (!optionState) {
             HandleToast("error", "Erro!", "Selecione um filtro para buscar.");
             return;
@@ -189,26 +168,25 @@ const Microbiology = () => {
         }
         setLoading(true);
         setTableLoading(true);
-        try {
-            const response = await api.get("/microbiology", {
-                params: { filter, filterValue },
+        MicrobiologyService.getMicrobiologies({ page: 1, filter, filterValue })
+            .then(data => {
+                const { results } = data;
+                const { count } = data.count;
+                setRecords(Number(count));
+                setMicrobiologies(results);
+                setLoading(false);
+                setTableLoading(false);
+                let res = "resultado";
+                if (count > 1) res += "s";
+                HandleToast("info", "Resultado Encontrado!", `Foi encontrado ${count} ${res}.`);
+                setSuccessfulSearch(true);
+            })
+            .catch(err => {
+                setLoading(false);
+                setTableLoading(false);
+                const message = err.response.data.error;
+                HandleToast("error", "Sem resultado!", `${message}`);
             });
-            const { results } = response.data;
-            const { count } = response.data.count;
-            setRecords(Number(count));
-            setMicrobiologies(results);
-            setLoading(false);
-            setTableLoading(false);
-            let res = "resultado";
-            if (count > 1) res += "s";
-            HandleToast("info","Resultado Encontrado!",`Foi encontrado ${count} ${res}.`);
-            setSuccessfulSearch(true);
-        } catch (err) {
-            setLoading(false);
-            setTableLoading(false);
-            const message = err.response.data.error;
-            HandleToast("error", "Sem resultado!", `${message}`);
-        }
     }
 
     function handleReset() {
@@ -228,7 +206,7 @@ const Microbiology = () => {
         return (
             <React.Fragment>
                 <span className="p-column-title">Id</span>
-                <a>{rowData.IdMicrobiologia}</a>
+                <span>{rowData.IdMicrobiologia}</span>
             </React.Fragment>
         );
     };
@@ -237,7 +215,7 @@ const Microbiology = () => {
         return (
             <React.Fragment>
                 <span className="p-column-title">Paciente</span>
-                <a>{rowData.IdPaciente}</a>
+                <span>{rowData.IdPaciente}</span>
             </React.Fragment>
         );
     };
@@ -246,7 +224,7 @@ const Microbiology = () => {
         return (
             <React.Fragment>
                 <span className="p-column-title">Prontuário</span>
-                <a>{rowData.IdProntuario}</a>
+                <span>{rowData.IdProntuario}</span>
             </React.Fragment>
         );
     };
@@ -255,7 +233,7 @@ const Microbiology = () => {
         return (
             <React.Fragment>
                 <span className="p-column-title">Coleta</span>
-                <a>{rowData.DataColeta}</a>
+                <span>{rowData.DataColeta}</span>
             </React.Fragment>
         );
     };
@@ -264,7 +242,7 @@ const Microbiology = () => {
         return (
             <React.Fragment>
                 <span className="p-column-title">Resultado</span>
-                <a>{rowData.DataResultado}</a>
+                <span>{rowData.DataResultado}</span>
             </React.Fragment>
         );
     };
@@ -273,7 +251,7 @@ const Microbiology = () => {
         return (
             <React.Fragment>
                 <span className="p-column-title">Swab Nasal</span>
-                <a>{rowData.SwabNasal}</a>
+                <span>{rowData.SwabNasal}</span>
             </React.Fragment>
         );
     };
@@ -282,7 +260,7 @@ const Microbiology = () => {
         return (
             <React.Fragment>
                 <span className="p-column-title">Swab Retal</span>
-                <a>{rowData.SwabRetal}</a>
+                <span>{rowData.SwabRetal}</span>
             </React.Fragment>
         );
     };
@@ -291,7 +269,7 @@ const Microbiology = () => {
         return (
             <React.Fragment>
                 <span className="p-column-title">Sangue</span>
-                <a>{rowData.Sangue}</a>
+                <span>{rowData.Sangue}</span>
             </React.Fragment>
         );
     };
@@ -300,7 +278,7 @@ const Microbiology = () => {
         return (
             <React.Fragment>
                 <span className="p-column-title">Urina</span>
-                <a>{rowData.Urina}</a>
+                <span>{rowData.Urina}</span>
             </React.Fragment>
         );
     };
@@ -309,7 +287,7 @@ const Microbiology = () => {
         return (
             <React.Fragment>
                 <span className="p-column-title">Secrecao Traqueal</span>
-                <a>{rowData.SecrecaoTraqueal}</a>
+                <span>{rowData.SecrecaoTraqueal}</span>
             </React.Fragment>
         );
     };
@@ -318,7 +296,7 @@ const Microbiology = () => {
         return (
             <React.Fragment>
                 <span className="p-column-title">Outros</span>
-                <a>{rowData.Outros}</a>
+                <span>{rowData.Outros}</span>
             </React.Fragment>
         );
     };

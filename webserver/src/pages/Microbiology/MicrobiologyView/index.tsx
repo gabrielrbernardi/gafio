@@ -2,33 +2,9 @@ import React, { useState, useEffect } from "react";
 import { Dialog } from "primereact/dialog";
 import Loading from "../../../components/Loading";
 import ToastComponent from "../../../components/Toast";
+import MicrobiologyService from "../MicrobiologyService"
 
-import api from "../../../services/api";
 import "./index.css";
-
-interface IMicrobiology {
-    IdMicrobiologia: number;
-    IdPaciente: number;
-    IdProntuario: number;
-    DataColeta: string;
-    DataResultado: string;
-    SwabNasal: string;
-    SwabNasalObservacoes: string;
-    SwabRetal: string;
-    SwabRetalObservacoes: string;
-    Sangue: string;
-    SangueObservacoes: string;
-    Urina: string;
-    UrinaObservacoes: string;
-    SecrecaoTraqueal: string;
-    SecrecaoTraquealObservacoes: string;
-    Outros: string;
-    OutrosObservacoes: string;
-    PerfilSensibilidade: string;
-    NomePaciente: string;
-    NroPaciente: number;
-    NroProntuario: number;
-}
 
 interface Props {
     id: number;
@@ -45,18 +21,11 @@ const MicrobiologyView: React.FC<Props> = ({ view, id, setView }) => {
     const [DataColeta, setDataColeta] = useState<string>("");
     const [NomePaciente, setNomePaciente] = useState<string>("");
     const [DataResultado, setDataResultado] = useState<string>("");
-    const [SwabNasalObservacoes, setSwabNasalObservacoes] = useState<string>(
-        ""
-    );
-    const [SwabRetalObservacoes, setSwabRetalObservacoes] = useState<string>(
-        ""
-    );
+    const [SwabNasalObservacoes, setSwabNasalObservacoes] = useState<string>( "");
+    const [SwabRetalObservacoes, setSwabRetalObservacoes] = useState<string>( "" );
     const [SangueObservacoes, setSangueObservacoes] = useState<string>("");
     const [UrinaObservacoes, setUrinaObservacoes] = useState<string>("");
-    const [
-        SecrecaoTraquealObservacoes,
-        setSecrecaoTraquealObservacoes,
-    ] = useState<string>();
+    const [SecrecaoTraquealObservacoes,setSecrecaoTraquealObservacoes] = useState<string>();
     const [OutrosObservacoes, setOutrosObservacoes] = useState<string>("");
     const [PerfilSensibilidade, setPerfilSensibilidade] = useState<string>("");
     const [toast, setToast] = useState<boolean>(false);
@@ -66,36 +35,31 @@ const MicrobiologyView: React.FC<Props> = ({ view, id, setView }) => {
     const [loading, setLoading] = useState<boolean>(true);
 
     useEffect(() => {
-        async function loadMicrobiology() {
-            try {
-                const response = await api.get<IMicrobiology[]>(
-                    `/microbiology/view/${id}`
-                );
-                const [microbiologyData] = response.data;
-
-                setIdMicrobiologia(microbiologyData.IdMicrobiologia);
-                setNroPaciente(microbiologyData.NroPaciente);
-                setNroProntuario(microbiologyData.NroProntuario);
-                setIdPaciente(microbiologyData.IdPaciente);
-                setIdProntuario(microbiologyData.IdProntuario);
-                setDataColeta(microbiologyData.DataColeta);
-                setDataResultado(microbiologyData.DataResultado);
-                setNomePaciente(microbiologyData.NomePaciente);
-                setSwabNasalObservacoes(microbiologyData.SwabNasalObservacoes);
-                setSwabRetalObservacoes(microbiologyData.SwabRetalObservacoes);
-                setSangueObservacoes(microbiologyData.SangueObservacoes);
-                setUrinaObservacoes(microbiologyData.UrinaObservacoes);
-                setSecrecaoTraquealObservacoes(
-                    microbiologyData.SecrecaoTraquealObservacoes
-                );
-                setOutrosObservacoes(microbiologyData.OutrosObservacoes);
-                setPerfilSensibilidade(microbiologyData.PerfilSensibilidade);
-
-                setLoading(false);
-            } catch (error) {
-                setLoading(false);
-                HandleToast("error", "Erro!", "Falha ao carregar os dados.");
-            }
+        function loadMicrobiology() {
+            MicrobiologyService.view(id)
+                .then(data => {
+                    const [microbiologyData] = data;
+                    setIdMicrobiologia(microbiologyData.IdMicrobiologia);
+                    setNroPaciente(microbiologyData.NroPaciente);
+                    setNroProntuario(microbiologyData.NroProntuario);
+                    setIdPaciente(microbiologyData.IdPaciente);
+                    setIdProntuario(microbiologyData.IdProntuario);
+                    setDataColeta(microbiologyData.DataColeta);
+                    setDataResultado(microbiologyData.DataResultado);
+                    setNomePaciente(microbiologyData.NomePaciente);
+                    setSwabNasalObservacoes(microbiologyData.SwabNasalObservacoes);
+                    setSwabRetalObservacoes(microbiologyData.SwabRetalObservacoes);
+                    setSangueObservacoes(microbiologyData.SangueObservacoes);
+                    setUrinaObservacoes(microbiologyData.UrinaObservacoes);
+                    setSecrecaoTraquealObservacoes(microbiologyData.SecrecaoTraquealObservacoes);
+                    setOutrosObservacoes(microbiologyData.OutrosObservacoes);
+                    setPerfilSensibilidade(microbiologyData.PerfilSensibilidade);
+                    setLoading(false);
+                })    
+               .catch(error => {
+                    setLoading(false);
+                    HandleToast("error", "Erro!", "Falha ao carregar os dados.");
+                });
         }
         loadMicrobiology();
     }, [id]);
@@ -199,6 +163,13 @@ const MicrobiologyView: React.FC<Props> = ({ view, id, setView }) => {
                             <p>{PerfilSensibilidade} </p>
                     </section>
                 </main>
+                {toast && (
+                    <ToastComponent
+                        messageType={getMessageType}
+                        messageTitle={getMessageTitle}
+                        messageContent={getMessageContent}
+                    />
+                )}
             </Dialog>
             {loading && <Loading />}
         </>

@@ -191,9 +191,6 @@ class MicrobiologyController {
             return date;
         };
         try {
-            if (req.body) {
-                
-            }
             const { id } = req.params;
             const { IdPaciente, IdProntuario } = req.body;
             if (IdPaciente) {

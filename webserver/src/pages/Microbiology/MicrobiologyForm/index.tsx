@@ -8,28 +8,8 @@ import Loading from "../../../components/Loading";
 import ToastComponent from "../../../components/Toast";
 import Select from "./Select";
 
-import api from "../../../services/api";
-
-interface IMicrobiology {
-    IdMicrobiologia?: number;
-    IdPaciente: number;
-    IdProntuario: number;
-    DataColeta: string;
-    DataResultado: string;
-    SwabNasal: string;
-    SwabNasalObservacoes: string;
-    SwabRetal: string;
-    SwabRetalObservacoes: string;
-    Sangue: string;
-    SangueObservacoes: string;
-    Urina: string;
-    UrinaObservacoes: string;
-    SecrecaoTraqueal: string;
-    SecrecaoTraquealObservacoes: string;
-    Outros: string;
-    OutrosObservacoes: string;
-    PerfilSensibilidade: string;
-}
+import MicrobiologyService from "../MicrobiologyService";
+import {IMicrobiology} from "../MicrobiologyModel";
 
 interface Props {
     id?: number;
@@ -55,7 +35,7 @@ const MicrobiologyForm: React.FC<Props> = ({ id }) => {
     const [Urina, setUrina] = useState<string>("");
     const [UrinaObservacoes, setUrinaObservacoes] = useState<string>("");
     const [SecrecaoTraqueal, setSecrecaoTraqueal] = useState<string>("");
-    const [SecrecaoTraquealObservacoes, setSecrecaoTraquealObservacoes,] = useState<string>();
+    const [SecrecaoTraquealObservacoes, setSecrecaoTraquealObservacoes] = useState<string>("");
     const [Outros, setOutros] = useState<string>("");
     const [OutrosObservacoes, setOutrosObservacoes] = useState<string>("");
     const [PerfilSensibilidade, setPerfilSensibilidade] = useState<string>("");
@@ -115,63 +95,61 @@ const MicrobiologyForm: React.FC<Props> = ({ id }) => {
                 newDate[1] - 1,
                 newDate[0]
             );
-
             return formatedDate;
         }
 
-        async function loadMicrobiologyInfo() {
-            try {
-                const response = await api.get<IMicrobiology[]>(
-                    `/microbiology/${id}`
-                );
-                const [microbiology] = response.data;
+       function loadMicrobiologyInfo(id:number) {
+            MicrobiologyService.getById(id)
+                .then(data => {
+                    const [microbiology] = data;
 
-                setIdPaciente(Number(microbiology.IdPaciente));
-                setIdProntuario(microbiology.IdProntuario);
+                    setIdPaciente(Number(microbiology.IdPaciente));
+                    setIdProntuario(microbiology.IdProntuario);
 
-                const dataColeta = formatDate(microbiology.DataColeta);
-                setDataColeta(dataColeta);
+                    const dataColeta = formatDate(microbiology.DataColeta);
+                    setDataColeta(dataColeta);
 
-                const dataResultado = formatDate(microbiology.DataResultado);
-                setDataResultado(dataResultado);
+                    const dataResultado = formatDate(microbiology.DataResultado);
+                    setDataResultado(dataResultado);
 
-                setSwabNasal(microbiology.SwabNasal);
-                if (microbiology.SwabNasalObservacoes)
-                    setSwabNasalObservacoes(microbiology.SwabNasalObservacoes);
-                setSwabRetal(microbiology.SwabRetal);
-                if (microbiology.SwabRetalObservacoes)
-                    setSwabRetalObservacoes(microbiology.SwabRetalObservacoes);
-                setSangue(microbiology.Sangue);
-                if (microbiology.SangueObservacoes)
-                    setSangueObservacoes(microbiology.SangueObservacoes);
-                setUrina(microbiology.Urina);
-                if (microbiology.UrinaObservacoes)
-                    setUrinaObservacoes(microbiology.UrinaObservacoes);
-                setSecrecaoTraqueal(microbiology.SecrecaoTraqueal);
-                if (microbiology.SecrecaoTraquealObservacoes)
-                    setSecrecaoTraquealObservacoes(microbiology.SecrecaoTraquealObservacoes);
-                setOutros(microbiology.Outros);
-                if (microbiology.OutrosObservacoes)
-                    setOutrosObservacoes(microbiology.OutrosObservacoes);
-                setPerfilSensibilidade(microbiology.PerfilSensibilidade);
+                    setSwabNasal(microbiology.SwabNasal);
+                    if (microbiology.SwabNasalObservacoes)
+                        setSwabNasalObservacoes(microbiology.SwabNasalObservacoes);
+                    setSwabRetal(microbiology.SwabRetal);
+                    if (microbiology.SwabRetalObservacoes)
+                        setSwabRetalObservacoes(microbiology.SwabRetalObservacoes);
+                    setSangue(microbiology.Sangue);
+                    if (microbiology.SangueObservacoes)
+                        setSangueObservacoes(microbiology.SangueObservacoes);
+                    setUrina(microbiology.Urina);
+                    if (microbiology.UrinaObservacoes)
+                        setUrinaObservacoes(microbiology.UrinaObservacoes);
+                    setSecrecaoTraqueal(microbiology.SecrecaoTraqueal);
+                    if (microbiology.SecrecaoTraquealObservacoes)
+                        setSecrecaoTraquealObservacoes(microbiology.SecrecaoTraquealObservacoes);
+                    setOutros(microbiology.Outros);
+                    if (microbiology.OutrosObservacoes)
+                        setOutrosObservacoes(microbiology.OutrosObservacoes);
+                    setPerfilSensibilidade(microbiology.PerfilSensibilidade);
 
-                setLoading(false);
-            } catch (error) {
-                setLoading(false);
-                HandleToast("error", "Erro!", "Falha ao carregar os dados.");
-            }
+                    setLoading(false);
+                })
+                .catch(error => {
+                    setLoading(false);
+                    HandleToast("error", "Erro!", "Falha ao carregar os dados.");
+                });
         }
         if (id) {
             setLoading(true);
             setButtonLabel("Atualizar");
             setTitle("Edição de microbiologia");
-            loadMicrobiologyInfo();
+            loadMicrobiologyInfo(id);
         }
     }, [id]);
 
     async function handleSubmit(event: FormEvent) {
         event.preventDefault();
-        const data = {
+        const data: IMicrobiology = {
             IdPaciente,
             IdProntuario,
             DataColeta,
@@ -216,21 +194,30 @@ const MicrobiologyForm: React.FC<Props> = ({ id }) => {
             await schema.validate(data, {abortEarly: false, });
 
             if (id) {
-                await api.put(`/microbiology/update/${id}`, data);
-                HandleToast("success", "Sucesso!", "Microbiologia atualizada com sucesso.");
+                MicrobiologyService.update(data, id).then(() => {
+                    HandleToast("success", "Sucesso!", "Microbiologia atualizada com sucesso.");
+                    setLoading(false);
+                }).catch(err => {
+                    const message = err.response.data.error;
+                    HandleToast("error", "Erro!", `${message}`)
+                    setLoading(false);
+                });
             } else {
-                await api.post("/microbiology", data);
-                HandleToast( "success", "Sucesso!","Microbiologia criada com sucesso.");
+                MicrobiologyService.create(data).then(() => {
+                    HandleToast("success", "Sucesso!", "Microbiologia criada com sucesso.");
+                    setLoading(false);
+                }).catch(err => {
+                    const message = err.response.data.error;
+                    HandleToast("error", "Erro!", `${message}`)
+                    setLoading(false);
+                });
             }
-            setLoading(false);
         } catch (err) {
             setLoading(false);
             if (err instanceof Yup.ValidationError) {
-                HandleToast("error", "Erro!","Verifique se todos os campos foram preenchidos corretamente!" );
-            } else {
-                const message = err.response.data.error;
-                HandleToast("error", "Erro!", `${message}`);
+                HandleToast("error", "Erro!", "Verifique se todos os campos foram preenchidos corretamente!");
             }
+            else return;
         }
     }
 
