@@ -8,23 +8,23 @@ class MedicinesController {
         const {
             EAN,
             PrincipioAtivo,
-            Registro,
+            CNPJ,
             Laboratorio,
+            Registro,
             Produto,
             Apresentacao,
-            ClasseTerapeutica,
-            CNPJ
+            ClasseTerapeutica
         } = request.body;
 
         const medicines = await knex("Medicamentos").insert({
             EAN,
             PrincipioAtivo,
-            Registro,
+            CNPJ,
             Laboratorio,
+            Registro,
             Produto,
             Apresentacao,
-            ClasseTerapeutica,
-            CNPJ
+            ClasseTerapeutica
         });
 
         return response.json(medicines);
