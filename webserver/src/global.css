@@ -3,7 +3,6 @@
     margin: 0;
     box-sizing: border-box;
     transition: .2s ease;
-    display: flexbox;
 }
 
 body {

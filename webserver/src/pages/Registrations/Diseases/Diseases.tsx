@@ -7,6 +7,7 @@ import { InputText } from 'primereact/inputtext';
 import { Dropdown } from 'primereact/dropdown';
 
 import Button from 'react-bootstrap/Button';
+import Collapse from 'react-bootstrap/Collapse';
 
 import { FiSearch } from 'react-icons/fi';
 import { AiOutlineClose } from 'react-icons/ai';
@@ -28,6 +29,7 @@ const Diseases = () => {
     const [messageTitle, setMessageTitle] = useState<string>('');
     const [messageContent, setMessageContent] = useState<string>('');
     const [datasource, setDatasource] = useState([]);
+    const [open, setOpen] = useState(false);
 
     function getDiseasesFunction(data?: any) {
         setLoading(true);
@@ -110,87 +112,93 @@ const Diseases = () => {
         setTimeout(() => { setToast(false) }, 4500);
     }
 
-    const header = (
-        <>
-            <h5 className="py-1">Tabela de doenças</h5>
-
-            <div className="p-inputgroup py-1">
-                <InputText
-                    value={searchInput}
-                    placeholder="Pesquisar por doença"
-                    className="mr-2"
-                    style={{ maxWidth: '20vw' }}
-                    onChange={(e) => setSearchInput((e.target as HTMLInputElement).value)}
-                    onKeyPress={
-                        (e) => {
-                            if (e.key === 'Enter') {
-                                handleSearch();
-                                e.preventDefault();
-                            }
-                        }
-                    }
-                />
-                <Dropdown
-                    value={optionState}
-                    optionLabel="name"
-                    placeholder="Selecione um filtro"
-                    className="mr-2"
-                    style={{ maxWidth: '14vw' }}
-                    options={[
-                        { name: 'Código', cod: 'C' },
-                        { name: 'Nome', cod: 'N' },
-                    ]}
-                    onChange={(e: { value: any }) => { setOptionState(e.value) }}
-                />
-                <Button
-                    variant="outline-danger"
-                    className="d-inline-flex justify-content-center align-items-center mr-2"
-                    onClick={() => {
-                        setSearchInput('');
-                        getDiseasesFunction();
-                        setMode('N');
-                        setOptionState(null)
-                    }}
-                >
-                    <AiOutlineClose size={18} />
-                </Button>
-                <Button 
-                    className="d-inline-flex justify-content-center align-items-center mr-2" 
-                    onClick={handleSearch}
-                >
-                    <FiSearch size={18} />
-                </Button>
-                <Button 
-                    className="d-inline-flex justify-content-center align-items-center" 
-                    variant="success" 
-                    onClick={diseasesService.updateDiseasesDB}
-                >
-                    Atualizar banco de dados
-                </Button>
-            </div>
-        </>
-    );
-
     return (
         <>
-            <DataTable
-                value={diseases}
-                style={{ margin: 48 }}
-                paginator={true}
-                rows={rows}
-                header={header}
-                totalRecords={totalRecords}
-                emptyMessage="Nenhum resultado encontrado"
-                className="p-datatable-responsive-demo"
-                resizableColumns={true}
-                loading={loading}
-                first={first}
-                onPage={onPage}
-                lazy={true}
-            >
-                <Column field="CodDoenca" header="Código" style={{ width: '8%', textAlign: 'center' }} />
-                <Column field="Nome" header="Nome" style={{ width: '20%', textAlign: 'center' }} />
-            </DataTable>
+            <div className="row m-5 px-5">
+                <Button
+                    className="mb-2"
+                    variant="outline-secondary"
+                    onClick={() => setOpen(!open)}
+                    aria-controls="example-collapse-text"
+                    aria-expanded={open}
+                    style={{ borderRadius: '0' }}
+                >
+                    Buscar paciente específico
+                </Button>
+                <Collapse className="mb-2" in={open} timeout={200}>
+                    <div className="ml-2">
+                        <div className="p-inputgroup">
+                            <span className="p-float-label">
+                                <InputText
+                                    id="float-input"
+                                    type="search"
+                                    value={searchInput}
+                                    onChange={(e) => { setSearchInput((e.target as HTMLInputElement).value) }}
+                                    onKeyPress={(ev) => { if (ev.key === 'Enter') { handleSearch(); ev.preventDefault(); } }}
+                                    style={{ minWidth: '4em', borderRadius: '0' }}
+                                />
+                                {
+                                    optionState === null
+                                    ? <label htmlFor="float-input">Buscar</label>
+                                    : <label htmlFor="float-input">Buscar por {optionState.name}</label>
+                                }
+                            </span>
+                            {
+                                searchInput === ''
+                                ? <></>
+                                : <>
+                                    <Dropdown
+                                        className="ml-2"
+                                        value={optionState}
+                                        options={[
+                                            { name: 'Código', cod: 'C' },
+                                            { name: 'Nome', cod: 'N' },
+                                        ]}
+                                        onChange={(e: { value: any }) => setOptionState(e.value)}
+                                        placeholder="Selecione um filtro"
+                                        optionLabel="name"
+                                        style={{ width: '12em' }}
+                                    />
+                                    <Button
+                                        tabIndex={2}
+                                        variant="outline-danger"
+                                        className="d-inline-flex justify-content-center align-items-center ml-2"
+                                        style={{ borderRadius: '0' }}
+                                        onClick={() => { setSearchInput(''); getDiseasesFunction(); setMode('N'); setOptionState(null) }}
+                                    >
+                                        <AiOutlineClose size={18} />
+                                    </Button>
+                                    <Button 
+                                        onClick={handleSearch} 
+                                        style={{ borderRadius: '0' }}
+                                        className="d-inline-flex justify-content-center align-items-center ml-2"
+                                    >
+                                        <FiSearch size={18} />
+                                    </Button>
+                                </>
+                            }
+                        </div>
+                    </div>
+                </Collapse>
+
+                <DataTable
+                    value={diseases}
+                    paginator={true}
+                    rows={rows}
+                    header={<h5 className="py-1">Tabela de doenças</h5>}
+                    totalRecords={totalRecords}
+                    emptyMessage="Nenhum resultado encontrado"
+                    className="p-datatable-responsive-demo"
+                    resizableColumns={true}
+                    loading={loading}
+                    first={first}
+                    onPage={onPage}
+                    lazy={true}
+                >
+                    <Column field="CodDoenca" header="Código" style={{ width: '8%', textAlign: 'center' }} />
+                    <Column field="Nome" header="Nome" style={{ width: '20%', textAlign: 'center' }} />
+                </DataTable>
+            </div>
         </>
     )
 }
