@@ -1,12 +1,13 @@
 import React, { useState, useEffect, FormEvent } from "react";
 import * as Yup from "yup";
 
-import { InputText } from "primereact/inputtext";
+import { InputTextarea } from 'primereact/inputtextarea';
 import { InputNumber } from "primereact/inputnumber";
 import { Calendar } from "primereact/calendar";
+import { Dropdown } from "primereact/dropdown";
+import { Dropdown as DropdownReact } from "react-bootstrap";
 import Loading from "../../../components/Loading";
 import ToastComponent from "../../../components/Toast";
-import Select from "./Select";
 
 import MicrobiologyService from "../MicrobiologyService";
 import {IMicrobiology} from "../MicrobiologyModel";
@@ -41,17 +42,17 @@ const MicrobiologyForm: React.FC<Props> = ({ id }) => {
     const [PerfilSensibilidade, setPerfilSensibilidade] = useState<string>("");
     const [loading, setLoading] = useState<boolean>(false);
 
+    const [viewNasal, setViewNasal] = useState<boolean>(false);
+    const [viewRetal, setViewRetal] = useState<boolean>(false);
+    const [viewSangue, setViewSangue] = useState<boolean>(false);
+    const [viewUrina, setViewUrina] = useState<boolean>(false);
+    const [viewSec, setViewSec] = useState<boolean>(false);
+    const [viewOutros, setViewOutros] = useState<boolean>(false);
+
+
     const pt_br = {
         firstDayOfWeek: 1,
-        dayNames: [
-            "domingo",
-            "Segunda",
-            "Terça",
-            "Quarta",
-            "Quinta",
-            "Sexta",
-            "Sábado",
-        ],
+        dayNames: [ "domingo","Segunda","Terça","Quarta","Quinta","Sexta","Sábado",],
         dayNamesShort: ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"],
         dayNamesMin: ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"],
         // dayNamesMin: ["D", "S", "T", "Q", "Q", "S", "S"],
@@ -86,6 +87,11 @@ const MicrobiologyForm: React.FC<Props> = ({ id }) => {
         today: "Hoje",
         clear: "Limpar",
     };
+
+    const options = [
+        { label: "Sim", value: "S" },
+        { label: "Não", value: "N" },
+    ];
 
     useEffect(() => {
         // Formatação de dados
@@ -181,17 +187,17 @@ const MicrobiologyForm: React.FC<Props> = ({ id }) => {
                 DataColeta: Yup.date().required(),
                 DataResultado: Yup.date().required(),
                 SwabNasal: Yup.string().nullable().oneOf([null, "S", "N"]).required(),
-                SwabNasalObservacoes: Yup.string(),
+                SwabNasalObservacoes: Yup.string().max(250),
                 SwabRetal: Yup.string().nullable().oneOf([null, "S", "N"]).required(),
-                SwabRetalObservacoes: Yup.string(),
+                SwabRetalObservacoes: Yup.string().max(250),
                 Sangue: Yup.string().nullable().oneOf([null, "S", "N"]).required(),
-                SangueObservacoes: Yup.string(),
+                SangueObservacoes: Yup.string().max(250),
                 Urina: Yup.string().nullable().oneOf([null, "S", "N"]).required(),
-                UrinaObservacoes: Yup.string(),
+                UrinaObservacoes: Yup.string().max(250),
                 SecrecaoTraqueal: Yup.string().nullable().oneOf([null, "S", "N"]).required(),
-                SecrecaoTraquealObservacoes: Yup.string(),
+                SecrecaoTraquealObservacoes: Yup.string().max(250),
                 Outros: Yup.string().nullable().oneOf([null, "S", "N"]).required(),
-                OutrosObservacoes: Yup.string(),
+                OutrosObservacoes: Yup.string().max(250),
                 PerfilSensibilidade: Yup.string().required(),
             });
 
@@ -235,8 +241,8 @@ const MicrobiologyForm: React.FC<Props> = ({ id }) => {
         setMessageTitle(messageTitle);
         setMessageContent(messageContent);
         setToast(true);
-        setTimeout(() => setToast(false), 4500) }
-
+        setTimeout(() => setToast(false), 4500)
+    }
     return (
         <>
             <div>
@@ -329,79 +335,283 @@ const MicrobiologyForm: React.FC<Props> = ({ id }) => {
                                     </div>
                                 </div>
 
-                                <Select
-                                    label="Swab Nasal"
-                                    htmlFor="SwabNasal"
-                                    name="SwabNasalObservacoes"
-                                    value={SwabNasal}
-                                    inputValue={SwabNasalObservacoes}
-                                    inputOnChange={(e: any) =>setSwabNasalObservacoes( (e.target as HTMLInputElement).value )}
-                                    onChange={(e: { value: string }) => setSwabNasal(e.value)}
-                                />
-                                <Select
-                                    label="Swab Retal"
-                                    htmlFor="SwabRetal"
-                                    name="SwabRetalObservacoes"
-                                    value={SwabRetal}
-                                    inputValue={SwabRetalObservacoes}
-                                    inputOnChange={(e: any) =>setSwabRetalObservacoes( (e.target as HTMLInputElement).value) }
-                                    onChange={(e: { value: string }) => setSwabRetal(e.value) }
-                                />
-                                <Select
-                                    label="Sangue"
-                                    htmlFor="Sangue"
-                                    name="SangueObservacoes"
-                                    value={Sangue}
-                                    inputValue={SangueObservacoes}
-                                    inputOnChange={(e: any) =>setSangueObservacoes((e.target as HTMLInputElement).value )}
-                                    onChange={(e: { value: string }) =>setSangue(e.value) }
-                                />
-                                <Select
-                                    label="Urina"
-                                    htmlFor="Urina"
-                                    name="UrinaObservacoes"
-                                    value={Urina}
-                                    inputValue={UrinaObservacoes}
-                                    inputOnChange={(e: any) => setUrinaObservacoes( (e.target as HTMLInputElement).value ) }
-                                    onChange={(e: { value: string }) =>setUrina(e.value)}
-                                />
-                                <Select
-                                    label="Secreção Traqueal"
-                                    htmlFor="SecrecaoTraqueal"
-                                    name="SecrecaoTraquealObservacoes"
-                                    value={SecrecaoTraqueal}
-                                    inputValue={SecrecaoTraquealObservacoes}
-                                    inputOnChange={(e: any) => setSecrecaoTraquealObservacoes((e.target as HTMLInputElement).value )}
-                                    onChange={(e: { value: string }) =>setSecrecaoTraqueal(e.value)}
-                                />
-                                <Select
-                                    label="Outros"
-                                    htmlFor="Outros"
-                                    name="OutrosObservacoes"
-                                    value={Outros}
-                                    inputValue={OutrosObservacoes}
-                                    inputOnChange={(e: any) => setOutrosObservacoes((e.target as HTMLInputElement).value )}
-                                    onChange={(e: { value: string }) =>setOutros(e.value)}
-                                />
+                              <div className="form-row mt-4">
+                                        <div className="col mr-2">
+                                            <DropdownReact />
+                                           <label>Swab Nasal</label>
+                                            <br></br>
+                                            <Dropdown
+                                                options={options}
+                                                placeholder="Selecione uma opção"
+                                                value={SwabNasal}
+                                                onChange={(e: { value: string }) => {
+                                                    if (e.value === "S") setViewNasal(true);
+                                                    else {
+                                                        if (SwabNasalObservacoes) setSwabNasalObservacoes("");
+                                                        setViewNasal(false)
+                                                    };
+                                                    setSwabNasal(e.value);
+                                               }}
+                                              style={{ width: "100%" }}
+                                            required
+                                            />
+                                            <DropdownReact />
+                                    </div>
+                                    
+                                    <div className="col">
+                                            <DropdownReact />
+                                           <label>Swab Retal</label>
+                                            <br></br>
+                                            <Dropdown
+                                                options={options}
+                                                placeholder="Selecione uma opção"
+                                                value={SwabRetal}
+                                                onChange={(e: { value: string }) => {
+                                                    if (e.value === "S") setViewRetal(true);
+                                                    else {
+                                                        if (SwabRetalObservacoes) setSwabRetalObservacoes("");
+                                                        setViewRetal(false);
+                                                    }
+                                                    setSwabRetal(e.value);
+                                                }}
+                                                style={{ width: "100%" }}
+                                            required
+                                            />
+                                            <DropdownReact />
+                                    </div>
+                                </div>
 
-                                <label
-                                    htmlFor="PerfilSensibilidade"
-                                    className="mt-4"
-                                >
-                                    Perfil Sensibilidade
+                                <div className="form-row mt-4">
+                                    <div className="col mr-2">
+                                        <DropdownReact />
+                                        <label>Sangue</label>
+                                        <br></br>
+                                        <Dropdown
+                                            options={options}
+                                            placeholder="Selecione uma opção"
+                                            value={Sangue}
+                                            onChange={(e: { value: string }) => {
+                                                if (e.value === "S") setViewSangue(true);
+                                                else {
+                                                    if (SangueObservacoes) setSangueObservacoes("");
+                                                    setViewSangue(false)
+                                                };
+                                                setSangue(e.value);
+                                            }}
+                                            style={{ width: "100%" }}
+                                            required
+                                        />
+                                        <DropdownReact />
+                                    </div>
+
+                                    <div className="col">
+                                        <DropdownReact />
+                                        <label>Urina</label>
+                                        <br></br>
+                                        <Dropdown
+                                            options={options}
+                                            placeholder="Selecione uma opção"
+                                            value={Urina}
+                                            onChange={(e: { value: string }) => {
+                                                if (e.value === "S") setViewUrina(true);
+                                                else {
+                                                    if (UrinaObservacoes) setUrinaObservacoes("");
+                                                    setViewUrina(false)
+                                                };
+                                                setUrina(e.value);
+                                            }}
+                                            style={{ width: "100%" }}
+                                            required
+                                        />
+                                        <DropdownReact />
+                                    </div>
+                                </div>
+
+                                
+                                <div className="form-row mt-4">
+                                    <div className="col mr-2">
+                                        <DropdownReact />
+                                        <label>Secreção Traqueal</label>
+                                        <br></br>
+                                        <Dropdown
+                                            options={options}
+                                            placeholder="Selecione uma opção"
+                                            value={SecrecaoTraqueal}
+                                            onChange={(e: { value: string }) => {
+                                                if (e.value === "S") setViewSec(true);
+                                                else {
+                                                    if (SecrecaoTraquealObservacoes) setSecrecaoTraquealObservacoes("");
+                                                    setViewSec(false);
+                                                }
+                                                setSecrecaoTraqueal(e.value);
+                                            }}
+                                            style={{ width: "100%" }}
+                                            required
+                                        />
+                                        <DropdownReact />
+                                    </div>
+
+                                    <div className="col">
+                                        <DropdownReact />
+                                        <label>Outros</label>
+                                        <br></br>
+                                        <Dropdown
+                                            options={options}
+                                            placeholder="Selecione uma opção"
+                                            value={Outros}
+                                            onChange={(e: { value: string }) => {
+                                                if (e.value === "S") {
+                                                    setViewOutros(true);
+                                                }
+                                                else {
+                                                    if (OutrosObservacoes) setOutrosObservacoes("");
+                                                    setViewOutros(false)
+                                                };
+                                                setOutros(e.value);
+                                            }}
+                                            style={{ width: "100%" }}
+                                            required
+                                        />
+                                        <DropdownReact />
+                                    </div>
+                                </div>
+
+                                {viewNasal && (
+                                    < div className="mt-4">
+                                        <label htmlFor="SwabNasal">Observações da Swab Nasal</label>
+                                        <InputTextarea
+                                                   maxLength={250}
+                                                   autoResize
+                                                    keyfilter="alpha"
+                                                    style={{ width: "100%" }}
+                                                    id="SwabNasal"
+                                                    name="SwabNasal"
+                                                    placeholder="Digite a observação..."
+                                                    defaultValue={SwabNasalObservacoes}
+                                                    onChange={(e: any) => setSwabNasalObservacoes((e.target as HTMLInputElement).value)}
+                                                    autoFocus
+                                                    required
+                                                />
+                                </div>
+                                )}
+
+                                {viewRetal && (
+                                    < div className="mt-4">
+                                        <label htmlFor="SwabRetal">Observações da Swab Retal</label>
+                                        <InputTextarea
+                                            autoResize
+                                            maxLength={250}
+                                            keyfilter="alpha"
+                                            style={{ width: "100%" }}
+                                            id="SwabRetal"
+                                            name="SwabRetal"
+                                            placeholder="Digite a observação..."
+                                            defaultValue={SwabRetalObservacoes}
+                                            onChange={(e: any) => setSwabRetalObservacoes((e.target as HTMLInputElement).value)}
+                                            autoFocus
+                                            required
+                                        />
+                                    </div>
+                                )}
+
+                                {viewSangue && (
+                                    < div className="mt-4">
+                                        <label htmlFor="Sangue">Observações do Sangue</label>
+                                        <InputTextarea
+                                            maxLength={250}
+                                            autoResize
+                                            keyfilter="alpha"
+                                            style={{ width: "100%" }}
+                                            id="Sangue"
+                                            name="Sangue"
+                                            placeholder="Digite a observação..."
+                                            defaultValue={SangueObservacoes}
+                                            onChange={(e: any) => setSangueObservacoes((e.target as HTMLInputElement).value)}
+                                            autoFocus
+                                            required
+                                        />
+                                    </div>
+                                )}
+
+                                {viewUrina && (
+                                    < div className="mt-4">
+                                        <label htmlFor="Urina">Observações da Urina</label>
+                                        <InputTextarea
+                                            maxLength={250}
+                                            autoResize
+                                            keyfilter="alpha"
+                                            style={{ width: "100%" }}
+                                            id="Urina"
+                                            name="Urina"
+                                            placeholder="Digite a observação..."
+                                            defaultValue={UrinaObservacoes}
+                                            onChange={(e: any) => setUrinaObservacoes((e.target as HTMLInputElement).value)}
+                                            autoFocus
+                                            required
+                                        />
+                                    </div>
+                                )}
+                                {viewSec && (
+                                    < div className="mt-4">
+                                        <label htmlFor="Secrecao">Observações da Secreção Traqueal</label>
+                                        <InputTextarea
+                                            maxLength={250}
+                                            autoResize
+                                            keyfilter="alpha"
+                                            style={{ width: "100%" }}
+                                            id="Secrecao"
+                                            name="Secrecao"
+                                            placeholder="Digite a observação..."
+                                            defaultValue={SecrecaoTraquealObservacoes}
+                                            onChange={(e: any) => {
+                                                setSecrecaoTraquealObservacoes((e.target as HTMLInputElement).value);
+                                            }}
+                                            autoFocus
+                                            required
+                                        />
+                                    </div>
+                                )}
+
+                                {viewOutros && (
+                                    < div className="mt-4">
+                                        <label htmlFor="Outros">Observações</label>
+                                        <InputTextarea
+                                            maxLength={250}
+                                            autoResize
+                                            keyfilter="alpha"
+                                            style={{ width: "100%" }}
+                                            id="Outros"
+                                            name="Outros"
+                                            placeholder="Digite a observação..."
+                                            defaultValue={OutrosObservacoes}
+                                            onChange={(e: any) => setOutrosObservacoes((e.target as HTMLInputElement).value)}
+                                            autoFocus
+                                            required
+                                        />
+                                    </div>
+                                )}
+
+                                <div className="mt-4">
+                                    <label
+                                        htmlFor="PerfilSensibilidade"
+                                    >
+                                        Perfil Sensibilidade
                                 </label>
-                                <InputText
-                                    id="PerfilSensibilidade"
-                                    name="PerfilSensibilidade"
-                                    defaultValue={PerfilSensibilidade}
-                                    onChange={(e) => setPerfilSensibilidade((e.target as HTMLInputElement).value ) }
-                                    keyfilter="alpha"
-                                    style={{ width: "100%" }}
-                                    placeholder="Digite o perfil de sensibilidade"
-                                    autoFocus
-                                    required
-                                />
-                            </div>
+                                    <InputTextarea
+                                        maxLength={250}
+                                        autoResize
+                                        id="PerfilSensibilidade"
+                                        name="PerfilSensibilidade"
+                                        defaultValue={PerfilSensibilidade}
+                                        onChange={(e) => setPerfilSensibilidade((e.target as HTMLInputElement).value)}
+                                        keyfilter="alpha"
+                                        style={{ width: "100%" }}
+                                        placeholder="Digite o perfil de sensibilidade"
+                                        autoFocus
+                                        required
+                                    />
+                                </div>
+                            </div>       
                             <button type="submit" className="btn btn-info btn-primary mt-3" >
                                 {buttonLabel}
                             </button>
