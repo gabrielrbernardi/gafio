@@ -62,14 +62,13 @@ const MedicinesCreate = () => {
             apresentacao,
             classeTerapeutica,
             CNPJ
-            ).then(() => history.push('/registrations/medicines'));
-
-            HandleToast("success", "Sucesso!", "Medicamento criado com sucesso!");
+            ).then(() => {
+                HandleToast("success", "Sucesso!", "Medicamento criado com sucesso!");
+                history.push('/registrations/medicines')
+            });
 
         } catch (err) {
-            if (err instanceof Yup.ValidationError) {
-                HandleToast("error", "Erro!", "Verifique se todos os campos foram preenchidos corretamente!");
-            }
+            if (err instanceof Yup.ValidationError) HandleToast("error", "Erro!", "Verifique se todos os campos foram preenchidos corretamente!");
             else return;
         }
     }
@@ -198,17 +197,19 @@ const MedicinesCreate = () => {
                             required={true}
                         />
                     </div>
-                    <button type="submit" className="btn btn-info btn-primary mt-3">Cadastrar</button>
+                    <button type="submit" className="btn btn-info btn-primary mt-2">Cadastrar</button>
                 </form>
             </div>
         </div>
-        { toast && (
-            <ToastComponent
-                messageType={getMessageType}
-                messageTitle={getMessageTitle}
-                messageContent={getMessageContent}
-            />
-        ) }
+        { 
+            toast && (
+                <ToastComponent
+                    messageType={getMessageType}
+                    messageTitle={getMessageTitle}
+                    messageContent={getMessageContent}
+                />
+            )
+        }
         </>
     );
 }

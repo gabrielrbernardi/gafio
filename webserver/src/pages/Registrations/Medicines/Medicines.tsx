@@ -120,10 +120,11 @@ const Medicines = () => {
                     <Button 
                         variant="outline-dark" 
                         className="mr-2 mb-2" 
-                        style={{ borderRadius: '0' }}>
-                            Cadastrar Medicamento
-                        </Button>
-                    </Link>
+                        style={{ borderRadius: '0' }}
+                    >
+                        Cadastrar Medicamento
+                    </Button>
+                </Link>
                 <Button
                     className="mr-2 mb-2"
                     variant="outline-secondary"

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { DiseasesService } from './DiseasesService';
 
 import { DataTable } from 'primereact/datatable';
@@ -115,6 +116,15 @@ const Diseases = () => {
     return (
         <>
             <div className="row m-5 px-5">
+                <Link to={location => ({ ...location, pathname: '/registrations/diseases/create' })}>
+                    <Button 
+                        variant="outline-dark" 
+                        className="mr-2 mb-2" 
+                        style={{ borderRadius: '0' }}
+                    >
+                        Cadastrar Doença
+                    </Button>
+                </Link>
                 <Button
                     className="mr-2 mb-2"
                     variant="outline-secondary"

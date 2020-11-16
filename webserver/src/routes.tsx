@@ -25,6 +25,8 @@ import Patient from './pages/Registrations/Patient/Patient';
 import PatientCreate from './pages/Registrations/Patient/Create/Create';
 
 import Diseases from './pages/Registrations/Diseases/Diseases';
+import CreateDisease from './pages/Registrations/Diseases/create/CreateDisease';
+
 import Medicines from './pages/Registrations/Medicines/Medicines';
 
 import CreateMedicine from './pages/Registrations/Medicines/create/CreateMedicine';
@@ -40,7 +42,6 @@ import AssessmentCreate from './pages/MedicalRecords/Assessment/Create/Create'
 
 import Microbiology from './pages/Microbiology';
 import MicrobiologyForm from "./pages/Microbiology/MicrobiologyForm";
-
 
 const Routes = () => {
     return (
@@ -131,6 +132,17 @@ const Routes = () => {
                         <div>
                             <Header />
                             <Diseases />
+                            <Footer />
+                        </div>
+                    )}
+                    exact
+                />
+                <Route
+                    path="/registrations/diseases/create"
+                    render={() => (
+                        <div>
+                            <Header />
+                            <CreateDisease />
                             <Footer />
                         </div>
                     )}
