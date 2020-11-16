@@ -116,19 +116,19 @@ const Diseases = () => {
         <>
             <div className="row m-5 px-5">
                 <Button
-                    className="mb-2"
+                    className="mr-2 mb-2"
                     variant="outline-secondary"
                     onClick={() => setOpen(!open)}
                     aria-controls="example-collapse-text"
                     aria-expanded={open}
                     style={{ borderRadius: '0' }}
                 >
-                    Buscar paciente específico
+                    Buscar doença específica
                 </Button>
                 <Collapse className="mb-2" in={open} timeout={200}>
-                    <div className="ml-2">
+                    <div>
                         <div className="p-inputgroup">
-                            <span className="p-float-label">
+                            <span className="p-float-label mr-2">
                                 <InputText
                                     id="float-input"
                                     type="search"
@@ -139,43 +139,43 @@ const Diseases = () => {
                                 />
                                 {
                                     optionState === null
-                                    ? <label htmlFor="float-input">Buscar</label>
-                                    : <label htmlFor="float-input">Buscar por {optionState.name}</label>
+                                        ? <label htmlFor="float-input">Buscar</label>
+                                        : <label htmlFor="float-input">Buscar por {optionState.name}</label>
                                 }
                             </span>
                             {
                                 searchInput === ''
-                                ? <></>
-                                : <>
-                                    <Dropdown
-                                        className="ml-2"
-                                        value={optionState}
-                                        options={[
-                                            { name: 'Código', cod: 'C' },
-                                            { name: 'Nome', cod: 'N' },
-                                        ]}
-                                        onChange={(e: { value: any }) => setOptionState(e.value)}
-                                        placeholder="Selecione um filtro"
-                                        optionLabel="name"
-                                        style={{ width: '12em' }}
-                                    />
-                                    <Button
-                                        tabIndex={2}
-                                        variant="outline-danger"
-                                        className="d-inline-flex justify-content-center align-items-center ml-2"
-                                        style={{ borderRadius: '0' }}
-                                        onClick={() => { setSearchInput(''); getDiseasesFunction(); setMode('N'); setOptionState(null) }}
-                                    >
-                                        <AiOutlineClose size={18} />
-                                    </Button>
-                                    <Button 
-                                        onClick={handleSearch} 
-                                        style={{ borderRadius: '0' }}
-                                        className="d-inline-flex justify-content-center align-items-center ml-2"
-                                    >
-                                        <FiSearch size={18} />
-                                    </Button>
-                                </>
+                                    ? <></>
+                                    : <>
+                                        <Dropdown
+                                            className="mr-2"
+                                            value={optionState}
+                                            options={[
+                                                { name: 'Código', cod: 'C' },
+                                                { name: 'Nome', cod: 'N' },
+                                            ]}
+                                            onChange={(e: { value: any }) => setOptionState(e.value)}
+                                            placeholder="Selecione um filtro"
+                                            optionLabel="name"
+                                            style={{ width: '12em' }}
+                                        />
+                                        <Button
+                                            tabIndex={2}
+                                            variant="outline-danger"
+                                            className="d-inline-flex justify-content-center align-items-center mr-2"
+                                            style={{ borderRadius: '0' }}
+                                            onClick={() => { setSearchInput(''); getDiseasesFunction(); setMode('N'); setOptionState(null) }}
+                                        >
+                                            <AiOutlineClose size={18} />
+                                        </Button>
+                                        <Button
+                                            onClick={handleSearch}
+                                            style={{ borderRadius: '0' }}
+                                            className="d-inline-flex justify-content-center align-items-center"
+                                        >
+                                            <FiSearch size={18} />
+                                        </Button>
+                                    </>
                             }
                         </div>
                     </div>

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { MedicinesService } from './MedicinesService';
 
 import { DataTable } from 'primereact/datatable';
@@ -7,6 +8,7 @@ import { InputText } from 'primereact/inputtext';
 import { Dropdown } from 'primereact/dropdown';
 
 import Button from 'react-bootstrap/Button';
+import Collapse from 'react-bootstrap/Collapse';
 
 import { FiSearch } from 'react-icons/fi';
 import { AiOutlineClose } from 'react-icons/ai';
@@ -28,6 +30,7 @@ const Medicines = () => {
     const [messageTitle, setMessageTitle] = useState<string>('');
     const [messageContent, setMessageContent] = useState<string>('');
     const [datasource, setDatasource] = useState([]);
+    const [open, setOpen] = useState(false);
 
     function getMedicinesFunction(data?: any) {
         setLoading(true);
@@ -110,86 +113,108 @@ const Medicines = () => {
         setTimeout(() => { setToast(false) }, 4500);
     }
 
-    const header = (
-        <>
-            <h5 className="py-1">Tabela de medicamentos</h5>
-
-            <div className="p-inputgroup py-1">
-                <InputText
-                    value={searchInput}
-                    placeholder="Pesquisar por medicamento"
-                    className="mr-2"
-                    style={{ maxWidth: '20vw' }}
-                    onChange={(e) => setSearchInput((e.target as HTMLInputElement).value)}
-                    onKeyPress={
-                        (e) => {
-                            if (e.key === 'Enter') {
-                                handleSearch();
-                                e.preventDefault();
-                            }
-                        }
-                    }
-                />
-                <Dropdown
-                    value={optionState}
-                    optionLabel="name"
-                    placeholder="Selecione um filtro"
-                    className="mr-2"
-                    style={{ maxWidth: '14vw' }}
-                    options={[
-                        { name: 'EAN', cod: 'E' },
-                        { name: 'Princípio', cod: 'P' },
-                        { name: 'Classe', cod: 'C' },
-                    ]}
-                />
-                <Button
-                    className="d-inline-flex justify-content-center align-items-center mr-2"
-                    variant="outline-danger"
-                    onClick={() => {
-                        setSearchInput('');
-                        getMedicinesFunction();
-                        setMode('N');
-                        setOptionState(null)
-                    }}
-                >
-                    <AiOutlineClose size={18} />
-                </Button>
-                <Button 
-                    className="d-inline-flex justify-content-center align-items-center mr-2" 
-                    onClick={handleSearch}
-                >
-                    <FiSearch size={18} />
-                </Button>
-            </div>
-        </>
-    );
-
     return (
         <>
-            <DataTable
-                value={medicines}
-                style={{ margin: 48 }}
-                paginator={true}
-                rows={rows}
-                header={header}
-                totalRecords={totalRecords}
-                emptyMessage="Nenhum resultado encontrado"
-                className="p-datatable-responsive-demo"
-                resizableColumns={true}
-                loading={loading}
-                first={first}
-                onPage={onPage}
-                lazy={true}
-            >
-                <Column field="EAN" header="Código" style={{ width: "12.5%", textAlign: "center" }} />
-                <Column field="PrincipioAtivo" header="Principio Ativo" style={{ width: "12.5%", textAlign: "center" }} />
-                <Column field="CNPJ" header="CNPJ" style={{ width: "12.5%", textAlign: "center" }} />
-                <Column field="Laboratorio" header="Laboratório" style={{ width: "12.5%", textAlign: "center" }} />
-                <Column field="Registro" header="Registro" style={{ width: "12.5%", textAlign: "center" }} />
-                <Column field="Produto" header="Produto" style={{ width: "12.5%", textAlign: "center" }} />
-                <Column field="Apresentacao" header="Apresentação" style={{ width: "12.5%", textAlign: "center" }} />
-                <Column field="ClasseTerapeutica" header="Classe Terapêutica" style={{ width: "12.5%", textAlign: "center" }} />
-            </DataTable>
+            <div className="row m-5 px-5">
+                <Link to={location => ({ ...location, pathname: '/registrations/medicines/create' })}>
+                    <Button 
+                        variant="outline-dark" 
+                        className="mr-2 mb-2" 
+                        style={{ borderRadius: '0' }}>
+                            Cadastrar Medicamento
+                        </Button>
+                    </Link>
+                <Button
+                    className="mr-2 mb-2"
+                    variant="outline-secondary"
+                    onClick={() => setOpen(!open)}
+                    aria-controls="example-collapse-text"
+                    aria-expanded={open}
+                    style={{ borderRadius: '0' }}
+                >
+                    Buscar doença específica
+                </Button>
+                <Collapse className="mb-2" in={open} timeout={200}>
+                    <div>
+                        <div className="p-inputgroup">
+                            <span className="p-float-label mr-2">
+                                <InputText
+                                    id="float-input"
+                                    type="search"
+                                    value={searchInput}
+                                    onChange={(e) => { setSearchInput((e.target as HTMLInputElement).value) }}
+                                    onKeyPress={(ev) => { if (ev.key === 'Enter') { handleSearch(); ev.preventDefault(); } }}
+                                    style={{ minWidth: '4em', borderRadius: '0' }}
+                                />
+                                {
+                                    optionState === null
+                                        ? <label htmlFor="float-input">Buscar</label>
+                                        : <label htmlFor="float-input">Buscar por {optionState.name}</label>
+                                }
+                            </span>
+                            {
+                                searchInput === ''
+                                    ? <></>
+                                    : <>
+                                        <Dropdown
+                                            className="mr-2"
+                                            value={optionState}
+                                            options={[
+                                                { name: 'EAN', cod: 'E' },
+                                                { name: 'Princípio', cod: 'P' },
+                                                { name: 'Classe', cod: 'C' },
+                                            ]}
+                                            onChange={(e: { value: any }) => setOptionState(e.value)}
+                                            placeholder="Selecione um filtro"
+                                            optionLabel="name"
+                                            style={{ width: '12em' }}
+                                        />
+                                        <Button
+                                            tabIndex={2}
+                                            variant="outline-danger"
+                                            className="d-inline-flex justify-content-center align-items-center mr-2"
+                                            style={{ borderRadius: '0' }}
+                                            onClick={() => { setSearchInput(''); getMedicinesFunction(); setMode('N'); setOptionState(null) }}
+                                        >
+                                            <AiOutlineClose size={18} />
+                                        </Button>
+                                        <Button
+                                            onClick={handleSearch}
+                                            style={{ borderRadius: '0' }}
+                                            className="d-inline-flex justify-content-center align-items-center"
+                                        >
+                                            <FiSearch size={18} />
+                                        </Button>
+                                    </>
+                            }
+                        </div>
+                    </div>
+                </Collapse>
+
+                <DataTable
+                    value={medicines}
+                    paginator={true}
+                    rows={rows}
+                    header={<h5 className="py-1">Tabela de medicamentos</h5>}
+                    totalRecords={totalRecords}
+                    emptyMessage="Nenhum resultado encontrado"
+                    className="p-datatable-responsive-demo"
+                    resizableColumns={true}
+                    loading={loading}
+                    first={first}
+                    onPage={onPage}
+                    lazy={true}
+                >
+                    <Column field="EAN" header="Código" style={{ width: "12.5%", textAlign: "center" }} />
+                    <Column field="PrincipioAtivo" header="Principio Ativo" style={{ width: "12.5%", textAlign: "center" }} />
+                    <Column field="CNPJ" header="CNPJ" style={{ width: "12.5%", textAlign: "center" }} />
+                    <Column field="Laboratorio" header="Laboratório" style={{ width: "12.5%", textAlign: "center" }} />
+                    <Column field="Registro" header="Registro" style={{ width: "12.5%", textAlign: "center" }} />
+                    <Column field="Produto" header="Produto" style={{ width: "12.5%", textAlign: "center" }} />
+                    <Column field="Apresentacao" header="Apresentação" style={{ width: "12.5%", textAlign: "center" }} />
+                    <Column field="ClasseTerapeutica" header="Classe Terapêutica" style={{ width: "12.5%", textAlign: "center" }} />
+                </DataTable>
+            </div>
         </>
     )
 }
