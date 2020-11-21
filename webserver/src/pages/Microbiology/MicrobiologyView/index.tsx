@@ -140,7 +140,6 @@ const MicrobiologyView: React.FC<Props> = ({ view, id, setView }) => {
                         <section>
                                 <h4>Observações sobre a urina</h4>
                                 <p>{UrinaObservacoes} </p>
-
                         </section>
                     )}
 

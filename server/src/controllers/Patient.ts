@@ -18,9 +18,26 @@ class PatientController {
                 var parseDataNascimento0 = DataNascimento.substring(0, 10);
                 parseDataNascimento0 = parseDataNascimento0.split("-");
                 const newDataNascimento = parseDataNascimento0[2] + '/' + parseDataNascimento0[1] + '/' + parseDataNascimento0[0]
+                //Formatação de nome
+                const prepositions = {
+                "DA": "da",
+                "DAS": "das",
+                "DE": "de",
+                "DI": "di",
+                "DO": "do",
+                "DOS": "dos",
+                "E": "e"
+                }   
+                const formattedName = NomePaciente.split(" ").reduce((formattedName, current) => {
+                if (prepositions[current])
+                    return formattedName += prepositions[current];
+                else 
+                return formattedName += current[0];
+                }, "")
+
                 await knex("Paciente").insert({
                     NroPaciente,
-                    NomePaciente,
+                    NomePaciente: formattedName,
                     DataNascimento: newDataNascimento,
                     Genero
                 }).then(patientNumber => {
@@ -160,8 +177,25 @@ class PatientController {
         parseDataNascimento = parseDataNascimento[2] + '/' + parseDataNascimento[1] + '/' + parseDataNascimento[0]
 
         if (NomePaciente && DataNascimento && Genero) {
+            //Formatação de nome
+            const prepositions = {
+            "DA": "da",
+            "DAS": "das",
+            "DE": "de",
+            "DI": "di",
+            "DO": "do",
+            "DOS": "dos",
+            "E": "e"
+            }   
+            const formattedName = NomePaciente.split(" ").reduce((formattedName, current) => {
+            if (prepositions[current])
+                return formattedName += prepositions[current];
+            else 
+            return formattedName += current[0];
+            }, "")
+            
             await knex("Paciente").where("SeqPaciente", SeqPaciente).update({
-                NomePaciente: NomePaciente,
+                NomePaciente: formattedName,
                 DataNascimento: parseDataNascimento,
                 Genero: Genero
             }).then(responseDB => {
