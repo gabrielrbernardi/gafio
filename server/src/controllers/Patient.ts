@@ -28,7 +28,7 @@ class PatientController {
                 "DOS": "dos",
                 "E": "e"
                 }   
-                const formattedName = NomePaciente.split(" ").reduce((formattedName, current) => {
+                const formattedName = NomePaciente.toString().split(" ").reduce((formattedName, current) => {
                 if (prepositions[current])
                     return formattedName += prepositions[current];
                 else 
