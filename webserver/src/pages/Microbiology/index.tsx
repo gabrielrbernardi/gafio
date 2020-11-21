@@ -59,8 +59,9 @@ const Microbiology = () => {
                .then(data => {
                    const { results } = data;
                    const { count } = data.count;
+                   const microbiologiesData = results.map(handleFormat);
                    setRecords(Number(count));
-                   setMicrobiologies(results);
+                   setMicrobiologies(microbiologiesData);
                    setLoading(false);
                    setTableLoading(false);
                })
@@ -73,6 +74,32 @@ const Microbiology = () => {
 
         loadMicrobiologies();
     }, []);
+
+
+    function handleFormat(microbiology: IMicrobiology) {  
+        const verifica = (item: string) => {
+            if (item === "S") return "Sim";
+            else return "Não";
+        }
+
+        let SwabNasal, SwabRetal, Sangue, Urina, SecrecaoTraqueal, Outros;
+        SwabNasal = verifica(microbiology.SwabNasal);
+        SwabRetal = verifica(microbiology.SwabRetal);
+        Sangue = verifica(microbiology.Sangue);
+        Urina = verifica(microbiology.Urina);
+        SecrecaoTraqueal = verifica(microbiology.SecrecaoTraqueal);
+        Outros = verifica(microbiology.Outros);
+
+        return {
+            ...microbiology,
+            SwabNasal,
+            SwabRetal,
+            Sangue,
+            Urina,
+            SecrecaoTraqueal,
+            Outros
+        }
+    }
 
     // Toast
     function HandleToast(
@@ -98,7 +125,8 @@ const Microbiology = () => {
                 MicrobiologyService.getMicrobiologies({ page, filter, filterValue }).then(data => {
                     response = data;
                     const { results } = response;
-                    setMicrobiologies(results);
+                    const microbiologiesData = results.map(handleFormat);
+                    setMicrobiologies(microbiologiesData);
                     setFirst(index);
                     setTableLoading(false);
                 }).catch(err => setTableLoading(false));
@@ -106,7 +134,8 @@ const Microbiology = () => {
                 MicrobiologyService.getMicrobiologies({page}).then(data => {
                     response = data;
                     const { results } = response;
-                    setMicrobiologies(results);
+                    const microbiologiesData = results.map(handleFormat);
+                    setMicrobiologies(microbiologiesData);
                     setFirst(index);
                     setTableLoading(false);
                 }).catch(err => setTableLoading(false));
@@ -128,7 +157,8 @@ const Microbiology = () => {
                 const { results } = data;
                 const { count } = data.count;
                 setRecords(Number(count));
-                setMicrobiologies(results);
+                const microbiologiesData = results.map(handleFormat);
+                setMicrobiologies(microbiologiesData);
                 setTableLoading(false);
             })
             .catch(error => {
@@ -173,7 +203,8 @@ const Microbiology = () => {
                 const { results } = data;
                 const { count } = data.count;
                 setRecords(Number(count));
-                setMicrobiologies(results);
+                const microbiologiesData = results.map(handleFormat);
+                setMicrobiologies(microbiologiesData);
                 setLoading(false);
                 setTableLoading(false);
                 let res = "resultado";
