@@ -27,6 +27,18 @@ class DiseasesService {
         }
     }
 
+    async getDiseaseInformation(codDoenca: Number) {
+        return await api.get(`diseases/search/searchPatientData/?id=${codDoenca}&page=10`).then(response => response.data);
+    }
+
+    async updateDiseaseInformation(codDoenca: Number, nome: string) {
+        return await api.put(`/diseases/update/${codDoenca}`, { codDoenca, nome }).then(response => {
+            return response.data;
+        }).catch((err) => {
+            return { error: err };
+        });
+    }
+
 }
 
 export { DiseasesService };

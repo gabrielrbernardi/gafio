@@ -59,20 +59,78 @@ class DiseasesController {
         return response.json({ diseases, length: diseasesLength });
     }
 
+    // Método para pegar informações sobre a doença:
+    async searchPatientData(request: Request, response: Response) {
+        let diseaseCode = String(request.query.code);
+        let page = String(request.query.page);
+
+        if (!page) page = "10";
+        
+        let pageRequest = parseInt(page) / 10;
+        const rows = 10;
+
+        if (diseaseCode) {
+            const codDoenca = await knex("Doenca").count("codDoenca").where("codDoenca", diseaseCode);
+            const nome = await knex("Doenca").count("nome").where("codDoenca", diseaseCode);
+
+            const parseCodDoenca = codDoenca[0]["count(`codDoenca`)"];
+            const parseNome = nome[0]["count(`nome`)"];
+
+            return response.json({
+                diseaseFound: true,
+                codDoencaLength: parseCodDoenca,
+                nomeLength: parseNome
+            });
+        } 
+        else {
+            return response.json({ diseaseFound: false, error: "Código da doença não fornecido." })
+        }
+    }
+
+    // Método para atualizar doença:
+    async update(request: Request, response: Response) {
+        const { codDoenca } = request.params;
+        const { nome } = request.body;
+
+        if (codDoenca && nome) {
+            await knex("Doenca").where("codDOenca", codDoenca).update({
+                codDoenca,
+                nome
+            }).then(responseDB => {
+                if (responseDB === 1) {
+                    return response.json({ updatedDisease: true });
+                } 
+                else {
+                    return response.json({ updatedDisease: false, error: "Não foi possível alterar os dados da doença." });
+                }
+            }).catch(err => {
+                return response.json({ updatedDisease: false, error: "Erro na atualização da doença.", err });
+            });
+        } 
+        else {
+            return response.json({ updatedDisease: false, error: "Verifique os dados inseridos e tente novamente." });
+        }
+    }
+
     // Método para deletar uma doença:
     async delete(request: Request, response: Response) {
-        const { codDoenca } = request.body;
-        const disease = await knex("Doenca").where("codDoenca", codDoenca);
+        try {
+            const { codDoenca } = request.params;
+            const disease = await knex("Microbiologia").where("codDoenca", codDoenca);
 
-        if (disease) {
-            await knex("Doenca").where("codDoenca", codDoenca).delete();
-            return response.json({ deletedDisease: true });
-        }
-        else {
-            return response.json({
-                deletedDisease: false,
-                error: "Doença não encontrada.",
-            });
+            if (disease[0]) {
+                await knex("Doenca").where("codDoenca", codDoenca).delete();
+                return response.json({ deletedDisease: true });
+            } 
+            else {
+                return response.status(400).json({
+                    deletedDisease: false,
+                    error: "Doença não encontrada.",
+                });
+            }
+        } 
+        catch (error) {
+            return response.json({ error });
         }
     }
 
