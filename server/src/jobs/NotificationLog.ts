@@ -26,7 +26,7 @@ class NoticationLog {
         )
       ]
     });
-    logger.warn({user:email, tipo: "createNotication", erro, date: formattedDate});
+    logger.warn({user:email, type: "createNotication", erro, date: formattedDate});
   }
 
   handleSuccessfulUpdate(email : string) {
@@ -50,7 +50,7 @@ class NoticationLog {
         )
       ]
     });
-    logger.warn({user:email, tipo: "updateNotication", erro, date: formattedDate});
+    logger.warn({user:email, type: "updateNotication", erro, date: formattedDate});
   }
 
    handleSuccessfulDelete(email : string) {
@@ -74,7 +74,7 @@ class NoticationLog {
         )
       ]
     });
-    logger.warn({user:email, tipo: "deleteNotication", erro, date: formattedDate});
+    logger.warn({user:email, type: "deleteNotication", erro, date: formattedDate});
   }
 }
 

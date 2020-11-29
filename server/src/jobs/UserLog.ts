@@ -26,7 +26,7 @@ class UserLog {
         )
       ]
     });
-    logger.warn({user:email, tipo: "createUser", erro, date: formattedDate});
+    logger.warn({user:email, type: "createUser", erro, date: formattedDate});
   }
 
   handleSuccessfulUpdate(email : string, id:number) {
@@ -38,7 +38,7 @@ class UserLog {
         )
       ]
     });
-    logger.info({user:email, tipo: "deleteUser", date: formattedDate, userId:id});
+    logger.info({user:email, type: "deleteUser", date: formattedDate, userId:id});
   }
 
   handleUnsuccessfulUpdate(email : string, erro : string, id:number) {
@@ -50,7 +50,7 @@ class UserLog {
         )
       ]
     });
-    logger.warn({user:email, tipo: "deleteUser", erro, date: formattedDate, userId:id});
+    logger.warn({user:email, type: "deleteUser", erro, date: formattedDate, userId:id});
   }
 
    handleSuccessfulDelete(email : string, id:number) {
@@ -62,7 +62,7 @@ class UserLog {
         )
       ]
     });
-    logger.info({user:email, tipo: "deleteUser",  date: formattedDate, userId:id});
+    logger.info({user:email, type: "deleteUser",  date: formattedDate, userId:id});
    }
     
   handleUnsuccessfulDelete(email: string, erro: string, id:number) {
@@ -74,7 +74,7 @@ class UserLog {
         )
       ]
     });
-    logger.warn({user:email, tipo: "deleteUser", erro, date: formattedDate, userId:id});
+    logger.warn({user:email, type: "deleteUser", erro, date: formattedDate, userId:id});
   }
 }
 

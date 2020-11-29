@@ -26,7 +26,7 @@ class MedicalRecordLog {
         )
       ]
     });
-    logger.warn({user:email, tipo: "createMedicalRecord", erro, date: formattedDate});
+    logger.warn({user:email, type: "createMedicalRecord", erro, date: formattedDate});
   }
 
   handleSuccessfulUpdate(email : string, id:number) {
@@ -38,7 +38,7 @@ class MedicalRecordLog {
         )
       ]
     });
-    logger.info({user: email, tipo: "updateMedicalRecord", date: formattedDate, MedicalRecord:id});
+    logger.info({user: email, type: "updateMedicalRecord", date: formattedDate, MedicalRecord:id});
   }
 
   handleUnsuccessfulUpdate(email : string, erro : string, id:number) {
@@ -50,7 +50,7 @@ class MedicalRecordLog {
         )
       ]
     });
-    logger.warn({user: email, tipo: "updateMedicalRecord", erro, date: formattedDate, MedicalRecord:id});
+    logger.warn({user: email, type: "updateMedicalRecord", erro, date: formattedDate, MedicalRecord:id});
   }
 
    handleSuccessfulDelete(email : string, id:number) {
@@ -62,7 +62,7 @@ class MedicalRecordLog {
         )
       ]
     });
-    logger.info({user: email, tipo: "updateMedicalRecord", date: formattedDate, MedicalRecord:id});
+    logger.info({user: email, type: "updateMedicalRecord", date: formattedDate, MedicalRecord:id});
    }
     
   handleUnsuccessfulDelete(email: string, erro: string, id:number) {
@@ -74,7 +74,7 @@ class MedicalRecordLog {
         )
       ]
     });
-    logger.warn({user: email, tipo: "updateMedicalRecord", erro, date: formattedDate, MedicalRecord:id});
+    logger.warn({user: email, type: "updateMedicalRecord", erro, date: formattedDate, MedicalRecord:id});
   }
 }
 

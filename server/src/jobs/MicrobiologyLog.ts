@@ -26,7 +26,7 @@ class MicrobiologyLog {
         )
       ]
     });
-    logger.warn({user:email, tipo: "createMicrobiology", erro, date: formattedDate});
+    logger.warn({user:email, type: "createMicrobiology", erro, date: formattedDate});
   }
 
   handleSuccessfulUpdate(email : string, id:number) {
@@ -50,7 +50,7 @@ class MicrobiologyLog {
         )
       ]
     });
-    logger.warn({user:email, tipo: "updateMicrobiology", erro, date: formattedDate, microbiology:id});
+    logger.warn({user:email, type: "updateMicrobiology", erro, date: formattedDate, microbiology:id});
   }
 
    handleSuccessfulDelete(email : string, id:number) {
@@ -62,7 +62,7 @@ class MicrobiologyLog {
         )
       ]
     });
-    logger.info({user:email, tipo: "updateMicrobiology", date: formattedDate, microbiology:id});
+    logger.info({user:email, type: "updateMicrobiology", date: formattedDate, microbiology:id});
    }
     
   handleUnsuccessfulDelete(email: string, erro: string, id:number) {
@@ -74,7 +74,7 @@ class MicrobiologyLog {
         )
       ]
     });
-    logger.warn({user:email, tipo: "updateMicrobiology", erro, date: formattedDate, microbiology:id});
+    logger.warn({user:email, type: "updateMicrobiology", erro, date: formattedDate, microbiology:id});
   }
 }
 
