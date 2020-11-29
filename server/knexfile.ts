@@ -10,8 +10,8 @@ try {
                 host: "localhost",
                 user: "root",
                 // password: "kutsu12",
-                // password: "dsw04051977",
-                password: "0000"
+                password: "Dsw04051977@",
+                //password: "0000"
             },
             migrations: {
                 directory: path.resolve(__dirname, "src", "database", "migrations"),

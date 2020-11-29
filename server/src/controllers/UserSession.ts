@@ -8,8 +8,11 @@ import { Request, Response } from "express";
 import knex from "../database/connection";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { format } from 'date-fns';
+import pt from 'date-fns/locale/pt';
 
 const authConfig = require("../config/auth.json");
+const winston = require("winston");
 
 const secretWord = "PalavraSecreta";
 
@@ -36,6 +39,11 @@ class UserSession {
 
         const userDB = await knex("Usuario").where("Email", email);
         const user = userDB[0];
+        const formattedDate = format(
+             new Date(),
+             "'dia 'dd 'de' MMMM', às' H:mm'h'",
+             { locale: pt }
+        );
         if (user) {
             if (user.isVerified === 1) {
                 const userStatusDB = await knex("Notificacao").where({ Status: 1, CodUsuario: user["CodUsuario"] });
@@ -54,6 +62,18 @@ class UserSession {
                                     authConfig.secret,
                                     { expiresIn: 60 * 60 }
                                 ); //Expira em 1 hora
+                                //gera aquivo de log de login com sucesso
+                                const logger = winston.createLogger({
+                                    level: 'info',
+                                    transports: [
+                                        new winston.transports.Console(),
+                                        new winston.transports.File({
+                                            filename: "./tmp/Logs/Login/logins.log",
+                                            level:"info",
+                                        })
+                                    ],
+                                });                          
+                                logger.info(`Usuario ${email} fez login no ${formattedDate}`);
                                 return response.json({ userLogin: true, userToken: token });
                             } else {
                                 return response.json({ userLogin: false, error: "Senha incorreta." });

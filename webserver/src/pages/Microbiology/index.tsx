@@ -68,7 +68,6 @@ const Microbiology = () => {
                .catch(error => {
                    setLoading(false);
                    setTableLoading(false);
-                   HandleToast("error", "Erro!", "Falha ao carregar os registros.");
                });
         }
 
