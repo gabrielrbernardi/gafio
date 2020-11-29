@@ -26,7 +26,7 @@ class AssessmentLog {
         )
       ]
     });
-    logger.warn({user:email, tipo: "createAssessment", erro, date: formattedDate});
+    logger.warn({user:email, type: "createAssessment", erro, date: formattedDate});
   }
 
   handleSuccessfulUpdate(email : string, id:number) {
@@ -50,7 +50,7 @@ class AssessmentLog {
         )
       ]
     });
-    logger.warn({user:email, tipo: "updateAssessment", erro, date: formattedDate, assessment:id});
+    logger.warn({user:email, type: "updateAssessment", erro, date: formattedDate, assessment:id});
   }
 
    handleSuccessfulDelete(email : string,  id:number) {
@@ -74,7 +74,7 @@ class AssessmentLog {
         )
       ]
     });
-    logger.warn({user:email, tipo: "deleteAssessment", erro, date: formattedDate, assessment:id});
+    logger.warn({user:email, type: "deleteAssessment", erro, date: formattedDate, assessment:id});
   }
 }
 

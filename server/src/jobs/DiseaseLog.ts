@@ -26,7 +26,7 @@ class DiseaseLog {
         )
       ]
     });
-    logger.warn({user:email, tipo: "createDisease", erro, date: formattedDate});
+    logger.warn({user:email, type: "createDisease", erro, date: formattedDate});
   }
 
   handleSuccessfulUpdate(email : string, id:number) {
@@ -38,7 +38,7 @@ class DiseaseLog {
         )
       ]
     });
-    logger.info({user:email, tipo: "deleteDisease", date: formattedDate, disease:id});
+    logger.info({user:email, type: "deleteDisease", date: formattedDate, disease:id});
   }
 
   handleUnsuccessfulUpdate(email : string, erro : string, id:number) {
@@ -50,7 +50,7 @@ class DiseaseLog {
         )
       ]
     });
-    logger.warn({user:email, tipo: "deleteDisease", erro, date: formattedDate, disease:id});
+    logger.warn({user:email, type: "deleteDisease", erro, date: formattedDate, disease:id});
   }
 
    handleSuccessfulDelete(email : string, id:number) {
@@ -62,7 +62,7 @@ class DiseaseLog {
         )
       ]
     });
-    logger.info({user:email, tipo: "deleteDisease", date: formattedDate, disease:id});
+    logger.info({user:email, type: "deleteDisease", date: formattedDate, disease:id});
    }
     
   handleUnsuccessfulDelete(email: string, erro: string, id:number) {
@@ -74,7 +74,7 @@ class DiseaseLog {
         )
       ]
     });
-    logger.warn({user:email, tipo: "deleteDisease", erro, date: formattedDate, disease:id});
+    logger.warn({user:email, type: "deleteDisease", erro, date: formattedDate, disease:id});
   }
 }
 
