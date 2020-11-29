@@ -1,9 +1,7 @@
-// gera aquivo de log de login com sucesso
 import {format} from 'date-fns';
 import pt from 'date-fns/locale/pt';
 
 const formattedDate = format(new Date(), "'dia 'dd 'de' MMMM' às' H:mm'h'", {locale: pt});
-
 const winston = require("winston");
 
 class LoginLog{
@@ -16,7 +14,7 @@ class LoginLog{
         )
       ]
     });
-    logger.info({ email,  tipo:"login", date: formattedDate});
+    logger.info({ email,  type:"login", date: formattedDate});
   }
 
     handleUnsuccessfulLogin(email: string, erro:string) {
@@ -28,7 +26,7 @@ class LoginLog{
         )
       ]
     });
-    logger.warn({ email,  tipo:"login",  erro, date: formattedDate});
+    logger.warn({ email,  type:"login",  erro, date: formattedDate});
   }
 }
 
