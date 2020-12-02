@@ -34,25 +34,32 @@ const Diseases = () => {
 
     function getDiseasesFunction(data?: any) {
         setLoading(true);
-        setDiseases([]);
-
+        
         if (!data) {
             diseasesService.getDiseasesPaginate(10).then(data => {
+                setDatasource(data.diseases);
+                setTotalRecords(data.length);
+                data = data.diseases;
+
                 console.log(data);
 
-                setDatasource(data.diseases);
-                setDiseases(datasource.slice(0, rows));
+                setDiseases(data.slice(0, rows));
                 setLoading(false);
 
                 return;
             });
         }
         else {
+            setDatasource(data.diseases);
+            setTotalRecords(data.length);
+            data = data.diseases;
+
             console.log(data);
 
-            setDatasource(data.diseases);
-            setDiseases(data.diseases.slice(0, rows));
+            setDiseases(data.slice(0, rows));
             setLoading(false);
+
+            return;
         }
     }
 

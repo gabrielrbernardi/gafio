@@ -3,7 +3,7 @@ import api from '../../../services/api';
 class DiseasesService {
 
     async getDiseasesPaginate(endIndex: Number) {
-        return await api.get(`diseases/paginate/${endIndex}`).then(response => response.data);
+        return await api.get(`diseases/paginate/?page=${endIndex}`).then(response => response.data);
     }
 
     async searchDiseasesGlobal(searchKey: String, searchCode: String, first: number) {

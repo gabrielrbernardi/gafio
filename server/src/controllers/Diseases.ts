@@ -50,17 +50,33 @@ class DiseasesController {
 
     // Método para listar doenças por página
     async indexByPage(request: Request, response: Response) {
-        const { page } = request.params;
-        const pageRequest = parseInt(page) / 10;
-        const rows = 10;
-        const diseases = await knex("Doenca").select("*").offset((pageRequest - 1) * rows).limit(rows);
-        const diseasesLength = (await knex("Doenca").select("*")).length;
+        let page = String(request.query.page);
 
-        return response.json({ diseases, length: diseasesLength });
+        if (!page) page = "10";
+
+        let pageRequest = parseInt(page) / 10;
+        const rows = 10;
+
+        try {
+            const diseases = await knex("Doenca").select("*").orderBy('codDoenca', 'desc').offset((pageRequest - 1) * rows).limit(rows);
+            const diseasesLength = (await knex("Doenca").select("*")).length;
+
+            return response.json({ 
+                showDiseases: true, 
+                diseases: diseases, 
+                length: diseasesLength 
+            });
+        } 
+        catch (err) {
+            return response.json({ 
+                showDiseases: false, 
+                error: err 
+            });
+        }
     }
 
     // Método para pegar informações sobre a doença:
-    async searchPatientData(request: Request, response: Response) {
+    async searchDiseaseData(request: Request, response: Response) {
         let diseaseCode = String(request.query.code);
         let page = String(request.query.page);
 
@@ -89,21 +105,23 @@ class DiseasesController {
 
     // Método para atualizar doença:
     async update(request: Request, response: Response) {
-        const { codDoenca } = request.params;
-        const { nome } = request.body;
+        const { id } = request.params;
+        const { codDoenca, nome } = request.body;
 
         if (codDoenca && nome) {
-            await knex("Doenca").where("codDOenca", codDoenca).update({
+            await knex("Doenca").where("codDoenca", id).update({
                 codDoenca,
                 nome
-            }).then(responseDB => {
+            })
+            .then(responseDB => {
                 if (responseDB === 1) {
                     return response.json({ updatedDisease: true });
                 } 
                 else {
                     return response.json({ updatedDisease: false, error: "Não foi possível alterar os dados da doença." });
                 }
-            }).catch(err => {
+            })
+            .catch(err => {
                 return response.json({ updatedDisease: false, error: "Erro na atualização da doença.", err });
             });
         } 
