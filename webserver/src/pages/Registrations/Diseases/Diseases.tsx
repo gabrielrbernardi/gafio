@@ -41,8 +41,6 @@ const Diseases = () => {
                 setTotalRecords(data.length);
                 data = data.diseases;
 
-                console.log(data);
-
                 setDiseases(data.slice(0, rows));
                 setLoading(false);
 
@@ -53,8 +51,6 @@ const Diseases = () => {
             setDatasource(data.diseases);
             setTotalRecords(data.length);
             data = data.diseases;
-
-            console.log(data);
 
             setDiseases(data.slice(0, rows));
             setLoading(false);
@@ -87,7 +83,7 @@ const Diseases = () => {
 
     function handleSearch() {
         if (!optionState) {
-            showToast('error', 'Erro!', 'Selecione um filtro para buscar.');
+            showToast("error", "Erro!", "Selecione um filtro para buscar.");
             return;
         }
         setLoading(true);
@@ -127,7 +123,7 @@ const Diseases = () => {
                     <Button 
                         variant="outline-dark" 
                         className="mr-2 mb-2" 
-                        style={{ borderRadius: '0' }}
+                        style={{ borderRadius: '0', height:'41.5px' }}
                     >
                         Cadastrar Doença
                     </Button>
@@ -138,7 +134,7 @@ const Diseases = () => {
                     onClick={() => setOpen(!open)}
                     aria-controls="example-collapse-text"
                     aria-expanded={open}
-                    style={{ borderRadius: '0' }}
+                    style={{ borderRadius: '0', height:'41.5px' }}
                 >
                     Buscar doença específica
                 </Button>
@@ -152,7 +148,7 @@ const Diseases = () => {
                                     value={searchInput}
                                     onChange={(e) => { setSearchInput((e.target as HTMLInputElement).value) }}
                                     onKeyPress={(ev) => { if (ev.key === 'Enter') { handleSearch(); ev.preventDefault(); } }}
-                                    style={{ minWidth: '4em', borderRadius: '0' }}
+                                    style={{ minWidth: '4em', borderRadius: '0', height:'41.5px' }}
                                 />
                                 {
                                     optionState === null
