@@ -2,7 +2,7 @@ import express from "express";
 import UsuarioRoutes from "./routes/userRoutes";
 import DiseaseRoutes from "./routes/diseaseRoutes";
 import NotificationRoutes from "./routes/notificationRoutes";
-import MedicineRoutes from "./routes/MedicinesRoutes";
+import MedicineRoutes from "./routes/medicinesRoutes";
 import histRoutes from "./routes/histRoutes";
 import MedicalRecordsRoutes from "./routes/MedicalRecordsRoutes";
 import PatientRoutes from "./routes/patientRoutes";

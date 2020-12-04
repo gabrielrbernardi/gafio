@@ -1,8 +1,7 @@
-/****************************************
-| Data: 17/06/2020                      |
-| Resumo: Controlador Doenças (CRUD)    |
-| Sistema: GAFio                        |
-****************************************/
+/*************************************
+| Resumo: Controlador Doenças (CRUD) |
+| Sistema: GAFio                     |
+*************************************/
 
 import { Request, Response } from "express";
 import knex from "../database/connection";
@@ -21,12 +20,14 @@ class DiseasesController {
                 await knex("Doenca").insert({
                     codDoenca,
                     nome
-                }).then(() => {
+                })
+                .then(() => {
                     return response.json({ 
                         createdDisease: true, 
                         diseaseData: { codDoenca, nome } 
                     });
-                }).catch(err => {
+                })
+                .catch(err => {
                     return response.json({ 
                         createdDisease: false, 
                         error: "Não foi possível inserir a doença no banco de dados.", 
@@ -37,7 +38,8 @@ class DiseasesController {
             else {
                 return response.json({ 
                     createdDisease: false, 
-                    error: "Não foi possível inserir a doença no banco de dados. Código da doença já existente." })
+                    error: "Não foi possível inserir a doença no banco de dados. Código da doença já existente." 
+                })
             }
         } 
         else {
@@ -45,34 +47,6 @@ class DiseasesController {
                 createdDisease: false, 
                 error: "Verifique os dados inseridos e tente novamente." 
             });
-        }
-    }
-
-    // Método para listar doenças por nome:
-    async indexByName(request: Request, response: Response) {
-        const { name } = request.query;
-
-        let page = String(request.query.page);
-        if (!page) page = "10";
-
-        let pageRequest = parseInt(page) / 10;
-        const rows = 10;
-
-        const diseasesDB = await knex("Doenca").where("nome", "like", `%${name}%`).offset((pageRequest - 1) * rows).limit(rows);
-        const disease = diseasesDB[0];
-
-        if (disease) {
-            const diseasesLength = (await knex("Doenca").count("codDoenca").where("nome", 'like', `%${name}%`));
-
-            return response.json({
-                diseaseFound: true,
-                diseases: diseasesDB,
-                length: diseasesLength,
-                length1: diseasesDB.length
-            });
-        } 
-        else {
-            return response.json({ diseaseFound: false, error: "Doença não encontrada." })
         }
     }
 
@@ -91,6 +65,34 @@ class DiseasesController {
 
         if (disease) {
             const diseasesLength = (await knex("Doenca").count("codDoenca").where("codDoenca", 'like', `%${code}%`));
+
+            return response.json({
+                diseaseFound: true,
+                diseases: diseasesDB,
+                length: diseasesLength,
+                length1: diseasesDB.length
+            });
+        } 
+        else {
+            return response.json({ diseaseFound: false, error: "Doença não encontrada." })
+        }
+    }
+
+    // Método para listar doenças por nome:
+    async indexByName(request: Request, response: Response) {
+        const { name } = request.query;
+
+        let page = String(request.query.page);
+        if (!page) page = "10";
+
+        let pageRequest = parseInt(page) / 10;
+        const rows = 10;
+
+        const diseasesDB = await knex("Doenca").where("nome", "like", `%${name}%`).offset((pageRequest - 1) * rows).limit(rows);
+        const disease = diseasesDB[0];
+
+        if (disease) {
+            const diseasesLength = (await knex("Doenca").count("codDoenca").where("nome", 'like', `%${name}%`));
 
             return response.json({
                 diseaseFound: true,

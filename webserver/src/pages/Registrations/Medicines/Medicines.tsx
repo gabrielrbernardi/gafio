@@ -138,7 +138,7 @@ const Medicines = () => {
                 <Collapse className="mb-2" in={open} timeout={200}>
                     <div>
                         <div className="p-inputgroup">
-                            <span className="p-float-label mr-2">
+                            <span className="p-float-label mr-2"> 
                                 <InputText
                                     id="float-input"
                                     type="search"
