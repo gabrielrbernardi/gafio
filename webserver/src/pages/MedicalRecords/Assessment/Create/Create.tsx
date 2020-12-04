@@ -292,7 +292,7 @@ const AssessmentForm = () => {
                 setDatasource(data.medicines);
                 setMedicines(datasource.slice(0, rows));
                 setLoading(false);
-
+                setLoading1(false);
                 return;
             });
         }
@@ -302,6 +302,8 @@ const AssessmentForm = () => {
             setDatasource(data.medicines);
             setMedicines(data.medicines.slice(0, rows));
             setLoading(false);
+            setLoading1(false);
+            return
         }
     }
 
@@ -566,7 +568,9 @@ const AssessmentForm = () => {
             {getToast &&
                 <ToastComponent messageType={getMessageType} messageTitle={getMessageTitle} messageContent={getMessageContent} />
             }
-            
+            {loading1 &&
+                <Loading/>
+            }
         </div>
     )
 }
