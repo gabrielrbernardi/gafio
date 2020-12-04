@@ -536,20 +536,6 @@ class ProntuarioController {
             return response.json({ deletedMedicalRecord: false, error: "Prontuário não encontrado." });
         }
     }
-
-    //BUSCAR DOENCAS
-    async indexDiseases(request: Request, response: Response) {
-        const diseases = await knex("Doenca").select("*")
-        
-        const serializedDiseases = diseases.map(disease => {
-            return { 
-                CodDoenca: disease.CodDoenca,
-                Nome: disease.Nome
-            }
-        })
-    
-        return response.json(serializedDiseases)
-    }
 }
 
 export default ProntuarioController;

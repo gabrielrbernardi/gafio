@@ -5,9 +5,18 @@ import { useHistory, useLocation } from 'react-router-dom';
 import ToastComponent from '../../../../components/Toast';
 import { InputText } from 'primereact/inputtext';
 import { Calendar } from 'primereact/calendar';
+import Button from 'react-bootstrap/Button';
+import { Dialog } from 'primereact/dialog';
+import { DataTable } from 'primereact/datatable';
+import { Column } from 'primereact/column';
+import Collapse from 'react-bootstrap/Collapse';
+import {FiSearch} from 'react-icons/fi';
+import {AiOutlineClose} from 'react-icons/ai';
+import Loading from '../../../../components/Loading';
 import * as Yup from "yup";
 
 import { CreateAssessmentService } from './CreateAssessmentService'
+import { MedicinesService } from '../../../Registrations/Medicines/MedicinesService';
 
 const AssessmentForm = () => {
     const query = new URLSearchParams(useLocation().search)
@@ -34,6 +43,24 @@ const AssessmentForm = () => {
     const [getMessageType, setMessageType] = useState<string>('');
     const [getMessageTitle, setMessageTitle] = useState<string>('');
     const [getMessageContent, setMessageContent] = useState<string>('');
+
+    const [loading, setLoading] = useState(true);
+    const [loading1, setLoading1] = useState(true);
+    const [datasource, setDatasource] = useState([]);
+    const [medicines, setMedicines] = useState([]);
+    const [totalRecords2, setTotalRecords2] = useState(0);
+    const [first2, setFirst2] = useState(0);
+    const [searchInput2, setSearchInput2] = useState('');
+    const [getOptionState2, setOptionState2] = useState<any>(null);
+    const [mode2, setMode2] = useState('N');
+    const [open2, setOpen2] = useState(false);
+    const [getMedicinesChange, setMedicinesChange] = useState();
+    const [selectedMedicines, setSelectedMedicines] = useState<any>(null);
+    const [displayDialog, setDisplayDialog] = useState(false);
+    const medicinesService = new MedicinesService();
+    var MedicinesData:any = {};
+    const rows = 10;
+
     const history = useHistory()
 
     const createAssessmentService = new CreateAssessmentService()
@@ -139,6 +166,16 @@ const AssessmentForm = () => {
         { label: 'Não', value: 'N' }
     ]
 
+    let options4 = [
+        { name: 'Código', cod: 'E' },
+        { name: 'Princípio', cod: 'P' },
+    ];
+
+    const header2 = 
+    <>
+        <p style={{textAlign:'left'}} className="p-clearfix d-inline">Medicamentos</p>
+    </>;
+
     const pt_br = {
         firstDayOfWeek: 1,
         dayNames: ["domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"],
@@ -229,6 +266,97 @@ const AssessmentForm = () => {
             setToast(false);
         }, 4500)
     }
+
+    const onOptionChange2 = (e: { value: any }) => {
+        setOptionState2(e.value);
+    };
+
+    useEffect(() => {
+        setLoading1(true);
+        setTimeout(() => {
+            medicinesService.getMedicinesPaginate(10).then(data => {
+                setTotalRecords2(data.length);
+                getMedicinesFunction(data);
+            });
+        }, 1000);
+    }, []);
+
+    function getMedicinesFunction(data?: any) {
+        setLoading(true);
+        setMedicines([]);
+
+        if (!data) {
+            medicinesService.getMedicinesPaginate(10).then(data => {
+                console.log(data);
+
+                setDatasource(data.medicines);
+                setMedicines(datasource.slice(0, rows));
+                setLoading(false);
+
+                return;
+            });
+        }
+        else {
+            console.log(data);
+
+            setDatasource(data.medicines);
+            setMedicines(data.medicines.slice(0, rows));
+            setLoading(false);
+        }
+    }
+
+    const onPage2 = (event: any) => {
+        setLoading(true);
+        setTimeout(() => {
+            const startIndex2 = event.first2;
+            const endIndex2 = event.first2 + rows;
+
+            medicinesService.getMedicinesPaginate(endIndex2).then(data => {
+                getMedicinesFunction(data.medicines);
+            });
+
+            setFirst2(startIndex2);
+            setLoading(false);
+        });
+    }
+
+    function handleSearch2() {
+        if (!getOptionState2) {
+            showToast('error', 'Erro!', 'Selecione um filtro para buscar.');
+            return;
+        }
+        setLoading(true);
+
+        if (!searchInput2) {
+            medicinesService.getMedicinesPaginate(10).then(data => {
+                getMedicinesFunction(data);
+                setLoading(false);
+                showToast('error', 'Erro!', 'Digite algum valor para pesquisar.');
+            });
+
+            return;
+        }
+        setMode2('S');
+        medicinesService.searchMedicineGlobal(searchInput2, getOptionState2.cod, first2 + rows).then(data => {
+            if (!data.medicines) {
+                setLoading(false);
+                return;
+            }
+            getMedicinesFunction(data);
+        });
+    }
+
+    let newMedicines = true
+    function onMedicinesSelect (e: any) {
+        newMedicines = false;
+        setMedicinesChange(e.value)
+        MedicinesData = e.data;
+        
+        setNovoAtb(MedicinesData.EAN)
+        setTimeout(() => {
+            setDisplayDialog(false)
+        }, 500);
+    };
 
     return (
         <div className="row m-5">
@@ -381,20 +509,64 @@ const AssessmentForm = () => {
                             </div>
                         </div>
 
-                        <label htmlFor="NovoAtb" className="mt-4">Novo Atb</label>
-                        <InputText style={{ width: '100%' }} id="NovoAtb" name="NovoAtb"
-                            defaultValue={getNovoAtb} onChange={(e) => { checkInput(4, (e.target as HTMLInputElement).value) }}
-                            placeholder="Digite o novo Atb" />
-
+                        <div className="form-row">
+                            <label htmlFor="NovoAtb" className="mt-4 ml-1"  style={{ width: '100%' }}>Novo Atb</label>
+                            <InputText style={{ width: '82%' }} className="ml-1" id="NovoAtb" name="NovoAtb"
+                                defaultValue={getNovoAtb} onChange={(e) => { checkInput(4, (e.target as HTMLInputElement).value) }}
+                                placeholder="Digite o novo Atb" required />
+                            <Button variant="primary" style={{ width: '16%' }} className="ml-1" onClick={() => {setDisplayDialog(true);}}>Buscar</Button><br/>
+                        </div>
                     </div>
 
                     <button type="submit" className="btn btn-info btn-primary mt-3 mb-3">Cadastrar</button>
                 </form>
             </div>
 
+            <Dialog visible={displayDialog} style={{width: '75%'}} modal={true} onHide={() => {setDisplayDialog(false); setSearchInput2(''); getMedicinesFunction(); setMode2('N'); setOptionState2(null); setOpen2(false)}}>
+                <div className="form-row">
+                    <Button variant="outline-secondary" className="mb-2 ml-2" onClick={() => setOpen2(!open2)} aria-controls="example-collapse-text" aria-expanded={open2} style={{borderRadius: '0', height:'41.5px'}}>Buscar medicamento específico</Button>
+                    <Collapse in={open2} timeout={200}>
+                        <div className="ml-1">
+                            <div className="p-inputgroup">
+                                <span className="p-float-label">
+                                    <InputText id="float-input" type="search" value={searchInput2} onChange={(e) => {setSearchInput2((e.target as HTMLInputElement).value)}} onKeyPress={(ev) => {if (ev.key === 'Enter') {handleSearch2(); ev.preventDefault();}}}  style={{minWidth:'4em', borderRadius: '0'}} size={30} />
+                                    {getOptionState2 === null
+                                        ? <label htmlFor="float-input">Buscar</label>
+                                        : <label htmlFor="float-input">Buscar por {getOptionState2.name}</label>
+                                    }
+                                </span>
+                                {searchInput2 === ''
+                                    ? <></>
+                                    :
+                                        <>
+                                            <Dropdown className="mx-1" value={getOptionState2} options={options4} onChange={onOptionChange2} placeholder="Selecione um filtro" optionLabel="name" style={{width: '12em'}}/>
+                                            <Button tabIndex={2} variant="outline-danger" className="p-0 mr-1" style={{width: '17px', borderRadius: '0'}} onClick={() => {setSearchInput2(''); getMedicinesFunction(); setMode2('N'); setOptionState2(null)}}><AiOutlineClose size={15}/></Button>
+                                            <Button onClick={handleSearch2} style={{borderRadius: '0'}}><FiSearch size={15}/></Button>
+                                        </>
+                                }
+                            </div>
+                        </div>
+                    </Collapse>
+                </div>
+
+                <div className="ml-auto"></div>
+
+                <DataTable value={medicines} paginator={true} rows={rows}
+                    header={header2} totalRecords={totalRecords2}
+                    emptyMessage="Nenhum resultado encontrado" className="p-datatable-responsive-demo"
+                    resizableColumns={true} loading={loading} first={first2} onPage={onPage2} lazy={true}
+                    selectionMode="single" selection={selectedMedicines}
+                    onSelectionChange={e => setSelectedMedicines(e.value)} onRowSelect={(e) => {onMedicinesSelect(e);}}>
+                    <Column field="EAN" header="Código" style={{ width: "33.3%", textAlign: "center" }} />
+                    <Column field="PrincipioAtivo" header="Principio Ativo" style={{ width: "33.4%", textAlign: "center" }} />
+                    <Column field="Apresentacao" header="Apresentação" style={{ width: "33.3%", textAlign: "center" }} />
+                </DataTable>
+            </Dialog>
+
             {getToast &&
                 <ToastComponent messageType={getMessageType} messageTitle={getMessageTitle} messageContent={getMessageContent} />
             }
+            
         </div>
     )
 }
