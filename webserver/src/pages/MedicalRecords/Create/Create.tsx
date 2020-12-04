@@ -382,7 +382,7 @@ const MedicalRecordsForm = () => {
                 setDatasource(data.medicines);
                 setMedicines(datasource.slice(0, rows));
                 setLoading(false);
-
+                setLoading1(false);
                 return;
             });
         }
@@ -392,6 +392,8 @@ const MedicalRecordsForm = () => {
             setDatasource(data.medicines);
             setMedicines(data.medicines.slice(0, rows));
             setLoading(false);
+            setLoading1(false);
+            return
         }
     }
 
