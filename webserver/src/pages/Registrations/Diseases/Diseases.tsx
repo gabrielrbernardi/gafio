@@ -34,25 +34,28 @@ const Diseases = () => {
 
     function getDiseasesFunction(data?: any) {
         setLoading(true);
-        setDiseases([]);
-
+        
         if (!data) {
             diseasesService.getDiseasesPaginate(10).then(data => {
-                console.log(data);
-
                 setDatasource(data.diseases);
-                setDiseases(datasource.slice(0, rows));
+                setTotalRecords(data.length);
+                data = data.diseases;
+
+                setDiseases(data.slice(0, rows));
                 setLoading(false);
 
                 return;
             });
         }
         else {
-            console.log(data);
-
             setDatasource(data.diseases);
-            setDiseases(data.diseases.slice(0, rows));
+            setTotalRecords(data.length);
+            data = data.diseases;
+
+            setDiseases(data.slice(0, rows));
             setLoading(false);
+
+            return;
         }
     }
 
@@ -61,6 +64,7 @@ const Diseases = () => {
             setTotalRecords(data.length);
             getDiseasesFunction(data);
         });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const onPage = (event: any) => {
@@ -80,7 +84,7 @@ const Diseases = () => {
 
     function handleSearch() {
         if (!optionState) {
-            showToast('error', 'Erro!', 'Selecione um filtro para buscar.');
+            showToast("error", "Erro!", "Selecione um filtro para buscar.");
             return;
         }
         setLoading(true);
@@ -120,7 +124,7 @@ const Diseases = () => {
                     <Button 
                         variant="outline-dark" 
                         className="mr-2 mb-2" 
-                        style={{ borderRadius: '0' }}
+                        style={{ borderRadius: '0', height:'41.5px' }}
                     >
                         Cadastrar Doença
                     </Button>
@@ -131,7 +135,7 @@ const Diseases = () => {
                     onClick={() => setOpen(!open)}
                     aria-controls="example-collapse-text"
                     aria-expanded={open}
-                    style={{ borderRadius: '0' }}
+                    style={{ borderRadius: '0', height:'41.5px' }}
                 >
                     Buscar doença específica
                 </Button>
@@ -145,7 +149,7 @@ const Diseases = () => {
                                     value={searchInput}
                                     onChange={(e) => { setSearchInput((e.target as HTMLInputElement).value) }}
                                     onKeyPress={(ev) => { if (ev.key === 'Enter') { handleSearch(); ev.preventDefault(); } }}
-                                    style={{ minWidth: '4em', borderRadius: '0' }}
+                                    style={{ minWidth: '4em', borderRadius: '0', height:'41.5px' }}
                                 />
                                 {
                                     optionState === null

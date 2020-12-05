@@ -120,7 +120,7 @@ const Medicines = () => {
                     <Button 
                         variant="outline-dark" 
                         className="mr-2 mb-2" 
-                        style={{ borderRadius: '0' }}
+                        style={{ borderRadius: '0', height:'41.5px' }}
                     >
                         Cadastrar Medicamento
                     </Button>
@@ -131,21 +131,21 @@ const Medicines = () => {
                     onClick={() => setOpen(!open)}
                     aria-controls="example-collapse-text"
                     aria-expanded={open}
-                    style={{ borderRadius: '0' }}
+                    style={{ borderRadius: '0', height:'41.5px' }}
                 >
                     Buscar doença específica
                 </Button>
                 <Collapse className="mb-2" in={open} timeout={200}>
                     <div>
                         <div className="p-inputgroup">
-                            <span className="p-float-label mr-2">
+                            <span className="p-float-label mr-2"> 
                                 <InputText
                                     id="float-input"
                                     type="search"
                                     value={searchInput}
                                     onChange={(e) => { setSearchInput((e.target as HTMLInputElement).value) }}
                                     onKeyPress={(ev) => { if (ev.key === 'Enter') { handleSearch(); ev.preventDefault(); } }}
-                                    style={{ minWidth: '4em', borderRadius: '0' }}
+                                    style={{ minWidth: '4em', borderRadius: '0', height:'41.5px' }}
                                 />
                                 {
                                     optionState === null

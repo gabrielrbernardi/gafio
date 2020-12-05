@@ -25,9 +25,6 @@ class CreateMedicalRecordsService {
             OrigemInfeccao: OrigemInfeccaof, DoseCorreta, PosologiaCorreta,email
         }).then(response => response.data);
     }
-    async Diseases(){
-        return await api.get('/medicalRecords/diseases').then(response => response.data)
-    }
 }
 
 export { CreateMedicalRecordsService };

@@ -61,7 +61,6 @@ const MedicalRecords = () => {
     const [searchInput, setSearchInput] = useState('');
     const [open, setOpen] = useState(false);
     const [getMode, setMode] = useState<string>('N');
-    const [displayDialog, setDisplayDialog] = useState(false);
     const [selectedMedicalRecord, setSelectedMedicalRecord] = useState<any>(null);
     const [getOptionState, setOptionState] = useState<any>(null)
     const [getUserChange, setMedicalRecordChange] = useState();
@@ -69,6 +68,7 @@ const MedicalRecords = () => {
     const [getMessageType, setMessageType] = useState<string>('');
     const [getMessageTitle, setMessageTitle] = useState<string>('');
     const [getMessageContent, setMessageContent] = useState<string>('');
+    const [displayDialog, setDisplayDialog] = useState(false);
     const [displayDialog1, setDisplayDialog1] = useState(false);
     const [displayDialog2, setDisplayDialog2] = useState(false);
     const [displayDialog3, setDisplayDialog3] = useState(false);
