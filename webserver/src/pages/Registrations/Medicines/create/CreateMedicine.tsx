@@ -7,7 +7,6 @@ import ToastComponent from "../../../../components/Toast";
 import { CreateMedicineService } from './CreateMedicineService';
 
 const MedicinesCreate = () => {
-
     const [EAN, setEAN] = useState<string>('');
     const [principioAtivo, setPrincipioAtivo] = useState<string>('');
     const [registro, setRegistro] = useState<string>('');
@@ -52,7 +51,7 @@ const MedicinesCreate = () => {
             })
 
             await schema.validate(data, { abortEarly: false });
-
+            const email = localStorage.getItem('@gafio-user/email');
             createMedicineService.Create(
             EAN,
             principioAtivo,
@@ -61,7 +60,8 @@ const MedicinesCreate = () => {
             produto,
             apresentacao,
             classeTerapeutica,
-            CNPJ
+            CNPJ,
+            email
             ).then(() => {
                 HandleToast("success", "Sucesso!", "Medicamento criado com sucesso!");
                 history.push('/registrations/medicines')

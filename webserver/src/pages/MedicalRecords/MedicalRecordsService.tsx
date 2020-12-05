@@ -19,7 +19,7 @@ class MedicalRecordsService {
         CodDoencaSecundariof: any, SistemaAcometidof: string, CodComorbidadef: any, Origemf: string, Alocacaof: string,
         ResultadoColetaf: any, CodAtbPrimariof: string, CodAtbSecundariof: any, SitioInfeccaoPrimariof: any,
         TratamentoCCIHf: string, IndicacaoSepsef: string, DisfuncaoRenalf: string, OrigemInfeccaof: string,
-        DoseCorretaf: any, PosologiaCorretaf: any) {
+        DoseCorretaf: any, PosologiaCorretaf: any, email:any) {
         let NroProntuario = NroProntuariof
         let SeqPaciente = SeqPacientef
         let CodDoencaSecundario = CodDoencaSecundariof
@@ -36,21 +36,21 @@ class MedicalRecordsService {
             Alocacao: Alocacaof, ResultadoColeta, CodAtbPrimario: CodAtbPrimariof,
             CodAtbSecundario, SitioInfeccaoPrimario,
             TratamentoCCIH: TratamentoCCIHf, IndicacaoSepse: IndicacaoSepsef, DisfuncaoRenal: DisfuncaoRenalf,
-            OrigemInfeccao: OrigemInfeccaof, DoseCorreta, PosologiaCorreta
+            OrigemInfeccao: OrigemInfeccaof, DoseCorreta, PosologiaCorreta, email
         })
             .then(response => response.data);
     }
 
-    async Delete(NroProntuariof: any) {
+    async Delete(NroProntuariof: any, email:any) {
         let NroProntuario = NroProntuariof
-        return await api.post('medicalRecords/delete', { NroProntuario })
+        return await api.post('medicalRecords/delete', { NroProntuario, email })
             .then(response => response.data);
     }
 
-    async Desfecho(NroProntuariof: any, Desfechof: any, DataDesfechof: string) {
+    async Desfecho(NroProntuariof: any, Desfechof: any, DataDesfechof: string, email:any) {
         let NroProntuario = NroProntuariof
         let Desfecho = Desfechof
-        return await api.put('medicalRecords/desfecho', { NroProntuario, Desfecho, DataDesfecho: DataDesfechof })
+        return await api.put('medicalRecords/desfecho', { NroProntuario, Desfecho, DataDesfecho: DataDesfechof , email})
             .then(response => response.data);
     }
 

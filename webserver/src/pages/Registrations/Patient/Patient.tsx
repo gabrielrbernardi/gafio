@@ -25,6 +25,8 @@ const Patient = (props: any) => {
 
     const rows = 10;
     let newUser = false;
+    const email = localStorage.getItem('@gafio-user/email');
+
 
     const [datasource, setDatasource] = useState([]);
     const [paciente, setPaciente] = useState([]);
@@ -193,7 +195,7 @@ const Patient = (props: any) => {
             })
 
             await schema.validate(data, { abortEarly: false });
-            patientService.updatePatientInformation(getPacienteSeq, getPacienteNomeUpdate, getPacienteGeneroUpdate, getPacienteDataNascimentoUpdate).then(response => {
+            patientService.updatePatientInformation(getPacienteSeq, getPacienteNomeUpdate, getPacienteGeneroUpdate, getPacienteDataNascimentoUpdate, email).then(response => {
                 if (response.updatedPatient) {
                     showToast('success', "Atualização!", "Paciente atualizado com sucesso.");
                     setDisplayDialog2(false);
@@ -211,7 +213,7 @@ const Patient = (props: any) => {
     }
 
     async function deletePatient() {
-        await patientService.deletePatient(getPacienteSeq).then(response => {
+        await patientService.deletePatient(getPacienteSeq, email).then(response => {
             if (response.deletedPatient) {
                 showToast('success', "Atualização!", "Paciente excluído com sucesso.");
                 setDisplayDialog3(false);

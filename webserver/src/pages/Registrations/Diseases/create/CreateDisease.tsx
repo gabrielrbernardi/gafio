@@ -25,7 +25,7 @@ const DiseasesCreate = () => {
             event.preventDefault();
             const data = {
                 codDoenca,
-                nome
+                nome,
             };
             //Validação de dados
             const schema = Yup.object().shape({
@@ -34,10 +34,12 @@ const DiseasesCreate = () => {
             })
 
             await schema.validate(data, { abortEarly: false });
+            const email = localStorage.getItem('@gafio-user/email');
 
             createDiseaseService.Create(
                 codDoenca,
-                nome
+                nome,
+                email
             ).then(() => {
                 HandleToast("success", "Sucesso!", "Doença criada com sucesso!");
                 history.push('/registrations/diseases');

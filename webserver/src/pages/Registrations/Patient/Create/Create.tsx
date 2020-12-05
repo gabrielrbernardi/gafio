@@ -76,8 +76,9 @@ const PatientCreate = () => {
             })
 
             await schema.validate(data, { abortEarly: false });
-
-            createPatientService.create(getNroPaciente, getNomePaciente, getDataNascimentoPaciente, getGeneroPaciente).then((response) => {
+            
+            const email = localStorage.getItem('@gafio-user/email');
+            createPatientService.create(getNroPaciente, getNomePaciente, getDataNascimentoPaciente, getGeneroPaciente, email).then((response) => {
                 if (response.createdPatient) {
                     history.push('/registrations/patient');
                 } else {

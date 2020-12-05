@@ -78,6 +78,7 @@ const MedicalRecords = () => {
 
     const medicalRecordsService = new MedicalRecordsService()
     var medicalRecordData:any = {};
+    const email = localStorage.getItem('@gafio-user/email');
 
     const rows = 10;
 
@@ -180,6 +181,7 @@ const MedicalRecords = () => {
                 getMedicalRecordsFunction(data)
             });
         }, 1000)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     function getMedicalRecordsFunction(data?: any){
@@ -312,7 +314,7 @@ const MedicalRecords = () => {
                 getSistemaAcometido, getCodComorbidade, getOrigem, getAlocacao,
                 getResultadoColeta, getCodAtbPrimario, getCodAtbSecundario,
                 getSitioInfeccaoPrimario, getTratamento, getIndicacao,
-                getDisfuncao, getOrigemInfeccao, getDose, getPosologia
+                getDisfuncao, getOrigemInfeccao, getDose, getPosologia, email
             ).then((response) => {
                 if(response.updatedMedicalRecord){
                     showToast('success', 'Sucesso!', `Prontuário atualizado com sucesso!`);
@@ -411,7 +413,7 @@ const MedicalRecords = () => {
     }
 
     function onClickDelete(){
-        medicalRecordsService.Delete(getNroProntuario)
+        medicalRecordsService.Delete(getNroProntuario, email)
         .then((response) => {
             if(response.deletedMedicalRecord){
                 showToast('success', 'Sucesso!', `Prontuário deletado com sucesso!`);
@@ -446,7 +448,7 @@ const MedicalRecords = () => {
                 abortEarly: false,
             });
 
-            medicalRecordsService.Desfecho(getNroProntuario, getDesfecho, getDataDesfecho
+            medicalRecordsService.Desfecho(getNroProntuario, getDesfecho, getDataDesfecho, email
             ).then((response) => {
                 console.log(response)
                 if(response.updatedMedicalRecord){

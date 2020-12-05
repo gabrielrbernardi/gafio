@@ -91,6 +91,7 @@ const Header = () => {
     function logoutFunction() {
         removeCookie('userData');
         removeCookie('notificationLength');
+        localStorage.removeItem('@gafio-user/email');
         history.push('/login');
     }
 

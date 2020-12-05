@@ -11,6 +11,7 @@ class CreateMedicineService {
         Apresentacao: string,
         ClasseTerapeutica: string,
         CNPJ: string,
+        email:any
     ) {
         return await api.post('medicines', {
             EAN,
@@ -20,7 +21,8 @@ class CreateMedicineService {
             Produto,
             Apresentacao,
             ClasseTerapeutica,
-            CNPJ
+            CNPJ,
+            email
         }).then(response => response.data);
     }
 }

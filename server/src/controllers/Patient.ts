@@ -7,11 +7,14 @@
 import { Request, Response } from "express";
 import knex from "../database/connection";
 import { parse } from "querystring";
+import PatientLog from '../jobs/PatientLog';
+import { id } from "date-fns/locale";
 
 class PatientController {
     // Método para cadastro de um paciente
     async create(request: Request, response: Response) {
-        const { NroPaciente, NomePaciente, DataNascimento, Genero } = request.body;
+        const { NroPaciente, NomePaciente, DataNascimento, Genero, email } = request.body;
+        console.log(email)
         if (NroPaciente && NomePaciente && DataNascimento && Genero) {
             const patientDB = await knex('Paciente').where('NroPaciente', NroPaciente);
             if (!patientDB[0]) {
@@ -32,7 +35,7 @@ class PatientController {
                 if (prepositions[current])
                     return formattedName += prepositions[current];
                 else 
-                return formattedName += current[0];
+                    return formattedName += current[0];
                 }, "")
 
                 await knex("Paciente").insert({
@@ -41,14 +44,18 @@ class PatientController {
                     DataNascimento: newDataNascimento,
                     Genero
                 }).then(patientNumber => {
+                    PatientLog.handleSuccessfulCreation(email);
                     return response.json({ createdPatient: true, patientData: { NomePaciente, DataNascimento, Genero, patientNumber: patientNumber[0] } })
                 }).catch(err => {
+                    PatientLog.handleUnsuccessfulCreation(email, err);
                     return response.json({ createdPatient: false, error: "Não foi possível inserir o paciente no banco de dados.", err: err })
                 })
             } else {
+                PatientLog.handleUnsuccessfulCreation(email, "paciente existente");
                 return response.json({ createdPatient: false, error: "Não foi possível inserir o paciente no banco de dados. Número do paciente já existente." })
             }
         } else {
+            PatientLog.handleUnsuccessfulCreation(email, "dados incorretos");
             return response.json({ createdPatient: false, error: "Verifique os dados inseridos e tente novamente." })
         }
     }
@@ -170,7 +177,7 @@ class PatientController {
 
     async update(request: Request, response: Response) {
         const { SeqPaciente } = request.params;
-        const { NomePaciente, DataNascimento, Genero } = request.body;
+        const { NomePaciente, DataNascimento, Genero, email } = request.body;
 
         var parseDataNascimento = DataNascimento.substring(0, 10);
         parseDataNascimento = parseDataNascimento.split("-");
@@ -200,21 +207,26 @@ class PatientController {
                 Genero: Genero
             }).then(responseDB => {
                 if (responseDB === 1) {
+                    PatientLog.handleSuccessfulUpdate(email, Number(SeqPaciente));
                     return response.json({ updatedPatient: true })
                 } else {
+                    PatientLog.handleUnsuccessfulUpdate(email, "erro no servidor", Number(SeqPaciente));
                     return response.json({ updatedPatient: false, error: "Não foi possível alterar os dados do paciente." })
                 }
             }).catch(err => {
+                PatientLog.handleUnsuccessfulUpdate(email, err, Number(SeqPaciente))
                 return response.json({ updatedPatient: false, error: "Erro na atualização do paciente.", err })
             })
         } else {
+            PatientLog.handleUnsuccessfulUpdate(email, "dados incorretos", Number(SeqPaciente))
             return response.json({ updatedPatient: false, error: "Verifique os dados inseridos e tente novamente." })
         }
     }
 
     // Método para exluir um paciente:
     async delete(request: Request, response: Response) {
-        const { SeqPaciente } = request.params;
+        const { SeqPaciente, email } = request.params;
+        console.log(request.body)
         try {
             const patient = await knex("Paciente").where("SeqPaciente", SeqPaciente);
             if (patient) {
@@ -224,25 +236,30 @@ class PatientController {
                     await knex("Historico").where("IdPaciente", SeqPaciente).delete();
                     await knex("Prontuario").where("SeqPaciente", SeqPaciente).delete();
                     await knex("Paciente").where("SeqPaciente", SeqPaciente).delete();
+                    PatientLog.handleSuccessfulDelete(email, Number(SeqPaciente));
                     return response.json({ deletedPatient: true });
                 } else {
                     const medicalRecordsPatient = await knex("Prontuario").where("SeqPaciente", SeqPaciente);
                     if (medicalRecordsPatient != []) {
                         await knex("Prontuario").where("SeqPaciente", SeqPaciente).delete();
                         await knex("Paciente").where("SeqPaciente", SeqPaciente).delete();
+                        PatientLog.handleSuccessfulDelete(email, Number(SeqPaciente));
                         return response.json({ deletedPatient: true });
                     } else {
                         await knex("Paciente").where("SeqPaciente", SeqPaciente).delete();
+                        PatientLog.handleSuccessfulDelete(email, Number(SeqPaciente));
                         return response.json({ deletedPatient: true });
                     }
                 }
             } else {
+                PatientLog.handleUnsuccessfulDelete(email, "paciente inexistente", Number(SeqPaciente));
                 return response.json({
                     deletedPatient: false,
                     error: "Paciente não encontrado.",
                 });
             }
         } catch (err) {
+            PatientLog.handleUnsuccessfulDelete(email, err,  Number(SeqPaciente));
             return response.json({ deletedPatient: false, error: err });
         }
     }

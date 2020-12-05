@@ -153,13 +153,13 @@ const MedicalRecordsForm = () => {
             await schema.validate(data, {
                 abortEarly: false,
             });
-
+            const email = localStorage.getItem('@gafio-user/email');
             createMedicalRecordsService.Create(getNroProntuario, getSeqPaciente,
                 getDataInternacao, getCodDoencaPrincipal, getCodDoencaSecundario,
                 getSistemaAcometido, getCodComorbidade, getOrigem, getAlocacao,
                 getResultadoColeta, getCodAtbPrimario, getCodAtbSecundario,
                 getSitioInfeccaoPrimario, getTratamento, getIndicacao,
-                getDisfuncao, getOrigemInfeccao, getDose, getPosologia
+                getDisfuncao, getOrigemInfeccao, getDose, getPosologia, email
             ).then((response) => {
                 if (response.CreatedMedicalRecord) {
                     showToast('success', 'Sucesso!', `Prontuário criado com sucesso!`);

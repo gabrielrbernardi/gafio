@@ -4,7 +4,7 @@ class CreateMedicalRecordsService {
     async Create(NroProntuariof: any, SeqPacientef: any, DataInternacaof: string, CodDoencaPrincipalf: string,
         CodDoencaSecundariof: any, SistemaAcometidof: string, CodComorbidadef: any, Origemf: string, Alocacaof: string,
         ResultadoColetaf: any, CodAtbPrimariof: string, CodAtbSecundariof: any, SitioInfeccaoPrimariof: any,
-        TratamentoCCIHf: string, IndicacaoSepsef: string, DisfuncaoRenalf: string, OrigemInfeccaof: string,
+        TratamentoCCIHf: string, IndicacaoSepsef: string, DisfuncaoRenalf: string, OrigemInfeccaof: string, email:any,
         DoseCorretaf: any, PosologiaCorretaf: any) {
         let NroProntuario = NroProntuariof
         let SeqPaciente = SeqPacientef
@@ -22,7 +22,7 @@ class CreateMedicalRecordsService {
             Alocacao: Alocacaof, ResultadoColeta, CodAtbPrimario: CodAtbPrimariof,
             CodAtbSecundario, SitioInfeccaoPrimario,
             TratamentoCCIH: TratamentoCCIHf, IndicacaoSepse: IndicacaoSepsef, DisfuncaoRenal: DisfuncaoRenalf,
-            OrigemInfeccao: OrigemInfeccaof, DoseCorreta, PosologiaCorreta
+            OrigemInfeccao: OrigemInfeccaof, DoseCorreta, PosologiaCorreta,email
         }).then(response => response.data);
     }
     async Diseases(){

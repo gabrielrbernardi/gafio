@@ -10,16 +10,16 @@ class PatientService {
         return await api.get(`patient/search/searchPatientData/?id=${idPatient}&page=10`).then(response => response.data);
     }
 
-    async updatePatientInformation(IdPaciente: Number, NomePaciente: string, Genero: string, DataNascimento: Date) {
-        return await api.put(`/patient/update/${IdPaciente}`, { NomePaciente, Genero, DataNascimento }).then(response => {
+    async updatePatientInformation(IdPaciente: Number, NomePaciente: string, Genero: string, DataNascimento: Date, email:any) {
+        return await api.put(`/patient/update/${IdPaciente}`, { NomePaciente, Genero, DataNascimento, email}).then(response => {
             return response.data;
         }).catch((err) => {
             return { error: err };
         })
     }
 
-    async deletePatient(IdPaciente: Number) {
-        return await api.delete(`/patient/delete/${IdPaciente}`).then(response => {
+    async deletePatient(IdPaciente: Number, email:any) {
+        return await api.delete(`/patient/delete/${IdPaciente}/${email}`).then(response => {
             return response.data;
         }).catch(err => {
             return { error: err };

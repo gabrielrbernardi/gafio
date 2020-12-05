@@ -47,6 +47,7 @@ const Login = () => {
         event.preventDefault();
         const {email, senha} = formData;
         // const token = jwt.sign({email: email, senha: senha}, secretWord);
+        localStorage.setItem('@gafio-user/email', email);
         try{
             await api.post('session/login', {email: email, senha: senha})
             .then(function(response){

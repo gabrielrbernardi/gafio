@@ -8,18 +8,26 @@ import { Request, Response } from "express";
 import knex from "../database/connection";
 import axios from 'axios';
 
+import DiseasesLog from '../jobs/DiseaseLog';
 class DiseasesController {
 
     // Método para cadastro de uma nova doença:
     async create(request: Request, response: Response) {
-        const { codDoenca, nome } = request.body;
-
-        await knex("Doenca").insert({
+        const { codDoenca, nome, email } = request.body;
+        try {
+            await knex("Doenca").insert({
             codDoenca,
             nome,
-        });
-
-        return response.json({ codDoenca, nome });
+            });
+            DiseasesLog.handleSuccessfulCreation(email);
+            return response.json({ codDoenca, nome });
+        } catch (err) {
+            DiseasesLog.handleUnsuccessfulCreation(email, err);
+            return response.status(400).json({
+                createdDisease: false,
+                err,
+            }); 
+       }
     }
 
     // Método para listar doenças:

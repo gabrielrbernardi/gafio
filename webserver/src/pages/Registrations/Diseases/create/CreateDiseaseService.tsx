@@ -4,11 +4,13 @@ class CreateDiseaseService {
 
     async Create(
         codDoenca: string,
-        nome: string
+        nome: string,
+        email:any
     ) {
         return await api.post('diseases', {
             codDoenca,
-            nome
+            nome,
+            email
         }).then(response => response.data);
     }
 }
