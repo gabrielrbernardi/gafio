@@ -31,7 +31,7 @@ class PatientController {
                 "DOS": "dos",
                 "E": "e"
                 }   
-                const formattedName = NomePaciente.toString().split(" ").reduce((formattedName, current) => {
+                const formattedName = NomePaciente.toUpperCase().split(" ").reduce((formattedName, current) => {
                 if (prepositions[current])
                     return formattedName += prepositions[current];
                 else 
