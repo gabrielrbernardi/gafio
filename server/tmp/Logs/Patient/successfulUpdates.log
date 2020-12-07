@@ -1,10 +1,1 @@
-{"message":{"user":"admin@gafio.com","type":"deletePatient","date":"dia 07 de dezembro às 16:25h","patient":6},"level":"info"}
-{"message":{"user":"admin@gafio.com","type":"deletePatient","date":"dia 07 de dezembro às 16:25h","patient":6},"level":"info"}
-{"message":{"user":"admin@gafio.com","type":"deletePatient","date":"dia 07 de dezembro às 16:25h","patient":6},"level":"info"}
-{"message":{"user":"admin@gafio.com","type":"deletePatient","date":"dia 07 de dezembro às 16:31h","patient":6},"level":"info"}
-{"message":{"user":"admin@gafio.com","type":"deletePatient","date":"dia 07 de dezembro às 16:31h","patient":6},"level":"info"}
-{"message":{"user":"admin@gafio.com","type":"deletePatient","date":"dia 07 de dezembro às 16:44h","patient":6},"level":"info"}
-{"message":{"user":"admin@gafio.com","type":"deletePatient","date":"dia 07 de dezembro às 16:44h","patient":6},"level":"info"}
-{"message":{"user":"admin@gafio.com","type":"deletePatient","date":"dia 07 de dezembro às 16:49h","patient":6},"level":"info"}
-{"message":{"user":"admin@gafio.com","type":"deletePatient","date":"dia 07 de dezembro às 16:49h","patient":6},"level":"info"}
-{"message":{"user":"admin@gafio.com","type":"deletePatient","date":"dia 07 de dezembro às 16:49h","patient":6},"level":"info"}
+{"message":{"user":"admin@gafio.com","type":"updatePatient","date":"dia 07 de dezembro às 20:24h","patient":12},"level":"info"}

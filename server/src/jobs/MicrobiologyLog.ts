@@ -62,7 +62,7 @@ class MicrobiologyLog {
         )
       ]
     });
-    logger.info({user:email, type: "updateMicrobiology", date: formattedDate, microbiology:id});
+    logger.info({user:email, type: "deleteMicrobiology", date: formattedDate, microbiology:id});
    }
     
   handleUnsuccessfulDelete(email: string, erro: string, id:number) {
@@ -74,7 +74,7 @@ class MicrobiologyLog {
         )
       ]
     });
-    logger.warn({user:email, type: "updateMicrobiology", erro, date: formattedDate, microbiology:id});
+    logger.warn({user:email, type: "deleteMicrobiology", erro, date: formattedDate, microbiology:id});
   }
 }
 

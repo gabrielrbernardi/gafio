@@ -38,7 +38,7 @@ class MedicineLog {
         )
       ]
     });
-    logger.info({user: email, type: "deleteMedicine", date: formattedDate, medicine:id});
+    logger.info({user: email, type: "updateMedicine", date: formattedDate, medicine:id});
   }
 
   handleUnsuccessfulUpdate(email : string, erro : string, id:number) {
@@ -50,7 +50,7 @@ class MedicineLog {
         )
       ]
     });
-    logger.warn({user: email, type: "deleteMedicine", erro, date: formattedDate, medicine:id});
+    logger.warn({user: email, type: "updateMedicine", erro, date: formattedDate, medicine:id});
   }
 
    handleSuccessfulDelete(email : string, id:number) {

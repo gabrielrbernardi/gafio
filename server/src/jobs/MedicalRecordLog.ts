@@ -62,7 +62,7 @@ class MedicalRecordLog {
         )
       ]
     });
-    logger.info({user: email, type: "updateMedicalRecord", date: formattedDate, MedicalRecord:id});
+    logger.info({user: email, type: "deleteMedicalRecord", date: formattedDate, MedicalRecord:id});
    }
     
   handleUnsuccessfulDelete(email: string, erro: string, id:number) {
@@ -74,7 +74,7 @@ class MedicalRecordLog {
         )
       ]
     });
-    logger.warn({user: email, type: "updateMedicalRecord", erro, date: formattedDate, MedicalRecord:id});
+    logger.warn({user: email, type: "deleteMedicalRecord", erro, date: formattedDate, MedicalRecord:id});
   }
 }
 

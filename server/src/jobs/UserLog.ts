@@ -38,7 +38,7 @@ class UserLog {
         )
       ]
     });
-    logger.info({user:email, type: "deleteUser", date: formattedDate, userId:id});
+    logger.info({user:email, type: "updateUser", date: formattedDate, userId:id});
   }
 
   handleUnsuccessfulUpdate(email : string, erro : string, id:number) {
@@ -50,7 +50,7 @@ class UserLog {
         )
       ]
     });
-    logger.warn({user:email, type: "deleteUser", erro, date: formattedDate, userId:id});
+    logger.warn({user:email, type: "updateUser", erro, date: formattedDate, userId:id});
   }
 
    handleSuccessfulDelete(email : string, id:number) {
