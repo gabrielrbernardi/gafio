@@ -134,7 +134,7 @@ const PatientCreate = () => {
 
                             <label htmlFor="Nome" className="mt-4">Nome</label>
                             <br></br>
-                            <InputText keyfilter="alpha" style={{width: '100%'}} id="Nome" name="Nome" defaultValue={getNomePaciente} onChange={(e) => setNomePaciente((e.target as HTMLInputElement).value)}
+                            <InputText  style={{width: '100%'}} id="Nome" name="Nome" defaultValue={getNomePaciente} onChange={(e) => setNomePaciente((e.target as HTMLInputElement).value)}
                                 placeholder="Digite o nome do paciente" required/>
                             
                             <label htmlFor="Genero" className="mt-4">Gênero</label>
