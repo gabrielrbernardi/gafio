@@ -1,9 +1,11 @@
 # GAFio
 Sistema de controle de antibióticos que permite à gestão de antibióticos no âmbito da fundação provendo controle, notificações e comunicação do sistema com interfaces externas. A interação será via Desktops e Smartphones.
 
-# Dependências
+# Instalação de dependências
 
 //Backend
+
+Na pasta do backend, instale as seguintes dependências
 
 npm install bcrypt knex cors jsonwebtoken
 
@@ -14,6 +16,8 @@ npm install @types/cors @types/bcrypt -D
 npm install @types/jsonwebtoken
 
 //Frontend
+
+Na pasta do frontend, instale as seguintes dependências
 
 npm install react-router-dom axios react-icons react-cookie react-bootstrap
 
