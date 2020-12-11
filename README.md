@@ -5,7 +5,7 @@ Sistema de controle de antibióticos que permite à gestão de antibióticos no 
 
 //Backend
 
-Na pasta do backend, instale as seguintes dependências
+Na pasta server, instale as seguintes dependências
 
 npm install bcrypt knex cors jsonwebtoken
 
@@ -17,7 +17,7 @@ npm install @types/jsonwebtoken
 
 //Frontend
 
-Na pasta do frontend, instale as seguintes dependências
+Na pasta webserver, instale as seguintes dependências
 
 npm install react-router-dom axios react-icons react-cookie react-bootstrap
 
