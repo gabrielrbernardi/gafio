@@ -15,6 +15,8 @@ npm install @types/cors @types/bcrypt -D
 
 npm install @types/jsonwebtoken
 
+Para executar a aplicação, npm run dev
+
 //Frontend
 
 Na pasta webserver, instale as seguintes dependências
@@ -24,6 +26,8 @@ npm install react-router-dom axios react-icons react-cookie react-bootstrap
 npm install primereact primeicons --save
 
 npm install @types/react-router-dom
+
+Para executar a aplicação, npm start
 
 # Useful sources to develop
 
