@@ -168,7 +168,8 @@ const Microbiology = () => {
 
     //Deleta microbiologia
     function handleDelete() {
-        MicrobiologyService.delete(id)
+        const email = localStorage.getItem('@gafio-user/email');
+        MicrobiologyService.delete(id, email)
             .then(() => {
                 setDeleteDialog(false);
                 HandleToast("success", "Sucesso!", "A microbiologia foi excluída.");

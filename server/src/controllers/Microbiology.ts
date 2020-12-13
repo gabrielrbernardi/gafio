@@ -7,10 +7,13 @@
 import { Request, Response } from "express";
 import knex from "../database/connection";
 
+import MicrobiologyLog from '../jobs/MicrobiologyLog';
+
 class MicrobiologyController {
     // Método de cadastro
     async create(req: Request, res: Response) {
-        const { IdPaciente, IdProntuario } = req.body;
+        const { microbiologyData, email} = req.body;
+        const { IdPaciente, IdProntuario } = microbiologyData;
 
         //Verificação da existência do paciente e do prontuário
         const patientExists = await knex("Paciente").where(
@@ -43,14 +46,16 @@ class MicrobiologyController {
             };
 
             try {
-                let data = req.body;
-                data.DataColeta = handleDate(data.DataColeta);
-                data.DataResultado = handleDate(data.DataResultado);
-                await knex("Microbiologia").insert(data);
+                microbiologyData.DataColeta = handleDate(microbiologyData.DataColeta);
+                microbiologyData.DataResultado = handleDate(microbiologyData.DataResultado);
+                const [id] = await knex("Microbiologia").insert(microbiologyData);
+                console.log(id);
+                MicrobiologyLog.handleSuccessfulCreation(email);
                 return res
                     .status(201)
-                    .json({ createdMicrobiology: true, ...data });
+                    .json({ createdMicrobiology: true, ...microbiologyData });
             } catch (error) {
+                MicrobiologyLog.handleUnsuccessfulCreation(email, error);
                 return res.status(400).json({
                     createdMicrobiology: false,
                     error,
@@ -185,9 +190,12 @@ class MicrobiologyController {
 
     //Método para atualização de dados
     async update(req: Request, res: Response) {
+        const { id } = req.params;
+        const { microbiologyData, email } = req.body;
+        
         try {
-            const { id } = req.params;
-            const { IdPaciente, IdProntuario } = req.body;
+            const { IdPaciente, IdProntuario } = microbiologyData;
+
             if (IdPaciente) {
                 const patientExists = await knex("Paciente").where(
                     "SeqPaciente",
@@ -214,11 +222,9 @@ class MicrobiologyController {
                         error: "Prontuário não existe!",
                     });
                 }
-            }
-
-            let data = req.body;
+            }    
             
-            if (req.body) {
+            if (microbiologyData) {
                 //Formatação de datas
                 const handleDate = (date: string) => {
                     let dateFormated = date.split("T");
@@ -229,24 +235,39 @@ class MicrobiologyController {
                     return date;
                 };   
                 
-                data.DataColeta = handleDate(data.DataColeta);
-                data.DataResultado = handleDate(data.DataResultado);
+                const microbiology = await knex("Microbiologia").where({
+                    IdMicrobiologia: id,
+                });
 
-                await knex("Microbiologia")
-                    .update(data)
-                    .where({ IdMicrobiologia: id });
+                if (microbiology[0]) {
+                    microbiologyData.DataColeta = handleDate(microbiologyData.DataColeta);
+                    microbiologyData.DataResultado = handleDate(microbiologyData.DataResultado);
 
-                return res.json({ updatedMicrobioloogy: true });
+                    await knex("Microbiologia")
+                        .update(microbiologyData)
+                        .where({ IdMicrobiologia: id });
+                
+                    MicrobiologyLog.handleSuccessfulUpdate(email, Number(id));
+                    return res.json({ updatedMicrobioloogy: true });
+                }
+                else {
+                    MicrobiologyLog.handleUnsuccessfulUpdate(email, 'Microbiologia inexistente', Number(id));
+                    return res.status(400).json({
+                        updatedMicrobiology: false,
+                        error: "Microbiollogia não existe!",
+                });                   
+                }
             }
         } catch (error) {
+            MicrobiologyLog.handleUnsuccessfulUpdate(email, error, Number(id));
             return res.status(400).json({ updatedMicrobioloogy: false, error });
         }
     }
 
     //Método de exclusão
     async delete(req: Request, res: Response) {
+        const { id, email } = req.params;
         try {
-            const { id } = req.params;
             const microbiology = await knex("Microbiologia").where({
                 IdMicrobiologia: id,
             });
@@ -254,14 +275,17 @@ class MicrobiologyController {
                 await knex("Microbiologia")
                     .where({ IdMicrobiologia: id })
                     .delete();
+                MicrobiologyLog.handleSuccessfulDelete(email, Number(id));
                 return res.json({ deletedMicrobiology: true });
             } else {
+                MicrobiologyLog.handleUnsuccessfulDelete(email, 'Microbiologia inexistente', Number(id));
                 return res.status(400).json({
                     deletedMicrobiology: false,
                     error: "Microbiollogia não existe!",
                 });
             }
         } catch (error) {
+            MicrobiologyLog.handleUnsuccessfulDelete(email, error, Number(id));
             return res.json({ error });
         }
     }

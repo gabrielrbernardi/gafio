@@ -6,8 +6,8 @@
 
 import { Request, Response } from "express";
 import knex from "../database/connection";
-import MedicalRecordLog from '../jobs/MedicalRecordLog';
 
+import MedicalRecordLog from '../jobs/MedicalRecordLog';
 
 class ProntuarioController {
     //CRIAR PRONTUARIO

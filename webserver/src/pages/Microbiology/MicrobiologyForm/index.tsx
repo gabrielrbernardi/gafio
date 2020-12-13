@@ -93,6 +93,8 @@ const MicrobiologyForm: React.FC<Props> = ({ id }) => {
         { label: "Não", value: "N" },
     ];
 
+    const email = localStorage.getItem('@gafio-user/email');
+
     useEffect(() => {
         // Formatação de dados
         function formatDate(date: any) {
@@ -155,7 +157,6 @@ const MicrobiologyForm: React.FC<Props> = ({ id }) => {
         }
     }, [id]);
 
-
     //Envio de formulário
     async function handleSubmit(event: FormEvent) {
         event.preventDefault();
@@ -204,7 +205,7 @@ const MicrobiologyForm: React.FC<Props> = ({ id }) => {
             await schema.validate(data, {abortEarly: false, });
 
             if (id) {
-                MicrobiologyService.update(data, id).then(() => {
+                MicrobiologyService.update(data, id, email).then(() => {
                     HandleToast("success", "Sucesso!", "Microbiologia atualizada com sucesso.");
                     setLoading(false);
                 }).catch(err => {
@@ -213,7 +214,7 @@ const MicrobiologyForm: React.FC<Props> = ({ id }) => {
                     setLoading(false);
                 });
             } else {
-                MicrobiologyService.create(data).then(() => {
+                MicrobiologyService.create(data, email).then(() => {
                     HandleToast("success", "Sucesso!", "Microbiologia criada com sucesso.");
                     setLoading(false);
                 }).catch(err => {
@@ -353,7 +354,6 @@ const MicrobiologyForm: React.FC<Props> = ({ id }) => {
                                                     setSwabNasal(e.value);
                                                }}
                                               style={{ width: "100%" }}
-                                            required
                                             />
                                             <DropdownReact />
                                     </div>
@@ -375,7 +375,6 @@ const MicrobiologyForm: React.FC<Props> = ({ id }) => {
                                                     setSwabRetal(e.value);
                                                 }}
                                                 style={{ width: "100%" }}
-                                            required
                                             />
                                             <DropdownReact />
                                     </div>
@@ -399,7 +398,6 @@ const MicrobiologyForm: React.FC<Props> = ({ id }) => {
                                                 setSangue(e.value);
                                             }}
                                             style={{ width: "100%" }}
-                                            required
                                         />
                                         <DropdownReact />
                                     </div>
@@ -421,7 +419,6 @@ const MicrobiologyForm: React.FC<Props> = ({ id }) => {
                                                 setUrina(e.value);
                                             }}
                                             style={{ width: "100%" }}
-                                            required
                                         />
                                         <DropdownReact />
                                     </div>
@@ -446,7 +443,6 @@ const MicrobiologyForm: React.FC<Props> = ({ id }) => {
                                                 setSecrecaoTraqueal(e.value);
                                             }}
                                             style={{ width: "100%" }}
-                                            required
                                         />
                                         <DropdownReact />
                                     </div>
@@ -470,7 +466,6 @@ const MicrobiologyForm: React.FC<Props> = ({ id }) => {
                                                 setOutros(e.value);
                                             }}
                                             style={{ width: "100%" }}
-                                            required
                                         />
                                         <DropdownReact />
                                     </div>
