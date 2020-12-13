@@ -48,8 +48,7 @@ class MicrobiologyController {
             try {
                 microbiologyData.DataColeta = handleDate(microbiologyData.DataColeta);
                 microbiologyData.DataResultado = handleDate(microbiologyData.DataResultado);
-                const [id] = await knex("Microbiologia").insert(microbiologyData);
-                console.log(id);
+                await knex("Microbiologia").insert(microbiologyData);
                 MicrobiologyLog.handleSuccessfulCreation(email);
                 return res
                     .status(201)

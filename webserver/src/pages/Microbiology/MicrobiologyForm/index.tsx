@@ -123,23 +123,40 @@ const MicrobiologyForm: React.FC<Props> = ({ id }) => {
                     setDataResultado(dataResultado);
 
                     setSwabNasal(microbiology.SwabNasal);
-                    if (microbiology.SwabNasalObservacoes)
+                    if (microbiology.SwabNasalObservacoes) {
                         setSwabNasalObservacoes(microbiology.SwabNasalObservacoes);
+                        setViewNasal(true);
+                    }
+                    
                     setSwabRetal(microbiology.SwabRetal);
-                    if (microbiology.SwabRetalObservacoes)
+                    if (microbiology.SwabRetalObservacoes){
                         setSwabRetalObservacoes(microbiology.SwabRetalObservacoes);
+                        setViewRetal(true);
+                    }
+
                     setSangue(microbiology.Sangue);
-                    if (microbiology.SangueObservacoes)
+                    if (microbiology.SangueObservacoes){
                         setSangueObservacoes(microbiology.SangueObservacoes);
+                        setViewSangue(true);
+                    }
+
                     setUrina(microbiology.Urina);
-                    if (microbiology.UrinaObservacoes)
-                        setUrinaObservacoes(microbiology.UrinaObservacoes);
+                    if (microbiology.UrinaObservacoes) {
+                         setUrinaObservacoes(microbiology.UrinaObservacoes);
+                         setViewUrina(true);                       
+                    }
+
                     setSecrecaoTraqueal(microbiology.SecrecaoTraqueal);
-                    if (microbiology.SecrecaoTraquealObservacoes)
+                    if (microbiology.SecrecaoTraquealObservacoes){
                         setSecrecaoTraquealObservacoes(microbiology.SecrecaoTraquealObservacoes);
+                        setViewSec(true);
+                    }
+
                     setOutros(microbiology.Outros);
-                    if (microbiology.OutrosObservacoes)
+                    if (microbiology.OutrosObservacoes) {
                         setOutrosObservacoes(microbiology.OutrosObservacoes);
+                        setViewOutros(true);
+                    }
                     setPerfilSensibilidade(microbiology.PerfilSensibilidade);
 
                     setLoading(false);
