@@ -6,6 +6,8 @@
 
 import { Request, Response } from "express";
 import knex from "../database/connection";
+import MedicalRecordLog from '../jobs/MedicalRecordLog';
+
 
 class ProntuarioController {
     //CRIAR PRONTUARIO
@@ -29,7 +31,8 @@ class ProntuarioController {
             DisfuncaoRenal,
             OrigemInfeccao,
             DoseCorreta,
-            PosologiaCorreta
+            PosologiaCorreta,
+            email
         } = request.body
 
         if (!NroProntuario || !SeqPaciente || !DataInternacao || !CodDoencaPrincipal || !SistemaAcometido || !Origem || !Alocacao || !CodAtbPrimario || !TratamentoCCIH || !IndicacaoSepse || !DisfuncaoRenal || !OrigemInfeccao) {
@@ -72,20 +75,25 @@ class ProntuarioController {
                         PosologiaCorreta
                     }).then((SeqProntuarioDB) => {
                         knex("Historico").insert({ "IdProntuario": SeqProntuarioDB, "IdPaciente": patient.SeqPaciente }).then(() => {
+                            MedicalRecordLog.handleSuccessfulCreation(email);
                             return response.json({ CreatedMedicalRecord: true });
                         }).catch((error) => {
+                            MedicalRecordLog.handleUnsuccessfulCreation(email, error);
                             return response.json({ CreatedMedicalRecord: false, error });
                         })
                     }).catch(error => {
+                         MedicalRecordLog.handleUnsuccessfulCreation(email, error);
                         return response.json({ CreatedMedicalRecord: false, error });
                     })
                 } else {
+                    MedicalRecordLog.handleUnsuccessfulCreation(email, "Paciente inexistente");
                     return response.json({
                         CreatedMedicalRecord: false,
                         error: "A sequência de paciente não existe."
                     });
                 }
             } else {
+                MedicalRecordLog.handleUnsuccessfulCreation(email, "Prontuário existente");
                 return response.json({
                     CreatedMedicalRecord: false,
                     error: "O número de prontuário já existe."
@@ -402,7 +410,8 @@ class ProntuarioController {
             DisfuncaoRenal,
             OrigemInfeccao,
             DoseCorreta,
-            PosologiaCorreta
+            PosologiaCorreta,
+            email
         } = request.body
 
         if (!SeqPaciente || !DataInternacao || !CodDoencaPrincipal || !SistemaAcometido || !Origem || !Alocacao || !CodAtbPrimario || !TratamentoCCIH || !IndicacaoSepse || !DisfuncaoRenal || !OrigemInfeccao) {
@@ -441,25 +450,30 @@ class ProntuarioController {
                         DisfuncaoRenal: DisfuncaoRenal,
                         OrigemInfeccao: OrigemInfeccao,
                         DoseCorreta: DoseCorreta,
-                        PosologiaCorreta: PosologiaCorreta
+                        PosologiaCorreta: PosologiaCorreta,
                     }).then(() => {
                         knex('Historico').where('IdProntuario', MedicalRecord.SeqProntuario).update({
                             IdPaciente: SeqPaciente
                         }).then(() => {
+                            MedicalRecordLog.handleSuccessfulUpdate(email, NroProntuario);
                             return response.json({ updatedMedicalRecord: true })
                         }).catch(error => {
+                            MedicalRecordLog.handleUnsuccessfulUpdate(email, error, NroProntuario);
                             return response.json({ updatedMedicalRecord: false, error })
                         })
                     }).catch(error => {
+                        MedicalRecordLog.handleUnsuccessfulUpdate(email, error, NroProntuario);
                         return response.json({ updatedMedicalRecord: false, error });
                     })
                 } else {
+                    MedicalRecordLog.handleUnsuccessfulUpdate(email, "Paciente inexistente", NroProntuario);
                     return response.json({
                         updatedMedicalRecord: false,
                         error: "A sequência de paciente não existe."
                     });
                 }
             } else {
+                MedicalRecordLog.handleUnsuccessfulUpdate(email, "Prontuário inexistente", NroProntuario);
                 return response.json({ updatedMedicalRecord: false, error: "O número de prontuário não existe." });
             }
         }
@@ -470,7 +484,8 @@ class ProntuarioController {
         const {
             NroProntuario,
             DataDesfecho,
-            Desfecho
+            Desfecho,
+            email
         } = request.body
 
         if (!DataDesfecho || !Desfecho) {
@@ -492,11 +507,14 @@ class ProntuarioController {
                     Desfecho: desfechoChar,
                     DataDesfecho: dataTratada
                 }).then(() => {
+                    MedicalRecordLog.handleSuccessfulUpdate(email, NroProntuario);
                     return response.json({ updatedMedicalRecord: true })
                 }).catch(error => {
+                    MedicalRecordLog.handleUnsuccessfulUpdate(email, error, NroProntuario);
                     return response.json({ updatedMedicalRecord: false, error, teste: 1 })
                 })
             } else {
+                MedicalRecordLog.handleUnsuccessfulUpdate(email, "Prontúario inexistente", NroProntuario);
                 return response.json({ updatedMedicalRecord: false, error: "O número de prontuário não existe." });
             }
         }
@@ -504,7 +522,7 @@ class ProntuarioController {
 
     //DELETAR PRONTUARIO
     async delete(request: Request, response: Response) {
-        const { NroProntuario } = request.body;
+        const { NroProntuario, email } = request.body;
 
         const MedicalRecordDB = await knex("Prontuario").where("NroProntuario", NroProntuario);
         const MedicalRecord = MedicalRecordDB[0];
@@ -515,24 +533,31 @@ class ProntuarioController {
                 if (AvaliacaoDB) {
                     knex("Avaliacao").where("IdProntuario", MedicalRecord.SeqProntuario).delete().then(() => {
                         knex("Prontuario").where("NroProntuario", NroProntuario).delete().then(() => {
+                            MedicalRecordLog.handleSuccessfulDelete(email, NroProntuario);                        
                             return response.json({ deletedMedicalRecord: true });
                         }).catch((error) => {
+                            MedicalRecordLog.handleUnsuccessfulDelete(email, error, NroProntuario);
                             return response.json({ deletedMedicalRecord: false, error });
                         })
                     }).catch((error) => {
+                        MedicalRecordLog.handleUnsuccessfulDelete(email, error, NroProntuario);
                         return response.json({ deletedMedicalRecord: false, error });
                     })
                 } else {
                     knex("Prontuario").where("NroProntuario", NroProntuario).delete().then(() => {
+                        MedicalRecordLog.handleSuccessfulDelete(email, NroProntuario);
                         return response.json({ deletedMedicalRecord: true });
                     }).catch((error) => {
+                        MedicalRecordLog.handleUnsuccessfulDelete(email, error, NroProntuario);
                         return response.json({ deletedMedicalRecord: false, error });
                     })
                 }
             }).catch((error) => {
+                MedicalRecordLog.handleUnsuccessfulDelete(email, error, NroProntuario);
                 return response.json({ deletedMedicalRecord: false, error });
             })
         } else {
+            MedicalRecordLog.handleUnsuccessfulDelete(email, "Prontuário inexistente", NroProntuario);
             return response.json({ deletedMedicalRecord: false, error: "Prontuário não encontrado." });
         }
     }

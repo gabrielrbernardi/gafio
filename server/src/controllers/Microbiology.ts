@@ -10,24 +10,16 @@ import knex from "../database/connection";
 class MicrobiologyController {
     // Método de cadastro
     async create(req: Request, res: Response) {
-        //formatação de datas
-        const handleDate = (date: string) => {
-            let dateFormated = date.split("T");
-            if (dateFormated.length) {
-                dateFormated = dateFormated[0].split("-");
-                date = `${dateFormated[2]}/${dateFormated[1]}/${dateFormated[0]}`;
-            }
-            return date;
-        };
         const { IdPaciente, IdProntuario } = req.body;
 
-        //verificação da existência do paciente e do prontuário
+        //Verificação da existência do paciente e do prontuário
         const patientExists = await knex("Paciente").where(
             "SeqPaciente",
             "like",
             `%${IdPaciente}%`
         );
-
+        
+        //Verificação da existência do prontuário
         const medicalRecordsExists = await knex("Prontuario").where(
             "SeqProntuario",
             "like",
@@ -40,6 +32,16 @@ class MicrobiologyController {
                 error: "Paciente ou prontuário não corresponde.",
             });
         } else {
+            //Formatação de datas
+            const handleDate = (date: string) => {
+                let dateFormated = date.split("T");
+                if (dateFormated.length) {
+                    dateFormated = dateFormated[0].split("-");
+                    date = `${dateFormated[2]}/${dateFormated[1]}/${dateFormated[0]}`;
+                }
+                return date;
+            };
+
             try {
                 let data = req.body;
                 data.DataColeta = handleDate(data.DataColeta);
@@ -57,6 +59,7 @@ class MicrobiologyController {
         }
     }
 
+    //Listagem de microbiologia
     async index(req: Request, res: Response) {
         try {
             const { page = 1 } = req.query;
@@ -129,7 +132,7 @@ class MicrobiologyController {
         }
     }
 
-    //método para visualização
+    //Método para visualização de microbiologia
     async view(req: Request, res: Response) {
         try {
             const { id } = req.params;
@@ -180,16 +183,8 @@ class MicrobiologyController {
         }
     }
 
-    //método para atualização de dados
+    //Método para atualização de dados
     async update(req: Request, res: Response) {
-        const handleDate = (date: string) => {
-            let dateFormated = date.split("T");
-            if (dateFormated.length) {
-                dateFormated = dateFormated[0].split("-");
-                date = `${dateFormated[2]}/${dateFormated[1]}/${dateFormated[0]}`;
-            }
-            return date;
-        };
         try {
             const { id } = req.params;
             const { IdPaciente, IdProntuario } = req.body;
@@ -220,16 +215,29 @@ class MicrobiologyController {
                     });
                 }
             }
+
             let data = req.body;
+            
             if (req.body) {
+                //Formatação de datas
+                const handleDate = (date: string) => {
+                    let dateFormated = date.split("T");
+                    if (dateFormated.length) {
+                        dateFormated = dateFormated[0].split("-");
+                        date = `${dateFormated[2]}/${dateFormated[1]}/${dateFormated[0]}`;
+                    }
+                    return date;
+                };   
+                
                 data.DataColeta = handleDate(data.DataColeta);
                 data.DataResultado = handleDate(data.DataResultado);
-            }
-            await knex("Microbiologia")
-                .update(data)
-                .where({ IdMicrobiologia: id });
 
-            return res.json({ updatedMicrobioloogy: true });
+                await knex("Microbiologia")
+                    .update(data)
+                    .where({ IdMicrobiologia: id });
+
+                return res.json({ updatedMicrobioloogy: true });
+            }
         } catch (error) {
             return res.status(400).json({ updatedMicrobioloogy: false, error });
         }

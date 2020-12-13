@@ -1,0 +1,1 @@
+{"message":{"user":"N","type":"createMedicalRecord","erro":{"code":"WARN_DATA_TRUNCATED","errno":1265,"sqlState":"01000","sqlMessage":"Data truncated for column 'PosologiaCorreta' at row 1"},"date":"dia 13 de dezembro às 8:23h"},"level":"warn"}

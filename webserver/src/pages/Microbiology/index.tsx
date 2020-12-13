@@ -74,7 +74,7 @@ const Microbiology = () => {
         loadMicrobiologies();
     }, []);
 
-
+    //formatação de dados
     function handleFormat(microbiology: IMicrobiology) {  
         const verifica = (item: string) => {
             if (item === "S") return "Sim";

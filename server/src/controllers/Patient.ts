@@ -26,6 +26,12 @@ class PatientController { // Método para cadastro de um paciente
         var parseDataNascimento0 = DataNascimento.substring(0, 10);
         parseDataNascimento0 = parseDataNascimento0.split("-");
         const newDataNascimento = parseDataNascimento0[2] + '/' + parseDataNascimento0[1] + '/' + parseDataNascimento0[0]
+        
+        // Se encontrar caracteres especiais, retorna erro
+        if (!/[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ]+$/.test(NomePaciente)) {
+          return response.json({updatedPatient: false, error: "Formato de entrada inválido no campo de nome."})
+        }
+        
         // Formatação de nome
         const prepositions = {
           "DA": "da",
@@ -36,20 +42,15 @@ class PatientController { // Método para cadastro de um paciente
           "DOS": "dos",
           "E": "e"
         }
-
-        // Se encontrar caracteres especiais, retorna erro
-        if (!/[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ]+$/.test(NomePaciente)) {
-          return response.json({updatedPatient: false, error: "Formato de entrada inválido no campo de nome."})
-        }
           
         // Formata nome
         const formattedName = NomePaciente.toUpperCase().split(" ").reduce((formattedName, current) => {
-          if (prepositions[current]) 
+          if (prepositions[current])
             return formattedName += prepositions[current];
-           else 
+          else
             return formattedName += current[0];
           
-        }, "")
+        }, "");
 
         await knex("Paciente").insert({NroPaciente, NomePaciente: formattedName, DataNascimento: newDataNascimento, Genero}).then(patientNumber => {
           PatientLog.handleSuccessfulCreation(email);
