@@ -19,6 +19,7 @@ import {IMicrobiology } from "./MicrobiologyModel";
 import "./index.css";
 
 import MicrobiologyService from "./MicrobiologyService"
+import { serialize } from "v8";
 
 const Microbiology = () => {
     const [microbiologies, setMicrobiologies] = useState<IMicrobiology[]>([]);
@@ -399,7 +400,12 @@ const Microbiology = () => {
                                         variant="outline-danger"
                                         className="p-0 mr-1"
                                         style={{ width: "17px", borderRadius: "0", }}
-                                        onClick={() =>  handleReset()}
+                                        onClick={() => {
+                                            if (successfulSearch) handleReset();
+                                            else {
+                                                setFilterValue("");
+                                            }
+                                        }}
                                     >
                                         <AiOutlineClose size={15} />
                                     </Button>

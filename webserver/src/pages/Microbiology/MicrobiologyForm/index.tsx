@@ -10,7 +10,9 @@ import Loading from "../../../components/Loading";
 import ToastComponent from "../../../components/Toast";
 
 import MicrobiologyService from "../MicrobiologyService";
-import {IMicrobiology} from "../MicrobiologyModel";
+import { IMicrobiology } from "../MicrobiologyModel";
+
+import { useHistory, useLocation } from 'react-router-dom';
 
 interface Props {
     id?: number;
@@ -93,6 +95,7 @@ const MicrobiologyForm: React.FC<Props> = ({ id }) => {
         { label: "Não", value: "N" },
     ];
 
+    const history = useHistory();
     const email = localStorage.getItem('@gafio-user/email');
 
     useEffect(() => {
@@ -234,6 +237,9 @@ const MicrobiologyForm: React.FC<Props> = ({ id }) => {
                 MicrobiologyService.create(data, email).then(() => {
                     HandleToast("success", "Sucesso!", "Microbiologia criada com sucesso.");
                     setLoading(false);
+                    setTimeout(() => {
+                        history.push("/microbiology");
+                    }, 1500);
                 }).catch(err => {
                     const message = err.response.data.error;
                     HandleToast("error", "Erro!", `${message}`)
