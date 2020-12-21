@@ -61,7 +61,7 @@ const Medicines = () => {
             setTotalRecords(data.length);
             getMedicinesFunction(data);
         });
-    }, [getMedicinesFunction, medicinesService]);
+    }, []);
 
     const onPage = (event: any) => {
         setLoading(true);
