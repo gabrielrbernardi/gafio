@@ -1,28 +1,19 @@
 import api from '../../../services/api';
 
 class CreateMedicalRecordsService {
-    async Create(NroProntuariof: any, SeqPacientef: any, DataInternacaof: string, CodDoencaPrincipalf: string,
-        CodDoencaSecundariof: any, SistemaAcometidof: string, CodComorbidadef: any, Origemf: string, Alocacaof: string,
-        ResultadoColetaf: any, CodAtbPrimariof: string, CodAtbSecundariof: any, SitioInfeccaoPrimariof: any,
-        TratamentoCCIHf: string, IndicacaoSepsef: string, DisfuncaoRenalf: string, OrigemInfeccaof: string, 
-        DoseCorretaf: any, PosologiaCorretaf: any, email:any) {
-        let NroProntuario = NroProntuariof
-        let SeqPaciente = SeqPacientef
-        let CodDoencaSecundario = CodDoencaSecundariof
-        let CodComorbidade = CodComorbidadef
-        let ResultadoColeta = ResultadoColetaf
-        let CodAtbSecundario = CodAtbSecundariof
-        let SitioInfeccaoPrimario = SitioInfeccaoPrimariof
-        let DoseCorreta = DoseCorretaf
-        let PosologiaCorreta = PosologiaCorretaf
+    async Create(getNroProntuario: any, getSeqPaciente: any, getDataInternacao: string, getCodDoencaPrincipal: string,
+        getCodDoencaSecundario: any, getSistemaAcometido: string, getCodComorbidade: any, getOrigem: string, getAlocacao: string,
+        getResultadoColeta: any, getCodAtbPrimario: string, getCodAtbSecundario: any, getSitioInfeccaoPrimario: any,
+        getTratamento: string, getIndicacao: string, getDisfuncao: string, getOrigemInfeccao: string, 
+        getDose: any, getPosologia: any, email:any) {
         return await api.post('medicalRecords', {
-            NroProntuario, SeqPaciente, DataInternacao: DataInternacaof,
-            CodDoencaPrincipal: CodDoencaPrincipalf, CodDoencaSecundario,
-            SistemaAcometido: SistemaAcometidof, CodComorbidade, Origem: Origemf,
-            Alocacao: Alocacaof, ResultadoColeta, CodAtbPrimario: CodAtbPrimariof,
-            CodAtbSecundario, SitioInfeccaoPrimario,
-            TratamentoCCIH: TratamentoCCIHf, IndicacaoSepse: IndicacaoSepsef, DisfuncaoRenal: DisfuncaoRenalf,
-            OrigemInfeccao: OrigemInfeccaof, DoseCorreta, PosologiaCorreta, email
+            NroProntuario: getNroProntuario, SeqPaciente: getSeqPaciente, DataInternacao: getDataInternacao,
+            CodDoencaPrincipal: getCodDoencaPrincipal, CodDoencaSecundario: getCodDoencaSecundario,
+            SistemaAcometido: getSistemaAcometido, CodComorbidade: getCodComorbidade, Origem: getOrigem, 
+            Alocacao: getAlocacao, ResultadoColeta: getResultadoColeta, CodAtbPrimario: getCodAtbPrimario,
+            CodAtbSecundario: getCodAtbSecundario, SitioInfeccaoPrimario: getSitioInfeccaoPrimario, 
+            TratamentoCCIH: getTratamento, IndicacaoSepse: getIndicacao, DisfuncaoRenal: getDisfuncao, 
+            OrigemInfeccao: getOrigemInfeccao, DoseCorreta: getDose, PosologiaCorreta: getPosologia, email: email
         }).then(response => response.data);
     }
 }

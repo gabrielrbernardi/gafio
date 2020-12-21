@@ -13,38 +13,31 @@ class AssessmentService {
         }
     }
 
-    async Update(IdProntuariof: any, NroAvaliacaof: any, DataAvaliacaof: string, ResultadoCulturasf: any, ResCulturasAcaof: any,
-        DoseCorretaf: any, PosologiaCorretaf: any, AlertaDotf: any, AlertaDotDescricaof: any, DisfuncaoRenalf: string, Hemodialisef: string,
-        AtbOralf: string, AtbContraindicacaof: string, AlteracaoPrescricaof: any, AtbDiluicaoInfusaof: string, InteracaoAtbMedicamentof: string,
-        TrocaAtbf: string, NovoAtbf: any) {
-        let IdProntuario = IdProntuariof
-        let NroAvaliacao = NroAvaliacaof
-        let ResultadoCulturas = ResultadoCulturasf
-        let ResCulturasAcao = ResCulturasAcaof
-        let DoseCorreta = DoseCorretaf
-        let PosologiaCorreta = PosologiaCorretaf
-        let AlertaDot = AlertaDotf
-        let AlertaDotDescricao = AlertaDotDescricaof
-        let AlteracaoPrescricao = AlteracaoPrescricaof
-        let NovoAtb = NovoAtbf
-        return await api.put('medicalRecords/assessment/update', {
-            IdProntuario, NroAvaliacao, DataAvaliacao: DataAvaliacaof, ResultadoCulturas, ResCulturasAcao,
-            DoseCorreta, PosologiaCorreta, AlertaDot, AlertaDotDescricao, DisfuncaoRenal: DisfuncaoRenalf,
-            Hemodialise: Hemodialisef, AtbOral: AtbOralf, AtbContraindicacao: AtbContraindicacaof,
-            AlteracaoPrescricao, AtbDiluicaoInfusao: AtbDiluicaoInfusaof, InteracaoAtbMedicamento: InteracaoAtbMedicamentof,
-            TrocaAtb: TrocaAtbf, NovoAtb
+    async Update(queryResponse: any, getNroAvaliacao: any, getDataAvaliacao: string, getResultadoCulturas: any, getResCulturasAcao: any,
+        getDoseCorreta: any, getPosologiaCorreta: any, getAlertaDot: any, getAlertaDotDescricao: any, getDisfuncaoRenal: string, getHemodialise: string,
+        getAtbOral: string, getAtbContraindicacao: string, getAlteracaoPrescricao: any, getAtbDiluicaoInfusao: string, getInteracaoAtbMedicamento: string,
+        getTrocaAtb: string, getNovoAtb: any) {
+            return await api.put('medicalRecords/assessment/update', {
+            IdProntuario: queryResponse, NroAvaliacao: getNroAvaliacao, DataAvaliacao: getDataAvaliacao,
+            ResultadoCulturas: getResultadoCulturas, ResCulturasAcao: getResCulturasAcao, DoseCorreta: getDoseCorreta, 
+            PosologiaCorreta: getPosologiaCorreta, AlertaDot: getAlertaDot, AlertaDotDescricao: getAlertaDotDescricao, 
+            DisfuncaoRenal: getDisfuncaoRenal, Hemodialise: getHemodialise, AtbOral: getAtbOral, 
+            AtbContraindicacao: getAtbContraindicacao, AlteracaoPrescricao: getAlteracaoPrescricao, 
+            AtbDiluicaoInfusao: getAtbDiluicaoInfusao, InteracaoAtbMedicamento: getInteracaoAtbMedicamento, 
+            TrocaAtb: getTrocaAtb, NovoAtb: getNovoAtb
         }).then(response => response.data)
     }
 
-    async Delete(NroAvaliacaof: any) {
-        let NroAvaliacao = NroAvaliacaof
-        return await api.post('medicalRecords/assessment/delete', { NroAvaliacao })
-            .then(response => response.data);
+    async Delete(getNroAvaliacao: any) {
+        return await api.post('medicalRecords/assessment/delete', { 
+            NroAvaliacao: getNroAvaliacao
+        }).then(response => response.data);
     }
 
-    async Verify(seqProntuariof: any){
-        let seqProntuario = seqProntuariof
-        return await api.post('/medicalRecords/assessment/verify/', { seqProntuario }).then(response => response.data)
+    async Verify(queryResponse: any){
+        return await api.post('/medicalRecords/assessment/verify/', { 
+            seqProntuario: queryResponse
+        }).then(response => response.data)
     }
 }
 

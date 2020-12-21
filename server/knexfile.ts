@@ -9,8 +9,8 @@ try {
                 database: "gafioDB",
                 host: "localhost",
                 user: "root",
-                //password: "kutsu12",
-                password: "Dsw04051977@",
+                password: "kutsu12",
+                //password: "Dsw04051977@",
                 //password: "0000"
             },
             migrations: {

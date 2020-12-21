@@ -280,7 +280,7 @@ const AssessmentForm = () => {
                 getMedicinesFunction(data);
             });
         }, 1000);
-    }, [getMedicinesFunction, medicinesService]);
+    }, []);
 
     function getMedicinesFunction(data?: any) {
         setLoading(true);
