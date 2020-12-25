@@ -5,11 +5,13 @@ try {
         development: {
             client: "mysql2",
             connection: {
-                // filename: './src/database/gafioDB.sql',
                 database: "gafioDB",
                 host: "localhost",
+                // host: "192.168.100.7", //host para conexao pelo docker em maquina local
+                port: "3307",   //porta para conexao com mysql via docker
                 user: "root",
-                password: "kutsu12",
+                password: "teste123",
+                // password: "kutsu12",
                 //password: "Dsw04051977@",
                 //password: "0000"
             },
