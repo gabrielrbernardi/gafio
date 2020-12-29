@@ -18,8 +18,26 @@ class MedicinesService {
         }
     }
 
-    async getMedicineService() {
-        return await api.get("medicines").then((response) => response.data);
+    async getMedicineInformation(ean: String) {
+        return await api.get(`medicines/info/?id=${ean}`).then(response => response.data);
+    }
+
+    // async updateMedicine(ean: String) {
+    //     return await api.put(`/medicines/${ean}`, { ean }).then(response => {
+    //         return response.data;
+    //     })
+    //     .catch((err) => {
+    //         return { error: err };
+    //     });
+    // }
+
+    async deleteMedicine(ean: String) {
+        return await api.delete(`/medicines/${ean}`).then(response => {
+            return response.data;
+        })
+        .catch(err => {
+            return { error: err };
+        })
     }
 
 }
