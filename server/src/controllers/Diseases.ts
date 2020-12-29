@@ -119,7 +119,7 @@ class DiseasesController {
         const rows = 10;
 
         try {
-            const diseases = await knex("Doenca").select("*").orderBy('codDoenca', 'desc').offset((pageRequest - 1) * rows).limit(rows);
+            const diseases = await knex("Doenca").select("*").orderBy("codDoenca", "desc").offset((pageRequest - 1) * rows).limit(rows);
             const diseasesLength = (await knex("Doenca").select("*")).length;
 
             return response.json({ 
@@ -137,8 +137,23 @@ class DiseasesController {
     }
 
     // Método para pegar informações sobre a doença:
-    async diseaseInfo(request: Request, response: Response) {
-        
+    async diseaseInformation(request : Request, response : Response) {
+        let id = String(request.query.id);
+        let page = String(request.query.page);
+
+        if (!page) page = "10";
+
+        if (id) {
+            const disease = await knex("Doenca").where("codDoenca", id);
+
+            return response.json({
+                diseaseFound: true, 
+                data: disease
+            });
+        } 
+        else {
+            return response.json({diseaseFound: false, error: "Código da doença não fornecido."});
+        }
     }
 
     // Método para atualizar doença:

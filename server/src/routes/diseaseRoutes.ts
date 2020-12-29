@@ -10,7 +10,7 @@ routes.post('/diseases/importDB', diseasesController.importDB);
 routes.get('/diseases/name/', diseasesController.indexByName);
 routes.get('/diseases/code/', diseasesController.indexByCode);
 routes.get('/diseases/page/', diseasesController.indexByPage);
-routes.get('/diseases/info/', diseasesController.diseaseInfo);
+routes.get('/diseases/info/', diseasesController.diseaseInformation);
 
 routes.put('/diseases/:id', diseasesController.update);
 
