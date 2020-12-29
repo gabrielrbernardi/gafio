@@ -133,7 +133,7 @@ const Medicines = () => {
                     aria-expanded={open}
                     style={{ borderRadius: '0', height:'41.5px' }}
                 >
-                    Buscar doença específica
+                    Buscar medicamento específico
                 </Button>
                 <Collapse className="mb-2" in={open} timeout={200}>
                     <div>
