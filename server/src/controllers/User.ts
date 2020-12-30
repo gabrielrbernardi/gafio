@@ -113,7 +113,6 @@ class UserController {
         try {
             const users = await knex("Usuario").select("*").offset((pageRequest - 1) * rows).limit(rows);
             const usersLength = (await knex("Usuario").select("*")).length;
-            console.log(users)
             if (users) {
                 var serializedUsers = users.map(userDB => {
                     return {

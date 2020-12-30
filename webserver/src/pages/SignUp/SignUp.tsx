@@ -11,11 +11,11 @@ import api from '../../services/api';
 // const secretWord = 'PalavraSecreta';
 
 const SignUp = () => {
-    const [getNome, setNome] = useState('gabriel');
-    const [getEmail, setEmail] = useState('teste1@gafio.com');
-    const [getMatricula, setMatricula] = useState('11821');
-    const [getSenha, setSenha] = useState('teste123');
-    const [getRedefinirSenha, setRedefinirSenha] = useState('teste123');
+    const [getNome, setNome] = useState('');
+    const [getEmail, setEmail] = useState('');
+    const [getMatricula, setMatricula] = useState('');
+    const [getSenha, setSenha] = useState('');
+    const [getRedefinirSenha, setRedefinirSenha] = useState('');
 
     const [getToast, setToast] = useState<boolean>();
     const [getMessageType, setMessageType] = useState<string>('');
