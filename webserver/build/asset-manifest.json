@@ -1,0 +1,29 @@
+{
+  "files": {
+    "main.css": "/static/css/main.1f1d218e.chunk.css",
+    "main.js": "/static/js/main.b35eb622.chunk.js",
+    "main.js.map": "/static/js/main.b35eb622.chunk.js.map",
+    "runtime-main.js": "/static/js/runtime-main.6934f41e.js",
+    "runtime-main.js.map": "/static/js/runtime-main.6934f41e.js.map",
+    "static/css/2.f56325dd.chunk.css": "/static/css/2.f56325dd.chunk.css",
+    "static/js/2.5f781895.chunk.js": "/static/js/2.5f781895.chunk.js",
+    "static/js/2.5f781895.chunk.js.map": "/static/js/2.5f781895.chunk.js.map",
+    "index.html": "/index.html",
+    "precache-manifest.4906030e596bd1beda850f2365e7dadf.js": "/precache-manifest.4906030e596bd1beda850f2365e7dadf.js",
+    "service-worker.js": "/service-worker.js",
+    "static/css/2.f56325dd.chunk.css.map": "/static/css/2.f56325dd.chunk.css.map",
+    "static/css/main.1f1d218e.chunk.css.map": "/static/css/main.1f1d218e.chunk.css.map",
+    "static/js/2.5f781895.chunk.js.LICENSE.txt": "/static/js/2.5f781895.chunk.js.LICENSE.txt",
+    "static/media/primereact.min.css": "/static/media/color.c7a33805.png",
+    "static/media/fiocruzBanner.jpg": "/static/media/fiocruzBanner.9a56b3de.jpg",
+    "static/media/logoFiocruz.png": "/static/media/logoFiocruz.afbb0d33.png",
+    "static/media/primeicons.css": "/static/media/primeicons.79432094.woff"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.6934f41e.js",
+    "static/css/2.f56325dd.chunk.css",
+    "static/js/2.5f781895.chunk.js",
+    "static/css/main.1f1d218e.chunk.css",
+    "static/js/main.b35eb622.chunk.js"
+  ]
+}
