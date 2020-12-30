@@ -182,7 +182,7 @@ const Header = () => {
                         </Link>
                     </div>
                     <div className="col-md-auto mx-2">
-                        <Link className="text-decoration-none" to="/underDevelopment">
+                        <Link className="text-decoration-none" to="/recomendations">
                             RECOMENDAÇÕES CCIH
                         </Link>
                     </div>

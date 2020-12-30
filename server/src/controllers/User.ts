@@ -113,7 +113,31 @@ class UserController {
         try {
             const users = await knex("Usuario").select("*").offset((pageRequest - 1) * rows).limit(rows);
             const usersLength = (await knex("Usuario").select("*")).length;
-            return response.json({ showUsers: true, users: users, length: usersLength });
+            console.log(users)
+            if (users) {
+                var serializedUsers = users.map(userDB => {
+                    return {
+                        CodUsuario: userDB.CodUsuario,
+                        Nome: userDB.Nome,
+                        Email: userDB.Email,
+                        Matricula: userDB.Matricula,
+                        TipoUsuario: userDB.TipoUsuario,
+                        isVerified: userDB.isVerified,
+                    }
+                })
+                return response.json({
+                    showUsers: true,
+                    users: serializedUsers,
+                    length: usersLength,
+                    // length1: users.length
+                });
+            } else {
+                return response.json({
+                    userFound: false,
+                    error: "Usuário não encontrado. Verifique o id e tente novamente.",
+                });
+            }
+            // return response.json({ showUsers: true, users: users, length: usersLength });
         } catch (err) {
             return response.json({ showUsers: false, error: err });
         }

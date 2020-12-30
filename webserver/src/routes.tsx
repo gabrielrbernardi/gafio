@@ -42,6 +42,7 @@ import AssessmentCreate from './pages/MedicalRecords/Assessment/Create/Create'
 
 import Microbiology from './pages/Microbiology';
 import MicrobiologyForm from "./pages/Microbiology/MicrobiologyForm";
+import Recomendations from './pages/Recomendations/Recomendations';
 
 const Routes = () => {
     return (
@@ -315,6 +316,16 @@ const Routes = () => {
                         <div>
                             <Header />
                             <MicrobiologyForm />
+                            <Footer />
+                        </div>
+                    )}
+                />
+                <Route
+                    path="/recomendations"
+                    render={() => (
+                        <div>
+                            <Header />
+                            <Recomendations />
                             <Footer />
                         </div>
                     )}
