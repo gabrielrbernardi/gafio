@@ -19,7 +19,6 @@ import {IMicrobiology } from "./MicrobiologyModel";
 import "./index.css";
 
 import MicrobiologyService from "./MicrobiologyService"
-import { serialize } from "v8";
 
 const Microbiology = () => {
     const [microbiologies, setMicrobiologies] = useState<IMicrobiology[]>([]);
