@@ -12,7 +12,7 @@ import ToastComponent from "../../../components/Toast";
 import MicrobiologyService from "../MicrobiologyService";
 import { IMicrobiology } from "../MicrobiologyModel";
 
-import { useHistory, useLocation } from 'react-router-dom';
+import { useHistory} from 'react-router-dom';
 
 interface Props {
     id?: number;
@@ -28,7 +28,7 @@ const MicrobiologyForm: React.FC<Props> = ({ id }) => {
     const [IdPaciente, setIdPaciente] = useState<number>(0);
     const [IdProntuario, setIdProntuario] = useState<number>(0);
     const [DataColeta, setDataColeta] = useState<any>();
-    const [DataResultado, setDataResultado] = useState<any>();
+    const [DataResultado, setDataResultado] = useState<any>(null);
     const [SwabNasal, setSwabNasal] = useState<string>("");
     const [SwabNasalObservacoes, setSwabNasalObservacoes] = useState<string>("");
     const [SwabRetal, setSwabRetal] = useState<string>("");
@@ -122,8 +122,10 @@ const MicrobiologyForm: React.FC<Props> = ({ id }) => {
                     const dataColeta = formatDate(microbiology.DataColeta);
                     setDataColeta(dataColeta);
 
-                    const dataResultado = formatDate(microbiology.DataResultado);
-                    setDataResultado(dataResultado);
+                    if (microbiology.DataResultado) {
+                           const dataResultado = formatDate(microbiology.DataResultado);
+                          setDataResultado(dataResultado);
+                    }
 
                     setSwabNasal(microbiology.SwabNasal);
                     if (microbiology.SwabNasalObservacoes) {
@@ -160,7 +162,9 @@ const MicrobiologyForm: React.FC<Props> = ({ id }) => {
                         setOutrosObservacoes(microbiology.OutrosObservacoes);
                         setViewOutros(true);
                     }
-                    setPerfilSensibilidade(microbiology.PerfilSensibilidade);
+
+                    if (microbiology.PerfilSensibilidade)
+                        setPerfilSensibilidade(microbiology.PerfilSensibilidade);
 
                     setLoading(false);
                 })
@@ -206,7 +210,7 @@ const MicrobiologyForm: React.FC<Props> = ({ id }) => {
                 IdPaciente: Yup.number().required(),
                 IdProntuario: Yup.number().required(),
                 DataColeta: Yup.date().required(),
-                DataResultado: Yup.date().required(),
+                DataResultado: Yup.date(),
                 SwabNasal: Yup.string().nullable().oneOf([null, "S", "N"]).required(),
                 SwabNasalObservacoes: Yup.string().max(250),
                 SwabRetal: Yup.string().nullable().oneOf([null, "S", "N"]).required(),
@@ -219,11 +223,12 @@ const MicrobiologyForm: React.FC<Props> = ({ id }) => {
                 SecrecaoTraquealObservacoes: Yup.string().max(250),
                 Outros: Yup.string().nullable().oneOf([null, "S", "N"]).required(),
                 OutrosObservacoes: Yup.string().max(250),
-                PerfilSensibilidade: Yup.string().required(),
+                PerfilSensibilidade: Yup.string(),
             });
-
+            
+             console.log(data)            
             await schema.validate(data, {abortEarly: false, });
-
+            
             if (id) {
                 MicrobiologyService.update(data, id, email).then(() => {
                     HandleToast("success", "Sucesso!", "Microbiologia atualizada com sucesso.");
@@ -354,7 +359,6 @@ const MicrobiologyForm: React.FC<Props> = ({ id }) => {
                                             monthNavigator
                                             showOnFocus={false}
                                             showIcon
-                                            required
                                         />
                                     </div>
                                 </div>
@@ -626,7 +630,6 @@ const MicrobiologyForm: React.FC<Props> = ({ id }) => {
                                         style={{ width: "100%" }}
                                         placeholder="Digite o perfil de sensibilidade"
                                         autoFocus
-                                        required
                                     />
                                 </div>
                             </div>       

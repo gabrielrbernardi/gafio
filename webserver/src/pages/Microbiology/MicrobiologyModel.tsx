@@ -3,7 +3,7 @@ export interface IMicrobiology {
     IdPaciente: number;
     IdProntuario: number;
     DataColeta: any;
-    DataResultado: any;
+    DataResultado?: any;
     SwabNasal: string;
     SwabNasalObservacoes?: string;
     SwabRetal: string;
@@ -16,5 +16,5 @@ export interface IMicrobiology {
     SecrecaoTraquealObservacoes?: string;
     Outros: string;
     OutrosObservacoes?: string;
-    PerfilSensibilidade: string;
+    PerfilSensibilidade?: string;
 }

@@ -20,7 +20,7 @@ class MicrobiologyController {
     async create(req: Request, res: Response) {
         const { microbiologyData, email } = req.body;
         const { IdPaciente, IdProntuario } = microbiologyData;
-
+        
         const patientExists = await knex("Paciente").where(
             "SeqPaciente",
             "like",
@@ -61,7 +61,7 @@ class MicrobiologyController {
                     microbiologyData.DataResultado = handleDate(
                         microbiologyData.DataResultado
                     );
-
+                
                 //Persiste a microbiologia no banco de dados
                 await knex("Microbiologia").insert(microbiologyData);
 
