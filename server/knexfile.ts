@@ -6,14 +6,14 @@ try {
             client: "mysql2",
             connection: {
                 database: "gafioDB",
-                host: "18.208.110.189",
+                //host: "18.208.110.189",
                 // host: "127.0.0.1",
                 // host: "192.168.100.7", //host para conexao pelo docker em maquina local
                 // port: "3306",   //porta para conexao com mysql via docker
                 user: "root",
-                password: "teste123",
+                //password: "teste123",
                 // password: "kutsu12",
-                //password: "Dsw04051977@",
+                password: "Dsw04051977@",
                 //password: "0000"
             },
             migrations: {
