@@ -353,7 +353,6 @@ const Diseases = () => {
                             className="mt-2 mb-2 p-3" 
                             style={{ width: '100%' }} 
                             onClick={() => { 
-                                deleteDisease();
                                 setDisplayDialog3(true); 
                                 setDisplayDialogs(false) 
                             }}

@@ -22,14 +22,14 @@ class MedicinesService {
         return await api.get(`medicines/info/?id=${ean}`).then(response => response.data);
     }
 
-    // async updateMedicine(ean: String) {
-    //     return await api.put(`/medicines/${ean}`, { ean }).then(response => {
-    //         return response.data;
-    //     })
-    //     .catch((err) => {
-    //         return { error: err };
-    //     });
-    // }
+    async updateMedicine(ean: String) {
+        return await api.put(`/medicines/${ean}`, { ean }).then(response => {
+            return response.data;
+        })
+        .catch((err) => {
+            return { error: err };
+        });
+    }
 
     async deleteMedicine(ean: String) {
         return await api.delete(`/medicines/${ean}`).then(response => {
