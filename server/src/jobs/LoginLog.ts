@@ -1,7 +1,6 @@
 import {format} from 'date-fns';
 import pt from 'date-fns/locale/pt';
 
-const formattedDate = format(new Date(), "'dia 'dd 'de' MMMM' às' H:mm'h'", {locale: pt});
 const winston = require("winston");
 
 class LoginLog{
@@ -14,7 +13,7 @@ class LoginLog{
         )
       ]
     });
-    logger.info({ email,  type:"login", date: formattedDate});
+    logger.info({ email,  type:"login", date: format(new Date(), "'dia 'dd 'de' MMMM' às' H:mm'h'", {locale: pt})});
   }
 
     handleUnsuccessfulLogin(email: string, erro:string) {
@@ -26,7 +25,7 @@ class LoginLog{
         )
       ]
     });
-    logger.warn({ email,  type:"login",  erro, date: formattedDate});
+    logger.warn({ email,  type:"login",  erro, date: format(new Date(), "'dia 'dd 'de' MMMM' às' H:mm'h'", {locale: pt})});
   }
 }
 

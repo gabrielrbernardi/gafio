@@ -1,7 +1,6 @@
 import {format} from 'date-fns';
 import pt from 'date-fns/locale/pt';
 
-const formattedDate = format(new Date(), "'dia 'dd 'de' MMMM' às' H:mm'h'", {locale: pt});
 const winston = require("winston");
 
 class UserLog {
@@ -14,7 +13,7 @@ class UserLog {
         )
       ]
     });
-    logger.info({user:email, type: "createUser", date: formattedDate});
+    logger.info({user:email, type: "createUser", date: format(new Date(), "'dia 'dd 'de' MMMM' às' H:mm'h'", {locale: pt})});
   }
 
   handleUnsuccessfulCreation(email : string, erro : string) {
@@ -26,7 +25,7 @@ class UserLog {
         )
       ]
     });
-    logger.warn({user:email, type: "createUser", erro, date: formattedDate});
+    logger.warn({user:email, type: "createUser", erro, date: format(new Date(), "'dia 'dd 'de' MMMM' às' H:mm'h'", {locale: pt})});
   }
 
   handleSuccessfulUpdate(email : string, id:number) {
@@ -38,7 +37,7 @@ class UserLog {
         )
       ]
     });
-    logger.info({user:email, type: "updateUser", date: formattedDate, userId:id});
+    logger.info({user:email, type: "updateUser", date: format(new Date(), "'dia 'dd 'de' MMMM' às' H:mm'h'", {locale: pt}), userId:id});
   }
 
   handleUnsuccessfulUpdate(email : string, erro : string, id:number) {
@@ -50,7 +49,7 @@ class UserLog {
         )
       ]
     });
-    logger.warn({user:email, type: "updateUser", erro, date: formattedDate, userId:id});
+    logger.warn({user:email, type: "updateUser", erro, date: format(new Date(), "'dia 'dd 'de' MMMM' às' H:mm'h'", {locale: pt}), userId:id});
   }
 
    handleSuccessfulDelete(email : string, id:number) {
@@ -62,7 +61,7 @@ class UserLog {
         )
       ]
     });
-    logger.info({user:email, type: "deleteUser",  date: formattedDate, userId:id});
+    logger.info({user:email, type: "deleteUser",  date: format(new Date(), "'dia 'dd 'de' MMMM' às' H:mm'h'", {locale: pt}), userId:id});
    }
     
   handleUnsuccessfulDelete(email: string, erro: string, id:number) {
@@ -74,7 +73,7 @@ class UserLog {
         )
       ]
     });
-    logger.warn({user:email, type: "deleteUser", erro, date: formattedDate, userId:id});
+    logger.warn({user:email, type: "deleteUser", erro, date: format(new Date(), "'dia 'dd 'de' MMMM' às' H:mm'h'", {locale: pt}), userId:id});
   }
 }
 

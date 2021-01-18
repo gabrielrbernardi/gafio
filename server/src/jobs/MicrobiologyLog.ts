@@ -1,7 +1,6 @@
 import {format} from 'date-fns';
 import pt from 'date-fns/locale/pt';
 
-const formattedDate = format(new Date(), "'dia 'dd 'de' MMMM' às' H:mm'h'", {locale: pt});
 const winston = require("winston");
 
 class MicrobiologyLog {
@@ -14,7 +13,7 @@ class MicrobiologyLog {
         )
       ]
     });
-    logger.info({user:email, type: "createMicrobiology", date: formattedDate});
+    logger.info({user:email, type: "createMicrobiology", date: format(new Date(), "'dia 'dd 'de' MMMM' às' H:mm'h'", {locale: pt})});
   }
 
   handleUnsuccessfulCreation(email : string, erro : string) {
@@ -26,7 +25,7 @@ class MicrobiologyLog {
         )
       ]
     });
-    logger.warn({user:email, type: "createMicrobiology", erro, date: formattedDate});
+    logger.warn({user:email, type: "createMicrobiology", erro, date: format(new Date(), "'dia 'dd 'de' MMMM' às' H:mm'h'", {locale: pt})});
   }
 
   handleSuccessfulUpdate(email : string, id:number) {
@@ -38,7 +37,7 @@ class MicrobiologyLog {
         )
       ]
     });
-    logger.info({user: email, type: "updateMicrobiology", date: formattedDate, microbiology:id});
+    logger.info({user: email, type: "updateMicrobiology", date: format(new Date(), "'dia 'dd 'de' MMMM' às' H:mm'h'", {locale: pt}), microbiology:id});
   }
 
   handleUnsuccessfulUpdate(email : string, erro : string, id:number) {
@@ -50,7 +49,7 @@ class MicrobiologyLog {
         )
       ]
     });
-    logger.warn({user:email, type: "updateMicrobiology", erro, date: formattedDate, microbiology:id});
+    logger.warn({user:email, type: "updateMicrobiology", erro, date: format(new Date(), "'dia 'dd 'de' MMMM' às' H:mm'h'", {locale: pt}), microbiology:id});
   }
 
    handleSuccessfulDelete(email : string, id:number) {
@@ -62,7 +61,7 @@ class MicrobiologyLog {
         )
       ]
     });
-    logger.info({user:email, type: "deleteMicrobiology", date: formattedDate, microbiology:id});
+    logger.info({user:email, type: "deleteMicrobiology", date: format(new Date(), "'dia 'dd 'de' MMMM' às' H:mm'h'", {locale: pt}), microbiology:id});
    }
     
   handleUnsuccessfulDelete(email: string, erro: string, id:number) {
@@ -74,7 +73,7 @@ class MicrobiologyLog {
         )
       ]
     });
-    logger.warn({user:email, type: "deleteMicrobiology", erro, date: formattedDate, microbiology:id});
+    logger.warn({user:email, type: "deleteMicrobiology", erro, date: format(new Date(), "'dia 'dd 'de' MMMM' às' H:mm'h'", {locale: pt}), microbiology:id});
   }
 }
 

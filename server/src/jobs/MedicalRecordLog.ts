@@ -1,7 +1,6 @@
 import {format} from 'date-fns';
 import pt from 'date-fns/locale/pt';
 
-const formattedDate = format(new Date(), "'dia 'dd 'de' MMMM' às' H:mm'h'", {locale: pt});
 const winston = require("winston");
 
 class MedicalRecordLog {
@@ -14,7 +13,7 @@ class MedicalRecordLog {
         )
       ]
     });
-    logger.info({user:email, type: "createMedicalRecord", date: formattedDate});
+    logger.info({user:email, type: "createMedicalRecord", date: format(new Date(), "'dia 'dd 'de' MMMM' às' H:mm'h'", {locale: pt})});
   }
 
   handleUnsuccessfulCreation(email : string, erro : string) {
@@ -26,7 +25,7 @@ class MedicalRecordLog {
         )
       ]
     });
-    logger.warn({user:email, type: "createMedicalRecord", erro, date: formattedDate});
+    logger.warn({user:email, type: "createMedicalRecord", erro, date: format(new Date(), "'dia 'dd 'de' MMMM' às' H:mm'h'", {locale: pt})});
   }
 
   handleSuccessfulUpdate(email : string, id:number) {
@@ -38,7 +37,7 @@ class MedicalRecordLog {
         )
       ]
     });
-    logger.info({user: email, type: "updateMedicalRecord", date: formattedDate, MedicalRecord:id});
+    logger.info({user: email, type: "updateMedicalRecord", date: format(new Date(), "'dia 'dd 'de' MMMM' às' H:mm'h'", {locale: pt}), MedicalRecord:id});
   }
 
   handleUnsuccessfulUpdate(email : string, erro : string, id:number) {
@@ -50,7 +49,7 @@ class MedicalRecordLog {
         )
       ]
     });
-    logger.warn({user: email, type: "updateMedicalRecord", erro, date: formattedDate, MedicalRecord:id});
+    logger.warn({user: email, type: "updateMedicalRecord", erro, date: format(new Date(), "'dia 'dd 'de' MMMM' às' H:mm'h'", {locale: pt}), MedicalRecord:id});
   }
 
    handleSuccessfulDelete(email : string, id:number) {
@@ -62,7 +61,7 @@ class MedicalRecordLog {
         )
       ]
     });
-    logger.info({user: email, type: "deleteMedicalRecord", date: formattedDate, MedicalRecord:id});
+    logger.info({user: email, type: "deleteMedicalRecord", date: format(new Date(), "'dia 'dd 'de' MMMM' às' H:mm'h'", {locale: pt}), MedicalRecord:id});
    }
     
   handleUnsuccessfulDelete(email: string, erro: string, id:number) {
@@ -74,7 +73,7 @@ class MedicalRecordLog {
         )
       ]
     });
-    logger.warn({user: email, type: "deleteMedicalRecord", erro, date: formattedDate, MedicalRecord:id});
+    logger.warn({user: email, type: "deleteMedicalRecord", erro, date: format(new Date(), "'dia 'dd 'de' MMMM' às' H:mm'h'", {locale: pt}), MedicalRecord:id});
   }
 }
 

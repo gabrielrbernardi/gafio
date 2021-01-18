@@ -1,7 +1,6 @@
 import {format} from 'date-fns';
 import pt from 'date-fns/locale/pt';
 
-const formattedDate = format(new Date(), "'dia 'dd 'de' MMMM' às' H:mm'h'", {locale: pt});
 const winston = require("winston");
 
 class PatientLog {
@@ -14,7 +13,7 @@ class PatientLog {
         )
       ]
     });
-    logger.info({user:email, type: "createPatient", date: formattedDate});
+    logger.info({user:email, type: "createPatient", date: format(new Date(), "'dia 'dd 'de' MMMM' às' H:mm'h'", {locale: pt})});
   }
 
   handleUnsuccessfulCreation(email : string, erro : string) {
@@ -26,7 +25,7 @@ class PatientLog {
         )
       ]
     });
-    logger.warn({user:email, type: "createPatient", erro, date: formattedDate});
+    logger.warn({user:email, type: "createPatient", erro, date: format(new Date(), "'dia 'dd 'de' MMMM' às' H:mm'h'", {locale: pt})});
   }
 
   handleSuccessfulUpdate(email : string, id:number) {
@@ -38,7 +37,7 @@ class PatientLog {
         )
       ]
     });
-    logger.info({user:email, type: "updatePatient", date: formattedDate, patient:id});
+    logger.info({user:email, type: "updatePatient", date: format(new Date(), "'dia 'dd 'de' MMMM' às' H:mm'h'", {locale: pt}), patient:id});
   }
 
   handleUnsuccessfulUpdate(email : string, erro : string, id:number) {
@@ -50,7 +49,7 @@ class PatientLog {
         )
       ]
     });
-    logger.warn({user:email, type: "updatePatient", erro, date: formattedDate, patient:id});
+    logger.warn({user:email, type: "updatePatient", erro, date: format(new Date(), "'dia 'dd 'de' MMMM' às' H:mm'h'", {locale: pt}), patient:id});
   }
 
    handleSuccessfulDelete(email : string, id:number) {
@@ -62,7 +61,7 @@ class PatientLog {
         )
       ]
     });
-    logger.info({user:email, type: "deletePatient", date: formattedDate, patient:id});
+    logger.info({user:email, type: "deletePatient", date: format(new Date(), "'dia 'dd 'de' MMMM' às' H:mm'h'", {locale: pt}), patient:id});
    }
     
   handleUnsuccessfulDelete(email: string, erro: string, id:number) {
@@ -74,7 +73,7 @@ class PatientLog {
         )
       ]
     });
-    logger.warn({user:email, type: "deletePatient", erro, date: formattedDate, patient:id});
+    logger.warn({user:email, type: "deletePatient", erro, date: format(new Date(), "'dia 'dd 'de' MMMM' às' H:mm'h'", {locale: pt}), patient:id});
   }
 }
 

@@ -1,7 +1,6 @@
 import {format} from 'date-fns';
 import pt from 'date-fns/locale/pt';
 
-const formattedDate = format(new Date(), "'dia 'dd 'de' MMMM' às' H:mm'h'", {locale: pt});
 const winston = require("winston");
 
 class AssessmentLog {
@@ -14,7 +13,7 @@ class AssessmentLog {
         )
       ]
     });
-    logger.info({user:email, type: "createAssessment", date: formattedDate});
+    logger.info({user:email, type: "createAssessment", date: format(new Date(), "'dia 'dd 'de' MMMM' às' H:mm'h'", {locale: pt})});
   }
 
   handleUnsuccessfulCreation(email : string, erro : string) {
@@ -26,7 +25,7 @@ class AssessmentLog {
         )
       ]
     });
-    logger.warn({user:email, type: "createAssessment", erro, date: formattedDate});
+    logger.warn({user:email, type: "createAssessment", erro, date: format(new Date(), "'dia 'dd 'de' MMMM' às' H:mm'h'", {locale: pt})});
   }
 
   handleSuccessfulUpdate(email : string, id:number) {
@@ -38,7 +37,7 @@ class AssessmentLog {
         )
       ]
     });
-    logger.info({user:email, type: "updateAssessment", date: formattedDate, assessment:id});
+    logger.info({user:email, type: "updateAssessment", date: format(new Date(), "'dia 'dd 'de' MMMM' às' H:mm'h'", {locale: pt}), assessment:id});
   }
 
   handleUnsuccessfulUpdate(email : string, erro : string,  id:number) {
@@ -50,7 +49,7 @@ class AssessmentLog {
         )
       ]
     });
-    logger.warn({user:email, type: "updateAssessment", erro, date: formattedDate, assessment:id});
+    logger.warn({user:email, type: "updateAssessment", erro, date: format(new Date(), "'dia 'dd 'de' MMMM' às' H:mm'h'", {locale: pt}), assessment:id});
   }
 
    handleSuccessfulDelete(email : string,  id:number) {
@@ -62,7 +61,7 @@ class AssessmentLog {
         )
       ]
     });
-    logger.info({user:email, type: "deleteAssessment", date: formattedDate});
+    logger.info({user:email, type: "deleteAssessment", date: format(new Date(), "'dia 'dd 'de' MMMM' às' H:mm'h'", {locale: pt})});
    }
     
   handleUnsuccessfulDelete(email: string, erro: string,  id:number) {
@@ -74,7 +73,7 @@ class AssessmentLog {
         )
       ]
     });
-    logger.warn({user:email, type: "deleteAssessment", erro, date: formattedDate, assessment:id});
+    logger.warn({user:email, type: "deleteAssessment", erro, date: format(new Date(), "'dia 'dd 'de' MMMM' às' H:mm'h'", {locale: pt}), assessment:id});
   }
 }
 

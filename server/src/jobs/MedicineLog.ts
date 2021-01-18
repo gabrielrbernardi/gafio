@@ -1,7 +1,6 @@
 import {format} from 'date-fns';
 import pt from 'date-fns/locale/pt';
 
-const formattedDate = format(new Date(), "'dia 'dd 'de' MMMM' às' H:mm'h'", {locale: pt});
 const winston = require("winston");
 
 class MedicineLog {
@@ -14,7 +13,7 @@ class MedicineLog {
         )
       ]
     });
-    logger.info({ user:email, type: "createMedicine", date: formattedDate});
+    logger.info({ user:email, type: "createMedicine", date: format(new Date(), "'dia 'dd 'de' MMMM' às' H:mm'h'", {locale: pt})});
   }
 
   handleUnsuccessfulCreation(email : string, erro : string) {
@@ -26,7 +25,7 @@ class MedicineLog {
         )
       ]
     });
-    logger.warn({user:email, type: "createMedicine", erro, date: formattedDate});
+    logger.warn({user:email, type: "createMedicine", erro, date: format(new Date(), "'dia 'dd 'de' MMMM' às' H:mm'h'", {locale: pt})});
   }
 
   handleSuccessfulUpdate(email : string, id:number) {
@@ -38,7 +37,7 @@ class MedicineLog {
         )
       ]
     });
-    logger.info({user: email, type: "updateMedicine", date: formattedDate, medicine:id});
+    logger.info({user: email, type: "updateMedicine", date: format(new Date(), "'dia 'dd 'de' MMMM' às' H:mm'h'", {locale: pt}), medicine:id});
   }
 
   handleUnsuccessfulUpdate(email : string, erro : string, id:number) {
@@ -50,7 +49,7 @@ class MedicineLog {
         )
       ]
     });
-    logger.warn({user: email, type: "updateMedicine", erro, date: formattedDate, medicine:id});
+    logger.warn({user: email, type: "updateMedicine", erro, date: format(new Date(), "'dia 'dd 'de' MMMM' às' H:mm'h'", {locale: pt}), medicine:id});
   }
 
    handleSuccessfulDelete(email : string, id:number) {
@@ -62,7 +61,7 @@ class MedicineLog {
         )
       ]
     });
-    logger.info({user: email, type: "deleteMedicine", date: formattedDate, medicine:id});
+    logger.info({user: email, type: "deleteMedicine", date: format(new Date(), "'dia 'dd 'de' MMMM' às' H:mm'h'", {locale: pt}), medicine:id});
    }
     
   handleUnsuccessfulDelete(email: string, erro: string, id:number) {
@@ -74,7 +73,7 @@ class MedicineLog {
         )
       ]
     });
-    logger.warn({user: email, type: "deleteMedicine", erro, date: formattedDate, medicine:id});
+    logger.warn({user: email, type: "deleteMedicine", erro, date: format(new Date(), "'dia 'dd 'de' MMMM' às' H:mm'h'", {locale: pt}), medicine:id});
   }
 }
 
