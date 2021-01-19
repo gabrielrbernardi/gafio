@@ -445,7 +445,7 @@ const Patient = (props: any) => {
                         </div>
                         <div className="col">
                             <Calendar id="DataInternacao" className="mt-2" style={{ width: '100%' }} value={getPacienteDataNascimentoUpdate} onChange={(e) => setPacienteDataNascimentoUpdate(e.value)}
-                                locale={pt_br} dateFormat="dd/mm/yy" placeholder="Selecione a data de nascimento do paciente" showButtonBar monthNavigator showIcon showOnFocus={false} required />
+                                locale={pt_br} dateFormat="dd/mm/yy" placeholder="Selecione a data de nascimento do paciente" showButtonBar monthNavigator showIcon showOnFocus={false} required/>
                         </div>
                     </div>
                     <button type="submit" className="btn btn-info btn-primary mt-3">Cadastrar</button>

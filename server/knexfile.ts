@@ -7,13 +7,14 @@ try {
             connection: {
                 database: "gafioDB",
                 //host: "18.208.110.189",
+                host: "3.88.186.254",
                 // host: "127.0.0.1",
                 // host: "192.168.100.7", //host para conexao pelo docker em maquina local
-                // port: "3306",   //porta para conexao com mysql via docker
+                // port: "3307",   //porta para conexao com mysql via docker
                 user: "root",
                 //password: "teste123",
                 // password: "kutsu12",
-                password: "Dsw04051977@",
+                password: "teste123",
                 //password: "0000"
             },
             migrations: {

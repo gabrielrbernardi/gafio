@@ -5,6 +5,7 @@ const winston = require("winston");
 
 class MicrobiologyLog {
   handleSuccessfulCreation(email : string) {
+    console.log(formattedDate)
     const logger = winston.createLogger({
       level: 'info',
       transports: [

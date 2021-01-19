@@ -5,6 +5,7 @@
     "main": "index.js",
     "scripts": {
         "dev": "ts-node-dev --transpile-only --ignore-watch node_modules src/server.ts",
+        "build": "ts-node-transpile-only src/server.ts",
         "knex:migrate": "knex --knexfile knexfile.ts migrate:latest"
     },
     "keywords": [],

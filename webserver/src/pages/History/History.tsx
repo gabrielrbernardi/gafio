@@ -16,19 +16,19 @@ const History = () => {
         {
             label: 'Entrada',
             command: (event: any) => {
-                showToast('info', 'Data', event.item.label)
+                showToast('info', 'Data de entrada', event.item.label)
             }
         },
         {
             label: 'Avaliações',
             command: (event: any) => {
-                showToast('info', 'Data', event.item.label)
+                showToast('info', 'Data da avaliação', event.item.label)
             }
         },
         {
             label: 'Verificação',
             command: (event: any) => {
-                showToast('info', 'Verificação correta?', event.item.label)
+                showToast('info', 'Status verificação', event.item.label)
             }
         },
         {
