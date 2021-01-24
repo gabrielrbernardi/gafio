@@ -210,7 +210,7 @@ const MicrobiologyForm: React.FC<Props> = ({ id }) => {
                 IdPaciente: Yup.number().required(),
                 IdProntuario: Yup.number().required(),
                 DataColeta: Yup.date().required(),
-                DataResultado: Yup.date(),
+                DataResultado: Yup.date().nullable(),
                 SwabNasal: Yup.string().nullable().oneOf([null, "S", "N"]).required(),
                 SwabNasalObservacoes: Yup.string().max(250),
                 SwabRetal: Yup.string().nullable().oneOf([null, "S", "N"]).required(),
