@@ -113,9 +113,7 @@ const MicrobiologyForm: React.FC<Props> = ({ id }) => {
        //Carrega os dados 
        function loadMicrobiologyInfo(id:number) {
             MicrobiologyService.getById(id)
-                .then(data => {
-                    const [microbiology] = data;
-
+                .then(microbiology => {
                     setIdPaciente(Number(microbiology.IdPaciente));
                     setIdProntuario(microbiology.IdProntuario);
 

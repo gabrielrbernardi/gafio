@@ -18,7 +18,7 @@ class MicrobiologyService {
   }
 
   async getById(id:number) {
-    return await api.get<IMicrobiology[]>(`/microbiology/${id}`).then(response => response.data);
+    return await api.get<IMicrobiology>(`/microbiology/${id}`).then(response => response.data);
   }
 
   async delete(id:number, email: any) {

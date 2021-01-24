@@ -157,10 +157,13 @@ const MicrobiologyView: React.FC<Props> = ({ view, id, setView }) => {
                         </section> 
                     )}
 
-                    <section>
-                           <h4>Perfil de sensibilidade</h4> 
-                            <p>{PerfilSensibilidade} </p>
-                    </section>
+                    {PerfilSensibilidade && (
+                        <section>
+                                <h4>Perfil de sensibilidade</h4> 
+                                <p>{PerfilSensibilidade} </p>
+                        </section>
+                    )}
+                
                 </main>
                 {toast && (
                     <ToastComponent
