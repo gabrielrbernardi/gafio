@@ -3,13 +3,6 @@ import { MicrobiologyService } from "../MicrobiologyService";
 import knex from "../../database/connection";
 
 class MicrobiologyServiceImpl implements MicrobiologyService {
-  findAll() {
-    throw new Error("Method not implemented.");
-  }
-  index() {
-    throw new Error("Method not implemented.");
-  }
-
   async create(data: IMicrobiology) {
     await knex("Microbiologia").insert(data);
   }

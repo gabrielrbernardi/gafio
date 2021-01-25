@@ -10,6 +10,7 @@ import knex from "../database/connection";
 import MicrobiologyLog from "../jobs/MicrobiologyLog";
 import { IMicrobiology } from "../interfaces/MicrobiologyInterface";
 import MicrobiologyServiceImpl from "../services/impl/MicrobiologyServiceImpl";
+import DateUtils from "../utils/DateUtils";
 
 interface IRequest {
   microbiologyData: IMicrobiology;
@@ -37,20 +38,11 @@ class MicrobiologyController {
     if (!medicalRecordsExists)
       return res.status(400).json({ createdMicrobiology: false, error: "Prontuário inexistente." });
 
-    const handleDate = (date: string) => {
-      let formattedDate = date.split("T");
-      if (formattedDate.length) {
-        formattedDate = formattedDate[0].split("-");
-        date = `${formattedDate[2]}/${formattedDate[1]}/${formattedDate[0]}`;
-      }
-      return date;
-    };
-
     try {
-      microbiologyData.DataColeta = handleDate(microbiologyData.DataColeta);
+      microbiologyData.DataColeta =  DateUtils.handleDate(microbiologyData.DataColeta);
 
       if (microbiologyData.DataResultado)
-        microbiologyData.DataResultado = handleDate(microbiologyData.DataResultado);
+      microbiologyData.DataResultado = DateUtils.handleDate(microbiologyData.DataResultado);
 
       MicrobiologyServiceImpl.create(microbiologyData);
       MicrobiologyLog.handleSuccessfulCreation(email);
@@ -72,8 +64,7 @@ class MicrobiologyController {
      * @param page
      * @param filter
      * @param filterValue
-     * @return microbiologies
-     * @return count
+     * @return IMicorbiology[]
   */
   async index(req: Request, res: Response) {
     try {
@@ -128,7 +119,7 @@ class MicrobiologyController {
      * do prontuário e paciente para mostrar os dados na visualização
      *
      * @param id
-     * @return microbiology
+     * @return IMicrobiology
   */
   async view(req: Request, res: Response) {
     try {
@@ -145,7 +136,7 @@ class MicrobiologyController {
      * Busca uma microbiologia por id
      *
      * @param id
-     * @return microbiology
+     * @return IMicrobiology
   */
   async showById(req: Request, res: Response) {
     const { id } = req.params;
@@ -185,20 +176,11 @@ class MicrobiologyController {
         return res.status(400).json({ createdMicrobiology: false, error: "Prontuário inexistente." });
 
       if (microbiologyData) {
-        const handleDate = (date: string) => {
-          let formattedDate = date.split("T");
-          if (formattedDate.length) {
-            formattedDate = formattedDate[0].split("-");
-            date = `${formattedDate[2]}/${formattedDate[1]}/${formattedDate[0]}`;
-          }
-          return date;
-        };
-
         const microbiology = await MicrobiologyServiceImpl.findById(Number(id));
 
         if (microbiology) {
-          microbiologyData.DataColeta = handleDate(microbiologyData.DataColeta);
-          microbiologyData.DataResultado = handleDate(microbiologyData.DataResultado);
+          microbiologyData.DataColeta = DateUtils.handleDate(microbiologyData.DataColeta);
+          microbiologyData.DataResultado = DateUtils.handleDate(microbiologyData.DataResultado);
 
           await MicrobiologyServiceImpl.update(Number(id), microbiologyData);
           MicrobiologyLog.handleSuccessfulUpdate(email, Number(id));
