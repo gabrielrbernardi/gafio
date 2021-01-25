@@ -4,7 +4,7 @@ class DateUtils{
             
             if (formattedDate.length) {
                 formattedDate = formattedDate[0].split("-");
-              date = `${formattedDate[2]}/${formattedDate[1]}/${formattedDate[0]}`;
+                date = `${formattedDate[2]}/${formattedDate[1]}/${formattedDate[0]}`;
             }
           
           return date;

@@ -24,7 +24,7 @@ class MicrobiologyController {
      *
      * @param microbiologyData
      * @param email
-     * @return IMicrobiology
+     * @returns uma microbiologia do tipo IMicrobiology ou um json com o erro
   */
   async create(req: Request, res: Response) {
     const { microbiologyData, email }: IRequest = req.body;
@@ -64,9 +64,10 @@ class MicrobiologyController {
      * @param page
      * @param filter
      * @param filterValue
-     * @return IMicorbiology[]
+     * @returns retorna uma lista de IMicrobiology ou um json com o erro
   */
   async index(req: Request, res: Response) {
+    //TODO fazer o service desse método de listagem e filtragem, além de um método privado para filtrar
     try {
       const {page = 1} = req.query;
       const { filter } = req.query;
@@ -119,7 +120,7 @@ class MicrobiologyController {
      * do prontuário e paciente para mostrar os dados na visualização
      *
      * @param id
-     * @return IMicrobiology
+     * @returns uma microbiologia com dados do paciente e prontuário ou um json com o erro
   */
   async view(req: Request, res: Response) {
     try {
@@ -136,7 +137,7 @@ class MicrobiologyController {
      * Busca uma microbiologia por id
      *
      * @param id
-     * @return IMicrobiology
+     * @returns uma IMicrobiology ou um json com o erro
   */
   async showById(req: Request, res: Response) {
     const { id } = req.params;
@@ -158,7 +159,7 @@ class MicrobiologyController {
      * @param id
      * @param email
      * @param microbiologyData
-     * @return json
+     * @returns um json com o status da atualização
   */
   async update(req: Request, res: Response) {
     const { id } = req.params;
@@ -202,7 +203,7 @@ class MicrobiologyController {
      *
      * @param id
      * @param email
-     * @return json
+     * @returns um json com status da exclusão
   */
   async delete(req: Request, res: Response) {
     const { id, email } = req.params;
