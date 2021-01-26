@@ -4,7 +4,7 @@
 | Sistema: GAFio                                             |
 *****************************************/
 
-import { Request, Response } from "express";
+import { Request, response, Response } from "express";
 import knex from "../database/connection";
 
 import MicrobiologyLog from "../jobs/MicrobiologyLog";
@@ -67,46 +67,35 @@ class MicrobiologyController {
      * @returns retorna uma lista de IMicrobiology ou um json com o erro
   */
   async index(req: Request, res: Response) {
-    //TODO fazer o service desse método de listagem e filtragem, além de um método privado para filtrar
     try {
       const {page = 1} = req.query;
       const { filter } = req.query;
       const pageRequest = Number(page);
       const rows = 10;
-      let microbiologyLength;
-
-      const query = knex("Microbiologia");
+      let response;
 
       // Filtragem de dados
       if (filter) {
         const { filterValue } = req.query;
-
+          
         if (filter === "id") {
-          microbiologyLength = await knex("Microbiologia").where({ IdMicrobiologia: filterValue }).count({ count: "*" });
-          query.where({ IdMicrobiologia: filterValue });
+            const result = await MicrobiologyServiceImpl.findById(Number(filterValue));
+            response = { results: result, count: {count: result.length} };
         } else if (filter === "paciente") {
-          microbiologyLength = await knex("Microbiologia").where({ IdPaciente: filterValue }).count({ count: "*" });
-          query.where({ IdPaciente: filterValue });
+            response = await MicrobiologyServiceImpl.findByIdPaciente(Number(filterValue), pageRequest, rows);
         } else if (filter === "prontuario") {
-          microbiologyLength = await knex("Microbiologia").where({ IdProntuario: filterValue }).count({ count: "*" });
-          query.where({ IdProntuario: filterValue });
+            response = await MicrobiologyServiceImpl.findByIdProntuario(Number(filterValue), pageRequest, rows);
         } else if (filter === "dataColeta") {
-          microbiologyLength = await knex("Microbiologia").where({ DataColeta: filterValue }).count({ count: "*" });
-          query.where({ DataColeta: filterValue });
-        } else {
-          query.where({ DataResultado: filterValue });
-          microbiologyLength = await knex("Microbiologia").where({ DataResultado: filterValue }).count({ count: "*" });
+            response = await MicrobiologyServiceImpl.findByDataColeta(String(filterValue), pageRequest, rows);
+        } else { 
+           response = await MicrobiologyServiceImpl.findByDataResultado(String(filterValue), pageRequest, rows);
         }
       } else {
-        microbiologyLength = await knex("Microbiologia").count({ count: "*" });
+          response = await MicrobiologyServiceImpl.index(pageRequest, rows);
       }
 
-      // Busca a(s) microbiologia(s), com limite de 10 microbiologias  por página
-      const results = await query.limit(rows).offset((pageRequest - 1) * rows);
-
-      if (results.length) {
-        const [count] = microbiologyLength;
-        return res.json({ results, count });
+      if (response?.results.length) {
+        return res.json(response);
       } else {
         return res.status(400).json({ error: "Nenhum registro encontrado" });
       }
@@ -143,7 +132,7 @@ class MicrobiologyController {
     const { id } = req.params;
 
     try {
-      const microbiology = await MicrobiologyServiceImpl.findById(Number(id));
+      const [microbiology] = await MicrobiologyServiceImpl.findById(Number(id));
       if (microbiology)
         return res.json(microbiology);
       else
