@@ -151,6 +151,7 @@ const Microbiology = () => {
     //Atualiza os dados da tabela
     function handleTableUpdate() {
         setTableLoading(true);
+        setFirst(1);
         MicrobiologyService.getMicrobiologies({ page: 1 })
             .then(data => {
                 const { results } = data;
@@ -196,6 +197,7 @@ const Microbiology = () => {
             HandleToast("error", "Erro!", "Digite algum valor para pesquisar.");
             return;
         }
+        setFirst(1);
         setLoading(true);
         setTableLoading(true);
         MicrobiologyService.getMicrobiologies({ page: 1, filter, filterValue })

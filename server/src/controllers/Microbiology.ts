@@ -4,362 +4,215 @@
 | Sistema: GAFio                                             |
 *****************************************/
 
-import { Request, Response } from "express";
+import { Request, response, Response } from "express";
 import knex from "../database/connection";
 
-import MicrobiologyLog from '../jobs/MicrobiologyLog';
+import MicrobiologyLog from "../jobs/MicrobiologyLog";
+import { IMicrobiology } from "../interfaces/MicrobiologyInterface";
+import MicrobiologyServiceImpl from "../services/impl/MicrobiologyServiceImpl";
+import DateUtils from "../utils/DateUtils";
+
+interface IRequest {
+  microbiologyData: IMicrobiology;
+  email: string;
+}
 
 class MicrobiologyController {
-    /**
-     * Adiciona uma microbiologia no banco de dados
+
+  /**
+     * Adiciona uma nova microbiologia no banco de dados
      *
      * @param microbiologyData
      * @param email
-     * @return json
-     */
-    async create(req: Request, res: Response) {
-        const { microbiologyData, email } = req.body;
-        const { IdPaciente, IdProntuario } = microbiologyData;
-        
-        const patientExists = await knex("Paciente").where(
-            "SeqPaciente",
-            "like",
-            `%${IdPaciente}%`
-        );
+     * @returns uma microbiologia do tipo IMicrobiology ou um json com o erro
+  */
+  async create(req: Request, res: Response) {
+    const { microbiologyData, email }: IRequest = req.body;
+    const { IdPaciente, IdProntuario } = microbiologyData;
 
-        const medicalRecordsExists = await knex("Prontuario").where(
-            "SeqProntuario",
-            "like",
-            `%${IdProntuario}%`
-        );
+    const [patientExists] = await knex("Paciente").where({ SeqPaciente: IdPaciente });
+    if (!patientExists)
+      return res.status(400).json({ createdMicrobiology: false, error: "Paciente inexistente." });
 
-        //Verificação da existência do paciente e do prontuário
-        if (!(patientExists[0] && medicalRecordsExists[0])) {
-            return res.status(400).json({
-                createdMicrobiology: false,
-                error: "Paciente ou prontuário não corresponde.",
-            });
-        }
-        //Fim da verificação da existência do prontuário ou paciente
-        else {
-            // Formatação de datas
-            const handleDate = (date: string) => {
-                let dateFormated = date.split("T");
-                if (dateFormated.length) {
-                    dateFormated = dateFormated[0].split("-");
-                    date = `${dateFormated[2]}/${dateFormated[1]}/${dateFormated[0]}`;
-                }
-                return date;
-            };
+    const [medicalRecordsExists] = await knex("Prontuario").where({ SeqProntuario: IdProntuario });
+    if (!medicalRecordsExists)
+      return res.status(400).json({ createdMicrobiology: false, error: "Prontuário inexistente." });
 
-            try {
-                microbiologyData.DataColeta = handleDate(
-                    microbiologyData.DataColeta
-                );
+    try {
+      microbiologyData.DataColeta =  DateUtils.handleDate(microbiologyData.DataColeta);
 
-                if (microbiologyData.DataResultado)
-                    microbiologyData.DataResultado = handleDate(
-                        microbiologyData.DataResultado
-                    );
-                
-                //Persiste a microbiologia no banco de dados
-                await knex("Microbiologia").insert(microbiologyData);
+      if (microbiologyData.DataResultado)
+      microbiologyData.DataResultado = DateUtils.handleDate(microbiologyData.DataResultado);
 
-                MicrobiologyLog.handleSuccessfulCreation(email);
+      MicrobiologyServiceImpl.create(microbiologyData);
+      MicrobiologyLog.handleSuccessfulCreation(email);
 
-                return res
-                    .status(201)
-                    .json({ createdMicrobiology: true, ...microbiologyData });
-            } catch (error) {
-                //Erro ao persistir a microbiologia
-                MicrobiologyLog.handleUnsuccessfulCreation(email, error);
+      return res.status(201).json({
+        createdMicrobiology: true,
+        ...microbiologyData
+      });
+    } catch (error) {
+      MicrobiologyLog.handleUnsuccessfulCreation(email, error);
 
-                return res.status(400).json({
-                    createdMicrobiology: false,
-                    error,
-                });
-            }
-        }
+      return res.status(400).json({ createdMicrobiology: false, error });
     }
+  }
 
-    /**
+  /**
      * Listagem  de microbiologia(s)
      *
      * @param page
      * @param filter
      * @param filterValue
-     * @return microbiologies
-     * @return count
-     */
-    async index(req: Request, res: Response) {
-        try {
-            const { page = 1 } = req.query;
-            const { filter } = req.query;
-            const pageRequest = Number(page);
-            const rows = 10;
-            let microbiologyLength;
+     * @returns retorna uma lista de IMicrobiology ou um json com o erro
+  */
+  async index(req: Request, res: Response) {
+    try {
+      const {page = 1} = req.query;
+      const { filter } = req.query;
+      const pageRequest = Number(page);
+      const rows = 10;
+      let response;
 
-            const query = knex("Microbiologia");
-
-            //Filtragem de dados
-            if (filter) {
-                const { filterValue } = req.query;
-                if (filter === "id") {
-                    microbiologyLength = await knex("Microbiologia")
-                        .where({ IdMicrobiologia: filterValue })
-                        .count({
-                            count: "*",
-                        });
-                    query.where({ IdMicrobiologia: filterValue });
-                } else if (filter === "paciente") {
-                    microbiologyLength = await knex("Microbiologia")
-                        .where({ IdPaciente: filterValue })
-                        .count({
-                            count: "*",
-                        });
-                    query.where({ IdPaciente: filterValue });
-                } else if (filter === "prontuario") {
-                    microbiologyLength = await knex("Microbiologia")
-                        .where({ IdProntuario: filterValue })
-                        .count({
-                            count: "*",
-                        });
-                    query.where({ IdProntuario: filterValue });
-                } else if (filter === "dataColeta") {
-                    microbiologyLength = await knex("Microbiologia")
-                        .where({ DataColeta: filterValue })
-                        .count({
-                            count: "*",
-                        });
-                    query.where({ DataColeta: filterValue });
-                } else {
-                    query.where({ DataResultado: filterValue });
-                    microbiologyLength = await knex("Microbiologia")
-                        .where({ DataResultado: filterValue })
-                        .count({
-                            count: "*",
-                        });
-                }
-            } else {
-                //Lista todas as microbiologias, sem filtrar
-                microbiologyLength = await knex("Microbiologia").count({
-                    count: "*",
-                });
-            }
-
-            //Busca a(s) microbiologia(s), com limite de 10 microbiologia  por página
-            const results = await query
-                .limit(rows)
-                .offset((pageRequest - 1) * rows);
-
-            if (results.length) {
-                //retorna todos as microbiologias encontradas
-                const [count] = microbiologyLength;
-                return res.json({ results, count });
-            } else {
-                return res
-                    .status(400)
-                    .json({ error: "Nenhum registro encontrado" });
-            }
-        } catch (error) {
-            return res.json({ error: "Erro ao carregar os registros" });
+      // Filtragem de dados
+      if (filter) {
+        const { filterValue } = req.query;
+          
+        if (filter === "id") {
+            const result = await MicrobiologyServiceImpl.findById(Number(filterValue));
+            response = { results: result, count: {count: result.length} };
+        } else if (filter === "paciente") {
+            response = await MicrobiologyServiceImpl.findByIdPaciente(Number(filterValue), pageRequest, rows);
+        } else if (filter === "prontuario") {
+            response = await MicrobiologyServiceImpl.findByIdProntuario(Number(filterValue), pageRequest, rows);
+        } else if (filter === "dataColeta") {
+            response = await MicrobiologyServiceImpl.findByDataColeta(String(filterValue), pageRequest, rows);
+        } else { 
+           response = await MicrobiologyServiceImpl.findByDataResultado(String(filterValue), pageRequest, rows);
         }
-    }
+      } else {
+          response = await MicrobiologyServiceImpl.index(pageRequest, rows);
+      }
 
-    /**
+      if (response?.results.length) {
+        return res.json(response);
+      } else {
+        return res.status(400).json({ error: "Nenhum registro encontrado" });
+      }
+    } catch (error) {
+      return res.json({ error: "Erro ao carregar os registros" });
+    }
+  }
+
+  /**
      * Busca uma microbiologia por id, devolvendo os dados da mesma juntamente com os dados
      * do prontuário e paciente para mostrar os dados na visualização
      *
      * @param id
-     * @return microbiology
-     */
-    async view(req: Request, res: Response) {
-        try {
-            const { id } = req.params;
-            const microbiology = await knex("Microbiologia")
-                .where({ IdMicrobiologia: id })
-                .join(
-                    "Prontuario",
-                    "Prontuario.SeqProntuario",
-                    "=",
-                    "Microbiologia.IdProntuario"
-                )
-                .join(
-                    "Paciente",
-                    "Paciente.SeqPaciente",
-                    "=",
-                    "Microbiologia.IdPaciente"
-                )
-                .select(
-                    "Microbiologia.*",
-                    "Prontuario.NroProntuario",
-                    "Paciente.NomePaciente",
-                    "Paciente.NroPaciente"
-                );
-
-            return res.json(microbiology);
-        } catch (error) {
-            return res.json({
-                error: "Erro ao carregar os dados",
-            });
-        }
+     * @returns uma microbiologia com dados do paciente e prontuário ou um json com o erro
+  */
+  async view(req: Request, res: Response) {
+    try {
+      const { id } = req.params;
+      const microbiology = await MicrobiologyServiceImpl.show(Number(id));
+      
+      return res.json(microbiology);
+    } catch (error) {
+      return res.json({ error: "Erro ao carregar os dados" });
     }
+  }
 
-    /**
+  /**
      * Busca uma microbiologia por id
      *
      * @param id
-     * @return microbiology
-     */
-    async showById(req: Request, res: Response) {
-        try {
-            const { id } = req.params;
-            const microbiology = await knex("Microbiologia").where({
-                IdMicrobiologia: id,
-            });
-            if (!microbiology[0]) {
-                return res.status(400).json({
-                    error: "Microbiologia não existe!",
-                });
-            }
-            return res.json(microbiology);
-        } catch (error) {
-            return res.json({ error: "Erro ao carregar os dados" });
-        }
-    }
+     * @returns uma IMicrobiology ou um json com o erro
+  */
+  async showById(req: Request, res: Response) {
+    const { id } = req.params;
 
-    /**
+    try {
+      const [microbiology] = await MicrobiologyServiceImpl.findById(Number(id));
+      if (microbiology)
+        return res.json(microbiology);
+      else
+        return res.status(400).json({ updatedMicrobiology: false, error: "Microbiologia  inexistente!" });
+    } catch (err) {
+      return res.json({ error: "Erro ao carregar os dados" });
+    }
+  }
+
+  /**
      * Atualiza uma microbiologia
      *
      * @param id
      * @param email
      * @param microbiologyData
-     * @return json
-     */
-    async update(req: Request, res: Response) {
-        const { id } = req.params;
-        const { microbiologyData, email } = req.body;
+     * @returns um json com o status da atualização
+  */
+  async update(req: Request, res: Response) {
+    const { id } = req.params;
+    const { microbiologyData, email }: IRequest = req.body;
 
-        try {
-            const { IdPaciente, IdProntuario } = microbiologyData;
+    try {
+      const { IdPaciente, IdProntuario } = microbiologyData;
 
-            //Verificação da existência do paciente
-            if (IdPaciente) {
-                const patientExists = await knex("Paciente").where(
-                    "SeqPaciente",
-                    "like",
-                    `%${IdPaciente}%`
-                );
-                if (!patientExists[0]) {
-                    return res.status(400).json({
-                        createdMicrobiology: false,
-                        error: "Paciente não existe!",
-                    });
-                }
-            }
+      const [patientExists] = await knex("Paciente").where({ SeqPaciente: IdPaciente });
+      if (!patientExists)
+        return res.status(400).json({ createdMicrobiology: false, error: "Paciente inexistente." });
 
-            //Verificação da existência do prontuário
-            if (IdProntuario) {
-                const medicalRecordsExists = await knex("Prontuario").where(
-                    "SeqProntuario",
-                    "like",
-                    `%${IdProntuario}%`
-                );
-                if (!medicalRecordsExists[0]) {
-                    return res.status(400).json({
-                        createdMicrobiology: false,
-                        error: "Prontuário não existe!",
-                    });
-                }
-            }
+      const [medicalRecordsExists] = await knex("Prontuario").where({ SeqProntuario: IdProntuario });
+      if (!medicalRecordsExists)
+        return res.status(400).json({ createdMicrobiology: false, error: "Prontuário inexistente." });
 
-            if (microbiologyData) {
-                //Formatação de datas
-                const handleDate = (date: string) => {
-                    let dateFormated = date.split("T");
-                    if (dateFormated.length) {
-                        dateFormated = dateFormated[0].split("-");
-                        date = `${dateFormated[2]}/${dateFormated[1]}/${dateFormated[0]}`;
-                    }
-                    return date;
-                };
+      if (microbiologyData) {
+        const microbiology = await MicrobiologyServiceImpl.findById(Number(id));
 
-                //Busca a microbiologia pelo id
-                const microbiology = await knex("Microbiologia").where({
-                    IdMicrobiologia: id,
-                });
+        if (microbiology) {
+          microbiologyData.DataColeta = DateUtils.handleDate(microbiologyData.DataColeta);
+          microbiologyData.DataResultado = DateUtils.handleDate(microbiologyData.DataResultado);
 
-                //Verifica a existência da microbiologia
-                if (microbiology[0]) {
-                    microbiologyData.DataColeta = handleDate(
-                        microbiologyData.DataColeta
-                    );
-                    microbiologyData.DataResultado = handleDate(
-                        microbiologyData.DataResultado
-                    );
+          await MicrobiologyServiceImpl.update(Number(id), microbiologyData);
+          MicrobiologyLog.handleSuccessfulUpdate(email, Number(id));
 
-                    //Atualiza  a microbiologia
-                    await knex("Microbiologia")
-                        .update(microbiologyData)
-                        .where({ IdMicrobiologia: id });
-
-                    MicrobiologyLog.handleSuccessfulUpdate(email, Number(id));
-                    return res.json({ updatedMicrobioloogy: true });
-                } else {
-                    MicrobiologyLog.handleUnsuccessfulUpdate(
-                        email,
-                        "Microbiologia inexistente",
-                        Number(id)
-                    );
-                    return res.status(400).json({
-                        updatedMicrobiology: false,
-                        error: "Microbiollogia não existe!",
-                    });
-                }
-            }
-        } catch (error) {
-            MicrobiologyLog.handleUnsuccessfulUpdate(email, error, Number(id));
-            return res.status(400).json({ updatedMicrobioloogy: false, error });
+          return res.json({ updatedMicrobioloogy: true });
+        } else {
+          MicrobiologyLog.handleUnsuccessfulUpdate(email, "Microbiologia inexistente", Number(id));
+          return res.status(400).json({ updatedMicrobiology: false, error: "Microbiologia inexistente!" });
         }
+      }
+    } catch (error) {
+      MicrobiologyLog.handleUnsuccessfulUpdate(email, error, Number(id));
+      return res.status(400).json({ updatedMicrobioloogy: false, error });
     }
+  }
 
-    /**
+  /**
      * Exclui uma microbiologia por id
      *
      * @param id
      * @param email
-     * @return json
-     */
-    async delete(req: Request, res: Response) {
-        const { id, email } = req.params;
-        try {
-            const microbiology = await knex("Microbiologia").where({
-                IdMicrobiologia: id,
-            });
-            //Verifica a existência da microbiologia
-            if (microbiology[0]) {
-                //Deleta a microbiologia
-                await knex("Microbiologia")
-                    .where({ IdMicrobiologia: id })
-                    .delete();
-                MicrobiologyLog.handleSuccessfulDelete(email, Number(id));
-                return res.json({ deletedMicrobiology: true });
-            } else {
-                MicrobiologyLog.handleUnsuccessfulDelete(
-                    email,
-                    "Microbiologia inexistente",
-                    Number(id)
-                );
-                return res.status(400).json({
-                    deletedMicrobiology: false,
-                    error: "Microbiollogia não existe!",
-                });
-            }
-        } catch (error) {
-            MicrobiologyLog.handleUnsuccessfulDelete(email, error, Number(id));
-            return res.json({ error });
-        }
-    }
-}
+     * @returns um json com status da exclusão
+  */
+  async delete(req: Request, res: Response) {
+    const { id, email } = req.params;
 
+    try {
+      const microbiology = await MicrobiologyServiceImpl.findById(Number(id));
+
+      if (microbiology) {
+        await MicrobiologyServiceImpl.delete(Number(id));
+        MicrobiologyLog.handleSuccessfulDelete(email, Number(id));
+
+        return res.json({ deletedMicrobiology: true });
+      } else {
+        MicrobiologyLog.handleUnsuccessfulDelete(email, "Microbiologia inexistente", Number(id));
+        return res.status(400).json({ deletedMicrobiology: false, error: "Microbiollogia inexistente!" });
+      }
+    } catch (error) {
+      MicrobiologyLog.handleUnsuccessfulDelete(email, error, Number(id));
+      return res.json({ error });
+    }
+  }
+}
 export default new MicrobiologyController();
