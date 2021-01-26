@@ -15,24 +15,18 @@ class DiseasesService {
         }
     }
 
-    async getDiseaseInformation(codDoenca: Number) {
-        return await api.get(`diseases/info/?id=${codDoenca}`).then(response => response.data);
-    }
-
     async updateDisease(codDoenca: Number, nome: string) {
-        return await api.put(`/diseases/${codDoenca}`, { codDoenca, nome }).then(response => {
+        return await api.put(`/disease/${codDoenca}`, { codDoenca, nome }).then(response => {
             return response.data;
-        })
-        .catch((err) => {
+        }).catch((err) => {
             return { error: err };
-        });
+        })
     }
 
     async deleteDisease(codDoenca: String) {
         return await api.delete(`/diseases/${codDoenca}`).then(response => {
             return response.data;
-        })
-        .catch(err => {
+        }).catch(err => {
             return { error: err };
         })
     }

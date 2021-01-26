@@ -1,16 +1,20 @@
 import React, { useState, useEffect, FormEvent } from 'react';
 import { Link } from 'react-router-dom';
+
 import { DiseasesService } from './DiseasesService';
 
+/* Importações do Prime React */
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { InputText } from 'primereact/inputtext';
 import { Dropdown } from 'primereact/dropdown';
 import { Dialog } from 'primereact/dialog';
 
+/* Importações do React Bootstrap */
 import Button from 'react-bootstrap/Button';
 import Collapse from 'react-bootstrap/Collapse';
 
+/* Importações dos icones */
 import { FiSearch } from 'react-icons/fi';
 import { AiOutlineClose } from 'react-icons/ai';
 
@@ -19,7 +23,6 @@ import * as Yup from "yup";
 const Diseases = () => {
     const [diseases, setDiseases] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [loading1, setLoading1] = useState(true);
     const [totalRecords, setTotalRecords] = useState(0);
     const [first, setFirst] = useState(0);
 
@@ -44,17 +47,20 @@ const Diseases = () => {
     const [codDoenca, setCodDoenca] = useState<any>('');
     const [nome, setNome] = useState<any>('');
 
-    var diseaseData:any = {}
-
     const [updatedCodDoenca, setUpdatedCodDoenca] = useState<any>('');
     const [updatedNome, setUpdatedNome] = useState<any>('');
 
     const [selectedRow, setSelectedRow] = useState<any>(null);
     const [selectedDisease, setSelectedDisease] = useState<any>(null);
 
+    /**
+     * Função para carregar as doenças
+     *
+     * @param data
+    **/
     function getDiseasesFunction(data?: any) {
         setLoading(true);
-        
+
         if (!data) {
             diseasesService.getDiseasesPaginate(10).then(data => {
                 setDatasource(data.diseases);
@@ -80,7 +86,6 @@ const Diseases = () => {
     }
 
     useEffect(() => {
-        setLoading1(true);
         setTimeout(() => {
             diseasesService.getDiseasesPaginate(10).then(data => {
                 setTotalRecords(data.length);
@@ -89,21 +94,26 @@ const Diseases = () => {
         }, 1000);
     }, []);
 
-    const onPage = (event: any) => {
-        setLoading(true);
-        setTimeout(() => {
-            const startIndex = event.first;
-            const endIndex = event.first + rows;
+    /**
+     * Função para mostrar avisos
+     *
+     * @param messageType
+     * @param messageTitle
+     * @param messageContent
+    **/
+    function showToast(messageType: string, messageTitle: string, messageContent: string) {
+        setToast(false);
+        setMessageType(messageType);
+        setMessageTitle(messageTitle);
+        setMessageContent(messageContent);
+        setToast(true);
 
-            diseasesService.getDiseasesPaginate(endIndex).then(data => {
-                getDiseasesFunction(data.diseases);
-            });
-
-            setFirst(startIndex);
-            setLoading(false);
-        });
+        setTimeout(() => { setToast(false) }, 4500);
     }
 
+    /**
+     * Função para filtrar doenças
+    **/
     function handleSearch() {
         if (!optionState) {
             showToast("error", "Erro!", "Selecione um filtro para buscar.");
@@ -130,37 +140,38 @@ const Diseases = () => {
         });
     }
 
-    function showToast(messageType: string, messageTitle: string, messageContent: string) {
-        setToast(false);
-        setMessageType(messageType);
-        setMessageTitle(messageTitle);
-        setMessageContent(messageContent);
-        setToast(true);
-        setTimeout(() => { setToast(false) }, 4500);
-    }
-
+    /**
+     * Função para pegar os dados da doença selecionada
+     *
+     * @param e
+    **/
     function onUserSelect(e: any) {
         setSelectedDisease(Object.assign({}, e.data));
 
-        diseaseData = e.data;
-        console.log(e.data);
+        let diseaseData: any = e.data;
 
         setCodDoenca(diseaseData.CodDoenca);
         setNome(diseaseData.Nome);
+
         setDisplayDialogs(true);
-        console.log(codDoenca, nome);
     };
 
+    /**
+     * Função para sobre escrever os dados de uma doença
+    **/
     function updateDisease() {
         setUpdatedCodDoenca(codDoenca);
         setUpdatedNome(nome);
     }
 
+    /**
+     * Função para atualizar os dados de uma doença
+    **/
     async function handleSubmit(event: FormEvent) {
-        try {
-            event.preventDefault();
+        event.preventDefault();
 
-            const data = {updatedCodDoenca, updatedNome};
+        try {
+            const data = { updatedCodDoenca, updatedNome };
             const schema = Yup.object().shape({
                 up: Yup.string().required(),
                 updatedCodDoenca: Yup.string().required(),
@@ -174,37 +185,31 @@ const Diseases = () => {
                     showToast("success", "Atualização!", "Doença atualizada com sucesso.");
                     setDisplayDialog2(false);
                     getDiseasesFunction();
-                } 
-                else {
-                    showToast("error", "Erro!", String(response.error));
                 }
+                else showToast("error", "Erro!", String(response.error));
             });
-        } 
+        }
         catch (err) {
-            if (err instanceof Yup.ValidationError) {
-                showToast("error", "Erro!", "Verifique se todos os campos foram preenchidos corretamente!");
-            }
+            if (err instanceof Yup.ValidationError) showToast("error", "Erro!", "Verifique se todos os campos foram preenchidos corretamente!");
             else return;
         }
     }
 
+    /**
+     * Função para deletar uma doença
+    **/
     async function deleteDisease() {
         await diseasesService.deleteDisease(codDoenca).then(response => {
-
             if (response.deletedDisease) {
                 showToast("success", "Atualização!", "Doença excluída com sucesso.");
                 setDisplayDialog3(false);
                 getDiseasesFunction();
-            } 
+            }
             else {
                 console.log(response.error);
 
-                if (response.error.code) {
-                    showToast("error", "Erro!", String(response.error.code) + ' ' + String(response.error.sqlMessage));
-                } 
-                else {
-                    showToast('error', "Erro!", String(response.error));
-                }
+                if (response.error.code) showToast("error", "Erro!", String(response.error.code) + ' ' + String(response.error.sqlMessage));
+                else showToast('error', "Erro!", String(response.error));
             }
         });
     }
@@ -212,25 +217,31 @@ const Diseases = () => {
     return (
         <>
             <div className="row m-5 px-5">
+
+                {/* Botão de cadastrar doenças */}
                 <Link to={location => ({ ...location, pathname: '/registrations/diseases/create' })}>
-                    <Button 
-                        variant="outline-dark" 
-                        className="mr-2 mb-2" 
-                        style={{ borderRadius: '0', height:'41.5px' }}
+                    <Button
+                        variant="outline-dark"
+                        className="mr-2 mb-2"
+                        style={{ borderRadius: '0', height: '41.5px' }}
                     >
                         Cadastrar Doença
                     </Button>
                 </Link>
+
+                {/* Botão de buscar doenças */}
                 <Button
                     className="mr-2 mb-2"
                     variant="outline-secondary"
                     onClick={() => setOpen(!open)}
                     aria-controls="example-collapse-text"
                     aria-expanded={open}
-                    style={{ borderRadius: '0', height:'41.5px' }}
+                    style={{ borderRadius: '0', height: '41.5px' }}
                 >
                     Buscar doença específica
                 </Button>
+
+                {/* Filtros de pesquisa */}
                 <Collapse className="mb-2" in={open} timeout={200}>
                     <div>
                         <div className="p-inputgroup">
@@ -241,7 +252,7 @@ const Diseases = () => {
                                     value={searchInput}
                                     onChange={(e) => { setSearchInput((e.target as HTMLInputElement).value) }}
                                     onKeyPress={(ev) => { if (ev.key === 'Enter') { handleSearch(); ev.preventDefault(); } }}
-                                    style={{ minWidth: '4em', borderRadius: '0', height:'41.5px' }}
+                                    style={{ minWidth: '4em', borderRadius: '0', height: '41.5px' }}
                                 />
                                 {
                                     optionState === null
@@ -286,7 +297,8 @@ const Diseases = () => {
                         </div>
                     </div>
                 </Collapse>
-
+                
+                {/* Tabela de doeças */}
                 <DataTable
                     value={diseases}
                     paginator={true}
@@ -298,10 +310,9 @@ const Diseases = () => {
                     resizableColumns={true}
                     loading={loading}
                     first={first}
-                    onPage={onPage}
                     lazy={true}
-                    selectionMode="single" 
-                    selection={selectedRow} 
+                    selectionMode="single"
+                    selection={selectedRow}
                     onSelectionChange={(e) => setSelectedRow(e.value)}
                     onRowSelect={(e) => onUserSelect(e)}
                 >
@@ -309,52 +320,57 @@ const Diseases = () => {
                     <Column field="Nome" header="Nome" style={{ width: '20%', textAlign: 'center' }} />
                 </DataTable>
             </div>
-
-            <Dialog 
-                visible={displayDialogs} 
-                style={{ width: '50%' }} 
-                header="Ações" 
-                modal={true} 
+            
+            {/* Dialog para mostrar as opções da tabela (displayDialogs) */}
+            <Dialog
+                visible={displayDialogs}
+                style={{ width: '50%' }}
+                header="Ações"
+                modal={true}
                 onHide={() => setDisplayDialogs(false)}
             >
                 <div className="form-row">
+
+                    {/* Botão de vizualizar doenças */}
                     <div className="col">
-                        <Button 
-                            variant="info" 
-                            className="mt-2 mb-2 p-3" 
-                            style={{ width: '100%' }} 
-                            onClick={() => { 
-                                setDisplayDialog1(true); 
+                        <Button
+                            variant="info"
+                            className="mt-2 mb-2 p-3"
+                            style={{ width: '100%' }}
+                            onClick={() => {
+                                setDisplayDialog1(true);
                                 setDisplayDialogs(false);
                             }}
                         >
                             Visualizar doença
                         </Button>
                     </div>
-
+                    
+                    {/* Botão de atualizar doenças */}
                     <div className="col ml-2">
-                        <Button 
-                            variant="primary" 
-                            className="mt-2 mb-2 p-3" 
-                            style={{ width: '100%' }} 
-                            onClick={() => { 
-                                updateDisease(); 
-                                setDisplayDialog2(true); 
-                                setDisplayDialogs(false) 
+                        <Button
+                            variant="primary"
+                            className="mt-2 mb-2 p-3"
+                            style={{ width: '100%' }}
+                            onClick={() => {
+                                updateDisease();
+                                setDisplayDialog2(true);
+                                setDisplayDialogs(false)
                             }}
                         >
                             Atualizar doença
                         </Button>
                     </div>
                     
+                    {/* Botão de excluir doenças */}
                     <div className="col ml-2">
-                        <Button 
-                            variant="danger" 
-                            className="mt-2 mb-2 p-3" 
-                            style={{ width: '100%' }} 
-                            onClick={() => { 
-                                setDisplayDialog3(true); 
-                                setDisplayDialogs(false) 
+                        <Button
+                            variant="danger"
+                            className="mt-2 mb-2 p-3"
+                            style={{ width: '100%' }}
+                            onClick={() => {
+                                setDisplayDialog3(true);
+                                setDisplayDialogs(false)
                             }}
                         >
                             Excluir doença
@@ -363,35 +379,36 @@ const Diseases = () => {
                 </div>
             </Dialog>
 
-            {/* Caixa de dialogo de listagem de doenças */}
-            <Dialog 
-                visible={displayDialog1} 
-                style={{ width: '50%' }} 
-                modal={true} 
-                onHide={() => setDisplayDialog1(false)} 
+            {/* Popup para visualizar doença (displayDialog1) */}
+            <Dialog
+                visible={displayDialog1}
+                style={{ width: '50%' }}
+                modal={true}
+                onHide={() => setDisplayDialog1(false)}
                 maximizable
             >
                 <p className="text-dark h5 mt-2">Código: {codDoenca}</p>
                 <p className="text-dark h5 mt-2">Nome: {nome}</p>
             </Dialog>
 
-            <Dialog 
-                visible={displayDialog2} 
-                style={{ width: '70%' }} 
-                modal={true} 
-                onHide={() => setDisplayDialog2(false)} 
+            {/* Popup para atualizar doença (displayDialog2) */}
+            <Dialog
+                visible={displayDialog2}
+                style={{ width: '70%' }}
+                modal={true}
+                onHide={() => setDisplayDialog2(false)}
                 maximizable maximized
             >
                 <p className="text-dark h3 text-center">Atualização dos dados da doença {nome}</p>
-                
+
                 <form className="was-validated" onSubmit={handleSubmit}>
                     <div className="mt-4 mb-2">
                         <span className="p-float-label">
-                            <InputText 
-                                id="codeUpdate" 
-                                style={{ width: '100%' }} 
-                                value={updatedCodDoenca} 
-                                onChange={(e) => setUpdatedCodDoenca((e.target as HTMLInputElement).value)} 
+                            <InputText
+                                id="codeUpdate"
+                                style={{ width: '100%' }}
+                                value={updatedCodDoenca}
+                                onChange={(e) => setUpdatedCodDoenca((e.target as HTMLInputElement).value)}
                             />
                             <label htmlFor="NomeUpdate">Código da doença</label>
                         </span>
@@ -399,29 +416,30 @@ const Diseases = () => {
 
                     <div className="mt-4 mb-2">
                         <span className="p-float-label">
-                            <InputText 
-                                id="nameUpdate" 
-                                style={{ width: '100%' }} 
-                                value={updatedNome} 
-                                onChange={(e) => setUpdatedNome((e.target as HTMLInputElement).value)} 
+                            <InputText
+                                id="nameUpdate"
+                                style={{ width: '100%' }}
+                                value={updatedNome}
+                                onChange={(e) => setUpdatedNome((e.target as HTMLInputElement).value)}
                             />
                             <label htmlFor="NomeUpdate">Nome da doença</label>
                         </span>
                     </div>
 
-                    <button type="submit" className="btn btn-info btn-primary mt-3">Cadastrar</button>
+                    <button type="submit" className="btn btn-info btn-primary mt-3">Atualizar</button>
                 </form>
             </Dialog>
 
-            <Dialog 
-                visible={displayDialog3} 
-                style={{ width: '50%' }} 
+            {/* Popup para deletar uma doença (displayDialog3) */}
+            <Dialog
+                visible={displayDialog3}
+                style={{ width: '50%' }}
                 modal={true}
-                header="Exclusão de doença" 
+                header="Exclusão de doença"
                 onHide={() => setDisplayDialog3(false)}
             >
                 <p className="text-dark h5 mt-2">Deseja exluir a doença {nome} de código {codDoenca}?</p>
-                
+
                 <div className="row">
                     <div className="col">
                         <Button variant="outline-danger" onClick={() => deleteDisease()} style={{ width: '100%' }}>Sim</Button>
