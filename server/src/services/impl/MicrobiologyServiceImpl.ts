@@ -1,65 +1,54 @@
 import { IMicrobiology } from "../../interfaces/MicrobiologyInterface";
 import { MicrobiologyService } from "../MicrobiologyService";
-import knex from "../../database/connection";
+import MicrobiologyRepository from "../../repositories/MicrobiologyRepository";
+import { IPageable } from "../../interfaces/PageableInterface";
 
 class MicrobiologyServiceImpl implements MicrobiologyService {
     async create(data: IMicrobiology) {
-        await knex("Microbiologia").insert(data);
-    }
-
-    async index(page: number, rows: number) {
-        const [count] = await knex("Microbiologia").count({ count: "*" });
-        const results = await knex("Microbiologia").limit(rows).offset((page - 1) * rows);
-
-        return { results, count };
-    }
-
-    async findById(id: number) {
-        const microbiology = await knex("Microbiologia").where({ IdMicrobiologia: id });
-        return microbiology;
-    }
-
-    async findByIdPaciente(idPaciente: number, page: number, rows: number) {
-        const [count] = await knex("Microbiologia").where({ IdPaciente: idPaciente }).count({ count: "*" });
-        const results = await knex("Microbiologia").where({ IdPaciente: idPaciente }).limit(rows).offset((page - 1) * rows);
-
-        return { results, count };
-    }
-
-    async findByIdProntuario(idProntuario: number, page: number, rows: number) {
-        const [count] = await knex("Microbiologia").where({ IdProntuario: idProntuario }).count({ count: "*" });
-        const results = await knex("Microbiologia").where({ IdProntuario: idProntuario }).limit(rows).offset((page - 1) * rows);
-
-        return { results, count };
-    }
-
-    async findByDataColeta(dataColeta: string, page: number, rows: number) {
-        const [count] = await knex("Microbiologia").where('DataColeta', 'LIKE', `%${dataColeta}%`).count({ count: "*" });
-        const results = await knex("Microbiologia").where('DataColeta', 'LIKE', `%${dataColeta}%`).limit(rows).offset((page - 1) * rows);
-
-        return { results, count };
-    }
-
-    async findByDataResultado(dataResultado: string, page: number, rows: number) {
-        const [count] = await knex("Microbiologia").where('DataResultado', 'LIKE', `%${dataResultado}%`).count({ count: "*" });
-        const results = await knex("Microbiologia").where('DataResultado', 'LIKE', `%${dataResultado}%`).limit(rows).offset((page - 1) * rows);
-
-        return { results, count };
+        await MicrobiologyRepository.create(data);
     }
 
     async update(id: number, data: IMicrobiology) {
-        await knex("Microbiologia").update(data).where({ IdMicrobiologia: id });
+        await MicrobiologyRepository.update(id, data);
     }
 
     async delete(id: number) {
-        await knex("Microbiologia").where({ IdMicrobiologia: id }).delete();
+        await MicrobiologyRepository.delete(id);
     }
 
     async show(id: number) {
-        return await knex("Microbiologia").where({ IdMicrobiologia: id })
-            .join("Prontuario", "Prontuario.SeqProntuario", "=", "Microbiologia.IdProntuario")
-            .join("Paciente", "Paciente.SeqPaciente", "=", "Microbiologia.IdPaciente")
-            .select("Microbiologia.*", "Prontuario.NroProntuario", "Paciente.NomePaciente", "Paciente.NroPaciente");
+        const data = await MicrobiologyRepository.showWithPatientAndMedicalRecordsData(id);
+        return data;
+    }
+
+    async index(pageable:IPageable) {
+        const data = await MicrobiologyRepository.listAllByPagination(pageable);
+        return data;
+    }
+
+    async findById(id: number) {
+        const microbiology = await MicrobiologyRepository.findById(id);
+        return microbiology;
+    }
+
+    async findByIdPaciente(idPaciente: number, pageable: IPageable) {
+        const data = await MicrobiologyRepository.findByIdPaciente(idPaciente, pageable);
+        return data;
+    }
+
+    async findByIdProntuario(idProntuario: number, pageable:IPageable) {
+        const data = await MicrobiologyRepository.findByIdProntuario(idProntuario, pageable);
+        return data;
+    }
+
+    async findByDataColeta(dataColeta: string, pageable:IPageable) {
+        const data = await MicrobiologyRepository.findByDataColeta(dataColeta, pageable);
+        return data;
+    }
+
+    async findByDataResultado(dataResultado: string, pageable:IPageable) {
+        const data = await MicrobiologyRepository.findByDataResultado(dataResultado, pageable);
+        return data;
     }
 }
 

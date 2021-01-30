@@ -80,18 +80,18 @@ class MicrobiologyController {
           
         if (filter === "id") {
             const result = await MicrobiologyServiceImpl.findById(Number(filterValue));
-            response = { results: result, count: {count: result.length} };
+            result ? response = { results: [result], count: {count: 1} }:undefined;
         } else if (filter === "paciente") {
-            response = await MicrobiologyServiceImpl.findByIdPaciente(Number(filterValue), pageRequest, rows);
+            response = await MicrobiologyServiceImpl.findByIdPaciente(Number(filterValue), { page: pageRequest,  rows });
         } else if (filter === "prontuario") {
-            response = await MicrobiologyServiceImpl.findByIdProntuario(Number(filterValue), pageRequest, rows);
+            response = await MicrobiologyServiceImpl.findByIdProntuario(Number(filterValue), { page: pageRequest,  rows });
         } else if (filter === "dataColeta") {
-            response = await MicrobiologyServiceImpl.findByDataColeta(String(filterValue), pageRequest, rows);
+            response = await MicrobiologyServiceImpl.findByDataColeta(String(filterValue), { page: pageRequest,  rows });
         } else { 
-           response = await MicrobiologyServiceImpl.findByDataResultado(String(filterValue), pageRequest, rows);
+           response = await MicrobiologyServiceImpl.findByDataResultado(String(filterValue), { page: pageRequest,  rows });
         }
       } else {
-          response = await MicrobiologyServiceImpl.index(pageRequest, rows);
+          response = await MicrobiologyServiceImpl.index({ page: pageRequest,  rows });
       }
 
       if (response?.results.length) {
@@ -132,11 +132,11 @@ class MicrobiologyController {
     const { id } = req.params;
 
     try {
-      const [microbiology] = await MicrobiologyServiceImpl.findById(Number(id));
+      const microbiology = await MicrobiologyServiceImpl.findById(Number(id));
       if (microbiology)
         return res.json(microbiology);
       else
-        return res.status(400).json({ updatedMicrobiology: false, error: "Microbiologia  inexistente!" });
+        return res.status(400).json({ error: "Microbiologia  inexistente!" });
     } catch (err) {
       return res.json({ error: "Erro ao carregar os dados" });
     }

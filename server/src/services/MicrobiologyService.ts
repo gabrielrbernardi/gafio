@@ -1,4 +1,5 @@
 import { IMicrobiology } from "../interfaces/MicrobiologyInterface";
+import { IPageable } from "../interfaces/PageableInterface";
 
 export interface MicrobiologyService {
 
@@ -12,11 +13,11 @@ export interface MicrobiologyService {
     /**
      *Busca todas as microbiologias por paginação
      * 
-     * @param page 
+     * @param pageable 
      * @param rows 
      * @returns uma lista de microbiologia
      */
-    index(page: number, rows: number): any;
+    index(pageable:IPageable): any;
 
     /**
      * Busca uma microbiologia por id, devolvendo os dados da mesma juntamente com os dados
@@ -39,37 +40,37 @@ export interface MicrobiologyService {
      * Busca uma microbiologia pelo id do paciente
      *
      * @param idPaciente
-     * @param page
+     * @param pageable
      * @returns uma lista de microbiologia e a quantidade total
      */
-    findByIdPaciente(idPaciente: number, page: number, rows: number): any;
+    findByIdPaciente(idPaciente: number, pageable:IPageable): any;
 
     /**
      * Busca uma microbiologia pelo id do prontuário
      *
      * @param idProntuario
-     * @param page
+     * @param pageable
      * @returns uma lista de microbiologia e a quantidade total
      */
-    findByIdProntuario(idProntuario: number, page: number, rows: number): any;
+    findByIdProntuario(idProntuario: number, pageable:IPageable): any;
 
     /**
      * Busca uma microbiologia pela data de coleta
      *
      * @param idProntuario
-     * @param page
+     * @param pageable
      * @returns uma lista de microbiologia e a quantidade total
      */
-    findByDataColeta(dataColeta: string, page: number, rows: number): any;
+    findByDataColeta(dataColeta: string, pageable:IPageable): any;
 
     /**
      * Busca uma microbiologia pela data de resultado
      *
      * @param dataResultado
-     * @param page
+     * @param pageable
      * @returns uma lista de microbiologia e a quantidade total
      */
-    findByDataResultado(dataResultado: string, page: number, rows: number): any;
+    findByDataResultado(dataResultado: string, pageable:IPageable): any;
 
     /**
      * Atualiza uma microbiologia

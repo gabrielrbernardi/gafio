@@ -14,3 +14,6 @@
 {"message":{"user":"admin@gafio.com","type":"updateMicrobiology","date":"dia 25 de janeiro às 8:35h","microbiology":2},"level":"info"}
 {"message":{"user":"admin@gafio.com","type":"updateMicrobiology","date":"dia 26 de janeiro às 17:51h","microbiology":2},"level":"info"}
 {"message":{"user":"admin@gafio.com","type":"updateMicrobiology","date":"dia 26 de janeiro às 18:19h","microbiology":2},"level":"info"}
+{"message":{"user":"admin@gafio.com","type":"updateMicrobiology","date":"dia 30 de janeiro às 11:17h","microbiology":6},"level":"info"}
+{"message":{"user":"admin@gafio.com","type":"updateMicrobiology","date":"dia 30 de janeiro às 11:19h","microbiology":6},"level":"info"}
+{"message":{"user":"admin@gafio.com","type":"updateMicrobiology","date":"dia 30 de janeiro às 12:59h","microbiology":6},"level":"info"}
