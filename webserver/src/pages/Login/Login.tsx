@@ -2,10 +2,13 @@ import React, {useState, ChangeEvent, FormEvent, useEffect} from 'react';
 import {Link, useHistory} from 'react-router-dom';
 import { useCookies } from 'react-cookie';
 import jwt from 'jsonwebtoken';
+import Carousel from 'react-bootstrap/Carousel';
 
 import './login.css';
 
 import { InputText } from 'primereact/inputtext';
+import loginFiocruzCustomImage from '../../assets/fiocruzFrente.jpeg';
+import loginFiocruzCasteloImage from '../../assets/fiocruzCastelo.jpg';
 import loginBanner from '../../assets/fiocruzBanner.jpg';
 import api from '../../services/api';
 import ToastComponent from '../../components/Toast';
@@ -27,6 +30,12 @@ const Login = () => {
     const [getMessageType, setMessageType] = useState<string>('');
     const [getMessageTitle, setMessageTitle] = useState<string>('');
     const [getMessageContent, setMessageContent] = useState<string>('');
+
+    const [index, setIndex] = useState(0);
+
+    const handleSelect = (selectedIndex: any, e: any) => {
+        setIndex(selectedIndex);
+    };
   
     const [formData, setFormData] = useState({
         email: '',
@@ -106,8 +115,20 @@ const Login = () => {
     return (
         <div>
             <div className="row m-5"> 
-                    <img className="rounded col-sm-7 " src={loginBanner} alt="Banner"/>
-                <div className="card col-sm-5 p-5 bg-light shadow-lg float-right text-center">
+                    {/* <img className="rounded col-sm-7 " src={loginBanner} alt="Banner"/> */}
+                    {/* <img className="rounded col-sm-7 " src={loginFiocruzCustomImage} alt="Banner"/> */}
+                    <Carousel className="rounded col-sm-7 d-none d-md-block" activeIndex={index} onSelect={handleSelect}>
+                        <Carousel.Item>
+                            <img className="d-block w-100" style={{"maxHeight": "440px"}} src={loginFiocruzCustomImage} alt="First slide" />
+                        </Carousel.Item>
+                        <Carousel.Item>
+                            <img className="d-block w-100" style={{"maxHeight": "440px"}} src={loginFiocruzCasteloImage} alt="Second slide" />
+                        </Carousel.Item>
+                        <Carousel.Item>
+                            <img className="d-block w-100" style={{"maxHeight": "440px"}} src={loginBanner} alt="Third slide" />
+                        </Carousel.Item>
+                    </Carousel>
+                <div className="card col-md-5 p-5 bg-light shadow-lg float-right text-center">
                     <form className="was-validated pb-2" onSubmit={handleSubmit}>
                     <div className="form-group">
                         <label htmlFor="email">Email:</label>
