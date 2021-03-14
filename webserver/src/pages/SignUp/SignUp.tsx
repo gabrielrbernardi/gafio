@@ -70,7 +70,7 @@ const SignUp = () => {
     return (
         <>
             <div className="row m-5">
-                <div className="card shadow-lg p-3 col-sm-6 offset-md-3 border">
+                <div className="card shadow-lg p-3 col-md-6 offset-md-3 border">
                     <p className="text-dark h3 text-center">Cadastro de Usuário</p>
                     <form className="was-validated" onSubmit={handleSubmit}>
                     <div className="form-group">
