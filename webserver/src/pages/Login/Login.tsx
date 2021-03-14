@@ -33,10 +33,16 @@ const Login = () => {
         senha: '',
     });
 
-    function handleInputChange(event: ChangeEvent<HTMLInputElement>){
+    async function handleInputChange(event: ChangeEvent<HTMLInputElement>){
         const { name, value } = event.target
-        setFormData({...formData, [name]: value})
+        await setFormData({...formData, [name]: value})
+        console.log(formData['senha'].length)
         if(formData['email'] && formData['senha']){
+            setEnableSubmitButton(1);
+        }else{
+            setEnableSubmitButton(0);
+        }
+        if(formData['senha'].length >= 7){
             setEnableSubmitButton(1);
         }else{
             setEnableSubmitButton(0);
