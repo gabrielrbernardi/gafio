@@ -101,7 +101,14 @@ class Notification {
         const userTypeDB = await knex('Usuario').where('CodUsuario', id);
         const userType = userTypeDB[0]['TipoUsuario']
         if (userType == 'A' || userType == 'M') {
-            const notificationLength = await knex('Usuario_Notificacao').count('CodUsuario').whereNot('CodUsuario', id);
+            const notificationLengthDB = await knex.raw("SELECT COUNT('Status') FROM notificacao noti NATURAL JOIN Usuario_Notificacao un WHERE noti.CodUsuario = un.CodUsuario AND noti.Status <> 1");
+            const notificationLength = notificationLengthDB[0];
+            // const notificationLength = await knex.select("*").from('Notificacao').joinRaw('natural join Usuario_Notificacao un').where({'Notificacao.CodUsuario': 'un.CodUsuario', 'Notificacao.Status': 0});
+            // select count('Status') from notificacao noti natural join Usuario_Notificacao un where noti.CodUsuario = un.CodUsuario and noti.Status <> 1;
+
+            // const notificationLength = await knex('Usuario_Notificacao').count('CodUsuario').whereNot('CodUsuario', id);
+            // const notificationLength1 = await knex('Notificacao').count('Status').where('Status', 1);
+            // console.log(notificationLength1)
             return response.json({ notificationFound: true, length: notificationLength });
         } else {
             return response.json({ notificationFound: false, error: "Não há notificações para este usuário.", length: 0 });

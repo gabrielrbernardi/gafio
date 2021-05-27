@@ -47,7 +47,7 @@ const Header = () => {
             try {
                 await api.get(`notifications/length/${CodUsuario}`).then(response => {
                     if (response.data.notificationFound) {
-                        let dataSize = response.data.length[0]['count(`CodUsuario`)']
+                        let dataSize = response.data.length[0][`COUNT('Status')`]
                         setNotificationsLength(dataSize)
                         if (dataSize === 0) {
                             showToast('info', 'Notificação', `Você não possui notificações.`)

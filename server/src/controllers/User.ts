@@ -109,6 +109,9 @@ class UserController {
     async indexPagination(request: Request, response: Response) {
         const { page } = request.params;
         var pageRequest = parseInt(page) / 10;
+        if(pageRequest == 0){
+            pageRequest = 1
+        }
         const rows = 10;
         try {
             const users = await knex("Usuario").select("*").offset((pageRequest - 1) * rows).limit(rows);
@@ -128,7 +131,7 @@ class UserController {
                     showUsers: true,
                     users: serializedUsers,
                     length: usersLength,
-                    // length1: users.length
+                    length1: users.length
                 });
             } else {
                 return response.json({

@@ -128,7 +128,7 @@ const PatientCreate = () => {
                                 <div className="col">
                                     <label htmlFor="DataInternacao">Data de Nascimento</label>
                                     <br></br>
-                                    <Calendar id="DataInternacao" style={{width: '100%'}} value={getDataNascimentoPaciente} onChange={(e) => setDataNascimentoPaciente(e.value)} locale={pt_br} dateFormat="dd/mm/yy" placeholder="Selecione a data de nascimento do paciente" showButtonBar monthNavigator showIcon showOnFocus={false} required/>
+                                    <Calendar id="DataInternacao" style={{width: '100%'}} value={getDataNascimentoPaciente} onChange={(e) => setDataNascimentoPaciente(e.value)} locale={pt_br} dateFormat="dd/mm/yy" placeholder="Selecione a data de nascimento do paciente" showButtonBar monthNavigator yearNavigator yearRange="1910:2021" showIcon showOnFocus={false} touchUI required/>
                                 </div>
                             </div>
 

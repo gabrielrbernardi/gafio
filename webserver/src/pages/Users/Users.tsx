@@ -8,7 +8,7 @@ import { Dropdown } from 'primereact/dropdown';
 import Button from 'react-bootstrap/Button';
 import { Dropdown as DropdownReact } from 'react-bootstrap';
 
-import { FiCheck, FiSearch } from 'react-icons/fi';
+import { FiCheck, FiSearch, FiRefreshCcw } from 'react-icons/fi';
 import { AiOutlineClose } from 'react-icons/ai';
 
 import { UsersService } from './UsersService';
@@ -25,6 +25,7 @@ const Users = () => {
     const [loading, setLoading] = useState(true);
     const [loading1, setLoading1] = useState(true);
     const [getFirst, setFirst] = useState(0);
+    const [getEnd, setEnd] = useState(0);
     const [totalRecords, setTotalRecords] = useState(0);
     const [searchInput, setSearchInput] = useState('');
     const [getMode, setMode] = useState<string>('N');
@@ -34,8 +35,8 @@ const Users = () => {
     const [displayDialog, setDisplayDialog] = useState(false);
     let newUser = false;
     const [getOptionState, setOptionState] = useState<any>(null)
-    const [getUserChange, setUserChange] = useState<string>('F');
-    const [getUserVerifyOption, setUserVerifyOption] = useState<string>('N');
+    const [getUserChange, setUserChange] = useState<string>('');
+    const [getUserVerifyOption, setUserVerifyOption] = useState<string>('');
 
     const [getToast, setToast] = useState<boolean>();
     const [getMessageType, setMessageType] = useState<string>('');
@@ -57,8 +58,6 @@ const Users = () => {
 
     const onUserSelectVerifyChange = (e: { value: any }) => {
         setUserVerifyOption(e.value);
-        console.log(getUserChange)
-        console.log(getUserVerifyOption)
     };
 
     let options = [
@@ -70,8 +69,10 @@ const Users = () => {
     ];
 
     let tipoUsuario = [
+        { label: 'Administrador', value: 'A' },
         { label: 'Médico', value: 'M' },
         { label: 'Farmacêutico', value: 'F' },
+        { label: 'Leitor', value: 'L' },
     ];
 
     let verifyOptions = [
@@ -95,7 +96,6 @@ const Users = () => {
         setTimeout(() => {
             const startIndex = event.first;
             const endIndex = event.first + rows;
-            console.log(endIndex);
             if (getMode === 'S') {
                 usersService.searchUserGlobal(searchInput, getOptionState.cod, endIndex).then(data => {
                     if (!data.userFound) {
@@ -111,6 +111,7 @@ const Users = () => {
                 });
             }
             setFirst(startIndex);
+            setEnd(endIndex);
             setProntuario(datasource.slice(startIndex, endIndex));
             setLoading(false);
         })
@@ -298,7 +299,41 @@ const Users = () => {
     function getUsersFunction(data?: any) {
         setLoading(true);
         if (!data) {
-            usersService.getUsersPaginate(10).then(data => {
+            usersService.getUsersPaginate(getEnd).then(data => {
+                if(!data.showUsers){
+                    showToast('danger', 'Erro!', 'Não foi possível exibir a lista de usuários');
+                    return 
+                }else{
+                    setDatasource(data.users);
+                    setTotalRecords(data.length);
+                    data = data.users;
+                    for (let i = 0; i < data.length; i++) {
+                        if (data[i]['TipoUsuario'] === 'A') {
+                            data[i]['TipoUsuario'] = 'Administrador';
+                        } else if (data[i]['TipoUsuario'] === 'M') {
+                            data[i]['TipoUsuario'] = 'Médico';
+                        } else if (data[i]['TipoUsuario'] === 'L'){
+                            data[i]['TipoUsuario'] = 'Leitor';
+                        } else {
+                            data[i]['TipoUsuario'] = 'Farmacêutico';
+                        }
+                        if (data[i]['isVerified'] === 1) {
+                            data[i]['isVerified'] = 'Sim';
+                        } else {
+                            data[i]['isVerified'] = 'Não';
+                        }
+                    }
+                    setProntuario(data.slice(0, rows));
+                    setLoading(false);
+                    setLoading1(false);
+                    return
+                }
+            })
+        } else {
+            if(!data.showUsers){
+                showToast('danger', 'Erro!', 'Não foi possível exibir a lista de usuários');
+                return
+            }else{
                 setDatasource(data.users);
                 setTotalRecords(data.length);
                 data = data.users;
@@ -307,6 +342,8 @@ const Users = () => {
                         data[i]['TipoUsuario'] = 'Administrador';
                     } else if (data[i]['TipoUsuario'] === 'M') {
                         data[i]['TipoUsuario'] = 'Médico';
+                    } else if (data[i]['TipoUsuario'] === 'L'){
+                        data[i]['TipoUsuario'] = 'Leitor';
                     } else {
                         data[i]['TipoUsuario'] = 'Farmacêutico';
                     }
@@ -320,29 +357,7 @@ const Users = () => {
                 setLoading(false);
                 setLoading1(false);
                 return
-            })
-        } else {
-            setDatasource(data.users);
-            setTotalRecords(data.length);
-            data = data.users;
-            for (let i = 0; i < data.length; i++) {
-                if (data[i]['TipoUsuario'] === 'A') {
-                    data[i]['TipoUsuario'] = 'Administrador';
-                } else if (data[i]['TipoUsuario'] === 'M') {
-                    data[i]['TipoUsuario'] = 'Médico';
-                } else {
-                    data[i]['TipoUsuario'] = 'Farmacêutico';
-                }
-                if (data[i]['isVerified'] === 1) {
-                    data[i]['isVerified'] = 'Sim';
-                } else {
-                    data[i]['isVerified'] = 'Não';
-                }
             }
-            setProntuario(data.slice(0, rows));
-            setLoading(false);
-            setLoading1(false);
-            return
         }
     }
 
@@ -451,14 +466,17 @@ const Users = () => {
     const onUserSelect = (e: any) => {
         newUser = false;
         setUser(Object.assign({}, e.data));
+        setUserChange(e.data['TipoUsuario'][0]);
+        setUserVerifyOption(e.data['isVerified'][0]);
         setDisplayDialog(true);
     };
 
     const header = (
         <>
             <p style={{ textAlign: 'left' }} className="p-clearfix d-inline">Dados dos usuários</p>
+            <Button variant="success" className="float-right" title="Atualizar" onClick={() => {getUsersFunction(); showToast('info', 'Notificação', `Foram encontrados ${totalRecords} resultados.`)}}><FiRefreshCcw size={20}/></Button>
             <div className="row">
-                <div className="col-sm-6">
+                <div className="col-sm-6 pl-2">
                     <span className="p-float-label p-inputgroup">
                         <div className="p-col-12">
                             <div className="p-inputgroup mt-4 mb-1">
@@ -503,7 +521,7 @@ const Users = () => {
 
     return (
         <>
-            <div className="row m-5 px-5">
+            <div className="row m-md-5 px-5">
                 <div className="datatable-responsive-demo">
                     <DataTable ref={dt} value={prontuario} paginator={true} rows={rows} header={header} totalRecords={totalRecords}
                         emptyMessage="Nenhum resultado encontrado" className="p-datatable-responsive-demo" resizableColumns={true} loading={loading} first={getFirst}
@@ -517,7 +535,7 @@ const Users = () => {
                         <Column field="isVerified" header="Verificado" body={VerifiedTemplate} />
                     </DataTable>
                 </div>
-                <Dialog visible={displayDialog} style={{ width: '50%' }} header="Ações" modal={true} onHide={() => setDisplayDialog(false)}
+                <Dialog visible={displayDialog} className="sol-sm-6" header="Ações" modal={true} onHide={() => setDisplayDialog(false)}
                     blockScroll={true} footer={dialogFooter}>
                     <p className="h3 mx-2">Alterar tipo de usuário</p>
                     {getUser &&

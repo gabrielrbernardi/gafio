@@ -24,50 +24,30 @@ declare module "jsonwebtoken"{
 const Login = () => {
     const history = useHistory();
 
-    const [enableSubmitButton, setEnableSubmitButton] = useState(Number);
     const [, setCookies] = useCookies([]);
     const [getToast, setToast] = useState<boolean>();
     const [getMessageType, setMessageType] = useState<string>('');
     const [getMessageTitle, setMessageTitle] = useState<string>('');
     const [getMessageContent, setMessageContent] = useState<string>('');
+    const [getEmail, setEmail] = useState<string>('');
+    const [getPassword, setPassword] = useState<string>('');
 
     const [index, setIndex] = useState(0);
 
     const handleSelect = (selectedIndex: any, e: any) => {
         setIndex(selectedIndex);
     };
-  
-    const [formData, setFormData] = useState({
-        email: '',
-        senha: '',
-    });
-
-    async function handleInputChange(event: ChangeEvent<HTMLInputElement>){
-        const { name, value } = event.target
-        await setFormData({...formData, [name]: value})
-        console.log(formData['senha'].length)
-        if(formData['email'] && formData['senha']){
-            setEnableSubmitButton(1);
-        }else{
-            setEnableSubmitButton(0);
-        }
-        if(formData['senha'].length >= 7){
-            setEnableSubmitButton(1);
-        }else{
-            setEnableSubmitButton(0);
-        }
-    }
-    
+     
     async function handleSubmit(event: FormEvent){
         event.preventDefault();
-        const {email, senha} = formData;
         // const token = jwt.sign({email: email, senha: senha}, secretWord);
-        localStorage.setItem('@gafio-user/email', email);
+        localStorage.setItem('@gafio-user/email', getEmail);
         try{
-            await api.post('session/login', {email: email, senha: senha})
+            await api.post('session/login', {email: getEmail, senha: getPassword})
             .then(function(response){
                 if(response.data.userLogin){
                     const tokenLoginResponse = jwt.decode(response.data.userToken);
+                    console.log(tokenLoginResponse)
                     var Email = tokenLoginResponse.Email;
                     let Nome = tokenLoginResponse.Nome;
                     let TipoUsuario = tokenLoginResponse.TipoUsuario;
@@ -132,20 +112,20 @@ const Login = () => {
                     <form className="was-validated pb-2" onSubmit={handleSubmit}>
                     <div className="form-group">
                         <label htmlFor="email">Email:</label>
-                        <InputText type="email" style={{width: '100%'}} id="email" name="email" onChange={handleInputChange} placeholder="Digite seu email" required autoFocus autoComplete="off"/>
+                        <InputText type="email" style={{width: '100%'}} id="email" name="email" onChange={(e) => setEmail((e.target as HTMLInputElement).value)} placeholder="Digite seu email" required autoFocus autoComplete="off"/>
                         
                         <div className="valid-feedback text-left">Válido.</div>
                         <div className="invalid-feedback text-left">Preencha este campo.</div>
                     </div>
                     <div className="form-group">
                         <label htmlFor="password">Senha:</label>
-                        <InputText type="password" style={{width: '100%'}} id="password" name="senha" onChange={handleInputChange} minLength={8} placeholder="Digite sua senha" required/>
+                        <InputText type="password" style={{width: '100%'}} id="password" name="senha" onChange={(e) => setPassword((e.target as HTMLInputElement).value)} minLength={8} placeholder="Digite sua senha" required/>
                         
                         <div className="valid-feedback text-left">Válido.</div>
                         <div className="invalid-feedback text-left">Preencha este campo.</div>
                     </div>
                     {
-                        enableSubmitButton === 0
+                        getEmail.length < 8 || getPassword.length < 8
                         ? <button type="submit" className="btn btn-info btn-primary disabled mt-2 mb-3" disabled>Entrar</button>
                         : <button type="submit" className="btn btn-info btn-primary mt-2 mb-3">Entrar</button>
                     }

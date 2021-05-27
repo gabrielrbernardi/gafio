@@ -10,7 +10,7 @@ try {
                 // host: "3.88.186.254",
                 host: "ec2-3-88-186-254.compute-1.amazonaws.com",
                 // host: "127.0.0.1",
-                // host: "192.168.100.7", //host para conexao pelo docker em maquina local
+                // host: "192.168.100.11", //host para conexao pelo docker em maquina local
                 // port: "3307",   //porta para conexao com mysql via docker
                 user: "root",
                 //password: "teste123",
