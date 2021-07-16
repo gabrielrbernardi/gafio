@@ -45,18 +45,24 @@ const MyProfile = () => {
     }, [])
 
     useEffect(() => {
-        if (cookies.userData) {
-            const email = cookies.userData.Email;
-            api.get(`users/email/?email=${email}&page=10`).then(response => {
-                var { CodUsuario, Nome, Matricula, Email, TipoUsuario } = response.data.users[0];
-                setInitData({ ...initData, id: CodUsuario, nome: Nome, email: Email, matricula: Matricula, tipoUsuario: TipoUsuario });
-                setFormData({ ...formData, nome: Nome, email: Email, matricula: Matricula, tipoUsuario: TipoUsuario });
-                // setFormData({...formData, nome: Nome, email: Email, matricula: Matricula, tipoUsuario: TipoUsuario});
-                setPharmaceuticalStatus(TipoUsuario);
-            })
-        } else {
-            history.push('/login');
-            alert('ERROR. Faça login novamente para acessar o conteúdo.');
+        try{
+            if (cookies.userData) {
+                const email = cookies.userData.Email;
+                api.get(`users/email/?email=${email}&page=10`).then(response => {
+                    var { CodUsuario, Nome, Matricula, Email, TipoUsuario } = response.data.showUsers[0];
+                    setInitData({ ...initData, id: CodUsuario, nome: Nome, email: Email, matricula: Matricula, tipoUsuario: TipoUsuario });
+                    setFormData({ ...formData, nome: Nome, email: Email, matricula: Matricula, tipoUsuario: TipoUsuario });
+                    // setFormData({...formData, nome: Nome, email: Email, matricula: Matricula, tipoUsuario: TipoUsuario});
+                    setPharmaceuticalStatus(TipoUsuario);
+                }).catch(err => {
+                    showToast('error', 'Erro', 'Erro: ' + String(err));
+                })
+            } else {
+                history.push('/login');
+                alert('ERROR. Faça login novamente para acessar o conteúdo.');
+            }
+        }catch(err){
+            showToast('error', 'Erro', err);
         }
     }, [cookies.userData, history]);
 
@@ -75,7 +81,7 @@ const MyProfile = () => {
                 if (response.data.updatedUser) {
                     showToast('success', 'Sucesso!', 'Informações alteradas com sucesso.');
                     api.get(`users/email/?email=${email}&page=10`).then(response1 => {
-                        var { CodUsuario, Nome, Matricula, Email, TipoUsuario } = response1.data.users[0];
+                        var { CodUsuario, Nome, Matricula, Email, TipoUsuario } = response1.data.showUsers[0];
                         setFormData({ ...formData, nome: Nome, email: Email, matricula: Matricula, tipoUsuario: TipoUsuario });
                         setInitData({ ...initData, id: CodUsuario, nome: Nome, email: Email, matricula: Matricula, tipoUsuario: TipoUsuario });
                         setPharmaceuticalStatus(TipoUsuario);
@@ -138,7 +144,7 @@ const MyProfile = () => {
             <div className="card shadow-lg p-3 col-sm-6 offset-md-3 border">
                 <p className="text-dark h3 text-center">Dados do usuário</p>
                 <Button type="button" variant="outline-info" className="float-right" onClick={() => { onClick(setDisplayPosition, 'top'); setEditable(1) }}><FaPenAlt size={15} />  Editar Informações</Button>
-                <Dialog header="Editar dados do Usuário" visible={displayPosition} style={{ width: '50vw' }} onHide={() => onHide(setDisplayPosition)} position={position} footer={renderFooter(setDisplayPosition)}>
+                <Dialog header="Editar dados do Usuário" visible={displayPosition} style={{ width: '50vw' }} onHide={() => onHide(setDisplayPosition)}  footer={renderFooter(setDisplayPosition)}>
                     <form className="was-validated" onSubmit={handleSubmit}>
                         <div className="form-group">
                             <label htmlFor="nome">Nome Completo:</label>
@@ -163,13 +169,15 @@ const MyProfile = () => {
                 <label htmlFor="matricula">Matrícula:</label>
                 <label className="form-control">{initData['matricula']}</label>
                 <div className="m-2"></div>
-                <label htmlFor="matricula">Tipo de usuário atual:
+                <label htmlFor="matricula">Tipo de usuário atual: 
                     {
                         pharmaceuticalStatus === 'F'
                             ? <label><strong>Farmacêutico</strong></label>
                             : pharmaceuticalStatus === 'M'
                                 ? <label><strong>Médico</strong></label>
-                                : <label><strong>Administrador</strong></label>
+                                : pharmaceuticalStatus === "L"
+                                    ? <label><strong>Leitor</strong></label>
+                                    : <label><strong>Administrador</strong></label>
                     }
                 </label>
                 <br />

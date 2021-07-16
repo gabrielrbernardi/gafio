@@ -23,8 +23,8 @@ class UsersService {
         }
     }
 
-    async changeUserType(userId: Number, newUserType: string) {
-        return await api.post('users/changeUserType', { userId: userId, newUserType: newUserType }).then(response => response.data);
+    async changeUserType(userId: Number, newUserType: string, incomingUserId: Number) {
+        return await api.post('users/changeUserType', { userId: userId, newUserType: newUserType, incomingUserId: incomingUserId }).then(response => response.data);
     }
 
     async changeVerifyUser(userId: Number, newUserType: string) {

@@ -1,0 +1,5 @@
+.disabled{
+    background-color: transparent;
+    color: inherit;
+    cursor: text;
+}

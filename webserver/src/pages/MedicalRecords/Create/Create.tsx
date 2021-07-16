@@ -13,6 +13,8 @@ import Collapse from 'react-bootstrap/Collapse';
 import {FiSearch} from 'react-icons/fi';
 import {AiOutlineClose} from 'react-icons/ai';
 import Loading from '../../../components/Loading';
+import { addLocale } from 'primereact/api';
+
 import * as Yup from "yup";
 
 import { CreateMedicalRecordsService } from './CreateMedicalRecordsService'
@@ -159,9 +161,9 @@ const MedicalRecordsForm = () => {
         { name: 'Princípio', cod: 'P' },
     ];
 
-    const pt_br = {
-        firstDayOfWeek: 1,
-        dayNames: ["domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"],
+    addLocale('pt', {
+        firstDayOfWeek: 0,
+        dayNames: ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"],
         dayNamesShort: ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"],
         dayNamesMin: ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"],
         // dayNamesMin: ["D", "S", "T", "Q", "Q", "S", "S"],
@@ -169,7 +171,15 @@ const MedicalRecordsForm = () => {
         monthNamesShort: ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"],
         today: "Hoje",
         clear: "Limpar",
-    };
+    });
+
+    const monthNavigatorTemplate = (e: any) => {
+        return <Dropdown value={e.value} options={e.options} onChange={(event) => e.onChange(event.originalEvent, event.value)} style={{ lineHeight: 1 }} />;
+    }
+
+    const yearNavigatorTemplate = (e: any) => {
+        return <Dropdown value={e.value} options={e.options} onChange={(event) => e.onChange(event.originalEvent, event.value)} className="p-ml-2" style={{ lineHeight: 1 }} />;
+    }
 
     async function handleSubmit(event: FormEvent) {
         event.preventDefault();
@@ -377,7 +387,6 @@ const MedicalRecordsForm = () => {
 
         if (!data) {
             medicinesService.getMedicinesPaginate(10).then(data => {
-                console.log(data);
 
                 setDatasource(data.medicines);
                 setMedicines(datasource.slice(0, rows));
@@ -387,7 +396,6 @@ const MedicalRecordsForm = () => {
             });
         }
         else {
-            console.log(data);
 
             setDatasource(data.medicines);
             setMedicines(data.medicines.slice(0, rows));
@@ -494,9 +502,9 @@ const MedicalRecordsForm = () => {
 
                         <label htmlFor="DataInternacao" className="mt-4">Data da Internação</label>
                         <Calendar id="DataInternacao" style={{ width: '100%' }} value={getDataInternacao}
-                            onChange={(e) => setDataInternacao(e.value)} locale={pt_br} dateFormat="dd/mm/yy"
-                            placeholder="Selecione a data da internação" showButtonBar monthNavigator
-                            showIcon showOnFocus={false} required />
+                            onChange={(e) => setDataInternacao(e.value)} locale="pt" dateFormat="dd/mm/yy"
+                            placeholder="Selecione a data da internação" showButtonBar monthNavigator yearNavigator yearRange="1910:2021" monthNavigatorTemplate={monthNavigatorTemplate} yearNavigatorTemplate={yearNavigatorTemplate}
+                            showIcon showOnFocus={false} required touchUI />
 
                         <div className="form-row">
                             <label htmlFor="CodDoencaPrincipal" className="mt-4 ml-1">Código de Doença Primário</label>

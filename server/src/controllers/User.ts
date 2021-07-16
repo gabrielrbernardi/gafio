@@ -175,7 +175,7 @@ class UserController {
                     })
                     return response.json({
                         userFound: true,
-                        users: serializedUsers,
+                        showUsers: serializedUsers,
                         length: usersLength,
                         length1: userDB.length
                     });
@@ -221,7 +221,7 @@ class UserController {
                     })
                     return response.json({
                         userFound: true,
-                        users: serializedUsers,
+                        showUsers: serializedUsers,
                         length: usersLength,
                         length1: userDB.length
                     });
@@ -267,7 +267,7 @@ class UserController {
                     })
                     return response.json({
                         userFound: true,
-                        users: serializedUsers,
+                        showUsers: serializedUsers,
                         length: usersLength,
                         length1: userDB.length
                     });
@@ -312,7 +312,7 @@ class UserController {
                     })
                     return response.json({
                         userFound: true,
-                        users: serializedUsers,
+                        showUsers: serializedUsers,
                         length: usersLength,
                         length1: userDB.length
                     });
@@ -358,7 +358,7 @@ class UserController {
                     })
                     return response.json({
                         userFound: true,
-                        users: serializedUsers,
+                        showUsers: serializedUsers,
                         length: usersLength,
                         length1: userDB.length
                     });
@@ -372,7 +372,7 @@ class UserController {
                 return response.json({ userFound: false, error: "Digite um tipo de usuário para procurar." })
             }
         } catch (err) {
-            return response.json({ showUsers: false, error: err });
+            return response.json({ userFound: false, error: err });
         }
     }
 
@@ -468,25 +468,34 @@ class UserController {
         }
     }
     async changeUserType(request: Request, response: Response) {
-        const { userId, newUserType } = request.body;
-        const charNewUserType = newUserType[0];
-        if (userId) {
-            const userDB = await knex('Usuario').select("*").where('CodUsuario', userId);
-            if (userDB[0]['TipoUsuario'] === 'A') {
-                return response.json({ verifyUser: false, error: "Não é possível alterar o tipo de usuário de Administrador." })
-            }
-            if (userDB[0]['TipoUsuario'] === charNewUserType) {
-                return response.json({ updatedUser: false, error: "Usuário já possui o referido cargo." });
-            } else {
-                const userDBUpdate = await knex('Usuario').where('CodUsuario', userId).update({
-                    TipoUsuario: charNewUserType
-                })
-                if (userDBUpdate === 1) {
-                    return response.json({ updatedUser: true });
-                } else {
-                    return response.json({ updateduser: false, error: "Erro na atualização da permissão do usuário" });
+        try{
+            const { incomingUserId, userId, newUserType } = request.body;
+            const charNewUserType = newUserType[0];
+            if (userId && incomingUserId && newUserType) {
+                if(incomingUserId == userId){
+                    throw 'O usuário não pode trocar a permissão do próprio usuário.';
                 }
+                const userDB = await knex('Usuario').select("TipoUsuario").where('CodUsuario', userId);
+                // if (userDB[0]['TipoUsuario'] === 'A') {
+                //     return response.json({ verifyUser: false, error: "Não é possível alterar o tipo de usuário de Administrador." })
+                // }
+                if (userDB[0]['TipoUsuario'] === charNewUserType) {
+                    return response.json({ updatedUser: false, error: "Usuário já possui o referido cargo." });
+                } else {
+                    const userDBUpdate = await knex('Usuario').where('CodUsuario', userId).update({
+                        TipoUsuario: charNewUserType
+                    })
+                    if (userDBUpdate === 1) {
+                        return response.json({ updatedUser: true });
+                    } else {
+                        return response.json({ updateduser: false, error: "Erro na atualização da permissão do usuário" });
+                    }
+                }
+            }else{
+                return response.status(400).json({updateduser: false, error: "Preencha todos os campos."});
             }
+        }catch(err){
+            return response.status(400).json({updateduser: false, error: err});
         }
     }
 

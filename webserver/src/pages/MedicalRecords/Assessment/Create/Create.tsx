@@ -13,6 +13,8 @@ import Collapse from 'react-bootstrap/Collapse';
 import {FiSearch} from 'react-icons/fi';
 import {AiOutlineClose} from 'react-icons/ai';
 import Loading from '../../../../components/Loading';
+import { addLocale } from 'primereact/api';
+
 import * as Yup from "yup";
 
 import { CreateAssessmentService } from './CreateAssessmentService'
@@ -177,9 +179,9 @@ const AssessmentForm = () => {
         <p style={{textAlign:'left'}} className="p-clearfix d-inline">Medicamentos</p>
     </>;
 
-    const pt_br = {
-        firstDayOfWeek: 1,
-        dayNames: ["domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"],
+    addLocale('pt', {
+        firstDayOfWeek: 0,
+        dayNames: ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"],
         dayNamesShort: ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"],
         dayNamesMin: ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"],
         // dayNamesMin: ["D", "S", "T", "Q", "Q", "S", "S"],
@@ -187,7 +189,15 @@ const AssessmentForm = () => {
         monthNamesShort: ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"],
         today: "Hoje",
         clear: "Limpar",
-    };
+    });
+    
+    const monthNavigatorTemplate = (e: any) => {
+        return <Dropdown value={e.value} options={e.options} onChange={(event) => e.onChange(event.originalEvent, event.value)} style={{ lineHeight: 1 }} />;
+    }
+
+    const yearNavigatorTemplate = (e: any) => {
+        return <Dropdown value={e.value} options={e.options} onChange={(event) => e.onChange(event.originalEvent, event.value)} className="p-ml-2" style={{ lineHeight: 1 }} />;
+    }
 
     async function handleSubmit(event: FormEvent) {
         event.preventDefault();
@@ -237,7 +247,7 @@ const AssessmentForm = () => {
                 } else {
                     if (response.error.sqlMessage) {
                         if (response.error.sqlState == 23000) {
-                            console.log(response.error.sqlState)
+                            // console.log(response.error.sqlState)
                             if (String(response.error.sqlMessage).includes("(`NovoAtb`)")) {
                                 showToast('error', 'Erro!', `O campo Novo Atb está incorreto`);
                             } else {
@@ -288,8 +298,6 @@ const AssessmentForm = () => {
 
         if (!data) {
             medicinesService.getMedicinesPaginate(10).then(data => {
-                console.log(data);
-
                 setDatasource(data.medicines);
                 setMedicines(datasource.slice(0, rows));
                 setLoading(false);
@@ -298,8 +306,6 @@ const AssessmentForm = () => {
             });
         }
         else {
-            console.log(data);
-
             setDatasource(data.medicines);
             setMedicines(data.medicines.slice(0, rows));
             setLoading(false);
@@ -378,9 +384,9 @@ const AssessmentForm = () => {
                             <div className="col">
                                 <label htmlFor="DataAvaliacao" className="mt">Data da Avaliação</label>
                                 <Calendar id="DataInternacao" style={{ width: '100%' }} value={getDataAvaliacao}
-                                    onChange={(e) => setDataAvaliacao(e.value)} locale={pt_br} dateFormat="dd/mm/yy"
-                                    placeholder="Selecione a data da internação" showButtonBar monthNavigator
-                                    showIcon showOnFocus={false} required />
+                                    onChange={(e) => setDataAvaliacao(e.value)} locale="pt" dateFormat="dd/mm/yy"
+                                    placeholder="Selecione a data da internação" showButtonBar monthNavigator yearNavigator yearRange="1910:2021" monthNavigatorTemplate={monthNavigatorTemplate} yearNavigatorTemplate={yearNavigatorTemplate}
+                                    showIcon showOnFocus={false} required touchUI />
                             </div>
                         </div>
 

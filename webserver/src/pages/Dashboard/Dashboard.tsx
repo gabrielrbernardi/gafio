@@ -53,12 +53,22 @@ const Dashboard = () => {
         }],
     };
 
+    const lightOptions = {
+        plugins: {
+            legend: {
+                labels: {
+                    color: '#495057'
+                }
+            }
+        }
+    };
+
     return (
         <>
             <div className="row m-2">
                 <div className="card shadow-lg p-3 col-sm-5 mx-auto border">
                     <p className="h5">Valores gerais</p>
-                    <Chart type="pie" data={data} />
+                    <Chart type="pie" data={data} options={lightOptions}/>
                 </div>
                 <div className="card shadow-lg p-3 col-sm-6 mx-auto border">
                     <p className="h5">Doses por mês</p>

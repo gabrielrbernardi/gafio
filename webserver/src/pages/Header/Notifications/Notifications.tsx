@@ -38,9 +38,7 @@ const Notifications = () => {
             let TipoUsuario = cookies.userData.TipoUsuario;
             const startIndex = event.first;
             const endIndex = event.first + rows;
-            console.log(endIndex);
             notificationsService.getNotifications(CodUsuario, TipoUsuario, endIndex).then(data => {
-                console.log(data)
                 setNotifications(data.notifications)
                 setLoading(false)
             })
@@ -57,7 +55,6 @@ const Notifications = () => {
             let TipoUsuario = cookies.userData.TipoUsuario;
             setTimeout(() => {
                 notificationsService.getNotifications(CodUsuario, TipoUsuario, getFirst + rows).then(data => {
-                    console.log(data)
                     setTotalRecords(data.length - 10);
                     setNotifications(data.notifications)
                     setLoading(false)
@@ -109,8 +106,8 @@ const Notifications = () => {
     const actionTemplate = (rowData: any, column: any) => {
         return (
             <div>
-                <Button variant="outline-success" onClick={() => { accept(rowData['CodNotificacao'], rowData['TipoNotificacao']) }}>Aceitar</Button>
-                <div className="mr-2 d-inline"></div>
+                <Button variant="outline-success" className="mb-2 mb-xl-0 mr-xl-2" onClick={() => { accept(rowData['CodNotificacao'], rowData['TipoNotificacao']) }}>Aceitar</Button>
+                {/* <div className=" d-inline"></div> */}
                 <Button variant="outline-danger" onClick={() => { refuse(rowData['CodNotificacao'], rowData['TipoNotificacao']) }}>Recusar</Button>
             </div>
         );

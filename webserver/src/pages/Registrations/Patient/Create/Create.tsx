@@ -7,9 +7,9 @@ import { Button } from 'primereact/button';
 import ToastComponent from '../../../../components/Toast';
 import { useHistory } from 'react-router-dom';
 import { InputText } from 'primereact/inputtext';
+import { addLocale } from 'primereact/api';
 
 import * as Yup from "yup";
-
 
 const PatientCreate = () => {
     const history = useHistory();
@@ -35,9 +35,9 @@ const PatientCreate = () => {
 
     const [date, setDate] = useState<Date | Date[] | undefined>(undefined);
 
-    const pt_br = {
-        firstDayOfWeek: 1,
-        dayNames: ["domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"],
+    addLocale('pt', {
+        firstDayOfWeek: 0,
+        dayNames: ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"],
         dayNamesShort: ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"],
         dayNamesMin: ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"],
         // dayNamesMin: ["D", "S", "T", "Q", "Q", "S", "S"],
@@ -45,7 +45,7 @@ const PatientCreate = () => {
         monthNamesShort: ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"],
         today: "Hoje",
         clear: "Limpar",
-    };
+    });
 
     const createPatientService = new CreatePatientService();
     
@@ -128,7 +128,7 @@ const PatientCreate = () => {
                                 <div className="col">
                                     <label htmlFor="DataInternacao">Data de Nascimento</label>
                                     <br></br>
-                                    <Calendar id="DataInternacao" style={{width: '100%'}} value={getDataNascimentoPaciente} onChange={(e) => setDataNascimentoPaciente(e.value)} locale={pt_br} dateFormat="dd/mm/yy" placeholder="Selecione a data de nascimento do paciente" showButtonBar monthNavigator yearNavigator yearRange="1910:2021" showIcon showOnFocus={false} touchUI required/>
+                                    <Calendar id="DataInternacao" style={{width: '100%'}} value={getDataNascimentoPaciente} onChange={(e) => setDataNascimentoPaciente(e.value)} locale="pt" dateFormat="dd/mm/yy" placeholder="Selecione a data de nascimento do paciente" showButtonBar monthNavigator yearNavigator yearRange="1910:2021" showIcon showOnFocus={false} touchUI required/>
                                 </div>
                             </div>
 

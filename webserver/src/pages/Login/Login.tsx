@@ -47,7 +47,6 @@ const Login = () => {
             .then(function(response){
                 if(response.data.userLogin){
                     const tokenLoginResponse = jwt.decode(response.data.userToken);
-                    console.log(tokenLoginResponse)
                     var Email = tokenLoginResponse.Email;
                     let Nome = tokenLoginResponse.Nome;
                     let TipoUsuario = tokenLoginResponse.TipoUsuario;

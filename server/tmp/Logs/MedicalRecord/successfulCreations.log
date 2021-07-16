@@ -2,3 +2,4 @@
 {"message":{"user":"admin@gafio.com","type":"createMedicalRecord","date":"dia 16 de dezembro às 7:51h"},"level":"info"}
 {"message":{"user":"admin@gafio.com","type":"createMedicalRecord","date":"dia 21 de dezembro às 11:25h"},"level":"info"}
 {"message":{"user":"admin@gafio.com","type":"createMedicalRecord","date":"dia 24 de janeiro às 8:02h"},"level":"info"}
+{"message":{"user":"gabriel@gafio.com","type":"createMedicalRecord","date":"dia 08 de julho às 23:47h"},"level":"info"}

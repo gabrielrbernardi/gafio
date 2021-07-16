@@ -6,7 +6,7 @@ import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Dropdown } from 'primereact/dropdown';
 import Button from 'react-bootstrap/Button';
-import { Dropdown as DropdownReact } from 'react-bootstrap';
+import { Dropdown as DropdownReact, Spinner } from 'react-bootstrap';
 
 import { FiCheck, FiSearch, FiRefreshCcw } from 'react-icons/fi';
 import { AiOutlineClose } from 'react-icons/ai';
@@ -113,8 +113,7 @@ const Users = () => {
             setFirst(startIndex);
             setEnd(endIndex);
             setProntuario(datasource.slice(startIndex, endIndex));
-            setLoading(false);
-        })
+        }, 500)
     }
 
     /*************************************************
@@ -249,8 +248,9 @@ const Users = () => {
     **************************************************/
     function changeUserType() {
         const userId = selectedUser.CodUsuario;
-        setTimeout(() => {
-            usersService.changeUserType(userId, getUserChange).then(response => {
+        const currentUserId = Number(cookie.userData.CodUsuario);
+        setTimeout(async () => {
+            await usersService.changeUserType(userId, getUserChange, currentUserId).then(response => {
                 if (response.updatedUser) {
                     showToast('success', 'Sucesso!', `A permissão do usuário ${selectedUser.Nome} foi alterada com sucesso.`);
                     getUsersFunction();
@@ -258,6 +258,8 @@ const Users = () => {
                     showToast('error', 'Erro!', response.error);
                 }
                 setDisplayDialog(false);
+            }).catch(err => {
+                showToast('error', "Erro", err.response.data.error)
             })
             setUserChange('F');
         }, 300);
@@ -302,7 +304,7 @@ const Users = () => {
             usersService.getUsersPaginate(getEnd).then(data => {
                 if(!data.showUsers){
                     showToast('danger', 'Erro!', 'Não foi possível exibir a lista de usuários');
-                    return 
+                    // return 
                 }else{
                     setDatasource(data.users);
                     setTotalRecords(data.length);
@@ -324,19 +326,19 @@ const Users = () => {
                         }
                     }
                     setProntuario(data.slice(0, rows));
-                    setLoading(false);
-                    setLoading1(false);
-                    return
+                    // setLoading(false);
+                    // setLoading1(false);
+                    // return
                 }
             })
         } else {
-            if(!data.showUsers){
+            if(!data.userFound && !data.showUsers){
                 showToast('danger', 'Erro!', 'Não foi possível exibir a lista de usuários');
-                return
+                // return
             }else{
-                setDatasource(data.users);
+                setDatasource(data.users || data.showUsers);
                 setTotalRecords(data.length);
-                data = data.users;
+                data = data.users || data.showUsers;
                 for (let i = 0; i < data.length; i++) {
                     if (data[i]['TipoUsuario'] === 'A') {
                         data[i]['TipoUsuario'] = 'Administrador';
@@ -354,11 +356,15 @@ const Users = () => {
                     }
                 }
                 setProntuario(data.slice(0, rows));
-                setLoading(false);
-                setLoading1(false);
-                return
+                // setLoading(false);
+                // setLoading1(false);
+                // return
             }
         }
+        setTimeout(() => {
+            setLoading(false);
+            setLoading1(false);
+        }, 500)
     }
 
     /*************************************************
@@ -471,10 +477,25 @@ const Users = () => {
         setDisplayDialog(true);
     };
 
+    const handleUnselectRow = () => {
+        // setUser(null);
+        setSelectedUser(null)
+        // setUserChange('');
+        // setUserVerifyOption('');
+        // setDisplayDialog(false);
+    }
+
     const header = (
         <>
             <p style={{ textAlign: 'left' }} className="p-clearfix d-inline">Dados dos usuários</p>
-            <Button variant="success" className="float-right" title="Atualizar" onClick={() => {getUsersFunction(); showToast('info', 'Notificação', `Foram encontrados ${totalRecords} resultados.`)}}><FiRefreshCcw size={20}/></Button>
+            <Button variant="success" className="float-right" title="Atualizar" onClick={() => {getUsersFunction(); showToast('info', 'Notificação', `Foram encontrados ${totalRecords} resultados.`)}}>
+                {loading
+                    ?
+                        <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true"/>
+                    : 
+                        <FiRefreshCcw size={20}/>
+                }    
+            </Button>
             <div className="row">
                 <div className="col-sm-6 pl-2">
                     <span className="p-float-label p-inputgroup">
@@ -535,7 +556,7 @@ const Users = () => {
                         <Column field="isVerified" header="Verificado" body={VerifiedTemplate} />
                     </DataTable>
                 </div>
-                <Dialog visible={displayDialog} className="sol-sm-6" header="Ações" modal={true} onHide={() => setDisplayDialog(false)}
+                <Dialog visible={displayDialog} className="sol-sm-6" header="Ações" modal={true} onHide={() => {setDisplayDialog(false); handleUnselectRow()}}
                     blockScroll={true} footer={dialogFooter}>
                     <p className="h3 mx-2">Alterar tipo de usuário</p>
                     {getUser &&

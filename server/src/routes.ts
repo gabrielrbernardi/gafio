@@ -8,7 +8,8 @@ import MedicalRecordsRoutes from "./routes/MedicalRecordsRoutes";
 import PatientRoutes from "./routes/patientRoutes";
 import AssessmentRoutes from "./routes/assessmentRoutes";
 import ConfigRoutes from './routes/configRoutes';
-import MicrobiologyRoutes from './routes/MicrobiologyRoutes'
+import MicrobiologyRoutes from './routes/MicrobiologyRoutes';
+import LogsRoutes from './routes/logsRoutes';
 
 const app = express();
 
@@ -22,5 +23,6 @@ app.use(PatientRoutes);
 app.use(AssessmentRoutes);
 app.use(MicrobiologyRoutes);
 app.use(ConfigRoutes);
+app.use(LogsRoutes);
 
 export default app;

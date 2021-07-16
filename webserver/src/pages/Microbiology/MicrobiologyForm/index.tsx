@@ -5,6 +5,8 @@ import { InputTextarea } from 'primereact/inputtextarea';
 import { InputNumber } from "primereact/inputnumber";
 import { Calendar } from "primereact/calendar";
 import { Dropdown } from "primereact/dropdown";
+import { addLocale } from 'primereact/api';
+
 import { Dropdown as DropdownReact } from "react-bootstrap";
 import Loading from "../../../components/Loading";
 import ToastComponent from "../../../components/Toast";
@@ -52,43 +54,25 @@ const MicrobiologyForm: React.FC<Props> = ({ id }) => {
     const [viewOutros, setViewOutros] = useState<boolean>(false);
 
 
-    const pt_br = {
-        firstDayOfWeek: 1,
-        dayNames: [ "domingo","Segunda","Terça","Quarta","Quinta","Sexta","Sábado",],
+    addLocale('pt', {
+        firstDayOfWeek: 0,
+        dayNames: ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"],
         dayNamesShort: ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"],
         dayNamesMin: ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"],
         // dayNamesMin: ["D", "S", "T", "Q", "Q", "S", "S"],
-        monthNames: [
-            "Janeiro",
-            "Fevereiro",
-            "Março",
-            "Abril",
-            "Maio",
-            "Junho",
-            "Julho",
-            "Agosto",
-            "Setembro",
-            "Outubro",
-            "Novembro",
-            "Dezembro",
-        ],
-        monthNamesShort: [
-            "Jan",
-            "Fev",
-            "Mar",
-            "Abr",
-            "Mai",
-            "Jun",
-            "Jul",
-            "Ago",
-            "Set",
-            "Out",
-            "Nov",
-            "Dez",
-        ],
+        monthNames: ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"],
+        monthNamesShort: ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"],
         today: "Hoje",
         clear: "Limpar",
-    };
+    });
+
+    const monthNavigatorTemplate = (e: any) => {
+        return <Dropdown value={e.value} options={e.options} onChange={(event) => e.onChange(event.originalEvent, event.value)} style={{ lineHeight: 1 }} />;
+    }
+
+    const yearNavigatorTemplate = (e: any) => {
+        return <Dropdown value={e.value} options={e.options} onChange={(event) => e.onChange(event.originalEvent, event.value)} className="p-ml-2" style={{ lineHeight: 1 }} />;
+    }
 
     const options = [
         { label: "Sim", value: "S" },
@@ -244,7 +228,7 @@ const MicrobiologyForm: React.FC<Props> = ({ id }) => {
                     }, 1500);
                 }).catch(err => {
                     const message = err.response.data.error;
-                    HandleToast("error", "Erro!", `${message}`)
+                    HandleToast("error", "Erro!", `${message}` + "Houve um erro na criacao da Microbiologia");
                     setLoading(false);
                 });
             }
@@ -329,12 +313,17 @@ const MicrobiologyForm: React.FC<Props> = ({ id }) => {
                                             value={DataColeta} 
                                             onChange={(e) =>setDataColeta(e.value)}
                                             style={{ width: "100%" }}
-                                            locale={pt_br}
+                                            locale="pt"
                                             dateFormat="dd/mm/yy"
                                             placeholder="Selecione a data de coleta"
                                             showButtonBar
                                             monthNavigator
+                                            yearNavigator
+                                            yearRange="1910:2021" 
+                                            monthNavigatorTemplate={monthNavigatorTemplate} 
+                                            yearNavigatorTemplate={yearNavigatorTemplate}
                                             showIcon
+                                            touchUI
                                             showOnFocus={false}
                                             required
                                         />
@@ -349,13 +338,18 @@ const MicrobiologyForm: React.FC<Props> = ({ id }) => {
                                             name="DataResultado"
                                             value={DataResultado}onChange={(e) =>setDataResultado(e.value)}
                                             style={{ width: "100%" }}
-                                            locale={pt_br}
+                                            locale="pt"
                                             dateFormat="dd/mm/yy"
                                             placeholder="Selecione a data do resultado"
                                             showButtonBar
                                             monthNavigator
+                                            yearNavigator
+                                            yearRange="1910:2021" 
+                                            monthNavigatorTemplate={monthNavigatorTemplate} 
+                                            yearNavigatorTemplate={yearNavigatorTemplate}
                                             showOnFocus={false}
                                             showIcon
+                                            touchUI
                                         />
                                     </div>
                                 </div>
@@ -501,7 +495,6 @@ const MicrobiologyForm: React.FC<Props> = ({ id }) => {
                                         <InputTextarea
                                                    maxLength={250}
                                                    autoResize
-                                                    keyfilter="alpha"
                                                     style={{ width: "100%" }}
                                                     id="SwabNasal"
                                                     name="SwabNasal"
@@ -520,7 +513,6 @@ const MicrobiologyForm: React.FC<Props> = ({ id }) => {
                                         <InputTextarea
                                             autoResize
                                             maxLength={250}
-                                            keyfilter="alpha"
                                             style={{ width: "100%" }}
                                             id="SwabRetal"
                                             name="SwabRetal"
@@ -539,7 +531,6 @@ const MicrobiologyForm: React.FC<Props> = ({ id }) => {
                                         <InputTextarea
                                             maxLength={250}
                                             autoResize
-                                            keyfilter="alpha"
                                             style={{ width: "100%" }}
                                             id="Sangue"
                                             name="Sangue"
@@ -558,7 +549,6 @@ const MicrobiologyForm: React.FC<Props> = ({ id }) => {
                                         <InputTextarea
                                             maxLength={250}
                                             autoResize
-                                            keyfilter="alpha"
                                             style={{ width: "100%" }}
                                             id="Urina"
                                             name="Urina"
@@ -576,7 +566,6 @@ const MicrobiologyForm: React.FC<Props> = ({ id }) => {
                                         <InputTextarea
                                             maxLength={250}
                                             autoResize
-                                            keyfilter="alpha"
                                             style={{ width: "100%" }}
                                             id="Secrecao"
                                             name="Secrecao"
@@ -597,7 +586,6 @@ const MicrobiologyForm: React.FC<Props> = ({ id }) => {
                                         <InputTextarea
                                             maxLength={250}
                                             autoResize
-                                            keyfilter="alpha"
                                             style={{ width: "100%" }}
                                             id="Outros"
                                             name="Outros"
@@ -622,8 +610,7 @@ const MicrobiologyForm: React.FC<Props> = ({ id }) => {
                                         id="PerfilSensibilidade"
                                         name="PerfilSensibilidade"
                                         defaultValue={PerfilSensibilidade}
-                                        onChange={(e) => setPerfilSensibilidade((e.target as HTMLInputElement).value)}
-                                        keyfilter="alpha"
+                                        onChange={(e: any) => setPerfilSensibilidade((e.target as HTMLInputElement).value)}
                                         style={{ width: "100%" }}
                                         placeholder="Digite o perfil de sensibilidade"
                                         autoFocus

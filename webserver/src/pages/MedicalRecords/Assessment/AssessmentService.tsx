@@ -2,7 +2,7 @@ import api from '../../../services/api';
 
 class AssessmentService {
     async getAssessmentPaginate(queryResponse: any, endIndex: Number) {
-        return await api.get(`/medicalRecords/assessment/paginate/?seqProntuario=${queryResponse}&page=${endIndex}`).then(response => { console.log(response); return response.data });
+        return await api.get(`/medicalRecords/assessment/paginate/?seqProntuario=${queryResponse}&page=${endIndex}`).then(response => { return response.data });
     }
 
     async searchAssessmentGlobal(queryResponse: any, searchKey: String, searchCode: String, first: number) {

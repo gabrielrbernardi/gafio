@@ -1,6 +1,6 @@
 import React from 'react';
 
-const NotFound = () => {
+const UnderDevelopment = () => {
     return (
         <>
             <div className="card shadow-lg mb-4 mx-auto p-3 col-sm-8 offset-md-3 rounded-pill border border-primary bg-light text-info">
@@ -11,4 +11,4 @@ const NotFound = () => {
     )
 }
 
-export default NotFound
+export default UnderDevelopment;

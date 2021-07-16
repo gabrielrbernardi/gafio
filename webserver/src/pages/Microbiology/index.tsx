@@ -503,7 +503,7 @@ const Microbiology = () => {
                     style={{ width: "55%" }}
                     header="Ações"
                     modal={true}
-                    onHide={() => setDisplayDialog(false)}
+                    onHide={() => {setDisplayDialog(false); setselectedMicrobiology(null)}}
                 >
                     <div className="form-row text-center">
                         <div className="col">
@@ -513,6 +513,7 @@ const Microbiology = () => {
                                 onClick={() => {
                                     setDisplayDialog(false);
                                     setView(true);
+                                    setselectedMicrobiology(null);
                                 }}
                             >
                                 Visualizar microbiologia
@@ -525,6 +526,7 @@ const Microbiology = () => {
                                 onClick={() => {
                                     setDisplayDialog(false);
                                     setUpdate(true);
+                                    setselectedMicrobiology(null);
                                 }}
                             >
                                 Atualizar microbiologia
@@ -538,6 +540,7 @@ const Microbiology = () => {
                                 onClick={() => {
                                     setDisplayDialog(false);
                                     setDeleteDialog(true);
+                                    setselectedMicrobiology(null);
                                 }}
                             >
                                 Excluir microbiologia

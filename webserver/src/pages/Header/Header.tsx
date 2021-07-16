@@ -4,6 +4,7 @@ import { FiArrowLeft } from 'react-icons/fi';
 import { MdPersonOutline, MdNotificationsNone } from 'react-icons/md';
 import { useCookies } from 'react-cookie';
 import { Dropdown, Button, Badge } from 'react-bootstrap';
+import { Message } from 'primereact/message';
 
 import '../Home/Home.css';
 import './Header.css';
@@ -17,6 +18,8 @@ const Header = () => {
     const [userName, setUserName] = useState('');
     const [tipoUsuario, setTipoUsuario] = useState('');
     const [notificationsLength, setNotificationsLength] = useState(Number);
+
+    const [getError, setError] = useState(false);
 
     const [getToast, setToast] = useState<boolean>();
     const [getMessageType, setMessageType] = useState<string>('');
@@ -61,6 +64,7 @@ const Header = () => {
             } catch (err) {
                 if (err.message === "Network Error") {
                     showToast('error', 'Erro!', 'Não foi possível conectar ao servidor. O sistema se desconectará! Contacte o administrador do sistema para mais informações!', 8000)
+                    setError(true);
                 }
                 // showToast('error', 'Erro!', 'teste');
             }
@@ -106,8 +110,13 @@ const Header = () => {
     function toHome() {
         history.push('/home');
     }
+    
     function toUsers() {
         history.push('/users');
+    }
+
+    function toLogs() {
+        history.push('/logs');
     }
 
     return (
@@ -143,7 +152,11 @@ const Header = () => {
                             <Dropdown.Menu>
                                 <Dropdown.Item onClick={myProfile}>Gerenciar sua conta</Dropdown.Item>
                                 {tipoUsuario === 'A'
-                                    ? <Dropdown.Item className="bg-secondary-custom" onClick={toUsers}>Gerenciar usuários</Dropdown.Item>
+                                    ? 
+                                        <>
+                                            <Dropdown.Item className="bg-secondary-custom" onClick={toUsers}>Gerenciar usuários</Dropdown.Item>
+                                            <Dropdown.Item className="bg-secondary-custom" onClick={toLogs}>Logs</Dropdown.Item>
+                                        </>
                                     : <></>
                                 }
                                 <Dropdown.Divider />
@@ -193,6 +206,11 @@ const Header = () => {
                     </div>
 
                 </div>
+                { getError
+                    ?
+                        <Message className="col-12" severity="error" text="Não foi possível conectar ao servidor! O sistema está offline." />
+                        :<></>
+                }
             </div>
             <div className="position-absolute arrow-left" style={{ left: '0px', top: '50px' }}>
                 <button className="btn" onClick={handleBackButton}>

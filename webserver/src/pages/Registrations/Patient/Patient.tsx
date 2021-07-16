@@ -3,7 +3,7 @@ import { DataTable } from 'primereact/datatable';
 import { Dialog } from 'primereact/dialog';
 import { Dropdown } from 'primereact/dropdown';
 import React, { useEffect, useState, FormEvent } from 'react';
-import { Button } from 'react-bootstrap';
+import { Button, Spinner } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import Loading from '../../../components/Loading';
 import ToastComponent from '../../../components/Toast';
@@ -11,7 +11,7 @@ import { PatientService } from './PatientService';
 import { InputText } from 'primereact/inputtext';
 import { Calendar } from 'primereact/calendar';
 import Collapse from 'react-bootstrap/Collapse';
-import {FiSearch} from 'react-icons/fi';
+import {FiRefreshCcw, FiSearch} from 'react-icons/fi';
 import { AiOutlineClose } from 'react-icons/ai';
 import * as Yup from "yup";
 
@@ -88,8 +88,8 @@ const Patient = (props: any) => {
     useEffect(() => {
         document.title = 'GAFio | Paciente';
         try {
-            const id = props.match.params.idPatient
-            console.log(id)
+            // console.log(props)
+            // const id = props.match.params.idPatient
         } catch (err) {
             console.log(err)
         }
@@ -350,6 +350,20 @@ const Patient = (props: any) => {
         })
     }
 
+    const header = (
+        <>
+            <a className="d-inline h6">Paciente(s)</a>
+            <Button variant="success" className="float-right mr-lg-2" title="Atualizar" disabled={loading} onClick={() => {getPatientFunction(); showToast('info', 'Notificação', `Foram encontrados ${totalRecords} resultados.`)}}>
+                {loading
+                    ?
+                        <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true"/>
+                    : 
+                        <FiRefreshCcw size={20}/>
+                }
+            </Button>
+        </>    
+    );
+
     return (
         <>
             <div className="row m-5 px-5">
@@ -380,8 +394,8 @@ const Patient = (props: any) => {
                 <div className="ml-auto"></div>
 
                 <div className="datatable-responsive-demo">
-                    <DataTable value={paciente} paginator={true} rows={rows} header="Pacientes" totalRecords={totalRecords}
-                        emptyMessage="Nenhum resultado encontrado" className="p-datatable-responsive-demo" resizableColumns={true} loading={loading}
+                    <DataTable value={paciente} paginator={true} rows={rows} header={header} totalRecords={totalRecords}
+                        emptyMessage="Nenhum resultado encontrado" className="p-datatable-responsive-demo" style={{"minWidth": "300px"}} resizableColumns={true} loading={loading}
                         first={getFirst} onPage={onPage} lazy={true} selectionMode="single" selection={selectedUser} onSelectionChange={e => setSelectedUser(e.value)}
                         onRowSelect={onUserSelect}>
                         <Column field="SeqPaciente" header="SeqPaciente" body={seqPacienteBodyTemplate} />
@@ -392,16 +406,16 @@ const Patient = (props: any) => {
                     </DataTable>
                 </div>
             </div>
-            <Dialog visible={displayDialog} style={{ width: '50%' }} header="Ações" modal={true} onHide={() => setDisplayDialog(false)}>
+            <Dialog visible={displayDialog} style={{ width: '50%' }} header="Ações" modal={true} onHide={() => {setDisplayDialog(false); setSelectedUser(null)}}>
                 <div className="form-row">
                     <div className="col">
-                        <Button variant="info" className="mt-2 mb-2 p-3" style={{ width: '100%' }} onClick={() => { getPatientInformation(); setDisplayDialog1(true); setDisplayDialog(false) }}>Visualizar Paciente</Button>
+                        <Button variant="info" className="mt-2 mb-2 p-3" style={{ width: '100%' }} onClick={() => { getPatientInformation(); setDisplayDialog1(true); setDisplayDialog(false); setSelectedUser(null) }}>Visualizar Paciente</Button>
                     </div>
                     <div className="col ml-2">
-                        <Button variant="primary" className="mt-2 mb-2 p-3" style={{ width: '100%' }} onClick={() => { getPatientInformationUpdate(); setDisplayDialog2(true); setDisplayDialog(false) }}>Atualizar paciente</Button>
+                        <Button variant="primary" className="mt-2 mb-2 p-3" style={{ width: '100%' }} onClick={() => { getPatientInformationUpdate(); setDisplayDialog2(true); setDisplayDialog(false); setSelectedUser(null) }}>Atualizar paciente</Button>
                     </div>
                     <div className="col ml-2">
-                        <Button variant="danger" className="mt-2 mb-2 p-3" style={{ width: '100%' }} onClick={() => { setDisplayDialog3(true); setDisplayDialog(false) }}>Excluir Paciente</Button>
+                        <Button variant="danger" className="mt-2 mb-2 p-3" style={{ width: '100%' }} onClick={() => { setDisplayDialog3(true); setDisplayDialog(false); setSelectedUser(null) }}>Excluir Paciente</Button>
                     </div>
                     {/* <div className="col mr-4">
                         <Button className="mx-2 mt-2 mb-2 p-3" onClick={() => {setDisplayDialog1(true); setDisplayDialog(false)}}>Atualizar <br></br> prontuário</Button>
@@ -445,7 +459,7 @@ const Patient = (props: any) => {
                         </div>
                         <div className="col">
                             <Calendar id="DataInternacao" className="mt-2" style={{ width: '100%' }} value={getPacienteDataNascimentoUpdate} onChange={(e) => setPacienteDataNascimentoUpdate(e.value)}
-                                locale={pt_br} dateFormat="dd/mm/yy" placeholder="Selecione a data de nascimento do paciente" showButtonBar monthNavigator showIcon showOnFocus={false} required/>
+                                locale="pt" dateFormat="dd/mm/yy" placeholder="Selecione a data de nascimento do paciente" showButtonBar monthNavigator showIcon showOnFocus={false} required/>
                         </div>
                     </div>
                     <button type="submit" className="btn btn-info btn-primary mt-3">Cadastrar</button>

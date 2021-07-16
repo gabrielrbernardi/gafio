@@ -2,3 +2,4 @@
 server/knexfile.ts
 server/knexfile.ts
 *.log
+*.log

@@ -17,6 +17,7 @@ import * as Yup from "yup";
 import {MedicalRecordsService} from './MedicalRecordsService';
 import Loading from '../../components/Loading';
 import './MedicalRecords.css'
+import { addLocale } from 'primereact/api';
 
 const MedicalRecords = () => {
     const [getSeqProntuario, setSeqProntuario] = useState<any>(null)
@@ -99,9 +100,9 @@ const MedicalRecords = () => {
         {label: 'Tranferência', value: 'Transferência'}
     ]
 
-    const pt_br = {
-        firstDayOfWeek: 1,
-        dayNames: ["domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"],
+    addLocale('pt', {
+        firstDayOfWeek: 0,
+        dayNames: ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"],
         dayNamesShort: ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"],
         dayNamesMin: ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"],
         // dayNamesMin: ["D", "S", "T", "Q", "Q", "S", "S"],
@@ -109,7 +110,7 @@ const MedicalRecords = () => {
         monthNamesShort: ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"],
         today: "Hoje",
         clear: "Limpar",
-    };
+    });
 
     const onResultadoChange = (e: { value: string }) => {
         setResultadoColeta(e.value);
@@ -260,7 +261,6 @@ const MedicalRecords = () => {
             }else{
                 searchType = getOptionState.name
             }
-            console.log(data)
             let dataSize = data.length[0]['count(`' + searchType + '`)']
             if(dataSize == 1){
                 showToast('info', 'Resultado Encontrado!', `Foi encontrado ${dataSize} resultado.`)
@@ -412,6 +412,14 @@ const MedicalRecords = () => {
             eval("set" + e + "String" + "(" + '"Não"' + ")")
     }
 
+    const monthNavigatorTemplate = (e: any) => {
+        return <Dropdown value={e.value} options={e.options} onChange={(event) => e.onChange(event.originalEvent, event.value)} style={{ lineHeight: 1 }} />;
+    }
+
+    const yearNavigatorTemplate = (e: any) => {
+        return <Dropdown value={e.value} options={e.options} onChange={(event) => e.onChange(event.originalEvent, event.value)} className="p-ml-2" style={{ lineHeight: 1 }} />;
+    }
+
     function onClickDelete(){
         medicalRecordsService.Delete(getNroProntuario, email)
         .then((response) => {
@@ -450,7 +458,6 @@ const MedicalRecords = () => {
 
             medicalRecordsService.Desfecho(getNroProntuario, getDesfecho, getDataDesfecho, email
             ).then((response) => {
-                console.log(response)
                 if(response.updatedMedicalRecord){
                     showToast('success', 'Sucesso!', `Desfecho atualizado com sucesso!`);
                     getMedicalRecordsFunction()
@@ -599,7 +606,7 @@ const MedicalRecords = () => {
                 <div className="datatable-responsive-demo">
                     <DataTable value={MedicalRecords} paginator={true} rows={rows} header={header} totalRecords={totalRecords}
                         emptyMessage="Nenhum resultado encontrado" className="p-datatable-responsive-demo" resizableColumns={true} loading={loading} first={getFirst}
-                        onPage={onPage} lazy={true} selectionMode="single" selection={selectedMedicalRecord} onSelectionChange={e => setSelectedMedicalRecord(e.value)}
+                        onPage={onPage} lazy={true} selectionMode="single" selection={selectedMedicalRecord} onSelectionChange={e => setSelectedMedicalRecord(e.value)} dataKey="id"
                         onRowSelect={(e) => {onMedicalRecordSelect(e);}}>
                         <Column field="SeqProntuario" header="Seq Prontuário" body={SeqProntuarioBodyTemplate}/>
                         <Column field="NroProntuario" header="Nro Prontuário" body={NroProntuarioBodyTemplate}/>
@@ -614,32 +621,32 @@ const MedicalRecords = () => {
                     </DataTable>
                 </div>
 
-                <Dialog visible={displayDialog} style={{width: '50%'}} header="Ações" modal={true} onHide={() => setDisplayDialog(false)}>
+                <Dialog visible={displayDialog} style={{width: '50%'}} header="Ações" modal={true} onHide={() => {setDisplayDialog(false); setSelectedMedicalRecord(null)} }>
                     <div className="form-row">
                         <div className="col">
-                            <Button variant="info" className="mt-2 mb-2 p-3" style={{width: '100%'}} onClick={() => {setDisplayDialog4(true); setDisplayDialog(false)}}>Visualizar prontuário</Button>
+                            <Button variant="info" className="mt-2 mb-2 p-3" style={{width: '100%'}} onClick={() => {setDisplayDialog4(true); setDisplayDialog(false); setSelectedMedicalRecord(null)}}>Visualizar prontuário</Button>
                         </div>
                         <div className="col ml-2">
-                            <Button variant="primary" className="mt-2 mb-2 p-3" style={{width: '100%'}} onClick={() => {setDisplayDialog1(true); setDisplayDialog(false)}}>Atualizar prontuário</Button>
+                            <Button variant="primary" className="mt-2 mb-2 p-3" style={{width: '100%'}} onClick={() => {setDisplayDialog1(true); setDisplayDialog(false); setSelectedMedicalRecord(null)}}>Atualizar prontuário</Button>
                         </div>
                     </div>
 
                     <div className="form-row mt-3">
                         <div className="col">
-                            <Button variant="primary" className="mt-2 mb-2 p-3" style={{width: '100%'}} onClick={() => {setDisplayDialog3(true); setDisplayDialog(false)}}>Atualizar desfecho</Button>
+                            <Button variant="primary" className="mt-2 mb-2 p-3" style={{width: '100%'}} onClick={() => {setDisplayDialog3(true); setDisplayDialog(false); setSelectedMedicalRecord(null)}}>Atualizar desfecho</Button>
                         </div>
 
                         <div className="col ml-2">
-                            <Button variant="danger" className="mt-2 mb-2 p-3" style={{width: '100%'}} onClick={() => {setDisplayDialog2(true); setDisplayDialog(false)}}>Excluir prontuário</Button>
+                            <Button variant="danger" className="mt-2 mb-2 p-3" style={{width: '100%'}} onClick={() => {setDisplayDialog2(true); setDisplayDialog(false); setSelectedMedicalRecord(null)}}>Excluir prontuário</Button>
                         </div>
                     </div>
 
                     <div className="form-row mt-3">
                         <div className="col">
-                            <Button variant="primary" className="mt-2 mb-2 p-3" style={{width: '100%'}} onClick={() => {setDisplayDialog(false); history.push(`/medicalRecords/assessment/create/?seqProntuario=${getSeqProntuario}`)}}>Cadastrar avaliação</Button>
+                            <Button variant="primary" className="mt-2 mb-2 p-3" style={{width: '100%'}} onClick={() => {setDisplayDialog(false); history.push(`/medicalRecords/assessment/create/?seqProntuario=${getSeqProntuario}`); setSelectedMedicalRecord(null)}}>Cadastrar avaliação</Button>
                         </div>
                         <div className="col ml-2">
-                            <Button variant="info" className="mt-2 mb-2 p-3" style={{width: '100%'}} onClick={() => {setDisplayDialog(false); history.push(`/medicalRecords/assessment/?seqProntuario=${getSeqProntuario}`)}}>Visualizar avaliação</Button>
+                            <Button variant="info" className="mt-2 mb-2 p-3" style={{width: '100%'}} onClick={() => {setDisplayDialog(false); history.push(`/medicalRecords/assessment/?seqProntuario=${getSeqProntuario}`); setSelectedMedicalRecord(null)}}>Visualizar avaliação</Button>
                         </div>
                     </div>
                 </Dialog>
@@ -662,9 +669,10 @@ const MedicalRecords = () => {
                             
                             <label htmlFor="DataDesfecho" className="mt-4">Data do Desfecho</label>
                             <Calendar id="DataInternacao" style={{width: '100%'}} value={getDataDesfecho} 
-                                    onChange={(e) => setDataDesfecho(e.value)} locale={pt_br} dateFormat="dd/mm/yy" 
-                                    placeholder="Selecione a data do desfecho" showButtonBar monthNavigator 
-                                    showIcon showOnFocus={false} required/>
+                                    onChange={(e) => setDataDesfecho(e.value)} locale="pt" dateFormat="dd/mm/yy" 
+                                    placeholder="Selecione a data do desfecho" showButtonBar monthNavigator yearNavigator
+                                    yearRange="1910:2021" monthNavigatorTemplate={monthNavigatorTemplate} yearNavigatorTemplate={yearNavigatorTemplate} 
+                                    showIcon showOnFocus={false} required touchUI/>
 
                             <button type="submit" className="btn btn-info btn-primary mt-4 mb-4">Atualizar</button>
                         </form>
@@ -751,9 +759,10 @@ const MedicalRecords = () => {
 
                                 <label htmlFor="DataInternacao" className="mt-4">Data da Internação</label>
                                 <Calendar id="DataInternacao" style={{width: '100%'}} value={getDataInternacao} 
-                                    onChange={(e) => setDataInternacao(e.value)} locale={pt_br} dateFormat="dd/mm/yy" 
-                                    placeholder="Selecione a data da internação" showButtonBar monthNavigator 
-                                    showIcon showOnFocus={false} required/>
+                                    onChange={(e) => setDataInternacao(e.value)} locale="pt" dateFormat="dd/mm/yy" 
+                                    placeholder="Selecione a data da internação" showButtonBar monthNavigator yearNavigator
+                                    yearRange="1910:2021" monthNavigatorTemplate={monthNavigatorTemplate} yearNavigatorTemplate={yearNavigatorTemplate}
+                                    touchUI showIcon showOnFocus={false} required/>
                                 
                                 <label htmlFor="CodDoencaPrincipal" className="mt-4">Código de Doença Primário</label>
                                 <InputText style={{width: '100%'}} id="CodDoencaPrincipal" name="CodDoencaPrincipal"

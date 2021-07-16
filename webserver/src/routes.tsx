@@ -44,6 +44,8 @@ import Microbiology from './pages/Microbiology';
 import MicrobiologyForm from "./pages/Microbiology/MicrobiologyForm";
 import Recomendations from './pages/Recomendations/Recomendations';
 
+import Logs from './pages/Logs/Logs';
+
 const Routes = () => {
     return (
         <BrowserRouter>
@@ -222,7 +224,7 @@ const Routes = () => {
                     render={() => (
                         <div>
                             <Header />
-                            <Dashboard />
+                            <UnderDevelopment />
                             <Footer />
                         </div>
                     )}
@@ -264,6 +266,18 @@ const Routes = () => {
                     exact
                 />
 
+                <Route
+                    path="/logs"
+                    render={() => (
+                        <div>
+                            <Header />
+                            <Logs />
+                            <Footer />
+                        </div>
+                    )}
+                    exact
+                />
+                
                 <Route
                     path="/notifications"
                     render={() => (

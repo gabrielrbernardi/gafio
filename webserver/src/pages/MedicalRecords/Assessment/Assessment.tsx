@@ -12,6 +12,8 @@ import {Dropdown as DropdownReact} from 'react-bootstrap';
 import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
 import { Calendar } from 'primereact/calendar';
+import { addLocale } from 'primereact/api';
+
 import * as Yup from "yup";
 
 import {AssessmentService} from './AssessmentService';
@@ -190,7 +192,6 @@ const Assessment = () => {
             }else{
                 searchType = getOptionState.name
             }
-            console.log(data)
             let dataSize = data.length[0]['count(`' + searchType + '`)']
             if(dataSize == 1){
                 showToast('info', 'Resultado Encontrado!', `Foi encontrado ${dataSize} resultado.`)
@@ -309,9 +310,9 @@ const Assessment = () => {
         {label: 'Não', value: 'Não'}
     ]
 
-    const pt_br = {
-        firstDayOfWeek: 1,
-        dayNames: ["domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"],
+    addLocale('pt', {
+        firstDayOfWeek: 0,
+        dayNames: ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"],
         dayNamesShort: ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"],
         dayNamesMin: ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"],
         // dayNamesMin: ["D", "S", "T", "Q", "Q", "S", "S"],
@@ -319,7 +320,15 @@ const Assessment = () => {
         monthNamesShort: ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"],
         today: "Hoje",
         clear: "Limpar",
-    };
+    });
+
+    const monthNavigatorTemplate = (e: any) => {
+        return <Dropdown value={e.value} options={e.options} onChange={(event) => e.onChange(event.originalEvent, event.value)} style={{ lineHeight: 1 }} />;
+    }
+
+    const yearNavigatorTemplate = (e: any) => {
+        return <Dropdown value={e.value} options={e.options} onChange={(event) => e.onChange(event.originalEvent, event.value)} className="p-ml-2" style={{ lineHeight: 1 }} />;
+    }
 
     async function handleSubmit(event: FormEvent){
         event.preventDefault();
@@ -368,7 +377,6 @@ const Assessment = () => {
                 }else{
                     if(response.error.sqlMessage){
                         if(response.error.sqlState == 23000){
-                            console.log(response.error.sqlState)
                             if(String(response.error.sqlMessage).includes("(`NovoAtb`)")){
                                 showToast('error', 'Erro!', `O campo Novo Atb está incorreto`);
                             }else{
@@ -562,16 +570,16 @@ const Assessment = () => {
                 </DataTable>
             </div>
 
-            <Dialog visible={displayDialog} style={{width: '50%'}} header="Ações" modal={true} onHide={() => setDisplayDialog(false)}>
+            <Dialog visible={displayDialog} style={{width: '50%'}} header="Ações" modal={true} onHide={() => {setDisplayDialog(false); setSelectedAssessment(null)}}>
                 <div className="form-row">
                     <div className="col">
-                        <Button variant="info" className="mt-2 mb-2 p-3" style={{width: '100%'}} onClick={() => {setDisplayDialog(false); setDisplayDialog1(true)}}>Visualizar avaliação</Button>
+                        <Button variant="info" className="mt-2 mb-2 p-3" style={{width: '100%'}} onClick={() => {setDisplayDialog(false); setDisplayDialog1(true); setSelectedAssessment(null)}}>Visualizar avaliação</Button>
                     </div>
                     <div className="col ml-2">
-                        <Button variant="primary" className="mt-2 mb-2 p-3" style={{width: '100%'}} onClick={() => {setDisplayDialog(false); setDisplayDialog2(true)}}>Atualizar avaliação</Button>
+                        <Button variant="primary" className="mt-2 mb-2 p-3" style={{width: '100%'}} onClick={() => {setDisplayDialog(false); setDisplayDialog2(true); setSelectedAssessment(null)}}>Atualizar avaliação</Button>
                     </div>
                     <div className="col ml-2">
-                        <Button variant="danger" className="mt-2 mb-2 p-3" style={{width: '100%'}} onClick={() => {setDisplayDialog(false); setDisplayDialog3(true)}}>Excluir avaliação</Button>
+                        <Button variant="danger" className="mt-2 mb-2 p-3" style={{width: '100%'}} onClick={() => {setDisplayDialog(false); setDisplayDialog3(true); setSelectedAssessment(null)}}>Excluir avaliação</Button>
                     </div>
                 </div>
             </Dialog>
@@ -634,9 +642,9 @@ const Assessment = () => {
                                 <div className="col">
                                     <label htmlFor="DataAvaliacao" className="mt">Data da Avaliação</label>
                                     <Calendar id="DataInternacao" style={{width: '100%'}} value={getDataAvaliacao} 
-                                        onChange={(e) => setDataAvaliacao(e.value)} locale={pt_br} dateFormat="dd/mm/yy" 
-                                        placeholder="Selecione a data da internação" showButtonBar monthNavigator 
-                                        showIcon showOnFocus={false} required/>
+                                        onChange={(e) => setDataAvaliacao(e.value)} locale="pt" dateFormat="dd/mm/yy" 
+                                        placeholder="Selecione a data da internação" showButtonBar monthNavigator yearNavigator yearRange="1910:2021" monthNavigatorTemplate={monthNavigatorTemplate} yearNavigatorTemplate={yearNavigatorTemplate}
+                                        showIcon showOnFocus={false} touchUI required/>
                                 </div>
                             </div>
 
